@@ -1,0 +1,239 @@
+import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/order_app/order_svg.dart';
+import 'package:cluster/presentation/seller_app/seller_svg.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class OutletCard extends StatelessWidget {
+  bool isSelect;
+
+  OutletCard({Key? key, this.isSelect = false}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
+    return Container(
+      width: w,
+
+      decoration: isSelect
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: Color(0xfffe5762),
+                width: 1,
+              ),
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Color(0x16000000),
+              //     blurRadius: 5,
+              //     offset: Offset(0, 5),
+              //   ),
+              // ],
+              color: Color(0x0cfe5762),
+            )
+          : BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: Color(0xffe6ecf0),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x16000000),
+                  blurRadius: 5,
+                  offset: Offset(0, 5),
+                ),
+              ],
+              color: Colors.white,
+            ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Color(0xffb02ba3),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "R",
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "RM General Trading",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w / 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Super Market",
+                      style: TextStyle(
+                        color: Color(0xff7d7d7d),
+                        fontSize: w / 26,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: w / 1.55,
+                      child: Text(
+                        "Hey! Please note that Sidracart or its emplyee will never ask you to disclose.",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: w / 25,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          isSelect?Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: w,
+                height: 1,
+                color: Color(0xffE6ECF0),
+              ),
+
+              Container(
+                padding: EdgeInsets.all(16),
+                child: 
+              
+              Column( children: [
+                Row(
+                  children: [
+                    SvgPicture.string(OrderSvg().mailIcon),
+                    SizedBox(width: 5,),
+                    Text(
+                      "www.rawabimarket.com",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w/24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Row(
+                  children: [
+                    SvgPicture.string(OrderSvg().callIcon,height: 16,color: ColorPalette.primary,),
+                    SizedBox(width: 5,),
+                    Text(
+                      "+971 986587454",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w/24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SvgPicture.string(OrderSvg().locationIcon,height: 16,color: ColorPalette.primary,),
+                    SizedBox(width: 5,),
+                    SizedBox(
+                      width: w/1.5,
+                      child: Text(
+                        "Hey! Please note that Sidracart or its emplyee will never ask you to disclose.",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ]),
+              )
+            ],
+          ):Container(),
+          Container(
+            width: w,
+            height: 1,
+            color: Color(0xffE6ECF0),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                  child: 
+              Row(
+                children: [
+                  Text(
+                    "DELIVERY AVAILABLE",
+                    style: GoogleFonts.roboto(
+                      color: Color(0xff7d7d7d),
+                      fontSize: w/32,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  SvgPicture.string(SellerSvg().verifyIcon)
+                ],
+              )),
+              Container(
+                width: 1,
+                height: 46,
+                color: Color(0xffE6ECF0),
+              ),
+              Container(
+                padding: EdgeInsets.all(8),
+                  child:
+              Row(
+                children: [
+                  Text(
+                    "LOGISTIC AVAILABLE",
+                    style: GoogleFonts.roboto(
+                      color: Color(0xff7d7d7d),
+                      fontSize: w/32,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  SvgPicture.string(SellerSvg().verifyIcon)
+                ],
+              )),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
