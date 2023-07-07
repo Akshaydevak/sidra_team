@@ -67,55 +67,6 @@ class OrderDataSource {
     print(
         "heyyyy loginnnn urll https://api-uat-user.sidrabazar.com/user-employee_employeeuserlogin/sidracart");
     print(email.toString()+password.toString()+code.toString());
-    try{
-      final response = await client.post(
-        "https://api-uat-user.sidrabazar.com/user-account_login-admin/cluster",
-        data:
-        {
-          "username": email,
-          "password": password,
-          "usercode": code
-        },
-
-// { "username":"shifas@rgcdynamics.com","password":"876254604560","usercode":"EMPY112"},
-
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-
-          },
-        ),
-      );
-      print("..........................."+response.data);
-      if (response.data['status'] == "success") {
-        authenticatedUser = User.fromJson(response.data['data']);
-        // await authentication.saveAuthenticatedUser(
-        //     authenticatedUser: authenticatedUser);
-        print("roleesssss ${authenticatedUser.roleList}");
-        for (int i = 0;
-        i < authenticatedUser.roleList!.length;
-        i++) {
-          if (authenticatedUser.roleList?[i] == "admin") {
-            print("heyyyy huuuuu succeess");
-            await authentication.saveAuthenticatedUser(
-                authenticatedUser: authenticatedUser, isAdmin: true);
-          }
-          else{
-            await authentication.saveAuthenticatedUser(
-                authenticatedUser: authenticatedUser, isAdmin: false);
-          }
-        }
-        print("roleesssss adminnn ${authentication.isAdmin}");
-
-        return DoubleResponse(
-            response.data['status'] == "success", response.data['message']);
-      }
-      return DoubleResponse(
-          response.data['status'] == "success", response.data['message']);
-    }catch(g){
-      print("LOGERROR$g");
-    }
     final response = await client.post(
       data:
       {
@@ -143,7 +94,6 @@ class OrderDataSource {
       i < authentication.authenticatedUser.roleList!.length;
       i++) {
         if (authentication.authenticatedUser.roleList?[i] == "admin") {
-          print("heyyyy huuuuu succeess");
           await authentication.saveAuthenticatedUser(
               authenticatedUser: authenticatedUser, isAdmin: true);
         }
