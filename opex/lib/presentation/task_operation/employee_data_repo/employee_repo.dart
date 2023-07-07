@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../../../core/utils/data_response.dart';
 
+import '../employee_model/employee_model.dart';
 import 'employee_datasourse.dart';
 
 class EmployeeRepo {
@@ -47,6 +48,30 @@ class EmployeeRepo {
       userList: userlist
     );
     if (restAPIresponse.hasData) {
+      return DataResponse(error: restAPIresponse.error);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "");
+    }
+  }
+  //
+  Future<DataResponse> UpdateGroupToState({
+    required String groupName,
+    required String discription,
+    required List<GetUserList> userList,
+    required bool isActive,
+    required int id,
+
+  }) async {
+    final restAPIresponse = await _dataSource.UpdateGroupToState(
+        groupName: groupName,
+        discription: discription,
+        userList: userList,
+      isActive: isActive,
+      id: id
+    );
+    print("res data${restAPIresponse.data}");
+    print("res data${restAPIresponse.error}");
+    if (restAPIresponse.data==true) {
       return DataResponse(error: restAPIresponse.error);
     } else {
       return DataResponse(error: restAPIresponse.error ?? "");

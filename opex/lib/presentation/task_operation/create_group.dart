@@ -37,10 +37,13 @@ class _CreateGroupState extends State<CreateGroup> {
   }
   List<String> userCodeList=[]  ;
   List<GetUserList>? userList=[];
+  GetTaskGroupList? readGroup;
   List<String> newTable=[];
-  void chaneTable(List<String> val){
+  void chaneTable(List<String> val,List<GetUserList> update){
+    // userList?.clear();
     newTable=val;
-    // setState((){});
+    userList=update;
+    setState((){});
 
   }
   @override
@@ -62,7 +65,8 @@ class _CreateGroupState extends State<CreateGroup> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: BackAppBar(label: widget.edit==true?"Edit Group":"Create Group"),
+          child: BackAppBar(label: widget.edit==true?"Edit Group":"Create Group",
+          isAction: false),
         ),
         body: SingleChildScrollView(
           child: MultiBlocListener(
@@ -112,19 +116,62 @@ class _CreateGroupState extends State<CreateGroup> {
 
         }
         if(state is GetReadGroupSuccess){
-          print(":GPName4${state.getGroupRead.gName}");
+          readGroup=state.getGroupRead;
+          // print(":GPName4${state.getGroupRead.i}");
           groupName.text=state.getGroupRead.gName??"";
           discription.text=state.getGroupRead.description??"";
-          userList=state.getGroupRead.userList;
+          // userList=state.getGroupRead.userList;
+
           for(var i=0;i<state.getGroupRead.userList!.length;i++){
             userCodeList.add(state.getGroupRead.userList?[i].code??"");
-            print("user code listr $userCodeList");
+            userList?.add(
+                GetUserList(
+                    userCode: state.getGroupRead.userList?[i].code??"",
+            isActive: state.getGroupRead.userList?[i].isActive??false));
+
           }
           setState(() {
 
           });
         }
 
+      },
+    ),
+    BlocListener<EmployeeBloc, EmployeeState>(
+      listener: (context, state) {
+        if (state is UpdateGroupLoading) {
+          showSnackBar(context,
+              message: "Loading...",
+              color: Colors.white,
+              // icon: HomeSvg().SnackbarIcon,
+              autoDismiss: true);
+        }
+
+        if (state is UpdateGroupFailed) {
+          showSnackBar(
+            context,
+            message: state.error,
+            color: Colors.red,
+            // icon: Icons.admin_panel_settings_outlined
+          );
+        }
+        if (state is UpdateGroupSuccess) {
+
+          Fluttertoast.showToast(
+              msg: 'Successfully Created Group',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.white,
+              textColor: Colors.black);
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: EmployeesGroupScreen(newIndex: 1),
+            withNavBar: true,
+            // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation:
+            PageTransitionAnimation.fade,
+          );
+        }
       },
     ),
   ],
@@ -343,6 +390,7 @@ class _CreateGroupState extends State<CreateGroup> {
                                         NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) =>
                                             GroupList(
+                                              userUpdateList: userList??[],
                                               userList: userCodeList,
                                               readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.employeeList[index].code):false,
 
@@ -367,6 +415,14 @@ class _CreateGroupState extends State<CreateGroup> {
                     ),
                     GradientButton(
                         onPressed: () {
+                          widget.edit?
+                          BlocProvider.of<EmployeeBloc>(context).add(
+                              UpdateGroupEvent(
+                                  groupName: groupName.text,
+                                  discription: discription.text,
+                                  userList: userList??[],
+                              isActive: true,
+                              id: readGroup?.id??0)):
                           BlocProvider.of<EmployeeBloc>(context).add(
                               CreateGroupEvent(
                                   groupName: groupName.text,

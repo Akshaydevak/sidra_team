@@ -275,6 +275,21 @@ class GetPaymentReadFailed extends TaskState {
   final String error;
   const GetPaymentReadFailed(this.error);
 }
+//readreview
+class GetReviewReadLoading extends TaskState {}
+
+class GetReviewReadSuccess extends TaskState {
+  final PaymentModel paymentRead;
+  const GetReviewReadSuccess({required this.paymentRead});
+  @override
+  List<Object> get props => [paymentRead];
+}
+
+class GetReviewReadFailed extends TaskState {
+  final String error;
+  const GetReviewReadFailed(this.error);
+}
+
 //updatePayment
 class UpdatePaymentInitial extends TaskState {}
 
@@ -314,6 +329,27 @@ class CreateReviewFailed extends TaskState {
   final String error;
 
   const CreateReviewFailed(this.error);
+  @override
+  List<Object> get props => [];
+}
+//updatereview
+class UpdateReviewInitial extends TaskState {}
+
+class UpdateReviewLoading extends TaskState {}
+
+class UpdateReviewSuccess extends TaskState {
+  final String taskId;
+
+  const UpdateReviewSuccess(this.taskId);
+
+  @override
+  List<Object> get props => [taskId];
+}
+
+class UpdateReviewFailed extends TaskState {
+  final String error;
+
+  const UpdateReviewFailed(this.error);
   @override
   List<Object> get props => [];
 }
@@ -392,4 +428,50 @@ class GetPointListSuccess extends TaskState {
 }
 
 class GetPointListFailed extends TaskState {}
+//
+class GetTaskAssignedGroupListInitial extends TaskState {}
 
+class GetTaskAssignedGroupListLoading extends TaskState {}
+
+class GetTaskAssignedGroupListSuccess extends TaskState {
+  final PaginatedResponse offerPeriod;
+
+  GetTaskAssignedGroupListSuccess({required this.offerPeriod});
+  @override
+  List<Object> get props => [offerPeriod];
+}
+
+class GetTaskAssignedGroupListFailed extends TaskState {
+  GetTaskAssignedGroupListFailed();
+}
+
+
+//cretera
+
+class GetCriteriaReadLoading extends TaskState {}
+
+class GetCriteriaReadSuccess extends TaskState {
+  final CriteriaRead criteriaRead;
+  GetCriteriaReadSuccess({required this.criteriaRead});
+  @override
+  List<Object> get props => [criteriaRead];
+}
+
+class GetCriteriaReadFailed extends TaskState {
+  final String error;GetCriteriaReadFailed(this.error);
+}
+
+//noti
+class NotificationDueLoading extends TaskState {}
+
+class NotificationDueSuccess extends TaskState {
+
+  NotificationDueSuccess();
+  @override
+  List<Object> get props => [];
+}
+
+class NotificationDueFailed extends TaskState {
+  final String error;
+  NotificationDueFailed(this.error);
+}

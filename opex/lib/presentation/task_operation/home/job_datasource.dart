@@ -497,7 +497,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
   //jobUpdate
   Future<DataResponse> jobUpdatePost({
     required String name,
-    required int jobType,
+    required int? jobType,
     required String reportingPerson,
     required String assignedBy,
     required String createdBy,
@@ -549,7 +549,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
     return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
 

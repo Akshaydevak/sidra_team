@@ -7,11 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 class TextFieldTab extends StatelessWidget {
   String ?label,hint;
   Widget ?child;
-   TextFieldTab({Key? key,this.label="",this.hint="",this.child}) : super(key: key);
+  bool isMandatory;
+  FocusNode ?focusNode;
+  int maxLine;
+  TextEditingController ?controller;
+  TextFieldTab({Key? key,this.label="",this.hint="",this.child,this.isMandatory=true,this.controller,this.focusNode,this.maxLine=1}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +37,7 @@ class TextFieldTab extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10,),
-                SvgPicture.string(SellerSvg().validationIcon)
+                isMandatory?SvgPicture.string(SellerSvg().validationIcon,height: 15,):Container()
               ],
             ),
             child??Container()
@@ -38,18 +45,20 @@ class TextFieldTab extends StatelessWidget {
         ),
         SizedBox(height: 5,),
         TextFormField(
-          scrollPadding: EdgeInsets.all(10),
-          cursorColor: Colors.black,
-          // obscureText: show,
-          style: TextStyle(color: Colors.black, fontSize: 17),
-          keyboardType: TextInputType.emailAddress,
+            controller: controller,
+            focusNode:  focusNode,
+            scrollPadding: EdgeInsets.all(10),
+            cursorColor: Colors.black,
+            // obscureText: show,
+            style: TextStyle(color: Colors.black, fontSize: 17),
+            keyboardType: TextInputType.emailAddress,
+            maxLines:maxLine ,
+            decoration: loginInputDecoration(
+              hintText:hint??"",
+              ('Username'),
 
-          decoration: loginInputDecoration(
-            hintText:hint??"",
-            ('Username'),
 
-
-        )),
+            )),
       ],
     );
   }
@@ -72,7 +81,7 @@ InputDecoration loginInputDecoration(
       contentPadding: EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 10),
       hintStyle: TextStyle(
         color: Color(0x7f666161),
-        fontSize: 16,
+        fontSize: 14,
       ),
       alignLabelWithHint: true,
       fillColor: Colors.white,

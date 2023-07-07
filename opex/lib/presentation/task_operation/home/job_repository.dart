@@ -248,7 +248,7 @@ class JobRepo {
   //updateJob
   Future<DataResponse> jobUpdatePost({
     required String name,
-    required int jobType,
+    required int? jobType,
     required String reportingPerson,
     required String assignedBy,
     required String createdBy,
@@ -274,10 +274,10 @@ class JobRepo {
 
 
     );
-    if (restAPIresponse.hasData) {
-      return DataResponse(error: restAPIresponse.error);
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: true);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "");
+      return DataResponse(error: restAPIresponse.error ?? "",data: false);
     }
   }
 

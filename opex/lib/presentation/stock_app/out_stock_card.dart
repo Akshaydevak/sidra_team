@@ -1,8 +1,10 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/inventory/model/inventory_model.dart';
 import 'package:flutter/material.dart';
 class OutStockCard extends StatelessWidget {
   bool isStock;
-   OutStockCard({Key? key,this.isStock=false}) : super(key: key);
+  final InventoryModel? variantList;
+  OutStockCard({Key? key,this.isStock=false, this.variantList}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class OutStockCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               color: Color(0xfff0f1f2),
             ),
+            child: Image.network(variantList?.image1??""),
           ),
           SizedBox(width: 16,),
           Container(
@@ -40,28 +43,28 @@ class OutStockCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing ealiquam ...",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: w/24,
-                    ),
+                  variantList?.name??"",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: w/24,
+                  ),
 
                 ),
                 SizedBox(height: 5,),
                 Row(
                   children: [
                     Text(
-                      isStock?"Quantity:": "Status:",
+                      "Barcode:",
                       style: TextStyle(
-                        fontSize: 14,
-                        color: ColorPalette.subtextGrey
+                          fontSize: 14,
+                          color: ColorPalette.subtextGrey
                       ),
                     ), Text(
-                      isStock?"105":" Out of stock",
+                      variantList?.barcode?.barcodeNumber??"",
                       style: TextStyle(
-                        fontSize: 14,
-                     color: ColorPalette.black,
-                        fontWeight: FontWeight.w600
+                          fontSize: 14,
+                          color: ColorPalette.black,
+                          fontWeight: FontWeight.w600
                       ),
                     ),
                   ],

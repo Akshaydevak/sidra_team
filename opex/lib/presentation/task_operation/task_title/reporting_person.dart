@@ -310,8 +310,15 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                         ? BlocProvider.of<
                                                         TaskBloc>(context).add(
                                                         UpdateTaskEvent(
-                                                            locationUrl: Variable
-                                                                .locationUrl,
+                                                            img5: widget.readTask?.metaData?.image5,
+                                                            img1: widget.readTask?.metaData?.image1,
+                                                            img4: widget.readTask?.metaData?.image4,
+                                                            img2: widget.readTask?.metaData?.image2,
+                                                            img3: widget.readTask?.metaData?.image3,
+                                                            attachmentDescription: widget.readTask?.metaData?.description,
+                                                            attachmentNote: widget.readTask?.metaData?.note,
+                                                            longitude: widget.readTask?.longitude??'',
+                                                            latitude: widget.readTask?.latitude??'',
                                                             taskType: widget
                                                                 .readTask
                                                                 ?.taskType ?? 0,
@@ -532,8 +539,15 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                         ? BlocProvider.of<
                                                         TaskBloc>(context).add(
                                                         UpdateTaskEvent(
-                                                          locationUrl: Variable
-                                                              .locationUrl,
+                                                          img5: widget.readTask?.metaData?.image5,
+                                                          img1: widget.readTask?.metaData?.image1,
+                                                          img4: widget.readTask?.metaData?.image4,
+                                                          img2: widget.readTask?.metaData?.image2,
+                                                          img3: widget.readTask?.metaData?.image3,
+                                                          attachmentDescription: widget.readTask?.metaData?.description,
+                                                          attachmentNote: widget.readTask?.metaData?.note,
+                                                          latitude: widget.readTask?.latitude??"",
+                                                          longitude: widget.readTask?.longitude??"",
                                                           id: widget.readTask
                                                               ?.id ?? 0,
                                                           AssigningCode: widget

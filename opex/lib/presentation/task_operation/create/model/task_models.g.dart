@@ -26,6 +26,12 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      paymentMeta: json['payment_data'] == null
+          ? null
+          : CostingMeta.fromJson(json['payment_data'] as Map<String, dynamic>),
+      rewardsData: json['rewards_data'] == null
+          ? null
+          : CostingMeta.fromJson(json['rewards_data'] as Map<String, dynamic>),
       locayionUrl: json['location_url'] as String?,
       jobTitle: json['job_title'] as String?,
       jobDiscription: json['job_description'] as String?,
@@ -36,8 +42,11 @@ GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       id: json['id'] as int?,
       rewardid: json['reward_id'] as int?,
       reportingPersonCode: json['reporting_person_code'] as String?,
+      isNotify: json['is_notify'] as bool? ?? false,
       createdPersonCode: json['created_person_code'] as String?,
       createdOn: json['created_on'] as String?,
+      longitude: json['longitude'] as String?,
+      latitude: json['latitude'] as String?,
       isActive: json['is_active'] as bool? ?? false,
       isDelete: json['is_delete'] as bool? ?? false,
       priority: json['priority'] as String?,
@@ -62,7 +71,9 @@ GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       remarks: json['remarks'] as String?,
       right: json['rght'] as int?,
       taskCode: json['task_code'] as String?,
-      taskMeta: json['task_meta'] as String?,
+      metaData: json['task_meta'] == null
+          ? null
+          : CostingMeta.fromJson(json['task_meta'] as Map<String, dynamic>),
       taskName: json['task_name'] as String?,
       taskType: json['task_type'] as int?,
       treeId: json['tree_id'] as int?,
@@ -75,6 +86,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'job_title': instance.jobTitle,
       'job_description': instance.jobDiscription,
       'name': instance.name,
+      'is_notify': instance.isNotify,
       'assigned_to': instance.assignToEmail,
       'assigned_to_name': instance.assignToName,
       'task_code': instance.taskCode,
@@ -90,6 +102,8 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'is_delete': instance.isDelete,
       'is_pinned': instance.isPinned,
       'assigning_type': instance.assigningType,
+      'longitude': instance.longitude,
+      'latitude': instance.latitude,
       'status_name': instance.statusName,
       'reporting_person_name': instance.reportingName,
       'assigned_by_name': instance.assignName,
@@ -99,7 +113,9 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'priority': instance.priority,
       'created_on': instance.createdOn,
       'last_modified': instance.lastModified,
-      'task_meta': instance.taskMeta,
+      'task_meta': instance.metaData,
+      'payment_data': instance.paymentMeta,
+      'rewards_data': instance.rewardsData,
       'lft': instance.left,
       'rght': instance.right,
       'tree_id': instance.treeId,
@@ -130,6 +146,9 @@ Map<String, dynamic> _$GetCountTaskToJson(GetCountTask instance) =>
 
 PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel(
       taskId: json['task_id'] as int?,
+      costingMeta: json['costing_meta'] == null
+          ? null
+          : CostingMeta.fromJson(json['costing_meta'] as Map<String, dynamic>),
       jobId: json['job_id'] as int?,
       description: json['description'] as String?,
       assigningCode: json['assigning_code'] as String?,
@@ -155,8 +174,36 @@ Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
       'notes': instance.notes,
       'expense': instance.expense,
       'cost_code': instance.costCode,
+      'costing_meta': instance.costingMeta,
       'is_active': instance.isActive,
       'is_delete': instance.isDelete,
+    };
+
+CostingMeta _$CostingMetaFromJson(Map<String, dynamic> json) => CostingMeta(
+      image1: json['image1'] as String?,
+      note: json['attachment_note'] as String?,
+      name: json['name'] as String?,
+      notes: json['notes'] as String?,
+      descriptionreward: json['description'] as String?,
+      description: json['attachment_description'] as String?,
+      image2: json['image2'] as String?,
+      image3: json['image3'] as String?,
+      image4: json['image4'] as String?,
+      image5: json['image5'] as String?,
+    );
+
+Map<String, dynamic> _$CostingMetaToJson(CostingMeta instance) =>
+    <String, dynamic>{
+      'image1': instance.image1,
+      'image2': instance.image2,
+      'image3': instance.image3,
+      'image4': instance.image4,
+      'image5': instance.image5,
+      'attachment_note': instance.note,
+      'name': instance.name,
+      'description': instance.descriptionreward,
+      'notes': instance.notes,
+      'attachment_description': instance.description,
     };
 
 PointsList _$PointsListFromJson(Map<String, dynamic> json) => PointsList(
@@ -178,12 +225,14 @@ Map<String, dynamic> _$PointsListToJson(PointsList instance) =>
 
 ReadRewards _$ReadRewardsFromJson(Map<String, dynamic> json) => ReadRewards(
       id: json['id'] as int?,
+      rewardsMeta: json['rewards_meta'] == null
+          ? null
+          : CostingMeta.fromJson(json['rewards_meta'] as Map<String, dynamic>),
       isDelete: json['is_delete'] as bool? ?? false,
       name: json['name'] as String?,
       isActive: json['is_active'] as bool? ?? false,
       description: json['description'] as String?,
       notes: json['notes'] as String?,
-      image: json['image'] as String?,
       types: json['types'] as String?,
       typeId: json['type_id'] as int?,
     );
@@ -194,7 +243,7 @@ Map<String, dynamic> _$ReadRewardsToJson(ReadRewards instance) =>
       'name': instance.name,
       'description': instance.description,
       'notes': instance.notes,
-      'image': instance.image,
+      'rewards_meta': instance.rewardsMeta,
       'types': instance.types,
       'type_id': instance.typeId,
       'is_active': instance.isActive,
@@ -203,6 +252,9 @@ Map<String, dynamic> _$ReadRewardsToJson(ReadRewards instance) =>
 
 ReviewModel _$ReviewModelFromJson(Map<String, dynamic> json) => ReviewModel(
       notes: json['notes'] as String?,
+      reviewMeta: json['review_meta'] == null
+          ? null
+          : CostingMeta.fromJson(json['review_meta'] as Map<String, dynamic>),
       review: json['review'] as String?,
       parent: json['parent'] as int?,
       taskId: json['task_id'] as int?,
@@ -226,6 +278,7 @@ Map<String, dynamic> _$ReviewModelToJson(ReviewModel instance) =>
       'image': instance.image,
       'task_id': instance.taskId,
       'reviewed_on': instance.reviewOn,
+      'review_meta': instance.reviewMeta,
       'is_active': instance.isActive,
       'is_delete': instance.isDelete,
       'reviewed_person_code': instance.reviewedPersonCode,
@@ -318,6 +371,44 @@ PointId _$PointIdFromJson(Map<String, dynamic> json) => PointId(
 
 Map<String, dynamic> _$PointIdToJson(PointId instance) => <String, dynamic>{
       'id': instance.id,
+      'name': instance.name,
+      'points': instance.points,
+    };
+
+CriteriaRead _$CriteriaReadFromJson(Map<String, dynamic> json) => CriteriaRead(
+      attittude: (json['Attittude'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      projectCompletion: (json['Project Completion'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      punctuality: (json['Punctuality'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      teamManagement: (json['Team Management & Leadership'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      timeMange: (json['Time Management'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$CriteriaReadToJson(CriteriaRead instance) =>
+    <String, dynamic>{
+      'Punctuality': instance.punctuality,
+      'Attittude': instance.attittude,
+      'Project Completion': instance.projectCompletion,
+      'Team Management & Leadership': instance.teamManagement,
+      'Time Management': instance.timeMange,
+    };
+
+Punchuality _$PunchualityFromJson(Map<String, dynamic> json) => Punchuality(
+      name: json['name'] as String?,
+      points: json['points'] as int?,
+    );
+
+Map<String, dynamic> _$PunchualityToJson(Punchuality instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'points': instance.points,
     };

@@ -66,11 +66,10 @@ class _PinnedJobsState extends State<PinnedJobs> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(label: "Pinned Job List",
-        isAction: false,
-
             onTap: () {
 
-            },),
+            },
+          isAction: false,),
         ),
         body: SingleChildScrollView(
           child:

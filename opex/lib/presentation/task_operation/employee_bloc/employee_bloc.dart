@@ -50,8 +50,20 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
           userList: event.userlist
       );
     }
+
+    if (event is UpdateGroupEvent) {
+      yield* UpdateGroupToState(
+          groupName: event.groupName.trim(),
+          discription: event.discription.trim(),
+          userList: event.userList,
+        id: event.id,
+        isActive: event.isActive
+      );
+    }
     else if (event is PostImageEvent) {
       yield* postImageInTaskState(img: event.image);}
+    else if (event is PostImageAllEvent) {
+      yield* postImageInAll(img: event.image);}
     else if (event is DeleteEmployeeEvent) {
       yield* deleteEmployee(reviewId: event.employeId);
     }
@@ -115,6 +127,33 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield CreateGroupSuccess(dataResponse.data);
     } else {
       yield CreateGroupFailed(dataResponse.error ?? "");
+    }
+  }
+  //
+  Stream<EmployeeState> UpdateGroupToState(
+      {
+        required String groupName,
+        required String discription,
+        required List<GetUserList> userList,
+        required bool isActive,
+        required int id,
+      }) async* {
+    yield UpdateGroupLoading();
+
+    final dataResponse = await _employeeDataSource.UpdateGroupToState(
+        groupName: groupName,
+        discription: discription,
+        userList: userList,
+      id: id,
+      isActive: isActive
+    );
+
+    print("bloc res${dataResponse.data}");
+    print("bloc res${dataResponse.error}");
+    if (dataResponse.data) {
+      yield UpdateGroupSuccess(dataResponse.error??"");
+    } else {
+      yield UpdateGroupFailed(dataResponse.error ?? "");
     }
   }
 //readgroup
@@ -212,6 +251,17 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield PostImageSuccess(id: dataResponse.data2);
     } else {
       yield PostImageFailed(error: dataResponse.data2);
+    }
+  }
+  //
+  Stream<EmployeeState> postImageInAll(
+      {required File img}) async* {
+    yield PicLoading();
+    final dataResponse = await _employeeDataSource.postImageInAll(img: img);
+    if (dataResponse.data1 != null) {
+      yield PicSuccess(dataResponse.data1,dataResponse.data2);
+    } else {
+      yield PicFailed();
     }
   }
 }

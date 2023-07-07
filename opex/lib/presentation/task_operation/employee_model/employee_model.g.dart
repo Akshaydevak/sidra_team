@@ -90,6 +90,8 @@ Map<String, dynamic> _$GetTaskGroupListToJson(GetTaskGroupList instance) =>
 GetUserList _$GetUserListFromJson(Map<String, dynamic> json) => GetUserList(
       email: json['email'] as String?,
       userId: json['user_id'] as int?,
+      isActive: json['is_active'] as bool? ?? false,
+      userCode: json['user_code'] as String?,
       code: json['code'] as String?,
       role: json['role'] as String?,
       userGroupId: json['user_group_id'] as int?,
@@ -99,6 +101,8 @@ Map<String, dynamic> _$GetUserListToJson(GetUserList instance) =>
     <String, dynamic>{
       'user_id': instance.userId,
       'code': instance.code,
+      'user_code': instance.userCode,
+      'is_active': instance.isActive,
       'email': instance.email,
       'role': instance.role,
       'user_group_id': instance.userGroupId,

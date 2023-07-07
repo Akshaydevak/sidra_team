@@ -137,7 +137,7 @@ class GetJobReadListEvent extends JobEvent {
 //updateJob
 class UpdateJobEvent extends JobEvent {
   final String name;
-  final int jobType;
+  final int? jobType;
   final String reportingPerson;
   final String createdBy;
   final String assignedBy;

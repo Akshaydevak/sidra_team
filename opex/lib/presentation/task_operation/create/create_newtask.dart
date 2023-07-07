@@ -138,6 +138,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   var startstdDate="";
 
 
+
   int tappedTile = 0;
   bool isSubTask = false;
   TextEditingController taskTitle=TextEditingController();
@@ -187,19 +188,50 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     }
     if (state is CreateTaskSuccess) {
 
-      print("task sucsess");
+      if(isSubTask==true){
+        taskId = state.taskId;
+        print("TASKID${state.taskId}");
 
-      taskId = state.taskId;
-      print("TASKID${state.taskId}");
+        Fluttertoast.showToast(
+            msg: 'Successfully Created',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black);
+        context.read<TaskBloc>().add(const GetSubTaskListEvent());
+        context.read<TaskBloc>().add(
+            GetTaskReadListEvent(int.tryParse(taskId.toString())??0));
+        // Navigator.pop(context);
+      }
+      else{
+        print("task sucsess");
 
-      Fluttertoast.showToast(
-          msg: 'Successfully Created',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.white,
-          textColor: Colors.black);
-      context.read<TaskBloc>().add(const GetTaskListEvent());
-      context.read<TaskBloc>().add( GetTaskReadListEvent(int.tryParse(taskId.toString())??0));
+        taskId = state.taskId;
+        print("TASKID${state.taskId}");
+
+        Fluttertoast.showToast(
+            msg: 'Successfully Created',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+            textColor: Colors.black);
+        context.read<TaskBloc>().add( GetTaskListEvent(int.tryParse(Variable.jobReadId.toString()??"")));
+        context.read<TaskBloc>().add(
+            GetTaskReadListEvent(int.tryParse(taskId.toString())??0));
+        Navigator.pop(context);
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen: MoreDetailsScreen(taskList: readTask,
+        //       updateValue: updatevalue),
+        //   withNavBar: true,
+        //   // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation
+        //       .fade,
+        // );
+      }
+
+
+      // context.read<TaskBloc>().add( GetTaskReadListEvent(int.tryParse(taskId.toString())??0));
       // Navigator.pop(context);
     }
   },
@@ -238,6 +270,15 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           context.read<TaskBloc>().add(const GetTaskTypeListEvent());
           context.read<TaskBloc>().add(
               GetTaskReadListEvent(readTask?.id??0));
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: MoreDetailsScreen(taskList: readTask,
+                updateValue: updatevalue),
+            withNavBar: true,
+            // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation
+                .fade,
+          );
           // Navigator.pop(context);
         }
       },
@@ -335,7 +376,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TaskAndOperationAppBar(
-                            label: "Task Title",
+                            label: readTask?.taskName??"Task Title",
                             // EndIcon: widget.isSubTask?GestureDetector(
                             //   onTap: (){
                             //     print("subb$taskId");
@@ -803,6 +844,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 ),SizedBox(
                                   height: 10,
                                 ),
+                                widget.editTask==false?
                                 widget.isSubTask?GestureDetector(
                                   onTap: () {
                                     context.read<JobBloc>().add( const GetEmployeeListEvent());
@@ -953,10 +995,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       ],
                                     ),
                                   ),
-                                ),
+                                ):Container(),
 
 
-                                SizedBox(
+                                widget.editTask==true?Container():SizedBox(
                                   height: 10,
                                 ),
                                 widget.isSubTask?Container():
@@ -994,7 +1036,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
                                             BlocProvider.of<TaskBloc>(context).add(
                                                 CreateTaskEvent(
-                                                  locationUrl: Variable.locationUrl,
+                                                  latitude: null,
+                                                  longitude: null,
                                                   AssigningCode: Variable.assignCode,
                                                   AssigningType: Variable.assignType,
                                                   createdOn: "2023-09-04 18:00:00",
@@ -1090,9 +1133,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                                   SizedBox(
                                                                     width: 10,
                                                                   ),
-                                                                  Icon(
-                                                                      Icons
-                                                                          .arrow_forward_ios_sharp)
+                                                                  // Icon(
+                                                                  //     Icons
+                                                                  //         .arrow_forward_ios_sharp)
                                                                 ],
                                                               )
 
@@ -1251,10 +1294,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    widget.editTask||updateval?
+                                    print("JOB IDDD${Variable.jobReadId}");
+                                    widget.editTask||updateval||isSubTask?
                                     BlocProvider.of<TaskBloc>(context).add(
                                         UpdateTaskEvent(
-                                          locationUrl: Variable.locationUrl,
+                                          latitude: readTask?.latitude,
+                                          longitude: readTask?.longitude,
                                           id: readTask?.id??0,
                                           AssigningCode: Variable.assignCode,
                                           AssigningType: Variable.assignType,
@@ -1275,10 +1320,18 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           reportingPerson: authentication.authenticatedUser.code??"",
                                           endDate: "$ebdDate"" ""$endTime",
                                           startDate: "$startDate"" ""$startTime",
+                                          img5:  readTask?.metaData?.image5,
+                                          img1: readTask?.metaData?.image1,
+                                          img4: readTask?.metaData?.image4,
+                                          img2: readTask?.metaData?.image2,
+                                          img3: readTask?.metaData?.image3,
+                                          attachmentDescription: readTask?.metaData?.description,
+                                          attachmentNote: readTask?.metaData?.note
                                         )):
                                     BlocProvider.of<TaskBloc>(context).add(
                                         CreateTaskEvent(
-                                          locationUrl: Variable.locationUrl,
+                                          latitude: null,
+                                          longitude: null,
                                           AssigningCode: Variable.assignCode,
                                           AssigningType: Variable.assignType,
                                           createdOn: "2023-09-04 18:00:00",
@@ -1299,17 +1352,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           endDate: "${_range.split(" - ")[1]} ${_time2.hour}"":""${_time2.minute}"":""00",
                                           startDate: "${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00",
                                         ));
-                                    Navigator.pop(context);
+                                    // Navigator.pop(context);
 
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: MoreDetailsScreen(taskList: readTask,
-                                          updateValue: updatevalue),
-                                      withNavBar: true,
-                                      // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation: PageTransitionAnimation
-                                          .fade,
-                                    );
+
                                   },
                                   child: Container(
                                     width: w,

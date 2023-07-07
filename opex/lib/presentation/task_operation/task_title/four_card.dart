@@ -11,8 +11,8 @@ class FourCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var w =MediaQuery.of(context).size.width;
     return Container(
-      width: w/4.6,
-      height: 95,
+      width: w/4.8,
+      height: 105,
       padding: EdgeInsets.all(12),
 
       decoration: BoxDecoration(

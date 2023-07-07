@@ -96,58 +96,58 @@ class _CreatevarientFourState extends State<CreatevarientFour> {
                   const SizedBox(
                     height: 20,
                   ),
-                  TableCard(),
+                  // TableCard(),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // TableCard(
+                  //   head: "Ingredients",
+                  //   title1: "Ingredient Name",
+                  //   title2: "Value",
+                  //   content1: "Ingredients",
+                  //   content2: "Enter details",
+                  // ),
                   const SizedBox(
                     height: 16,
                   ),
-                  TableCard(
-                    head: "Ingredients",
-                    title1: "Ingredient Name",
-                    title2: "Value",
-                    content1: "Ingredients",
-                    content2: "Enter details",
-                  ),
+                  // TableCard(
+                  //   head: "Product Features",
+                  //   title1: "Features",
+                  //   title2: "Details",
+                  //   content1: "Enter Features",
+                  //   content2: "Enter details",
+                  // ),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // TableCard(
+                  //   head: "Additional Information",
+                  //   title1: "Additional Info",
+                  //   title2: "Value",
+                  //   content1: "Enter Additional info",
+                  //   content2: "Enter details",
+                  // ),
                   const SizedBox(
                     height: 16,
                   ),
-                  TableCard(
-                    head: "Product Features",
-                    title1: "Features",
-                    title2: "Details",
-                    content1: "Enter Features",
-                    content2: "Enter details",
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  TableCard(
-                    head: "Additional Information",
-                    title1: "Additional Info",
-                    title2: "Value",
-                    content1: "Enter Additional info",
-                    content2: "Enter details",
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  TableCard(
-                    head: "Nutrition Facts",
-                    title1: "Nutrition Facts",
-                    title2: "Value",
-                    content1: "Enter Nutrition Facts",
-                    content2: "Enter details",
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Usage Direction",
-                    style: GoogleFonts.roboto(
-                      color: Colors.black,
-                      fontSize: w / 24,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  // TableCard(
+                  //   head: "Nutrition Facts",
+                  //   title1: "Nutrition Facts",
+                  //   title2: "Value",
+                  //   content1: "Enter Nutrition Facts",
+                  //   content2: "Enter details",
+                  // ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  // Text(
+                  //   "Usage Direction",
+                  //   style: GoogleFonts.roboto(
+                  //     color: Colors.black,
+                  //     fontSize: w / 24,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 10,
                   ),

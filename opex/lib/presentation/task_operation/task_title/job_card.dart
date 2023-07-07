@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../core/utils/variables.dart';
@@ -15,10 +16,14 @@ import '../task_title.dart';
 
 class JobCard extends StatelessWidget {
   final GetJobList? joblist;
-  const JobCard({Key? key, this.joblist}) : super(key: key);
+   JobCard({Key? key, this.joblist}) : super(key: key);
+  String endstdDate='';
 
   @override
   Widget build(BuildContext context) {
+    var date = joblist?.endDate;
+    var dateTime =  DateTime.parse("$date");
+    endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
@@ -60,7 +65,7 @@ class JobCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 93,
+                  width: w/3.5,
                   // height: 25,
                   padding: EdgeInsets.symmetric(horizontal: 5,vertical: 4),
                   decoration: BoxDecoration(
@@ -76,10 +81,10 @@ class JobCard extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    joblist?.statusName??"",
+                    joblist?.statusName??"STARTED",
                     style: GoogleFonts.roboto(
                       color: Color(0xffff9900),
-                      fontSize: 13,
+                      fontSize: w/28,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -104,7 +109,7 @@ class JobCard extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      "1",
+                      joblist?.imgCount?.toString()??"",
                       style: GoogleFonts.roboto(
                         color: Color(0xff939393),
                         fontSize: w/25,
@@ -129,7 +134,7 @@ class JobCard extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      "14",
+                      joblist?.rewCount?.toString()??"",
                       style: GoogleFonts.roboto(
                         color: Color(0xff939393),
                         fontSize: w/25,
@@ -146,8 +151,7 @@ class JobCard extends StatelessWidget {
                       SvgPicture.string(TaskSvg().startDateIcon,height: 14,),
                       SizedBox(width: 8,),
                       Text(
-                        "${joblist?.endDate.toString().split("T")[0]}"" "
-                            "${joblist?.endDate.toString().split("T")[1].split("+")[1]}",
+                        endstdDate,
                         style: GoogleFonts.roboto(
                           color:  Color(0xff939393),
                           fontSize: w/27,

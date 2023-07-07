@@ -22,14 +22,14 @@ class CreatePerformance extends StatefulWidget {
 }
 
 class _CreatePerformanceState extends State<CreatePerformance> {
-  bool isIndividual= true;
-  bool isCritiria= false;
+  bool isIndividual= false;
+  bool isCritiria= true;
   List<PointsList> pointList=[];
   int totalMark=0;
   @override
   void initState() {
     context.read<TaskBloc>().add(GetPointsListEvent());
-    context.read<TaskBloc>().add(GetTotalPerformanceEvent());
+    context.read<TaskBloc>().add(GetTotalPerformanceEvent(employeeCode: widget.taskList?.assigningCode??"",widget.taskList?.id));
     super.initState();
   }
   @override
@@ -86,7 +86,7 @@ class _CreatePerformanceState extends State<CreatePerformance> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
             TaskAndOperationAppBar(
-              label: "Performance Appraisal",
+              label: "Criteria",
             ),
             Container(
               padding: EdgeInsets.all(16),
@@ -94,114 +94,115 @@ class _CreatePerformanceState extends State<CreatePerformance> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text(
-                  "Choose One",
-                  style: GoogleFonts.roboto(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 16,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap:(){
-                        setState((){isCritiria=true;
-                        isIndividual=false;});
-                      },
-                      child: Container(
-                        width: w/2.3,
-                       padding: EdgeInsets.all(10),
-                        decoration: isCritiria? BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color:  ColorPalette.cardBackground,
-                        ):BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.string(isCritiria?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
-                            SizedBox(width: 10,),
-                            Text(
-                              "Criteria",
-                              style: GoogleFonts.roboto(
-                                color: Color(0xff151522),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),  GestureDetector(
-                      onTap: (){
-                        setState((){
-                          isIndividual=true;
-                          isCritiria=false;
-                        });
-                      },
-                      child: Container(
-                        width: w/2.3,
-                       padding: EdgeInsets.all(10),
-                        decoration: isIndividual? BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color:  ColorPalette.cardBackground,
-                        ):BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.string(isIndividual?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
-                            SizedBox(width: 10,),
-                            Text(
-                              "Individual",
-                              style: GoogleFonts.roboto(
-                                color: Color(0xff151522),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
+                // Text(
+                //   "Choose One",
+                //   style: GoogleFonts.roboto(
+                //     color: Colors.black,
+                //     fontSize: 18,
+                //     fontWeight: FontWeight.w500,
+                //   ),
+                // ),
+                // SizedBox(height: 16,),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     GestureDetector(
+                //       onTap:(){
+                //         setState((){
+                //           isCritiria=true;
+                //         isIndividual=false;});
+                //       },
+                //       child: Container(
+                //         width: w/2.3,
+                //        padding: EdgeInsets.all(10),
+                //         decoration: isCritiria? BoxDecoration(
+                //           borderRadius: BorderRadius.circular(10),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Color(0x05000000),
+                //               blurRadius: 8,
+                //               offset: Offset(1, 1),
+                //             ),
+                //           ],
+                //           color:  ColorPalette.cardBackground,
+                //         ):BoxDecoration(
+                //           borderRadius: BorderRadius.circular(10),
+                //           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Color(0x05000000),
+                //               blurRadius: 8,
+                //               offset: Offset(1, 1),
+                //             ),
+                //           ],
+                //           color: Colors.white,
+                //         ),
+                //         child: Row(
+                //           children: [
+                //             SvgPicture.string(isCritiria?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
+                //             SizedBox(width: 10,),
+                //             Text(
+                //               "Criteria",
+                //               style: GoogleFonts.roboto(
+                //                 color: Color(0xff151522),
+                //                 fontSize: 18,
+                //                 fontWeight: FontWeight.w500,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),  GestureDetector(
+                //       onTap: (){
+                //         setState((){
+                //           isIndividual=true;
+                //           isCritiria=false;
+                //         });
+                //       },
+                //       child: Container(
+                //         width: w/2.3,
+                //        padding: EdgeInsets.all(10),
+                //         decoration: isIndividual? BoxDecoration(
+                //           borderRadius: BorderRadius.circular(10),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Color(0x05000000),
+                //               blurRadius: 8,
+                //               offset: Offset(1, 1),
+                //             ),
+                //           ],
+                //           color:  ColorPalette.cardBackground,
+                //         ):BoxDecoration(
+                //           borderRadius: BorderRadius.circular(10),
+                //           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Color(0x05000000),
+                //               blurRadius: 8,
+                //               offset: Offset(1, 1),
+                //             ),
+                //           ],
+                //           color: Colors.white,
+                //         ),
+                //         child: Row(
+                //           children: [
+                //             SvgPicture.string(isIndividual?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
+                //             SizedBox(width: 10,),
+                //             Text(
+                //               "Individual",
+                //               style: GoogleFonts.roboto(
+                //                 color: Color(0xff151522),
+                //                 fontSize: 18,
+                //                 fontWeight: FontWeight.w500,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //
+                //   ],
+                // ),
                   SizedBox(height: 16,),
                   isIndividual? IndividualPerformance(pointList: pointList,taskList: widget.taskList,totalMark: totalMark,):Container(),
                   isCritiria? CritireaPerformance():Container(),

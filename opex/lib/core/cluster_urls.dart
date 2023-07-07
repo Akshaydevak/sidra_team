@@ -5,6 +5,7 @@ class ClusterUrls{
 
   static const userCreateUrl="${taskAndOperationBaseURL}task-manage/user-create";
   static const groupCreate="${taskAndOperationBaseURL}task-manage/task-group-create";
+  static const groupUpdateUrl="${taskAndOperationBaseURL}task-manage/task-group-update/";
 
   static const myjobsListUrl = "${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
   static const newJoblistUrl="${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
@@ -33,7 +34,7 @@ class ClusterUrls{
   static const readEmployeeUrl="${taskAndOperationBaseURL}task-manage/user-update/";
   static const updateEmployeeUrl="${taskAndOperationBaseURL}task-manage/user-update/";
   static const payymentCreateUrl="${taskAndOperationBaseURL}task-manage/cost-create";
-  static const paymentReadUrl="${taskAndOperationBaseURL}task-manage/cost-read/";
+  static const paymentReadUrl="${taskAndOperationBaseURL}task-manage/cost-read";
   static const paymentUpdateUrl="${taskAndOperationBaseURL}task-manage/cost-update/";
   static const activityLogsUrl="${taskAndOperationBaseURL}task/list-activity-logs/";
   static const designationListUrl="${organisationBaseUrl}legalunit/";
@@ -41,7 +42,9 @@ class ClusterUrls{
   static const roleListngUrl="${taskAndOperationBaseURL}task-manage/role-list";
   static const updateTaskGroupUrl="${taskAndOperationBaseURL}task-manage/user-group-update/";
   static const imageUploadUrl="${taskAndOperationBaseURL}file-upload";
+  static const imageUploadAttachmentUrl="${taskAndOperationBaseURL}task/attachments-create";
   static const reviewCreateUrl="${taskAndOperationBaseURL}task-review/review-create";
+
   static const reviewListUrl="${taskAndOperationBaseURL}task-review/list-reviews/";
   static const reviewUpdateUrl="${taskAndOperationBaseURL}task-review/review-update/";
   static const createRewadsUrl="${taskAndOperationBaseURL}task-review/rewards-create";
@@ -52,7 +55,11 @@ class ClusterUrls{
   static const readPerformanceUrl="${taskAndOperationBaseURL}task-manage/read-performance-appraisal/";
   static const perfomenceListUrl="${taskAndOperationBaseURL}task-manage/list-performance/";
   static const userVerifyUrl="${taskAndOperationBaseURL}task-manage/user-verify";
-  static const readRewadsUrl="${taskAndOperationBaseURL}task-review/read-rewards/";
+  static const readRewadsUrl="${taskAndOperationBaseURL}task-review/read-rewards";
+
+  static const listGroupUnderListUrl="${taskAndOperationBaseURL}task-manage/list-task-assigned-to-group";
+  static const criteraReadUrl="${taskAndOperationBaseURL}task-manage/criteria-performance-appraisal/";
+  static const dueNotificationUrl="${taskAndOperationBaseURL}task/notification-due-task/";
 
 
 }

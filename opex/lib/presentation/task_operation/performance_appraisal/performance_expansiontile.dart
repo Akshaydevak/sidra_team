@@ -52,6 +52,8 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
       );
     }
     if (state is CreatePerformanceSuccess) {
+      context.read<TaskBloc>().add(
+          GetTotalPerformanceEvent(employeeCode: widget.tasklist?.assigningCode??"",widget.tasklist?.id));
       Fluttertoast.showToast(
           msg: 'Performance Created',
           toastLength: Toast.LENGTH_SHORT,
@@ -125,7 +127,7 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
 
                                   ));
                                   context.read<TaskBloc>().add(
-                                      GetTotalPerformanceEvent());
+                                      GetTotalPerformanceEvent(employeeCode: widget.tasklist?.assigningCode??"",widget.tasklist?.id));
                                 });
                               },
                               child: Container(

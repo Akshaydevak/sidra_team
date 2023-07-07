@@ -5,7 +5,7 @@ import '../../common_widgets/no_glow.dart';
 import '../../core/color_palatte.dart';
 import '../mpos/product_card.dart';
 import '../mpos/search_card.dart';
-import 'Inventory_product_card.dart';
+import 'widget/Inventory_product_card.dart';
 import 'inventory_svg.dart';
 
 class SearchOrderView extends StatelessWidget {

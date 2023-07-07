@@ -49,10 +49,36 @@ class CreateGroupEvent extends EmployeeEvent {
   ];
 }
 
+//updateGop
+class UpdateGroupEvent extends EmployeeEvent {
+  final String groupName;
+  final String discription;
+  final List<GetUserList> userList;
+  final bool isActive;
+  final int id;
+
+  UpdateGroupEvent({
+    required this.groupName,
+    required this.discription,
+    required this.userList,
+    required this.isActive,
+    required this.id,
+
+  });
+  @override
+  List<Object> get props => [
+    groupName,
+  ];
+}
+
 //post image
 class PostImageEvent extends EmployeeEvent {
   final File image;
   const PostImageEvent(this.image);
+}
+class PostImageAllEvent extends EmployeeEvent {
+  final File image;
+  const PostImageAllEvent(this.image);
 }
 //readgroup
 class GetGroupTReadEvent extends EmployeeEvent {

@@ -126,6 +126,10 @@ class GetUserList extends Equatable {
   final int? userId;
   @JsonKey(name: 'code')
   final String? code;
+  @JsonKey(name: 'user_code')
+  final String? userCode;
+  @JsonKey(name: 'is_active',defaultValue: false)
+  final bool? isActive;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'role')
@@ -136,6 +140,8 @@ class GetUserList extends Equatable {
   const GetUserList({
     this.email,
     this.userId,
+    this.isActive,
+    this.userCode,
     this.code,
     this.role,this.userGroupId
   });

@@ -7,7 +7,10 @@ class RecentPromotionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
       width: w,

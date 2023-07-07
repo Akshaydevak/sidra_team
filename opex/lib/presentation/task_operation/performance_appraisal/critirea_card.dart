@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../create/model/task_models.dart';
+
 class CritiriaCard extends StatefulWidget {
   String label;
-   CritiriaCard({Key? key,this.label=""}) : super(key: key);
+  List<Punchuality> list=[];
+   CritiriaCard({Key? key,required this.list,this.label=""}) : super(key: key);
 
   @override
   State<CritiriaCard> createState() => _CritiriaCardState();
@@ -49,124 +52,44 @@ class _CritiriaCardState extends State<CritiriaCard> {
               SizedBox(
                 height: 10,
               ),
-              Container(
-                width: w,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color(0xff198a17),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "1.Afthabu Rahman PP",
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) =>
+                      Container(
+                    width: w,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color(0xff198a17),
                     ),
-                    Text(
-                      "5 Point",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                width: w,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color(0xfff8f7f5),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "2.Afthabu Rahman PP",
-                      style: TextStyle(
-                        color: Color(0xff151522),
-                        fontSize: 16,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "1.${widget.list?[index].name}",
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "${widget.list?[index].points} Point",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        )
+                      ],
                     ),
-                    Text(
-                      "5 Point",
-                      style: TextStyle(
-                        color: Color(0xff939393),
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                width: w,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color(0xfff8f7f5),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "3.Afthabu Rahman PP",
-                      style: TextStyle(
-                        color: Color(0xff151522),
-                        fontSize: 15,
-                      ),
-                    ),
-                    Text(
-                      "15 Point",
-                      style: TextStyle(
-                        color: Color(0xff939393),
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                width: w,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color(0xfff8f7f5),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "4.Afthabu Rahman PP",
-                      style: TextStyle(
-                        color: Color(0xff151522),
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      "20 Point",
-                      style: TextStyle(
-                        color: Color(0xff939393),
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+                  ) ,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: 10,),
+                  itemCount: widget.list!.length),
+
+
+
             ],
           )
 

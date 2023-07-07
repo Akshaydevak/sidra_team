@@ -1,17 +1,21 @@
 import 'package:cluster/common_widgets/cluster_card.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/presentation/promotion_app/blocs/discount_bloc/discount_bloc.dart';
+import 'package:cluster/presentation/promotion_app/models_promotion/discount_models/model_discount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../common_widgets/gradient_button.dart';
+import '../../common_widgets/loading.dart';
 import '../../core/color_palatte.dart';
-import '../product_hub/product_hub_card.dart';
 import '../seller_app/seller_svg.dart';
+import 'discount_screen.dart';
 
 class SuccessPromotion extends StatefulWidget {
-  SuccessPromotion({Key? key}) : super(key: key);
+  final bool? update;
+  const SuccessPromotion({Key? key, this.update}) : super(key: key);
 
   @override
   State<SuccessPromotion> createState() => _SuccessPromotionState();
@@ -19,12 +23,40 @@ class SuccessPromotion extends StatefulWidget {
 
 class _SuccessPromotionState extends State<SuccessPromotion> {
   bool isActive = false;
-
+  DiscountList? readDiscount;
+  List<String> segment=[];
+  String lifeStyle="";
+  int select=0;
+  void onSelect(int val) {
+    select = val;
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return BlocListener<DiscountBloc, DiscountState>(
+      listener: (context, state) {
+        if (state is GetDiscountReadLoading) {
+          customCupertinoLoading();
+        }
+        else if (state is GetDiscountReadSuccess) {
+          readDiscount = state.discountList;
+          for(var i=0;i<readDiscount!.segments!.length;i++){
+            segment.add(readDiscount?.segments?[i].segmentName??"");
+
+          }
+          for(int i=0;i<segment.length;i++){
+            lifeStyle="$lifeStyle${segment[i]},";
+          }
+          print("lifee$lifeStyle");
+          print("lifee${readDiscount?.offerLines?.length}");
+          setState(() {
+
+          });
+        }
+      },
+  child: Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(0),
@@ -61,7 +93,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                         height: 10,
                       ),
                       Text(
-                        "Item Submitted successfully !",
+                        widget.update==true?"Discount Updated Successfully !":"Discount Created Successfully !",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: w / 22,
@@ -87,6 +119,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                               borderRadius: BorderRadius.circular(5),
                               color: Color(0xfff0f1f2),
                             ),
+                            child: Image.network(readDiscount?.image??"",fit: BoxFit.cover,),
                           ),
                           SizedBox(
                             width: 10,
@@ -96,7 +129,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Friday Sale of the day",
+                                readDiscount?.title??"",
                                 style: GoogleFonts.roboto(
                                   color: Colors.black,
                                   fontSize: w/22,
@@ -104,7 +137,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                                 ),
                               ),
                               Text(
-                                "From Jan 21, 2022 to Mar 22, 2022",
+                                "From ${readDiscount?.offerPeriodDetails?.fromDate} to ${readDiscount?.offerPeriodDetails?.toDate}",
                                 style: GoogleFonts.roboto(
                                   color: Color(0x99666161),
                                   fontSize: w/25,
@@ -132,7 +165,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                               ),
                             ),
                             Text(
-                              "Life Style",
+                              lifeStyle,
                               style: GoogleFonts.roboto(
                                 color: Colors.black,
                                 fontSize: w/24,
@@ -150,7 +183,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                               ),
                             ),
                             Text(
-                              "Life Style",
+                              readDiscount?.title??"",
                               style: GoogleFonts.roboto(
                                 color: Colors.black,
                                 fontSize: w/24,
@@ -168,43 +201,43 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                               ),
                             ),
                             Text(
-                              "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. ",
+                              readDiscount?.description??"",
                               style: GoogleFonts.roboto(
                                 color: Colors.black,
                                 fontSize: w/24,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
+                            // SizedBox(
+                            //   height: 16,
+                            // ),
+                            // Text(
+                            //   "Offer Based on",
+                            //   style: TextStyle(
+                            //     color: Color(0x99666161),
+                            //     fontSize: w/25,
+                            //   ),
+                            // ),
+                            // Text(
+                            //   readDiscount?.basedOn??"",
+                            //   style: GoogleFonts.roboto(
+                            //     color: Colors.black,
+                            //     fontSize: w/24,
+                            //     fontWeight: FontWeight.w500,
+                            //   ),
+                            // ),
                             SizedBox(
                               height: 16,
                             ),
                             Text(
-                              "Offer Based on",
+                              "Offer Period Name",
                               style: TextStyle(
                                 color: Color(0x99666161),
                                 fontSize: w/25,
                               ),
                             ),
                             Text(
-                              "Life Style",
-                              style: GoogleFonts.roboto(
-                                color: Colors.black,
-                                fontSize: w/24,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Text(
-                              "Offer Group",
-                              style: TextStyle(
-                                color: Color(0x99666161),
-                                fontSize: w/25,
-                              ),
-                            ),
-                            Text(
-                              "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. ",
+                              readDiscount?.offerPeriodDetails?.title??"",
                               style: GoogleFonts.roboto(
                                 color: Colors.black,
                                 fontSize: w/24,
@@ -217,162 +250,162 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
                       SizedBox(
                         height: 10,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isActive = !isActive;
-                          });
-                        },
-                        child: ClusterCard(
-                         padding: EdgeInsets.zero,
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: isActive
-                                    ? EdgeInsets.fromLTRB(16, 16, 16, 10)
-                                    : EdgeInsets.all(16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Promotion Applying To",
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Icon(Icons.keyboard_arrow_down_outlined)
-                                  ],
-                                ),
-                              ),
-                              isActive
-                                  ? Container(
-
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Divider(
-                                            color: ColorPalette.divider,
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.all(16),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      width: 76,
-                                                      height: 76,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(5),
-                                                        color: Color(0xfff0f1f2),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          "Type ID",
-                                                          style: GoogleFonts.roboto(
-                                                            color: Colors.black,
-                                                            fontSize: w/22,
-                                                            fontWeight: FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          "#145HGYD",
-                                                          style: GoogleFonts.roboto(
-                                                            color: Color(0x99666161),
-                                                            fontSize: w/25,
-                                                            fontWeight: FontWeight.w500,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. ",
-                                                  style: GoogleFonts.roboto(
-                                                    color: Colors.black,
-                                                    fontSize: w/24,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 16,),
-                                                Text(
-                                                  "Offer Based on",
-                                                  style: TextStyle(
-                                                    color: ColorPalette.subtextGrey,
-                                                    fontSize: w/25,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 5,),
-                                                Text(
-                                                  "Life Style",
-                                                  style: GoogleFonts.roboto(
-                                                    color: Colors.black,
-                                                    fontSize: w/24,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 16,),
-                                                Text(
-                                                  "Offer Group",
-                                                  style: TextStyle(
-                                                    color: ColorPalette.subtextGrey,
-                                                    fontSize: w/25,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. ",
-                                                  style: GoogleFonts.roboto(
-                                                    color: Colors.black,
-                                                    fontSize: w/24,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-
-                                              ],
+                      Container(
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            primary: false,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return  GestureDetector(
+                                onTap: () {
+                                  onSelect(index);
+                                  setState(() {
+                                    // isActive = !isActive;
+                                  });
+                                },
+                                child: ClusterCard(
+                                  padding: EdgeInsets.zero,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: select==index
+                                            ? EdgeInsets.fromLTRB(16, 16, 16, 10)
+                                            : EdgeInsets.all(16),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Promotion Applying To",
+                                              style: GoogleFonts.roboto(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-
-                                        ],
+                                            // Icon(Icons.keyboard_arrow_down_outlined)
+                                          ],
+                                        ),
                                       ),
-                                    )
-                                  : Container()
-                            ],
-                          ),
-                        ),
+                                      select==index
+                                          ? Container(
+
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Divider(
+                                              color: ColorPalette.divider,
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(16),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                    children: [
+                                                      Container(
+                                                        width: 76,
+                                                        height: 76,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(5),
+                                                          color: Color(0xfff0f1f2),
+                                                        ),
+                                                        child: Image.network(readDiscount?.offerLines?[index].image??"",fit: BoxFit.cover,),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            "Type Name",
+                                                            style: GoogleFonts.roboto(
+                                                              color: Colors.black,
+                                                              fontSize: w/22,
+                                                              fontWeight: FontWeight.w500,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            readDiscount?.offerLines?[index].typeApplying??"",
+                                                            style: GoogleFonts.roboto(
+                                                              color: Color(0x99666161),
+                                                              fontSize: w/25,
+                                                              fontWeight: FontWeight.w500,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    readDiscount?.offerLines?[index].title??"",
+                                                    style: GoogleFonts.roboto(
+                                                      color: Colors.black,
+                                                      fontSize: w/24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  // SizedBox(height: 16,),
+                                                  // SizedBox(height: 16,),
+                                                  // Text(
+                                                  //   "Offer Product Group Code",
+                                                  //   style: TextStyle(
+                                                  //     color: ColorPalette.subtextGrey,
+                                                  //     fontSize: w/25,
+                                                  //   ),
+                                                  // ),
+                                                  // Text(
+                                                  //   readDiscount?.offerLines?[index].offerProductGroupCode??"",
+                                                  //   style: GoogleFonts.roboto(
+                                                  //     color: Colors.black,
+                                                  //     fontSize: w/24,
+                                                  //     fontWeight: FontWeight.w500,
+                                                  //   ),
+                                                  // )
+
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      )
+                                          : Container()
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) => Container(
+                              height: 10,
+                            ),
+                            itemCount: readDiscount?.offerLines?.length??0),
                       ),
+
                       SizedBox(
                         height: 30,
                       ),
                       GradientButton(
                           color: ColorPalette.primary,
                           onPressed: () {
-                            //  SuccessPromotion
+                            Navigator.pop(context);
+                            context.read<DiscountBloc>().add( PaginatedDiscountListEvent("",""));
                           },
                           gradient: LinearGradient(
                               begin: Alignment.topCenter,
@@ -398,6 +431,7 @@ class _SuccessPromotionState extends State<SuccessPromotion> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }

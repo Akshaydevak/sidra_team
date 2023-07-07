@@ -13,6 +13,8 @@ part 'task_state.dart';
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final TaskDataSource _taskDataSource = TaskDataSource();
   final TaskRepo _taskRepo = TaskRepo();
+  List<GetTaskList> tasklist = [];
+  String? next;
   TaskBloc() : super(GetTaskTypeListInitial());
 
   @override
@@ -21,7 +23,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getTaskTypeListState();
     }
     if (event is GetTaskListEvent) {
-      yield* getTaskListState();
+      yield* getTaskListState(event.id);
     }
     if (event is GetPendingTaskListEvent) {
       yield* getPendingTaskListState();
@@ -42,13 +44,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getTaskRead(event.id);
     }
     if (event is GetReadRewardsEvent) {
-      yield* getReadRewards(event.id);
+      yield* getReadRewards(event.id,event.isTask);
     }
      if (event is GetPerformanceReadEvent) {
       yield* getPerformanceRead(event.id);
     }
      if (event is GetTotalPerformanceEvent) {
-      yield* getTotalPerformance();
+      yield* getTotalPerformance(event.employeeCode,event.id);
     }
     if (event is DeleteTaskEvent) {
       yield* deleteTask(jobId: event.taskId);
@@ -57,14 +59,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* deleteReview(reviewId: event.reviewId);
     }
      if (event is GetPaymentReadListEvent) {
-      yield* getPaymentRead(event.id);
+      yield* getPaymentRead(event.id,event.isTask);
     }
     else if (event is GetAssignCountEvent) {
       yield* getAssignCount(event.id);
     }
     if (event is CreateTaskEvent) {
       yield* createTaskstate(
-        locationUrl: event.locationUrl.trim(),
+        longitude: event.longitude,
+          latitude: event.latitude,
           startDate: event.startDate.trim(),
           endDate: event.endDate.trim(),
           reportingPerson: event.reportingPerson,
@@ -89,7 +92,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is UpdateTaskEvent) {
       yield* updateTaskstate(
-        locationUrl: event.locationUrl.trim(),
+        attachNote: event.attachmentNote?.trim(),
+        attachdescription: event.attachmentDescription?.trim(),
+        img5: event.img5,
+        img1: event.img1,
+        img2: event.img2,
+        img3: event.img3,
+        img4: event.img4,
+        latitude: event.latitude,
+        longitude: event.longitude,
         startDate: event.startDate.trim(),
         endDate: event.endDate.trim(),
         reportingPerson: event.reportingPerson,
@@ -125,6 +136,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       );
     }
+    if (event is UpdateReviewTaskEvent) {
+      yield* updateReviewTask(
+        taskId: event.taskId,
+          image: event.image,
+          parant: event.parant,
+          id: event.id,
+          notas: event.notes.trim(),
+          review: event.review.trim(),
+          reviewdBy: event.reviewdBy.trim(),
+        isActive: event.isActive
+
+
+      );
+    }
     if (event is CreatePerfomanceAppraisalTaskEvent) {
       yield* createPerformanceAppraisalTask(
           name: event.name.trim(),
@@ -138,7 +163,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* createReward(
         type: event.type??"",
           typeId: event.typeId??0,
-          image: event.image,
+          img5: event.img5,
+          img4: event.img4,
+          img3: event.img3,
+          img2: event.img2,
+          img1: event.img1,
           discription: event.discription.trim(),
           name: event.name.trim(),
           notes: event.notes.trim(),
@@ -148,7 +177,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* updateRewards(
         type: event.type??"",
         typeId: event.typeId??0,
-        image: event.image,
+        img5: event.img5,
+        img1: event.img1,
+        img2: event.img2,
+        img3: event.img3,
+        img4: event.img4,
         discription: event.discription.trim(),
         name: event.name.trim(),
         notes: event.notes.trim(),
@@ -167,6 +200,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         notas: event.notas.trim(),
         budget: event.budget,
         expense: event.expense,
+        img1: event.img1,
+        img2: event.img2,
+        img3: event.img3,
+        img4: event.img4,
+        img5: event.img5
 
       );
     }
@@ -174,6 +212,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* updatePaymentstate(
         payId: event.payId,
 
+        img1: event.img1,
+        img2: event.img2,
+        img3: event.img3,
+        img4: event.img4,
+        img5: event.img5,
         discription: event.discription.trim(),
         AssigningCode: event.AssigningCode.trim(),
         assigningType: event.assigningType.trim(),
@@ -188,6 +231,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is GetPointsListEvent) {
       yield* getPointsList();
+    }
+    if (event is TaskAssignedGroupListEvent) {
+      yield* TaskAssignedGroupListState(event.code.trim(),event.prev?.trim());
+    }
+    else if (event is GetCriteriaReadEvent) {
+      yield* getCriteriaRead(event.taskCode);
+    }
+    if (event is NotificationDueEvent) {
+      yield* getNotificationDue(event.id);
     }
   }
 
@@ -205,10 +257,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
   //task list
-  Stream<TaskState> getTaskListState() async* {
+  Stream<TaskState> getTaskListState(int? id) async* {
     yield GetTaskListLoading();
 
-    final dataResponse = await _taskRepo.getTaskList();
+    final dataResponse = await _taskRepo.getTaskList(id);
 
     if (dataResponse.data.isNotEmpty) {
       yield GetTaskListSuccess(dataResponse.data);
@@ -259,11 +311,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   //readRewards
-  Stream<TaskState> getReadRewards(int id) async* {
+  Stream<TaskState> getReadRewards(int id,bool isTask) async* {
 
     yield GetReadRewadsLoading();
 
-    final dataResponse = await _taskRepo.getReadRewards(id);
+    final dataResponse = await _taskRepo.getReadRewards(id,isTask);
 
     if (dataResponse.hasData) {
       yield GetReadRewadsSuccess(readRewards: dataResponse.data);
@@ -289,11 +341,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   //totalPerfomane
-  Stream<TaskState> getTotalPerformance() async* {
+  Stream<TaskState> getTotalPerformance(String? employeeCode,int? id) async* {
 
     yield GetTotalPerformanceLoading();
 
-    final dataResponse = await _taskRepo.getTotalPerformance();
+    final dataResponse = await _taskRepo.getTotalPerformance(employeeCode,id);
 
     if (dataResponse.hasData) {
       yield GetTotalPerformanceSuccess(totalMark: dataResponse.data);
@@ -338,12 +390,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         required String priority,
         required String createdOn,
         required String? lastmodified,
-        required String? locationUrl,
+        required String? longitude,
+        required String? latitude,
       }) async* {
     yield CreateTaskLoading();
 
     final dataResponse = await _taskRepo.taskCreatePost(
-      locationUrl: locationUrl,
+      latitude: latitude,
+      longitude: longitude,
       statusStagesId:statusStagesId,
         startDate: startDate,
         endDate: endDate,
@@ -379,6 +433,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   //updateTask
   Stream<TaskState> updateTaskstate(
       {
+        required dynamic img1,
+        required dynamic img2,
+        required dynamic img3,
+        required dynamic img4,
+        required dynamic img5,
+        required String? attachdescription,
+        required String? attachNote,
         required int? parant,
         required int taskType,
         required int id,
@@ -399,12 +460,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         required String createdOn,
         required String? lastmodified,
         required int? jobid,
-        required String? locationUrl,
+        required String? longitude,
+        required String? latitude,
       }) async* {
     yield UpdateTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
-      locationUrl: locationUrl,
+      longitude: longitude,
+      latitude: latitude,
+      img4: img4,
+      img3: img3,
+      img2: img2,
+      img1: img1,
+      img5: img5,
+      attachdescription: attachdescription,
+      attachNote: attachNote,
       statusStagesId:statusStagesId,
       startDate: startDate,
       endDate: endDate,
@@ -507,6 +577,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         required String notas,
         required String discription,
         required double expense,
+        required int img1,
+        required int img2,
+        required int img3,
+        required int img4,
+        required int img5,
       }) async* {
     yield CreatePaymentLoading();
 
@@ -518,7 +593,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       assigningType: assigningType,
       AssigningCode: AssigningCode,
       budget: budget,
-      expense: expense
+      expense: expense,
+      img5: img5,
+      img4: img4,
+      img3: img3,
+      img2: img2,
+      img1: img1
 
     );
 
@@ -531,11 +611,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
   //readPayment
-  Stream<TaskState> getPaymentRead(int id) async* {
+  Stream<TaskState> getPaymentRead(int id,bool isTask) async* {
 
     yield GetPaymentReadLoading();
 
-    final dataResponse = await _taskRepo.getPaymentRead(id);
+    final dataResponse = await _taskRepo.getPaymentRead(id,isTask);
 
     if (dataResponse.hasData) {
       yield GetPaymentReadSuccess(paymentRead: dataResponse.data);
@@ -558,6 +638,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         required String discription,
         required double expense,
         required bool isActive,
+        required dynamic img1,
+        required dynamic img2,
+        required dynamic img3,
+        required dynamic img4,
+        required dynamic img5,
       }) async* {
     yield UpdatePaymentLoading();
 
@@ -571,7 +656,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         budget: budget,
         expense: expense,
       isActive: isActive,
-      payId: payId
+      payId: payId,
+      img1: img1,
+      img5: img5,
+      img4: img4,
+      img3: img3,
+      img2: img2
 
     );
 
@@ -613,6 +703,40 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         dataResponse.error ?? "",);
     }
   }
+  //updateReview
+  Stream<TaskState> updateReviewTask(
+      {
+        required int? parant,
+        required int? id,
+        required bool? isActive,
+        required String reviewdBy,
+        required dynamic image,
+        required String review,
+        required String notas,
+        required int taskId,
+
+      }) async* {
+    yield UpdateReviewLoading();
+
+    final dataResponse = await _taskRepo.updateReviewTask(
+      image:image,
+      parant: parant,
+      review: review,
+      reviewdBy: reviewdBy,
+      id: id,
+      taskId: taskId,
+      isActive: isActive,
+      notas: notas
+    );
+
+    if (dataResponse.data) {
+      print("task succcess atv repo");
+      yield UpdateReviewSuccess(dataResponse.error??"",);
+    } else {
+      yield UpdateReviewFailed(
+        dataResponse.error ?? "",);
+    }
+  }
   //createPerfomance
   Stream<TaskState> createPerformanceAppraisalTask(
       {
@@ -646,7 +770,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> createReward(
       {
 
-        required int image,
+        required int img1,
+        required int img2,
+        required int img3,
+        required int img4,
+        required int img5,
         required String discription,
         required String name,
         required String notes,
@@ -657,7 +785,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     yield CreateRewardLoading();
 
     final dataResponse = await _taskRepo.createReward(
-      image:image,
+      img1: img1,
+      img2: img2,
+      img3: img3,
+      img4: img4,
+      img5: img5,
       typeId: typeId,
       type: type,
       discription: discription,
@@ -679,7 +811,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> updateRewards(
       {
 
-        required int image,
+        required dynamic img1,
+        required dynamic img2,
+        required dynamic img3,
+        required dynamic img4,
+        required dynamic img5,
         required String discription,
         required String name,
         required String notes,
@@ -692,7 +828,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     yield UpdateRewardLoading();
 
     final dataResponse = await _taskRepo.updateRewards(
-      image:image,
+      img4: img4,
+      img3: img3,
+      img2: img2,
+      img1: img1,
+      img5: img5,
       typeId: typeId,
       type: type,
       discription: discription,
@@ -725,4 +865,54 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield GetPointListFailed();
     }
   }
+
+  //perfom
+  Stream<TaskState> TaskAssignedGroupListState(String code,String? prev) async* {
+    tasklist=[];
+    yield GetTaskAssignedGroupListLoading();
+
+    final dataResponse = await _taskRepo.TaskAssignedGroupListState(code, prev);
+
+    dataResponse.fold((l) => emit(GetTaskAssignedGroupListFailed()), (r) {
+      next = r.nextPage;
+
+      r.data?.forEach((element) {
+        tasklist.add((element));
+      });
+
+      emit(GetTaskAssignedGroupListSuccess(
+          offerPeriod: PaginatedResponse(tasklist, r.nextPage, r.previousUrl)));
+    });
+  }
+
+  //
+  Stream<TaskState> getCriteriaRead(String taskCode) async* {
+
+    yield GetCriteriaReadLoading();
+
+    final dataResponse = await _taskRepo.getCriteriaRead(taskCode);
+
+    if (dataResponse.hasData) {
+      yield GetCriteriaReadSuccess(criteriaRead: dataResponse.data);
+    } else {
+      yield GetCriteriaReadFailed(dataResponse.error.toString(),
+      );
+    }
+  }
+
+  //noti
+  Stream<TaskState> getNotificationDue(int id) async* {
+
+    yield NotificationDueLoading();
+
+    final dataResponse = await _taskDataSource.getNotificationDue(id);
+
+    if (dataResponse=="success") {
+      yield NotificationDueSuccess();
+    } else {
+      yield NotificationDueFailed("");
+    }
+  }
+
+
 }

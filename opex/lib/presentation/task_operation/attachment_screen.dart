@@ -9,175 +9,90 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/color_palatte.dart';
+import '../../core/common_snackBar.dart';
+import '../inventory/inventory_new_list.dart';
+import '../inventory/new_list_tab/profiling_tab.dart';
 import 'create/add_text.dart';
+import 'create/model/task_models.dart';
+import 'create/task_bloc/task_bloc.dart';
+import 'employee_bloc/employee_bloc.dart';
 
 
 class AttachmentScreen extends StatefulWidget {
-  const AttachmentScreen({Key? key}) : super(key: key);
+  final GetTaskList? readData;
+  const AttachmentScreen({Key? key, this.readData}) : super(key: key);
 
   @override
   State<AttachmentScreen> createState() => _AttachmentScreenState();
 }
 
 class _AttachmentScreenState extends State<AttachmentScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  String? _fileName;
-  String? _saveAsFileName;
-  List<PlatformFile>? _paths;
-  String? _directoryPath;
-  String? _extension;
-  bool _isLoading = false;
-  bool _userAborted = false;
-  bool _multiPick = true;
-  FileType _pickingType = FileType.any;
+  TextEditingController discription=TextEditingController();
+  TextEditingController notes=TextEditingController();
+  final picker = ImagePicker();
   File? cropImage;
   bool _cropped = false;
-  final picker = ImagePicker();
-  TextEditingController _controller = TextEditingController();
+  dynamic? imageId;
+  String imgUrl='';
+  String? imageFileName;
 
+  int indexImage=0;
+  int catindexImage=0;
+  bool isCatalogue=false;
   @override
   void initState() {
+    picModel.clear();
+    for(int i=0;i<5;i++) {
+      picModel.add(PicModel(data: null,url: ""));
+    }
+    readAttach();
     super.initState();
-    _controller.addListener(() => _extension = _controller.text);
   }
-
-  Future<void> getImage(source) async {
-    try {
-      final pickedFile =
-      await picker.pickImage(source: source, maxHeight: 512, maxWidth: 512);
-
-      // cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
-
-      if (cropImage != null) {
-        // BlocProvider.of<ProfileBloc>(context)
-        //     .add(UpdatePictureEvent(cropImage!));
-      }
-      setState(() {
-        _cropped = true;
-      });
-      Navigator.maybePop(context);
-    } catch (e) {}
-  }
-
-  void _pickFiles() async {
-    _resetState();
-    try {
-      _directoryPath = null;
-      _paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
-        allowMultiple: _multiPick,
-        onFileLoading: (FilePickerStatus status) => print(status),
-        allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension?.replaceAll(' ', '').split(',')
-            : null,
-      ))
-          ?.files;
-    } on PlatformException catch (e) {
-      _logException('Unsupported operation' + e.toString());
-    } catch (e) {
-      _logException(e.toString());
-    }
-    if (!mounted) return;
+  readAttach(){
+    discription.text=widget.readData?.metaData?.description??"";
+    notes.text=widget.readData?.metaData?.note??"";
+    picModel.setAll(0, [
+      PicModel(
+          url: widget.readData?.metaData?.image1 ??
+              "")
+    ]);
+    picModel.setAll(1, [
+      PicModel(
+          url: widget.readData?.metaData?.image2 ??
+              "")
+    ]);
+    picModel.setAll(2, [
+      PicModel(
+          url: widget.readData?.metaData?.image3 ??
+              "")
+    ]);
+    picModel.setAll(3, [
+      PicModel(
+          url: widget.readData?.metaData?.image4 ??
+              "")
+    ]);
+    picModel.setAll(4, [
+      PicModel(
+          url: widget.readData?.metaData?.image5 ??
+              "")
+    ]);
     setState(() {
-      _isLoading = false;
-      _fileName =
-      _paths != null ? _paths!.map((e) => e.name).toString() : '...';
-      _userAborted = _paths == null;
+
     });
   }
 
-  void _clearCachedFiles() async {
-    _resetState();
-    try {
-      bool? result = await FilePicker.platform.clearTemporaryFiles();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: result! ? Colors.green : Colors.red,
-          content: Text((result
-              ? 'Temporary files removed with success.'
-              : 'Failed to clean temporary files')),
-        ),
-      );
-    } on PlatformException catch (e) {
-      _logException('Unsupported operation' + e.toString());
-    } catch (e) {
-      _logException(e.toString());
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
 
-  void _selectFolder() async {
-    _resetState();
-    try {
-      String? path = await FilePicker.platform.getDirectoryPath();
-      setState(() {
-        _directoryPath = path;
-        _userAborted = path == null;
-      });
-    } on PlatformException catch (e) {
-      _logException('Unsupported operation' + e.toString());
-    } catch (e) {
-      _logException(e.toString());
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-  TextEditingController controller=TextEditingController();
-  Future<void> _saveFile() async {
-    _resetState();
-    try {
-      String? fileName = await FilePicker.platform.saveFile(
-        allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension?.replaceAll(' ', '').split(',')
-            : null,
-        type: _pickingType,
-      );
-      setState(() {
-        _saveAsFileName = fileName;
-        _userAborted = fileName == null;
-      });
-    } on PlatformException catch (e) {
-      _logException('Unsupported operation' + e.toString());
-    } catch (e) {
-      _logException(e.toString());
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  void _logException(String message) {
-    print(message);
-    _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
-    _scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
-
-  void _resetState() {
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      _isLoading = true;
-      _directoryPath = null;
-      _fileName = null;
-      _paths = null;
-      _saveAsFileName = null;
-      _userAborted = false;
-    });
-  }
 
   List<String>fileType=["Open Camera","Image","Document","Video File"];
   @override
   Widget build(BuildContext context) {
+
     var w=MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Colors.white,
@@ -193,231 +108,386 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
 
           ),
         ),
-        body:SafeArea(child:
-        Column(
-          children: [
-            TaskAndOperationAppBar(
-              label: "Attachment",
-              EndIcon: Container(
-                // width: 110,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: ColorPalette.primary,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  "Add",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: w,
-              padding: EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      _showModalBottomSheet();
-                    },
-                    child: Container(
-                      width: w/3,
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
-                        color: Color(0xfff8f7f5),
-                      ),
-                      child: Row(
-                        children: [SvgPicture.string(TaskSvg().attachIcon),
-                          SizedBox(width: 5,),
-                          Text(
-                            "Attach",
-                            style: GoogleFonts.roboto(
-                              color: Color(0xff151522),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  AttachmentCard(),
-                  Container(
-                    width: w,
-                    height: 145,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x05000000),
-                          blurRadius: 8,
-                          offset: Offset(1, 1),
-                        ),
-                      ],
-                      color: Colors.white,
-                    ),
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
-                        hintText: "Description",
-                        hintStyle:  TextStyle(
-                          color: Color(0xff939393),
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    width: w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Color(0xffe6ecf0),
-                        width: 1,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x05000000),
-                          blurRadius: 8,
-                          offset: Offset(1, 1),
-                        ),
-                      ],
-                      color: Colors.white,
-                    ),
-                    child: AddText(label: "Add Notes",controller: controller,isActive: true),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ))
-    );
-  }
+        body:MultiBlocListener(
+  listeners: [
+    BlocListener<EmployeeBloc, EmployeeState>(
+      listener: (context, state) {
+        if(state is PicLoading){
+          print("Inside Loading");
+        }
+        if(state is PicSuccess){
+          print("Inside Success${state.data}\t${state.url}");
+          setState(() {
+            isCatalogue? catalogueList.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]):picModel.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]);
+          });
+          print("pic model length${picModel.length}");
 
-  _showModalBottomSheet() {
-    final TextEditingController groupName = TextEditingController();
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
-        ),
-        context: context,
-        builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          var w = MediaQuery.of(context).size.width;
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                padding: EdgeInsets.all(16),
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                    )),
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                // Padding(
-                // padding: const EdgeInsets.only(top: 20.0),
-                // child: DropdownButton<FileType>(
-                //     hint: const Text('LOAD PATH FROM'),
-                //     value: _pickingType,
-                //     items: FileType.values
-                //         .map((fileType) => DropdownMenuItem<FileType>(
-                //       child: Text(fileType.toString()),
-                //       value: fileType,
-                //     ))
-                //         .toList(),
-                //     onChanged: (value) => setState(() {
-                //       value!;
-                //       if (_pickingType != FileType.custom) {
-                //         _controller.text = _extension = '';
-                //       }
-                //     }))),
-                    Text(
-                      "Select File Type",
+        }
+      },
+    ),
+    BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is UpdateTaskLoading) {
+          print("task loading");
+          showSnackBar(context,
+              message: "Loading...",
+              color: Colors.white,
+              // icon: HomeSvg().SnackbarIcon,
+              autoDismiss: true);
+        }
+
+        if (state is UpdateTaskFailed) {
+          showSnackBar(
+            context,
+            message: state.error,
+            color: Colors.red,
+            // icon: Icons.admin_panel_settings_outlined
+          );
+        }
+        if (state is UpdateTaskSuccess) {
+          print("attachment success ");
+          // Fluttertoast.showToast(
+          //     msg: 'Successfully Updated',
+          //     toastLength: Toast.LENGTH_SHORT,
+          //     gravity: ToastGravity.BOTTOM,
+          //     backgroundColor: Colors.white,
+          //     textColor: Colors.black);
+          Navigator.pop(context);
+        }
+      },
+    ),
+  ],
+  child: SingleChildScrollView(
+          child: SafeArea(child:
+          Column(
+            children: [
+              TaskAndOperationAppBar(
+                label: "Attachment",
+                EndIcon: GestureDetector(
+                  onTap: (){
+                    BlocProvider.of<TaskBloc>(context).add(
+                        UpdateTaskEvent(
+                          latitude: widget?.readData?.latitude??"",
+                          longitude: widget?.readData?.longitude??"",
+                          img5: picModel[4].url,
+                          img1: picModel[0].url,
+                          img4: picModel[3].url,
+                          img2: picModel[1].url,
+                          img3: picModel[2].url,
+                          attachmentDescription: discription.text,
+                          attachmentNote: notes.text,
+                          id: widget.readData?.id??0,
+                          AssigningCode: widget.readData?.assigningCode??"",
+                          AssigningType: widget.readData?.assigningType??"",
+                          createdOn: "${widget.readData?.createdOn?.split("T")[0]}"" ""${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
+                          jobid: widget.readData?.jobId,
+                          notas: widget.readData?.notes??"",
+                          priorityLeval: "1",
+                          remarks: widget.readData?.remarks??"",
+                          taskName: widget.readData?.taskName??"",
+                          taskType: widget.readData?.taskType??0,
+                          lastmodified: null,
+                          parant: widget.readData?.parent??null,
+                          statusStagesId: null,
+                          discription:widget.readData?.description??"",
+                          createdBy: widget.readData?.createdPersonCode??"",
+                          isActive: true,
+                          priority: widget.readData?.priority??"",
+                          reportingPerson: widget.readData?.reportingPersonCode??"",
+                          endDate: "${widget.readData?.endDate?.split("T")[0]}"" ""${widget.readData?.endDate?.split("T")[1].split("+")[0]}"??"",
+                          startDate: "${widget.readData?.startDate?.split("T")[0]}"" ""${widget.readData?.startDate?.split("T")[1].split("+")[0]}"??"",
+                        ));
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: ColorPalette.primary,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Add",
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.roboto(
-                        color: Colors.black,
-                        fontSize: w/18,
+                        color: Colors.white,
+                        fontSize: 20,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 10,),
-                    ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) => Container(
-                          padding: EdgeInsets.all(10),
-                          child: InkWell(
+                  ),
+                ),
+              ),
+              Container(
+                width: w,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                              onTap: () => _pickFiles(),
-
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(22),
-                                    color: Color(0xff33c658),
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                GestureDetector(
-                                  onTap: (){
-                                    print("SHIFAS");
-                                    fileType[index]=="Open Camera"?
-                                    getImage(
-                                        ImageSource.camera):
-                                    fileType[index]=="Image"?
-                                    getImage(
-                                        ImageSource.gallery):
-                                    fileType[index]=="Document"?
-                                    _pickingType= FileType.media:
-                                    fileType[index]=="Video File"?
-                                    _pickingType= FileType.video:
-                                        Container();
-                                    fileType[index]=="Open Camera"?null:_pickFiles();
-
-                                  },
-                                  child: Text(
-                                    fileType[index],
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                    Container(
+                      width: w,
+                      height: 145,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x05000000),
+                            blurRadius: 8,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      child: TextFormField(
+                        controller: discription,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          hintText: "Description",
+                          hintStyle:  TextStyle(
+                            color: Color(0xff939393),
+                            fontSize: 18,
                           ),
                         ),
-                        separatorBuilder: (context, index) => Divider(),
-                        itemCount: fileType.length)
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xffe6ecf0),
+                          width: 1,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x05000000),
+                            blurRadius: 8,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      child: AddText(label: "Add Notes",controller: notes,isActive: true),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      "Images",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
 
+                        width: MediaQuery.of(context).size.width,
+                        child: GridView.builder(
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 5,
+                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 100,
+                                childAspectRatio: 1.5 / 2,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 8),
+                            itemBuilder: (context, i) {
+                              // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                              return GestureDetector(
+                                onTap: (){
+                                  isCatalogue=false;
+                                  indexImage=i;
+                                  setState(() {
+
+                                  });
+                                  getCoverImage(ImageSource.gallery);
+                                },
+                                child:
+                                picModel[i].url!=""&&picModel[i].url!.isNotEmpty?
+                                Container(
+                                    width: 88,
+                                    height: 100,
+                                    decoration:BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(picModel[i].url.toString()),fit: BoxFit.fill
+                                        )
+                                    )
+                                )
+                                    :
+                                Container(
+                                    width: 88,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                    ),
+                                    child: const Icon(Icons.add,color:Color(0x7f666161))
+                                ),
+                              );
+                            })),
+                    SizedBox(height: 10,),
                   ],
                 ),
-              );
-            },
-          );
-        });
+              )
+            ],
+          )),
+        ),
+)
+    );
+  }
+
+  // _showModalBottomSheet() {
+  //   final TextEditingController groupName = TextEditingController();
+  //   showModalBottomSheet(
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+  //       ),
+  //       context: context,
+  //       builder: (context) {
+  //         var h = MediaQuery.of(context).size.height;
+  //         var w = MediaQuery.of(context).size.width;
+  //         return StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setState) {
+  //             return Container(
+  //               padding: EdgeInsets.all(16),
+  //               width: double.infinity,
+  //               decoration: const BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.only(
+  //                     topRight: Radius.circular(10),
+  //                     topLeft: Radius.circular(10),
+  //                   )),
+  //               alignment: Alignment.center,
+  //               child: Column(
+  //                 children: [
+  //               // Padding(
+  //               // padding: const EdgeInsets.only(top: 20.0),
+  //               // child: DropdownButton<FileType>(
+  //               //     hint: const Text('LOAD PATH FROM'),
+  //               //     value: _pickingType,
+  //               //     items: FileType.values
+  //               //         .map((fileType) => DropdownMenuItem<FileType>(
+  //               //       child: Text(fileType.toString()),
+  //               //       value: fileType,
+  //               //     ))
+  //               //         .toList(),
+  //               //     onChanged: (value) => setState(() {
+  //               //       value!;
+  //               //       if (_pickingType != FileType.custom) {
+  //               //         _controller.text = _extension = '';
+  //               //       }
+  //               //     }))),
+  //                   Text(
+  //                     "Select File Type",
+  //                     style: GoogleFonts.roboto(
+  //                       color: Colors.black,
+  //                       fontSize: w/18,
+  //                       fontWeight: FontWeight.w500,
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 10,),
+  //                   ListView.separated(
+  //                       physics: NeverScrollableScrollPhysics(),
+  //                       shrinkWrap: true,
+  //                       itemBuilder: (context, index) => Container(
+  //                         padding: EdgeInsets.all(10),
+  //                         child: InkWell(
+  //
+  //                             onTap: () => _pickFiles(),
+  //
+  //                           child: Row(
+  //                             children: [
+  //                               Container(
+  //                                 width: 32,
+  //                                 height: 32,
+  //                                 decoration: BoxDecoration(
+  //                                   borderRadius: BorderRadius.circular(22),
+  //                                   color: Color(0xff33c658),
+  //                                 ),
+  //                               ),
+  //                               SizedBox(width: 10,),
+  //                               GestureDetector(
+  //                                 onTap: (){
+  //                                   print("SHIFAS");
+  //                                   fileType[index]=="Open Camera"?
+  //                                   getImage(
+  //                                       ImageSource.camera):
+  //                                   fileType[index]=="Image"?
+  //                                   getImage(
+  //                                       ImageSource.gallery):
+  //                                   fileType[index]=="Document"?
+  //                                   _pickingType= FileType.media:
+  //                                   fileType[index]=="Video File"?
+  //                                   _pickingType= FileType.video:
+  //                                       Container();
+  //                                   fileType[index]=="Open Camera"?null:_pickFiles();
+  //
+  //                                 },
+  //                                 child: Text(
+  //                                   fileType[index],
+  //                                   style: GoogleFonts.roboto(
+  //                                     color: Colors.black,
+  //                                     fontSize: 18,
+  //                                     fontWeight: FontWeight.w500,
+  //                                   ),
+  //                                 ),
+  //                               )
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       separatorBuilder: (context, index) => Divider(),
+  //                       itemCount: fileType.length)
+  //
+  //                 ],
+  //               ),
+  //             );
+  //           },
+  //         );
+  //       });
+  // }
+
+  Future<void> getCoverImage(source) async {
+    try {
+      final pickedFile = await picker.pickImage(
+          source: source, maxHeight: 512, maxWidth: 512);
+
+      cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
+
+      if (cropImage != null) {
+
+        BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(cropImage!));
+        imageFileName=cropImage?.path.split("_")[1];
+        print("cropppp$imageFileName");
+      }
+      setState(() {
+        _cropped = true;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

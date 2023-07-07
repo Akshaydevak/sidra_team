@@ -103,7 +103,7 @@ class _SegmentScreenState extends State<SegmentScreen> {
                 ),
               ),
               SizedBox(height: 16,),
-              const SearchBar(),
+              // const SearchBar(),
               GridView.builder(
                   padding: const EdgeInsets.all(16),
                   physics:const NeverScrollableScrollPhysics(),

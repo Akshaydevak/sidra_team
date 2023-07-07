@@ -44,6 +44,8 @@ class GetTaskList extends Equatable {
   final String? jobDiscription;
   @JsonKey(name: 'name')
   final String? name;
+  @JsonKey(name: 'is_notify',defaultValue: false)
+  final bool? isNotify;
   @JsonKey(name: 'assigned_to')
   final String? assignToEmail;
   @JsonKey(name: 'assigned_to_name')
@@ -74,6 +76,10 @@ class GetTaskList extends Equatable {
   final bool? isPinned;
   @JsonKey(name: "assigning_type")
   final String? assigningType;
+  @JsonKey(name: "longitude")
+  final String? longitude;
+  @JsonKey(name: "latitude")
+  final String? latitude;
   @JsonKey(name: "status_name")
   final String? statusName;
   @JsonKey(name: "reporting_person_name")
@@ -93,7 +99,11 @@ class GetTaskList extends Equatable {
   @JsonKey(name: "last_modified")
   final String? lastModified;
   @JsonKey(name: "task_meta")
-  final String? taskMeta;
+  final CostingMeta? metaData;
+  @JsonKey(name: "payment_data")
+  final CostingMeta? paymentMeta;
+  @JsonKey(name: "rewards_data")
+  final CostingMeta? rewardsData;
   @JsonKey(name: "lft")
   final int? left;
   @JsonKey(name: "rght")
@@ -118,15 +128,21 @@ class GetTaskList extends Equatable {
   final int? createdBy;
 
   const GetTaskList({
-    this.name,this.locayionUrl,
+    this.name,
+    this.paymentMeta,
+    this.rewardsData,
+    this.locayionUrl,
     this.jobTitle,this.jobDiscription,
     this.assignToEmail,
     this.assignToName,
     this.description,this.paymentId,
     this.id,this.rewardid,
     this.reportingPersonCode,
+    this.isNotify,
     this.createdPersonCode,
     this.createdOn,
+    this.longitude,
+    this.latitude,
     this.isActive,
     this.isDelete,
     this.priority,
@@ -151,7 +167,7 @@ class GetTaskList extends Equatable {
     this.remarks,
     this.right,
     this.taskCode,
-    this.taskMeta,
+    this.metaData,
     this.taskName,
     this.taskType,
     this.treeId
@@ -218,6 +234,8 @@ class PaymentModel extends Equatable {
   final double? expense;
   @JsonKey(name: 'cost_code')
   final String? costCode;
+  @JsonKey(name: 'costing_meta')
+  final CostingMeta? costingMeta;
   @JsonKey(name: 'is_active', defaultValue: false)
   final bool? isActive;
   @JsonKey(name: 'is_delete', defaultValue: false)
@@ -225,6 +243,7 @@ class PaymentModel extends Equatable {
 
   const PaymentModel({
     this.taskId,
+    this.costingMeta,
     this.jobId,
     this.description,
     this.assigningCode,
@@ -246,6 +265,54 @@ class PaymentModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$PaymentModelToJson(this);
 }
+//costMeta
+@JsonSerializable()
+class CostingMeta extends Equatable {
+
+  @JsonKey(name: 'image1')
+  final String? image1;
+  @JsonKey(name: 'image2')
+  final String? image2;
+  @JsonKey(name: 'image3')
+  final String? image3;
+  @JsonKey(name: 'image4')
+  final String? image4;
+  @JsonKey(name: 'image5')
+  final String? image5;
+  @JsonKey(name: 'attachment_note')
+  final String? note;
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'description')
+  final String? descriptionreward;
+  @JsonKey(name: 'notes')
+  final String? notes;
+  @JsonKey(name: 'attachment_description')
+  final String? description;
+
+
+  const CostingMeta({
+    this.image1,
+    this.note,
+    this.name,
+    this.notes,
+    this.descriptionreward,
+    this.description,
+    this.image2,
+    this.image3,
+    this.image4,
+    this.image5,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory CostingMeta.fromJson(Map<String, dynamic> json) =>
+      _$CostingMetaFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CostingMetaToJson(this);
+}
+
 //rewards
 @JsonSerializable()
 class PointsList extends Equatable {
@@ -285,8 +352,8 @@ class ReadRewards extends Equatable {
   final String? description;
   @JsonKey(name: 'notes')
   final String? notes;
-  @JsonKey(name: 'image')
-  final String? image;
+  @JsonKey(name: 'rewards_meta')
+  final CostingMeta? rewardsMeta;
   @JsonKey(name: 'types')
   final String? types;
   @JsonKey(name: 'type_id')
@@ -298,10 +365,11 @@ class ReadRewards extends Equatable {
 
   const ReadRewards( {
     this.id,
+    this.rewardsMeta,
     this.isDelete,
     this.name,
     this.isActive,
-    this.description, this.notes, this.image, this.types, this.typeId,
+    this.description, this.notes, this.types, this.typeId,
   });
 
   @override
@@ -332,8 +400,8 @@ class ReviewModel extends Equatable {
   final int? taskId;
   @JsonKey(name: 'reviewed_on')
   final String? reviewOn;
-  // @JsonKey(name: 'image')
-  // final String? imageRead;
+  @JsonKey(name: 'review_meta')
+  final CostingMeta? reviewMeta;
   @JsonKey(name: 'is_active',defaultValue: false)
   final bool? isActive;
   @JsonKey(name: 'is_delete',defaultValue: false)
@@ -345,6 +413,7 @@ class ReviewModel extends Equatable {
 
   const ReviewModel({
     this.notes,
+    this.reviewMeta,
     this.review,
     this.parent,
     this.taskId,
@@ -515,4 +584,62 @@ class PointId extends Equatable {
       _$PointIdFromJson(json);
 
   Map<String, dynamic> toJson() => _$PointIdToJson(this);
+}
+
+//CriteriaRedad
+@JsonSerializable()
+class CriteriaRead extends Equatable {
+
+  @JsonKey(name: 'Punctuality')
+  final List<Punchuality>? punctuality;
+  @JsonKey(name: 'Attittude')
+  final List<Punchuality>? attittude;
+  @JsonKey(name: 'Project Completion')
+  final List<Punchuality>? projectCompletion;
+  @JsonKey(name: 'Team Management & Leadership')
+  final List<Punchuality>? teamManagement;
+  @JsonKey(name: 'Time Management')
+  final List<Punchuality>? timeMange;
+
+  const CriteriaRead({
+    this.attittude,
+    this.projectCompletion,
+    this.punctuality,
+    this.teamManagement,
+    this.timeMange
+
+  });
+  @override
+  List<Object> get props => [];
+
+  factory CriteriaRead.fromJson(Map<String, dynamic> json) =>
+      _$CriteriaReadFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CriteriaReadToJson(this);
+}
+
+
+//CriteriaRedad
+@JsonSerializable()
+class Punchuality extends Equatable {
+
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'points')
+  final int? points;
+
+
+  const Punchuality({
+    this.name,
+    this.points,
+
+
+  });
+  @override
+  List<Object> get props => [];
+
+  factory Punchuality.fromJson(Map<String, dynamic> json) =>
+      _$PunchualityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PunchualityToJson(this);
 }

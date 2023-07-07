@@ -1,27 +1,36 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors
+
 
 import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TextFormReusable extends StatefulWidget {
   String? label;
+  String? error;
   String? hint;
+  void Function(String)? onchange;
   TextEditingController? controller;
   int maxLength;
   FormFieldValidator<String>? validator;
   bool password;
-
-  // Widget? suffix;
+  bool readOnly;
+  bool isError;
+  bool? numField;
+  bool? floatVal;
   TextFormReusable(
       {Key? key,
-      this.label,
-      this.controller,
-      this.validator,
-      this.password = false,
-      this.hint,
-      this.maxLength = 1})
+        this.label,
+        this.error,
+        this.numField,
+        this.floatVal,
+        this.controller,
+        this.validator,
+        this.password = false,
+        this.readOnly = false,
+        this.isError = false,
+        this.hint,
+        this.maxLength = 1,  this.onchange})
       : super(key: key);
 
   @override
@@ -39,30 +48,52 @@ class _TextReusableState extends State<TextFormReusable> {
 
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     // show = widget.password;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label??"",
-          style: GoogleFonts.roboto(
-            color: ColorPalette.black,
-            fontSize: w/24,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.label??"",
+              style: GoogleFonts.roboto(
+                color: ColorPalette.black,
+                fontSize: w/24,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            widget.isError?Text(
+              widget.error??"",
+              style: GoogleFonts.roboto(
+                color: ColorPalette.primary,
+                fontSize: w/28,
+                fontWeight: FontWeight.w500,
+              ),
+            ):Text(""),
+          ],
         ),
         SizedBox(
           height: 5,
         ),
         TextFormField(
-          
+          readOnly: widget.readOnly,
+          onChanged: widget.onchange,
           scrollPadding: EdgeInsets.all(10),
           cursorColor: ColorPalette.black,
           obscureText: show,
           style: TextStyle(color: ColorPalette.black, fontSize: 17),
-          keyboardType: TextInputType.emailAddress,
+          keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+          inputFormatters: [
+            widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+            widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+            FilteringTextInputFormatter.singleLineFormatter,
+
+          ],
           controller: widget.controller,
           maxLines: widget.maxLength,
           decoration: loginInputDecoration(
@@ -70,27 +101,27 @@ class _TextReusableState extends State<TextFormReusable> {
             ('Username'),
             suffix: widget.password
                 ? InkWell(
-                    onTap: () {
-                      setState(() {
-                        show = !show;
-                      });
-                    },
-                    child: Container(
-                        height: 16,
-                        margin: EdgeInsets.only(right: 5, left: 5),
-                        child: show
-                            ? Icon(
-                                Icons.remove_red_eye_outlined,
-                                size: 16.0,
-                                color: Color(0xff7C7C7C),
-                              )
-                            :
-                            // SvgPicture.string(IconConstants().eyeIcon,height: 16,width: 16,):
-                            Icon(
-                                Icons.remove_red_eye_outlined,
-                                size: 16.0,
-                                color: Color(0xff7C7C7C),
-                              )))
+                onTap: () {
+                  setState(() {
+                    show = !show;
+                  });
+                },
+                child: Container(
+                    height: 16,
+                    margin: EdgeInsets.only(right: 5, left: 5),
+                    child: show
+                        ? Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 16.0,
+                      color: Color(0xff7C7C7C),
+                    )
+                        :
+                    // SvgPicture.string(IconConstants().eyeIcon,height: 16,width: 16,):
+                    Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 16.0,
+                      color: Color(0xff7C7C7C),
+                    )))
                 : null,
           ),
           validator: widget.validator,
@@ -101,11 +132,11 @@ class _TextReusableState extends State<TextFormReusable> {
 }
 
 InputDecoration loginInputDecoration(
-  String label, {
-  String? hintText,
-  Widget? leading,
-  Widget? suffix,
-}) =>
+    String label, {
+      String? hintText,
+      Widget? leading,
+      Widget? suffix,
+    }) =>
     InputDecoration(
       // suffixIcon: suffix,
       suffix: suffix,
@@ -136,6 +167,5 @@ InputDecoration loginInputDecoration(
       ),
       isDense: false,
       helperStyle: TextStyle(fontSize: 8),
-
       helperMaxLines: 15,
     );

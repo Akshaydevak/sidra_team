@@ -48,6 +48,27 @@ class CreateGroupFailed extends EmployeeState {
   @override
   List<Object> get props => [];
 }
+//update
+
+class UpdateGroupLoading extends EmployeeState {}
+
+
+class UpdateGroupSuccess extends EmployeeState {
+  final String group;
+
+  const UpdateGroupSuccess(this.group);
+
+  @override
+  List<Object> get props => [];
+}
+
+class UpdateGroupFailed extends EmployeeState {
+  final String error;
+
+  const UpdateGroupFailed(this.error);
+  @override
+  List<Object> get props => [];
+}
 //readGroup
 class GetReadGroupInitial extends EmployeeState {}
 
@@ -140,3 +161,15 @@ class PostImageFailed extends EmployeeState {
   final String? error;
   const PostImageFailed({this.error});
 }
+
+class PicLoading extends EmployeeState {}
+
+class PicSuccess extends EmployeeState {
+  final int data;
+  final String url;
+  // final List<ListOrdersModel> ordersList;
+
+  const PicSuccess(this.data,this.url);
+}
+
+class PicFailed extends EmployeeState {}

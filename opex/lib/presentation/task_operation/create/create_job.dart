@@ -252,15 +252,16 @@ class _CreateJobState extends State<CreateJob> {
                       gravity: ToastGravity.BOTTOM,
                       backgroundColor: Colors.white,
                       textColor: Colors.black);
+                  Navigator.pop(context);
 
-                  context.read<JobBloc>().add(
-                      GetJobReadListEvent(int.tryParse(Variable.jobReadId.toString())??0));
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: JobTitle(),
-                    withNavBar: true, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+                  // context.read<JobBloc>().add(
+                  //     GetJobReadListEvent(int.tryParse(Variable.jobReadId.toString())??0));
+                  // PersistentNavBarNavigator.pushNewScreen(
+                  //   context,
+                  //   screen: JobTitle(),
+                  //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                  //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                  // );
                 }
               },
             ),
@@ -998,12 +999,12 @@ class _CreateJobState extends State<CreateJob> {
                       children: [
                         GestureDetector(
                           onTap: (){
-                            jobtitle.text==""||jobdiscription.text==""||Variable.prioritys==""||_range==""?Fluttertoast.showToast(
-                                msg: 'Please Fill Fields',
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor: Colors.white,
-                                textColor: Colors.black):Container();
+                            // jobtitle.text==""||jobdiscription.text==""||Variable.prioritys==""||_range==""?Fluttertoast.showToast(
+                            //     msg: 'Please Fill Fields',
+                            //     toastLength: Toast.LENGTH_SHORT,
+                            //     gravity: ToastGravity.BOTTOM,
+                            //     backgroundColor: Colors.white,
+                            //     textColor: Colors.black):Container();
                             print("DATETIME${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00");
 
                             widget.edit?BlocProvider.of<JobBloc>(context)

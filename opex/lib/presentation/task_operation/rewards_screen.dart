@@ -13,6 +13,8 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
+import '../inventory/inventory_new_list.dart';
+import '../inventory/new_list_tab/profiling_tab.dart';
 import 'create/add_text.dart';
 import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
@@ -36,28 +38,49 @@ class _RewardsScreenState extends State<RewardsScreen> {
    final picker = ImagePicker();
    File? cropImage;
    bool _cropped = false;
-   int? imageId;
+   dynamic? imageId;
+   String imgUrl='';
+   String? imageFileName;
+
+   int indexImage=0;
+   int catindexImage=0;
+   bool isCatalogue=false;
+   @override
+   void initState() {
+     catalogueList.clear();
+     picModel.clear();
+     for(int i=0;i<5;i++) {
+       picModel.add(PicModel(data: null,url: ""));
+     }
+     super.initState();
+   }
    ReadRewards? rewadsRead;
   @override
   Widget build(BuildContext context) {
+    print("Inside Loading${widget.type}");
+    print("Inside Loading${widget.typeId}");
+
     var w =MediaQuery.of(context).size.width;
     var h =MediaQuery.of(context).size.height;
     return MultiBlocListener(
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
-  listener: (context, state) {
-    if(state is PostImageLoading){
+      listener: (context, state) {
+        if(state is PicLoading){
+          print("Inside Loading");
+        }
+        if(state is PicSuccess){
+          print("Inside Success${state.data}\t${state.url}");
+          setState(() {
+            isCatalogue? catalogueList.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]):picModel.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]);
+          });
+          print("pic model length${picModel.length}");
 
-    }
-    if(state is PostImageSuccess){
-      print("pIC IS ID${state.id}");
-      imageId=state.id;
-      setState(() {
-
-      });
-    }
-  },
-),
+        }
+      },
+    ),
     BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
         if(state is GetReadRewadsLoading){
@@ -69,7 +92,31 @@ class _RewardsScreenState extends State<RewardsScreen> {
           rewardName.text=rewadsRead?.name??"";
           discription.text=rewadsRead?.description??"";
           notes.text=rewadsRead?.notes??"";
-
+          picModel.setAll(0, [
+            PicModel(
+                url: rewadsRead?.rewardsMeta?.image1 ??
+                    "")
+          ]);
+          picModel.setAll(1, [
+            PicModel(
+                url: rewadsRead?.rewardsMeta?.image2 ??
+                    "")
+          ]);
+          picModel.setAll(2, [
+            PicModel(
+                url: rewadsRead?.rewardsMeta?.image3 ??
+                    "")
+          ]);
+          picModel.setAll(3, [
+            PicModel(
+                url: rewadsRead?.rewardsMeta?.image4 ??
+                    "")
+          ]);
+          picModel.setAll(4, [
+            PicModel(
+                url: rewadsRead?.rewardsMeta?.image5 ??
+                    "")
+          ]);
           setState(() {
 
           });
@@ -186,7 +233,11 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         id: rewadsRead?.id??0,
                         typeId: rewadsRead?.typeId,
                         type:rewadsRead?.types,
-                        image: imageId??0,
+                        img1: picModel[0].data??picModel[0].url,
+                        img5: picModel[4].data??picModel[4].url,
+                        img4: picModel[3].data??picModel[3].url,
+                        img3: picModel[2].data??picModel[2].url,
+                        img2: picModel[1].data??picModel[1].url,
                         notes: notes.text??"",
                         discription: discription.text??"",
                         name: rewardName.text??""
@@ -194,10 +245,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         .add(CreateRewardTaskEvent(
                       typeId: widget.typeId,
                       type: widget.type,
-                      image: imageId??0,
                       notes: notes.text??"",
                       discription: discription.text??"",
-                      name: rewardName.text??""
+                      name: rewardName.text??"",
+                      img2: picModel[1].data??0,
+                      img3:picModel[2].data??0 ,
+                      img4: picModel[3].data??0,
+                      img5: picModel[4].data??0,
+                      img1: picModel[0].data??0
                     ));
                   },
                   child: Container(
@@ -312,51 +367,74 @@ class _RewardsScreenState extends State<RewardsScreen> {
                       child: AddText(label: "Add Notes",controller: notes,hint: "Enter Notes",isActive: notes.text==""?false:true,),
                     ),
                     SizedBox(height: 16,),
-                    Container(
-                      padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),),
-                        width: w/2,
-                        height: h/4,
-                        child: Image.network(rewadsRead?.image??"",fit: BoxFit.cover,)),
-                    SizedBox(height: 15,),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            getCoverImage(
-                                ImageSource.gallery);
-                          },
-                          child: Container(
-                            // width: 150,
-                            padding: EdgeInsets.symmetric(horizontal: 14,vertical: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
-                              color: Color(0xfff8f7f5),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.string(TaskSvg().attachIcon),
-                                SizedBox(width: 10,),
-                                Text(
-                                  "Attach",
-                                  style: GoogleFonts.roboto(
-                                    color: Color(0xff151522),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      "Images",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+
+                        width: MediaQuery.of(context).size.width,
+                        child: GridView.builder(
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 5,
+                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 100,
+                                childAspectRatio: 1.5 / 2,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 8),
+                            itemBuilder: (context, i) {
+                              // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                              return GestureDetector(
+                                onTap: (){
+                                  isCatalogue=false;
+                                  indexImage=i;
+                                  setState(() {
+
+                                  });
+                                  getCoverImage(ImageSource.gallery);
+                                },
+                                // getImage(ImageSource.gallery);
+                                // onTap: isAdmin?onTapListTileAdmin(i, context):onTapListTile(i, context),
+                                child:
+                                picModel[i].url!=""&&picModel[i].url!.isNotEmpty?
+                                Container(
+                                    width: 88,
+                                    height: 100,
+                                    decoration:BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage("${picModel[i].url.toString()}"),fit: BoxFit.fill
+                                        )
+                                    )
+                                )
+                                    :
+                                Container(
+                                    width: 88,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                    ),
+                                    child: const Icon(Icons.add,color:Color(0x7f666161))
+                                ),
+                              );
+                            })),
 
                   ],
                 ),
@@ -370,15 +448,17 @@ class _RewardsScreenState extends State<RewardsScreen> {
   }
    Future<void> getCoverImage(source) async {
      try {
-       final pickedFile = await picker.pickImage(source: source, maxHeight: 512, maxWidth: 512);
+       final pickedFile = await picker.pickImage(
+           source: source, maxHeight: 512, maxWidth: 512);
 
        cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
 
        if (cropImage != null) {
-         BlocProvider.of<EmployeeBloc>(context)
-             .add(PostImageEvent(cropImage!));
-
-
+         // BlocProvider.of<DiscountBloc>(context)
+         //     .add(PostImageDiscountEvent(cropImage!));
+         BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(cropImage!));
+         imageFileName=cropImage?.path.split("_")[1];
+         print("cropppp$imageFileName");
        }
        setState(() {
          _cropped = true;
