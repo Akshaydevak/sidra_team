@@ -108,8 +108,8 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: BackAppBar(
-              label: "Reporting Person",
-              isAction: true,
+              label: "Reporting Person Job",
+              isAction: false,
               action: GestureDetector(
                 onTap: () {
                   context.read<JobBloc>().add(GetJobReadListEvent(
@@ -234,7 +234,7 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                         reportingPerson: employee[i].code ?? "",
                                         priority: JobRead?.priority ?? "",
                                         name: JobRead?.name ?? "",
-                                        jobType: JobRead?.jobType ?? 0,
+                                        jobType: JobRead?.jobType,
                                         isActive: JobRead?.isActive ?? true,
                                         assignedBy: JobRead?.assignCode ?? "",
                                         createdBy: JobRead?.createdCode ?? "",

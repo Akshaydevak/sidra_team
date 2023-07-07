@@ -11,7 +11,8 @@ class GetTaskTypeListEvent extends TaskEvent {
   const GetTaskTypeListEvent();
 }
 class GetTaskListEvent extends TaskEvent {
-  const GetTaskListEvent();
+  final int? id;
+  const GetTaskListEvent(this.id);
 }
 
 class GetPendingTaskListEvent extends TaskEvent {
@@ -37,7 +38,8 @@ class GetTaskReadListEvent extends TaskEvent {
 //readReward
 class GetReadRewardsEvent extends TaskEvent {
   final int id;
-  const GetReadRewardsEvent(this.id);
+  final bool isTask;
+  const GetReadRewardsEvent(this.id,this.isTask);
   @override
   List<Object> get props => [this.id];
 }
@@ -51,7 +53,9 @@ class GetPerformanceReadEvent extends TaskEvent {
 }
 //perfomanceTotal
 class GetTotalPerformanceEvent extends TaskEvent {
-  const GetTotalPerformanceEvent();
+  final String employeeCode;
+  final int? id;
+  const GetTotalPerformanceEvent(this.id, {required this.employeeCode});
   @override
   List<Object> get props => [];
 }
@@ -93,9 +97,11 @@ class CreateTaskEvent extends TaskEvent {
   final String priority;
   final String createdOn;
   final String? lastmodified;
-  final String locationUrl;
+  final String? longitude;
+  final String? latitude;
   const CreateTaskEvent(  {
-    required this.locationUrl,
+    required this.longitude,
+    required this.latitude,
     this.parant,
     required this.jobId,
     required this.taskType,
@@ -144,9 +150,26 @@ class UpdateTaskEvent extends TaskEvent {
   final String createdOn;
   final String? lastmodified;
   final int? jobid;
-  final String locationUrl;
+  final String? longitude;
+  final String? latitude;
+  final String? attachmentNote;
+  final String? attachmentDescription;
+  final dynamic img1;
+  final dynamic img2;
+  final dynamic img3;
+  final dynamic img4;
+  final dynamic img5;
+
   const UpdateTaskEvent( {
-    required this.locationUrl,
+    required this.longitude,
+    required this.latitude,
+    required this.img4,
+    required this.img3,
+    required this.img2,
+    required this.img5,
+    required this.attachmentDescription,
+    required this.img1,
+    required this.attachmentNote,
     this.parant,
     required this.taskType,
     this.statusStagesId,
@@ -183,6 +206,7 @@ class GetReviewListEvent extends TaskEvent {
   final int? taskId;
   const GetReviewListEvent(this.taskId);
 }
+
 //PaymentPost
 class CreatePaymentEvent extends TaskEvent {
   final int? jobId;
@@ -193,6 +217,11 @@ class CreatePaymentEvent extends TaskEvent {
   final String notas;
   final String discription;
   final double expense;
+  final int img1;
+  final int img2;
+  final int img3;
+  final int img4;
+  final int img5;
   const CreatePaymentEvent( {
 
     required this.jobId,
@@ -203,6 +232,11 @@ class CreatePaymentEvent extends TaskEvent {
     required this.discription,
     required this.AssigningCode,
     required this.notas,
+    required this.img1,
+    required this.img2,
+    required this.img3,
+    required this.img4,
+    required this.img5,
 
 
   });
@@ -214,7 +248,8 @@ class CreatePaymentEvent extends TaskEvent {
 //readpayment
 class GetPaymentReadListEvent extends TaskEvent {
   final int id;
-  const GetPaymentReadListEvent(this.id);
+  final bool isTask;
+  const GetPaymentReadListEvent(this.id,this.isTask);
   @override
   List<Object> get props => [this.id];
 }
@@ -230,8 +265,18 @@ class UpdatePaymentEvent extends TaskEvent {
   final String discription;
   final double expense;
   final bool isActive;
+  final dynamic img1;
+  final dynamic img2;
+  final dynamic img3;
+  final dynamic img4;
+  final dynamic img5;
   const UpdatePaymentEvent( {
 
+    required this.img2,
+    required this.img3,
+    required this.img4,
+    required this.img5,
+    required this.img1,
     required this.payId,
     required this.isActive,
     required this.jobId,
@@ -271,18 +316,51 @@ class CreateReviewTaskEvent extends TaskEvent {
     review,
   ];
 }
+//updateReview
+class UpdateReviewTaskEvent extends TaskEvent {
+  final int? parant;
+  final bool isActive;
+  final String reviewdBy;
+  final dynamic image;
+  final int taskId;
+  final int id;
+  final String review;
+  final String notes;
+  const UpdateReviewTaskEvent( {
+    this.parant,
+    required this.isActive,
+    required this.taskId,
+    required this.id,
+    required this.reviewdBy,
+    required this.review,
+    required this.image,
+    required this.notes,
+  });
+  @override
+  List<Object> get props => [
+    review,
+  ];
+}
 //createRewards
 class CreateRewardTaskEvent extends TaskEvent {
   final String discription;
-  final int image;
   final String name;
   final String notes;
   final int? typeId;
   final String? type;
+  final int img1;
+  final int img2;
+  final int img3;
+  final int img4;
+  final int img5;
   const CreateRewardTaskEvent(  {
     this.typeId,
     this.type,
-    required this.image,
+    required this.img2,
+    required this.img1,
+    required this.img3,
+    required this.img4,
+    required this.img5,
     required this.notes,
     required this.name,
     required this.discription,
@@ -295,7 +373,11 @@ class CreateRewardTaskEvent extends TaskEvent {
 //updateTask
 class UpdateRewardTaskEvent extends TaskEvent {
   final String discription;
-  final int image;
+  final dynamic img1;
+  final dynamic img2;
+  final dynamic img3;
+  final dynamic img4;
+  final dynamic img5;
   final int id;
   final String name;
   final String notes;
@@ -305,7 +387,11 @@ class UpdateRewardTaskEvent extends TaskEvent {
   const UpdateRewardTaskEvent(  {
     this.typeId,
     this.type,
-    required this.image,
+    required this.img1,
+    required this.img2,
+    required this.img3,
+    required this.img4,
+    required this.img5,
     required this.id,
     required this.notes,
     required this.name,
@@ -340,4 +426,28 @@ class CreatePerfomanceAppraisalTaskEvent extends TaskEvent {
   List<Object> get props => [
     name,
   ];
+}
+//taskPerfom
+class TaskAssignedGroupListEvent extends TaskEvent {
+  final String code;
+  final String? prev;
+  const TaskAssignedGroupListEvent(this.code, this.prev);
+  @override
+  List<Object> get props => [this.code];
+}
+
+//CriteraiRead
+class GetCriteriaReadEvent extends TaskEvent {
+  final String taskCode;
+  const GetCriteriaReadEvent(this.taskCode);
+  @override
+  List<Object> get props => [this.taskCode];
+}
+//
+//notification
+class NotificationDueEvent extends TaskEvent {
+  final int id;
+  const NotificationDueEvent(this.id);
+  @override
+  List<Object> get props => [this.id];
 }

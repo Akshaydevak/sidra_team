@@ -9,10 +9,13 @@ class HomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w =MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
       padding: EdgeInsets.all(10),
-      width: w/2.28,
+      width: w1>700?w1/2.1:w1/2.28,
       height: 90,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -39,7 +42,7 @@ class HomeCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          // SizedBox(height: 5,),
+          SizedBox(height: 5,),
           Text(
             sub??"",
             style: TextStyle(

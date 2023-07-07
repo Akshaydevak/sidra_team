@@ -90,13 +90,18 @@ dependencies:
   animated_splash_screen:
   mime:
   http_parser :
+  dartz: ^0.10.1
+  loading_animation_widget: ^1.2.0+4
+  horizontal_data_table :
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: 
+  flutter_launcher_icons:
+  build_runner: ^2.2.0
+  json_serializable:
  
 flutter_icons:
   android: true

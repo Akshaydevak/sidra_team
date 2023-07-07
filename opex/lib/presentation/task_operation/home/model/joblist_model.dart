@@ -64,10 +64,16 @@ class GetJobList extends Equatable {
   final int? statusStagesId;
   @JsonKey(name: 'job_meta')
   final int? jobMeta;
+  @JsonKey(name: 'image_count')
+  final int? imgCount;
+  @JsonKey(name: 'review_count')
+  final int? rewCount;
 
 
    GetJobList( {
     this.statusName,
+    this.imgCount,
+    this.rewCount,
     this.taskName,this.taskCode,
     this.reportingMail,
     this.reportingName,

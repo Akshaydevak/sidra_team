@@ -18,7 +18,7 @@ class TextCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 16.0),
           child: Text(
-            title??"Task Title",
+            title??"",
             style:isTask? TextStyle(
               color: ColorPalette.black,
               fontSize: w/22,
@@ -36,7 +36,7 @@ class TextCard extends StatelessWidget {
         Container(
           padding: EdgeInsets.only(left: 16, right: 5),
           child:  Text(
-            subText?? "Amet minim mollit non deserunt ullam co est sit aliqua dolor do amet sint. Velit ficia consequat duis enimmollit. ",
+            subText?? "",
             style: TextStyle(
               color: ColorPalette.black,
               fontSize: w/22,

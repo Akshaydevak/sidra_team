@@ -31,7 +31,7 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
       onTap: (){
         Variable.jobReadId=widget.assignedMe?.id??0;
         print("HHH${Variable.jobReadId}");
-        context.read<TaskBloc>().add(GetTaskListEvent());
+        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId));
         context.read<JobBloc>().add(GetJobReadListEvent(Variable.jobReadId??0));
         PersistentNavBarNavigator.pushNewScreen(
           context,
@@ -81,30 +81,30 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
                           SizedBox(
                             width: 5,
                           ),
-                          Container(
-                              // width: 121,
-                              // height: 30,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 6, horizontal: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(28),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Color(0x19ff9900),
-                              ),
-                              child: Text(
-                                "On Progress",
-                                style: GoogleFonts.roboto(
-                                  color: Color(0xffff9900),
-                                  fontSize: w/30,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ))
+                          // Container(
+                          //     // width: 121,
+                          //     // height: 30,
+                          //     padding: EdgeInsets.symmetric(
+                          //         vertical: 6, horizontal: 10),
+                          //     decoration: BoxDecoration(
+                          //       borderRadius: BorderRadius.circular(28),
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: Color(0x05000000),
+                          //           blurRadius: 8,
+                          //           offset: Offset(1, 1),
+                          //         ),
+                          //       ],
+                          //       color: Color(0x19ff9900),
+                          //     ),
+                          //     child: Text(
+                          //       "On Progress",
+                          //       style: GoogleFonts.roboto(
+                          //         color: Color(0xffff9900),
+                          //         fontSize: w/30,
+                          //         fontWeight: FontWeight.w500,
+                          //       ),
+                          //     ))
                         ],
                       ),
                       SizedBox(
@@ -133,21 +133,21 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
                     children: [
                       Row(
                         children: [
-                          SvgPicture.string(TaskSvg().attachmIcon),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "1",
-                            style: GoogleFonts.roboto(
-                              color: Color(0xff939393),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
+                          // SvgPicture.string(TaskSvg().attachmIcon),
+                          // SizedBox(
+                          //   width: 5,
+                          // ),
+                          // Text(
+                          //   widget.assignedMe?.imgCount.toString()??"",
+                          //   style: GoogleFonts.roboto(
+                          //     color: Color(0xff939393),
+                          //     fontSize: 15,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   width: 15,
+                          // ),
                           SvgPicture.string(TaskSvg().timerIcon),
                           SizedBox(
                             width: 5,
@@ -190,10 +190,10 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
                           // ),
                         ],
                       ),
-                      Container(
-                        height: 30,
-                        width: 30,
-                        child:   Image.asset("asset/newprofile.png",height: 20,width: 20,),)
+                      // Container(
+                      //   height: 30,
+                      //   width: 30,
+                      //   child:   Image.asset("asset/newprofile.png",height: 20,width: 20,),)
 
                     ],
                   ))

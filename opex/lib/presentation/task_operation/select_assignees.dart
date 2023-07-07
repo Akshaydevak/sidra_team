@@ -92,6 +92,8 @@ class _SelectAssigneesState extends State<SelectAssignees> {
             onTap: () {
               widget.groupVal!(groupActived);
               print("grpVal$groupActived");
+              print("grpVal${Variable.assignType}");
+              print("grpVal${Variable.assignCode}");
               Navigator.pop(context);
             },
             action: GestureDetector(
@@ -335,12 +337,13 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                       indValue = value;
                                       grpValue;
 
-                                      Variable.assignType =
+                                      Variable.assignType=
                                       "Individual";
                                       Variable.assignCode =
                                           employeeList[index].code ??
                                               "";
                                     });
+                                    print("ASSSS${Variable.assignType}");
                                   },
                                 ),
                                 Row(
@@ -462,6 +465,7 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                             grouplist[index].id ?? 0;
                                         groupActived = true;
                                         indValue = 0;
+                                        print("GRRR${Variable.assignType}");
                                       });
                                       final SharedPreferences prefs =
                                       await SharedPreferences

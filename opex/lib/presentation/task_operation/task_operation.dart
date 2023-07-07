@@ -2,9 +2,9 @@ import 'package:cluster/common_widgets/datefield.dart';
 import 'package:cluster/common_widgets/headline_text.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
-import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/performance_appraisal/create_performance.dart';
 import 'package:cluster/presentation/task_operation/task_home_page.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/four_card.dart';
@@ -100,7 +100,11 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return BlocListener<JobBloc, JobState>(
       listener: (context, state) {
         if (state is GetNewJobListLoading) {
@@ -116,17 +120,11 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(
-            isBack: false,
-            isAction: false,
             label: "Task & Operations",
+            isAction: false,
             onTap: () {
               print("appbar");
-     PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: DashBoard(),
-            withNavBar: false, // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+              _showModalBottomSheet();
             },
           ),
         ),
@@ -229,6 +227,32 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     height: 35,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
+
+                                      color: Color(0xfffdf2f2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+
+                                    ),
+                                    padding: EdgeInsets.all(4),
+                                    child: SvgPicture.string(
+                                      CreateSvg().calenderIcon,
+                                      color: ColorPalette.primary,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: Color(0xfffdf2f2),
                                         width: 1.50,
@@ -242,29 +266,12 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       ],
                                       color: Colors.white,
                                     ),
-                                    padding: EdgeInsets.all(4),
-                                    child: SvgPicture.string(
-                                      CreateSvg().calenderIcon,
-                                      color: Color(0xffdcdcdc),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Color(0xfffdf2f2),
-                                    ),
                                     alignment: Alignment.center,
                                     child: Text(
                                       startDate2,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          color: ColorPalette.primary),
+                                          color: ColorPalette.black),
                                     )),
                                 SizedBox(
                                   width: 5,
@@ -274,14 +281,25 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      color: Color(0xfffdf2f2),
+                                      border: Border.all(
+                                        color: Color(0xfffdf2f2),
+                                        width: 1.50,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
                                       ebdDate2,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          color: ColorPalette.primary),
+                                          color: ColorPalette.black),
                                     )),
                               ],
                             ),
@@ -474,9 +492,18 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     label: "Groups",
                                   ),
                                 ),
-                                FourCard(
-                                  label: "Settings",
-                                )
+                                GestureDetector(
+                                    onTap: () {
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: CreatePerformance(),
+                                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                                      );
+                                    },
+                                    child: FourCard(
+                                      label: "Criteria",
+                                    ))
                               ],
                             )
                                 : Row(
@@ -534,9 +561,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     label: "Pending Jobs",
                                   ),
                                 ),
-                                FourCard(
-                                  label: "Settings",
-                                )
+                                // FourCard(
+                                //   label: "Settings",
+                                // )
                               ],
                             ),
                             const SizedBox(
@@ -647,7 +674,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                           ),
                                         );
                                       },
-                                      itemCount: joblist.length),
+                                      itemCount: joblist.length>=5?5:joblist.length),
                                 )
                               ],
                             ),

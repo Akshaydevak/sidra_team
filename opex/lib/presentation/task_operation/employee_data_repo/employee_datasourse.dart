@@ -97,6 +97,48 @@ class EmployeeDataSource {
       return DataResponse(data: null, error: response.data['message']);
     }
   }
+  //update
+  Future<DataResponse> UpdateGroupToState({
+    required String groupName,
+    required String discription,
+    required List<GetUserList> userList,
+    required bool isActive,
+    required int id,
+
+  }) async {
+    print("FAS$groupName");
+    print("FAS$discription");
+    print("FAS$userList");
+    print("FAS$isActive");
+    print("FAS$id");
+    print("FAS${ClusterUrls.groupUpdateUrl+id.toString()}");
+
+    final response = await client.patch(ClusterUrls.groupUpdateUrl+id.toString(),
+      data: {
+        "group_name":groupName,
+        "user_id":userList,
+        "description":discription,
+        "is_active":isActive
+
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+
+    if (response.data['status'] == 'success') {
+      print("data is Res${response.data}");
+
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message']);
+    } else {
+      return DataResponse(data: null, error: response.data['message']);
+    }
+  }
   //readgroup
   Future<GetTaskGroupList> getGroupRead(int id) async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -268,6 +310,42 @@ print(groupRead.userId);
     return activityList;
   }
 //postImage
+  Future<DoubleResponse> postImageInAll(
+      {File? img}) async {
+    String filePath = "";
+    print("check new at datasource");
+    if (img != null) filePath = img.path;
+    final mime = lookupMimeType(filePath)!.split("/");
+    final fileData = await MultipartFile.fromFile(filePath,
+        contentType: MediaType(mime.first, mime.last));
+    final FormData formData = FormData.fromMap({
+      "file": fileData,
+      "description":"description",
+      "notes":"notes",
+      "file_type":"Image",
+      "attachment_type":"job",
+      "attachment_type_id":1,
+
+    });
+    final response = await client.post(
+      ClusterUrls.imageUploadAttachmentUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization':authentication.authenticatedUser.token
+        },
+      ),
+    );
+    print(response.data);
+    if (response.data != null || response.data != "") {
+      return DoubleResponse(response.data['data'], response.data['image_url']);
+    }
+    return DoubleResponse(response.data, "failed");
+  }
+
+  //postAll
   Future<DoubleResponse> PostImage(
       {File? img}) async {
     String filePath = "";

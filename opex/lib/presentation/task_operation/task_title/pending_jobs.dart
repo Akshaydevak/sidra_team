@@ -67,17 +67,16 @@ class _PendingJobsState extends State<PendingJobs> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(label: " Pending Job List",
-        isAction: false,
-
             onTap: () {
 
-            },),
+            },
+          isAction: false,),
         ),
         body: SingleChildScrollView(
           child:
           taskList.isEmpty?
           Container(
-            padding: EdgeInsets.only(top: 15),
+            padding: EdgeInsets.all(25),
             height: h/3,
             child: SvgPicture.string(TaskSvg().nolistSvg),
           ):

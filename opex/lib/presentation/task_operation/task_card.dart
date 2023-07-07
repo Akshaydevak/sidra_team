@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
@@ -16,8 +17,13 @@ class TaskCard extends StatelessWidget {
   final GetTaskList? taskList;
    TaskCard({Key? key,this.isMylist=false, this.taskList}) : super(key: key);
 
+   String? endstdDate;
   @override
   Widget build(BuildContext context) {
+
+    var date2 = taskList?.createdOn;
+    var dateTime =  DateTime.parse("$date2");
+    endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
     var w=MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
@@ -127,9 +133,9 @@ class TaskCard extends StatelessWidget {
                   SvgPicture.string(TaskSvg().calenderIcon),
                   SizedBox(width: 5,),
                   Text(
-                    taskList?.createdOn?.toString().split("T")[0]??"",
+                    endstdDate??"",
                     style: GoogleFonts.roboto(
-                      color: Color(0xff939393),
+                      color: const Color(0xff939393),
                       fontSize: w/25,
                       fontWeight: FontWeight.w500,
                     ),
@@ -137,8 +143,6 @@ class TaskCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
-
           ],
         ),
       ),

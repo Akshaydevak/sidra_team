@@ -12,7 +12,7 @@ import '../mpos/product_card.dart';
 import '../mpos/search_card.dart';
 import '../order_app/order_svg.dart';
 import '../product_hub/Filter_screen.dart';
-import 'Inventory_product_card.dart';
+import 'widget/Inventory_product_card.dart';
 
 class ManageDeliveryScreen extends StatefulWidget {
 

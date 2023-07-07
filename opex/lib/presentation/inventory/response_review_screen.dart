@@ -1,5 +1,5 @@
 import 'package:cluster/common_widgets/no_glow.dart';
-import 'package:cluster/presentation/inventory/response_card.dart';
+import 'package:cluster/presentation/inventory/widget/response_card.dart';
 import 'package:cluster/presentation/inventory/response_review/business_msg.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';

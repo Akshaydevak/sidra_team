@@ -8,6 +8,8 @@ part of 'joblist_model.dart';
 
 GetJobList _$GetJobListFromJson(Map<String, dynamic> json) => GetJobList(
       statusName: json['status_name'] as String?,
+      imgCount: json['image_count'] as int?,
+      rewCount: json['review_count'] as int?,
       taskName: json['task_name'] as String?,
       taskCode: json['task_code'] as String?,
       reportingMail: json['reporting_person_mail'] as String?,
@@ -71,6 +73,8 @@ Map<String, dynamic> _$GetJobListToJson(GetJobList instance) =>
       'created_by': instance.createdBy,
       'status_stages_id': instance.statusStagesId,
       'job_meta': instance.jobMeta,
+      'image_count': instance.imgCount,
+      'review_count': instance.rewCount,
     };
 
 JobTypeList _$JobTypeListFromJson(Map<String, dynamic> json) => JobTypeList(

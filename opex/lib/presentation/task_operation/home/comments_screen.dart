@@ -1,18 +1,25 @@
 
 import 'dart:io';
+
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+// import 'package:image_downloader/image_downloader.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../core/common_snackBar.dart';
+import '../../inventory/inventory_new_list.dart';
 import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../employee_bloc/employee_bloc.dart';
@@ -31,7 +38,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
   final picker = ImagePicker();
   File? cropImage;
   bool _cropped = false;
-  int? imageId;
+  dynamic? imageId;
+  dynamic? imageUrl;
+  bool reviewUpdate=false;
+  int reviewid=0;
   List<ReviewModel> reviewList=[];
   TextEditingController review=TextEditingController();
   @override
@@ -49,16 +59,20 @@ class _CommentsScreenState extends State<CommentsScreen> {
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
   listener: (context, state) {
-   if(state is PostImageLoading){
+    if(state is PicLoading){
+      print("Inside Loading");
+    }
+    if(state is PicSuccess){
+      print("Inside Success${state.data}\t${state.url}");
+      setState(() {
+       // picModel.replaceRange(indexImage, indexImage+1,
+       //      [PicModel(data: state.data,url: state.url)]);
+        imageId=state.data;
+        imageUrl=state.url;
+      });
+      print("pic model length${picModel.length}");
 
-   }
-   if(state is PostImageSuccess){
-     print("pIC IS ID${state.id}");
-     imageId=state.id;
-     setState(() {
-
-     });
-   }
+    }
   },
 ),
     BlocListener<TaskBloc, TaskState>(
@@ -83,6 +97,38 @@ class _CommentsScreenState extends State<CommentsScreen> {
         if (state is CreateReviewSuccess) {
           Fluttertoast.showToast(
               msg: 'Successfully Created',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.white,
+              textColor: Colors.black);
+          review.clear();
+
+
+        }
+      },
+    ),
+    BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        print('StateCreate$state');
+        if (state is UpdateReviewLoading) {
+          showSnackBar(context,
+              message: "Loading...",
+              color: Colors.white,
+              // icon: HomeSvg().SnackbarIcon,
+              autoDismiss: true);
+        }
+
+        if (state is UpdateReviewFailed) {
+          showSnackBar(
+            context,
+            message: state.error,
+            color: Colors.red,
+            // icon: Icons.admin_panel_settings_outlined
+          );
+        }
+        if (state is UpdateReviewSuccess) {
+          Fluttertoast.showToast(
+              msg: 'Successfully Updated',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: Colors.white,
@@ -258,6 +304,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: (){
+                                                            review.text=reviewList[index].review??"";
+                                                            imageId=reviewList[index].reviewMeta?.image1??"";
+                                                            reviewid=reviewList[index].id??0;
+                                                            reviewUpdate=true;
+                                                            Navigator.pop(context);
+                                                            setState(() {
+
+                                                            });
                                                           },
                                                           child: Container(
                                                             padding: const EdgeInsets.only(left: 10),
@@ -279,6 +333,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                         const Divider(indent: 30,),
                                                         GestureDetector(
                                                           onTap: (){
+                                                            Navigator.pop(context);
                                                             showDialog(
                                                                 context: context,
                                                                 builder: (BuildContext context) {
@@ -415,7 +470,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                               decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
-                                                          reviewList[index].image ?? ""),
+                                                          reviewList[index].reviewMeta?.image1 ?? ""),
                                                       fit: BoxFit.fill)),
                                             ),
                                             SizedBox(
@@ -526,17 +581,35 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         ),
                         GestureDetector(
                             onTap: ()async{
-                              BlocProvider.of<TaskBloc>(context)
-                                  .add(CreateReviewTaskEvent(
-                                image: imageId??0,
-                                taskId:widget.taskId??0,
-                                notes: review.text??"",
-                                review: review.text??"",
-                                reviewdBy: authentication.authenticatedUser.code??"",
-                                parant: null,
+                              if(reviewUpdate==true){
+                                BlocProvider.of<TaskBloc>(context)
+                                    .add(UpdateReviewTaskEvent(
+                                  taskId: widget.taskId??0,
+                                  image: imageId,
+                                  id: reviewid,
+                                  notes: review.text??"",
+                                  review: review.text??"",
+                                  reviewdBy: authentication.authenticatedUser.code??"",
+                                  parant: null,
+                                  isActive: true,
 
-                              ));
-                              context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                                ));
+                                context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                              }
+                              else{
+                                BlocProvider.of<TaskBloc>(context)
+                                    .add(CreateReviewTaskEvent(
+                                  image: imageId??0,
+                                  taskId:widget.taskId??0,
+                                  notes: review.text??"",
+                                  review: review.text??"",
+                                  reviewdBy: authentication.authenticatedUser.code??"",
+                                  parant: null,
+
+                                ));
+                                context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                              }
+
 
                             },
                             child: SvgPicture.string(TaskSvg().sendIcon,height: 60,)),
@@ -554,14 +627,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
   Future<void> getCoverImage(source) async {
     try {
-      final pickedFile = await picker.pickImage(source: source, maxHeight: 512, maxWidth: 512);
+      final pickedFile = await picker.pickImage(
+          source: source, maxHeight: 512, maxWidth: 512);
 
       cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
 
       if (cropImage != null) {
-        BlocProvider.of<EmployeeBloc>(context)
-            .add(PostImageEvent(cropImage!));
-
+        // BlocProvider.of<DiscountBloc>(context)
+        //     .add(PostImageDiscountEvent(cropImage!));
+        BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(cropImage!));
 
       }
       setState(() {

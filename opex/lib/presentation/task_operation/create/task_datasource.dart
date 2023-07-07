@@ -1,7 +1,6 @@
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/cluster_urls.dart';
 import '../../../../core/utils/data_response.dart';
@@ -13,7 +12,6 @@ class TaskDataSource {
   // tasktype list
   Future<List<GetTaskTypeList>> getTaskTypeList() async {
     List<GetTaskTypeList> tasktypeList = [];
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     print("URL:${ClusterUrls.taskLisTypetUrl}");
 
     try {
@@ -51,14 +49,13 @@ class TaskDataSource {
   }
 
   //task list
-  Future<List<GetTaskList>> getTaskList() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  Future<List<GetTaskList>> getTaskList(int? id) async {
     List<GetTaskList> taskList = [];
-    print("URL Task:${ClusterUrls.taskListUrl+Variable.jobReadId.toString()}");
+    print("URL Task:${ClusterUrls.taskListUrl+id.toString()}");
 
     try {
       final response = await client.get(
-        ClusterUrls.taskListUrl+Variable.jobReadId.toString(),
+        ClusterUrls.taskListUrl+id.toString(),
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -75,7 +72,7 @@ class TaskDataSource {
     } catch (h) {
       print("SHIFAS ERROR$h");
     }
-    final response = await client.get(ClusterUrls.taskListUrl+Variable.jobReadId.toString(),
+    final response = await client.get(ClusterUrls.taskListUrl+id.toString(),
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +89,6 @@ class TaskDataSource {
 
   //pendinglist
   Future<List<GetTaskList>> getPendingTaskList() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     List<GetTaskList> taskList = [];
     print("URL Task:${ClusterUrls.pendingtaskUrl+authentication.authenticatedUser.code.toString()}?status=PENDING");
 
@@ -191,11 +187,18 @@ class TaskDataSource {
   }
 
   //readRwards
-  Future<ReadRewards> getReadRewards(int id) async {
+  Future<ReadRewards> getReadRewards(int id,bool isTask) async {
     ReadRewards selectedItemDetails;
-    print("Task Read:${ClusterUrls.readRewadsUrl + id.toString()}");
+    String? path;
+    if(isTask==true){
+      path="${ClusterUrls.readRewadsUrl}?task=${id.toString()}";
+    }
+    else{
+      path="${ClusterUrls.readRewadsUrl}?job=${id.toString()}";
+    }
+    print("Rewards Read:$path");
     final response = await client.get(
-      ClusterUrls.readRewadsUrl + id.toString(),
+      path,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -230,11 +233,11 @@ class TaskDataSource {
     return selectedItemDetails;
   }
   //totalPerfomane
-  Future<int> getTotalPerformance() async {
+  Future<int> getTotalPerformance(String? employeeCode,int? id) async {
     int Total;
-    print("Task Total:${ClusterUrls.totalPerfomanceUrl+authentication.authenticatedUser.code.toString().toString()}");
+    print("Perfomance Total:${"${ClusterUrls.totalPerfomanceUrl}$id/$employeeCode"}");
     final response = await client.get(
-      ClusterUrls.totalPerfomanceUrl+authentication.authenticatedUser.code.toString(),
+      "${ClusterUrls.totalPerfomanceUrl}$id/$employeeCode",
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +248,6 @@ class TaskDataSource {
     );
     print(response.data);
     Total = response.data['data'];
-
     return Total;
   }
 
@@ -307,13 +309,14 @@ class TaskDataSource {
     required String priority,
     required String createdOn,
     required String? lastmodified,
-    required String? locationUrl,
+    required String? longitude,
+    required String? latitude,
   }) async {
-    print("taskdetails$parant");
-    print("taskdetails$jobId");
-    print("taskdetails$taskType");
-    print("taskdetails$statusStagesId");
-    print("taskdetails$reportingPerson");
+    print("taskdetails parant$parant");
+    print("taskdetails jobId$jobId");
+    print("taskdetails taskType$taskType");
+    print("taskdetails statusStagesId$statusStagesId");
+    print("taskdetails reportingPerson$reportingPerson");
     print("taskdetails$createdBy");
     print("taskdetails$taskName");
     print("taskdetails$discription");
@@ -350,7 +353,8 @@ class TaskDataSource {
         "priority":priority,
         "created_on":createdOn,
         "last_modified":lastmodified,
-        "location_url":locationUrl
+        "longitude":longitude,
+        "latitude":latitude,
       },
       options: Options(
         headers: {
@@ -373,6 +377,13 @@ class TaskDataSource {
   //updateTask
   Future<DataResponse> taskUpdatePost({
     required int? parant,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
+    required String? attachdescription,
+    required String? attachNote,
     required int taskType,
     final int? statusStagesId,
     required String reportingPerson,
@@ -392,11 +403,12 @@ class TaskDataSource {
     required String? lastmodified,
     required int? jobid,
     required int? id,
-    required String? locationUrl,
+    required String? longitude,
+    required String? latitude,
 
   }) async {
     print("taskdetails$parant");
-    print("location$locationUrl");
+    print("location$longitude");
     print("taskdetails$jobid");
     print("taskdetails$taskType");
     print("taskdetails$statusStagesId");
@@ -415,55 +427,14 @@ class TaskDataSource {
     print("taskdetails$priority");
     print("taskdetails$createdOn");
     print("taskdetails$lastmodified");
+    print("taskdetails$img4");
+    print("taskdetails$img1");
+    print("taskdetails$img5");
+    print("latitude$longitude");
+    print("latitude$latitude");
     print("update Task:${ClusterUrls.updateTaskUrl+id.toString()}");
-    try{
-      final response = await client.patch(
-        ClusterUrls.updateTaskUrl+id.toString(),
-        data: {
-          "parent":parant,
-          "job_id":jobid,
-          "task_type":taskType,
-          "status_stages_id":statusStagesId,
-          "reporting_person":reportingPerson,
-          "created_by":createdBy,
-          "task_name":taskName,
-          "description":discription,
-          "priority_level":priorityLeval,
-          "start_date":startDate,
-          "end_date":endDate,
-          "is_active":isActive,
-          "assigning_type":AssigningType,
-          "assigning_code":AssigningCode,
-          "notes":notas,
-          "remarks":remarks,
-          "priority":priority,
-          "created_on":createdOn,
-          "last_modified":lastmodified,
-          "location_url":locationUrl
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
 
-      print("create response${response}");
-      if (response.data['status'] == 'success') {
-        // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
-
-        return DataResponse(
-            data: response.data["status"]=="success", error: response.data['task_id'].toString());
-      } else {
-        return DataResponse(data: null, error: response.data['message']);
-      }
-    }
-    catch(e){
-      print("EWA$e");
-    }
-    final response = await client.post(
+    final response = await client.patch(
       ClusterUrls.updateTaskUrl+id.toString(),
       data: {
         "parent":parant,
@@ -485,7 +456,15 @@ class TaskDataSource {
         "priority":priority,
         "created_on":createdOn,
         "last_modified":lastmodified,
-        "location_url":locationUrl
+        "longitude":longitude,
+        "latitude":latitude,
+        "image1":img1,
+        "image2":img2,
+        "image3":img3,
+        "image4":img4,
+        "image5":img5,
+        "attachment_note":attachNote,
+        "attachment_description":attachdescription,
       },
       options: Options(
         headers: {
@@ -496,12 +475,11 @@ class TaskDataSource {
       ),
     );
 
-    print("create response${response}");
+    print("create response$response");
     if (response.data['status'] == 'success') {
-      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
 
       return DataResponse(
-          data: response.data["status"]=="success", error: response.data['task_id'].toString());
+          data: response.data["status"]=="success", error: response.data['message']);
     } else {
       return DataResponse(data: null, error: response.data['message']);
     }
@@ -673,8 +651,12 @@ class TaskDataSource {
     required String notas,
     required String discription,
     required double expense,
+    required int img1,
+    required int img2,
+    required int img3,
+    required int img4,
+    required int img5,
   }) async {
-    GetTaskList taskDetails;
     print("taskdetails$taskId");
     print("taskdetails$jobId");
     print("taskdetails$discription");
@@ -683,6 +665,8 @@ class TaskDataSource {
     print("taskdetails$assigningType");
     print("taskdetails$AssigningCode");
     print("taskdetails$budget");
+    print("taskdetails$img5");
+    print("taskdetails$img1");
 
     final response = await client.post(
       ClusterUrls.payymentCreateUrl,
@@ -695,6 +679,11 @@ class TaskDataSource {
         "description":discription,
         "notes":notas,
         "expense":expense,
+        "image1":img1,
+        "image2":img2,
+        "image3":img3,
+        "image4":img4,
+        "image5":img5,
 
       },
       options: Options(
@@ -718,11 +707,20 @@ class TaskDataSource {
   }
 
   //readPayment
-  Future<PaymentModel> getPaymentRead(int id) async {
+  Future<PaymentModel> getPaymentRead(int id,bool isTask) async {
     PaymentModel payment;
     print("Payment Read:${ClusterUrls.paymentReadUrl + id.toString()}");
+    String path='';
+    if(isTask==true){
+      path="${ClusterUrls.paymentReadUrl}?task=${id.toString()}";
+    }
+    else{
+      path="${ClusterUrls.paymentReadUrl}?job=${id.toString()}";
+    }
+
+    print("Payment Read:${path}");
     final response = await client.get(
-      ClusterUrls.paymentReadUrl + id.toString(),
+      path,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -749,16 +747,22 @@ class TaskDataSource {
     required String discription,
     required double expense,
     required bool isActive,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
   }) async {
-    GetTaskList taskDetails;
-    print("taskdetails$taskId");
-    print("taskdetails$jobId");
-    print("taskdetails$discription");
-    print("taskdetails$notas");
-    print("taskdetails$expense");
-    print("taskdetails$assigningType");
-    print("taskdetails$AssigningCode");
-    print("taskdetails$budget");
+    print("taskId$taskId");
+    print("jobId$jobId");
+    print("discription$discription");
+    print("notas$notas");
+    print("expense$expense");
+    print("assigningType$assigningType");
+    print("AssigningCode$AssigningCode");
+    print("budget$budget");
+    print("taskdetails$img1");
+    print("taskdetails$img2");
 
 
     final response = await client.patch(
@@ -772,7 +776,12 @@ class TaskDataSource {
         "description":discription,
         "notes":notas,
         "expense":expense,
-        "is_active":isActive
+        "is_active":isActive,
+        "image1":img1,
+        "image2":img2,
+        "image3":img3,
+        "image4":img4,
+        "image5":img5,
 
       },
       options: Options(
@@ -784,7 +793,7 @@ class TaskDataSource {
       ),
     );
 
-    print("update response${response}");
+    print("update response$response");
     if (response.data['status'] == 'success') {
       // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
 
@@ -803,7 +812,6 @@ class TaskDataSource {
     required String review,
     required String notas,
   }) async {
-    GetTaskList taskDetails;
     print("taskdetails$parant");
     print("taskdetails$taskId");
     print("taskdetails 1111111$reviewdBy");
@@ -817,9 +825,61 @@ class TaskDataSource {
         "parent":parant,
         "task_id":taskId,
         "reviewed_by":reviewdBy,
-        "image":image,
+        "image1":image,
         "review":review,
         "notes":notas,
+
+
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+
+    print("create response${response}");
+    if (response.data['status'] == 'success') {
+      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
+
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message'].toString());
+    } else {
+      return DataResponse(data: null, error: response.data['message']);
+    }
+  }
+  //updateRewiew
+  Future<DataResponse> updateReviewTask({
+    required int? parant,
+    required int? id,
+    required bool? isActive,
+    required String reviewdBy,
+    required dynamic image,
+    required String review,
+    required String notas,
+    required int taskId,
+  }) async {
+    print("taskdetails$parant");
+    print("taskdetails${ClusterUrls.reviewUpdateUrl+id.toString()}");
+    print("taskdetails 1111111$reviewdBy");
+    print("taskdetails$review");
+    print("taskdetails$image");
+    print("taskdetails$id");
+    print("taskdetails$taskId");
+    print("taskdetails$notas");
+    final response = await client.post(
+      ClusterUrls.reviewUpdateUrl+id.toString(),
+      data:
+      {
+        "parent":parant,
+        "is_active":isActive,
+        "reviewed_by":reviewdBy,
+        "image1":image,
+        "review":review,
+        "notes":notas,
+        "task_id":taskId
 
 
       },
@@ -850,7 +910,6 @@ class TaskDataSource {
     required String name,
     required String discription,
   }) async {
-    GetTaskList taskDetails;
     print("taskdetails$userId");
     print("taskdetails$taskId");
     print("taskdetails 1111111$pointId");
@@ -875,8 +934,7 @@ class TaskDataSource {
         },
       ),
     );
-
-    print("create response${response}");
+    print("create perfomance$response");
     if (response.data['status'] == 'success') {
       // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
       return DataResponse(
@@ -888,22 +946,23 @@ class TaskDataSource {
   //createRewards
   Future<DataResponse> createReward({
     required String name,
-    required int image,
+    required int img1,
+    required int img2,
+    required int img3,
+    required int img4,
+    required int img5,
     required String discription,
     required String notas,
     required int typeId,
     required String type,
   }) async {
-    GetTaskList taskDetails;
 
     print("taskdetails 1111111$name");
     print("taskdetails$discription");
-    print("taskdetails$image");
+    print("taskdetails$img3");
     print("taskdetails$notas");
     print("taskdetails$type");
     print("taskdetails$typeId");
-
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final response = await client.post(
       ClusterUrls.createRewadsUrl,
       data:
@@ -911,7 +970,11 @@ class TaskDataSource {
         "name":name,
         "description":discription,
         "notes":notas,
-        "image":image,
+        "image1":img1,
+        "image2":img2,
+        "image3":img3,
+        "image4":img4,
+        "image5":img5,
         "types":type,
         "type_id":typeId
       },
@@ -938,7 +1001,11 @@ class TaskDataSource {
   //updateReward
   Future<DataResponse> updateRewards({
     required String name,
-    required int image,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
     required String discription,
     required String notas,
     required int typeId,
@@ -946,11 +1013,10 @@ class TaskDataSource {
     required int id,
     required bool isActive,
   }) async {
-    GetTaskList taskDetails;
 
     print("taskdetails 1111111$name");
     print("taskdetails$discription");
-    print("taskdetails$image");
+    print("taskdetails$img4");
     print("taskdetails$notas");
     print("taskdetails$type");
     print("taskdetails$typeId");
@@ -963,7 +1029,11 @@ class TaskDataSource {
         "name":name,
         "description":discription,
         "notes":notas,
-        "image":image,
+        "image1":img1,
+        "image2":img2,
+        "image3":img3,
+        "image4":img4,
+        "image5":img5,
         "types":type,
         "type_id":typeId,
         "is_active":isActive
@@ -1026,4 +1096,84 @@ class TaskDataSource {
     });
     return pointList;
   }
+
+  //
+  Future<PaginatedResponse<List<GetTaskList>>> TaskAssignedGroupListState(
+      String code, String? next) async {
+    print("VVVVV$next");
+    print("VVVVV$code");
+    String path="";
+    if(next==""){
+      path=ClusterUrls.listGroupUnderListUrl;
+    }
+    else if(next!=""){
+      path=next??"";
+    }
+    List<GetTaskList> offerPeriodList = [];
+    print("pagiiiiii$path");
+    final response = await client.get(
+      path,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': authentication.authenticatedUser.token,
+        },
+      ),
+    );
+
+    (response.data['data']['results'] as List).forEach((element) {
+      offerPeriodList.add(GetTaskList.fromJson(element));
+    });
+
+    return PaginatedResponse<List<GetTaskList>>(
+        offerPeriodList,
+        response.data['data']['next'],
+        response.data['data']['count'].toString(),
+        previousUrl: response.data['data']['previous']
+    );
+  }
+  //
+  Future<CriteriaRead> getCriteriaRead(String taskCode) async {
+    CriteriaRead selectedItemDetails;
+
+    print("Criteria Read:${ClusterUrls.criteraReadUrl + taskCode.toString()}");
+    final response = await client.get(
+      ClusterUrls.criteraReadUrl + taskCode.toString(),
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    selectedItemDetails = CriteriaRead.fromJson((response.data['data']));
+
+    return selectedItemDetails;
+  }
+
+  //noti
+  Future<String> getNotificationDue(int id) async {
+   String status="";
+
+    print("Criteria Read:${ClusterUrls.dueNotificationUrl + id.toString()}");
+    final response = await client.get(
+      ClusterUrls.dueNotificationUrl + id.toString(),
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    // selectedItemDetails = CriteriaRead.fromJson((response.data['status']));
+
+   status=response.data['status'];
+    return status;
+  }
+
 }

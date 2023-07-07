@@ -1,8 +1,12 @@
 
+import 'package:cluster/presentation/task_operation/create/model/task_models.dart';
 import 'package:cluster/presentation/task_operation/create/task_datasource.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../core/utils/data_response.dart';
+import '../../../core/utils/failure.dart';
+import '../../../core/utils/repo.dart';
+import 'package:dartz/dartz.dart';
 
 class TaskRepo {
   final TaskDataSource _dataSource = TaskDataSource();
@@ -21,8 +25,8 @@ class TaskRepo {
     return DataResponse(error: "error Text");
   }
 
-  Future<DataResponse> getTaskList() async {
-    final apiResponse = await _dataSource.getTaskList();
+  Future<DataResponse> getTaskList(int? id) async {
+    final apiResponse = await _dataSource.getTaskList(id);
     try {
       if (apiResponse.isNotEmpty) {
         return DataResponse(data: apiResponse);
@@ -87,9 +91,9 @@ class TaskRepo {
   }
 
   //readRewards
-  Future<DataResponse> getReadRewards(int? id) async {
+  Future<DataResponse> getReadRewards(int? id,bool isTask) async {
     try {
-      final apiResponse = await _dataSource.getReadRewards(id!);
+      final apiResponse = await _dataSource.getReadRewards(id!,isTask);
 
       if (apiResponse.id != null) {
         return DataResponse(
@@ -132,9 +136,9 @@ class TaskRepo {
   }
 
   //toalaPerfomance
-  Future<DataResponse> getTotalPerformance() async {
+  Future<DataResponse> getTotalPerformance(String? employeeCode,int? id) async {
     try {
-      final apiResponse = await _dataSource.getTotalPerformance();
+      final apiResponse = await _dataSource.getTotalPerformance(employeeCode,id);
 
       if (apiResponse != null) {
         return DataResponse(
@@ -195,10 +199,12 @@ class TaskRepo {
     required String priority,
     required String createdOn,
     required String? lastmodified,
-    required String? locationUrl,
+    required String? longitude,
+    required String? latitude,
   }) async {
     final restAPIresponse = await _dataSource.taskCreatePost(
-      locationUrl: locationUrl,
+    longitude: longitude,
+        latitude: latitude,
         reportingPerson: reportingPerson,
         createdBy:createdBy,
         discription: discription,
@@ -229,6 +235,13 @@ class TaskRepo {
   //taskupdate
   Future<DataResponse> taskUpdatePost({
     required int? parant,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
+    required String? attachdescription,
+    required String? attachNote,
     required int taskType,
     final int? statusStagesId,
     required String reportingPerson,
@@ -248,10 +261,19 @@ class TaskRepo {
     required String? lastmodified,
     required int? jobid,
     required int? id,
-    required String? locationUrl,
+    required String? longitude,
+    required String? latitude,
   }) async {
     final restAPIresponse = await _dataSource.taskUpdatePost(
-      locationUrl: locationUrl,
+     latitude: latitude,
+        longitude: longitude,
+        img4: img4,
+        img3: img3,
+        img2: img2,
+        img1: img1,
+        img5: img5,
+        attachdescription: attachdescription,
+        attachNote: attachNote,
         reportingPerson: reportingPerson,
         createdBy:createdBy,
         discription: discription,
@@ -336,6 +358,11 @@ class TaskRepo {
     required String notas,
     required String discription,
     required double expense,
+    required int img1,
+    required int img2,
+    required int img3,
+    required int img4,
+    required int img5,
   }) async {
     final restAPIresponse = await _dataSource.paymentCreatePost(
 
@@ -346,7 +373,12 @@ class TaskRepo {
       expense: expense,
       budget: budget,
       discription: discription,
-      taskId: taskId
+      taskId: taskId,
+      img1: img1,
+      img2: img2,
+      img3: img3,
+      img4: img4,
+      img5: img5
 
 
     );
@@ -358,9 +390,9 @@ class TaskRepo {
   }
 
   //readPayment
-  Future<DataResponse> getPaymentRead(int? id) async {
+  Future<DataResponse> getPaymentRead(int? id,bool isTask) async {
     try {
-      final apiResponse = await _dataSource.getPaymentRead(id!);
+      final apiResponse = await _dataSource.getPaymentRead(id!,isTask);
 
       if (apiResponse.id != null) {
         return DataResponse(
@@ -391,6 +423,11 @@ class TaskRepo {
     required double expense,
     required bool isActive,
     required int? payId,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
   }) async {
     final restAPIresponse = await _dataSource.paymentUpdatePost(
         isActive: isActive,
@@ -402,7 +439,12 @@ class TaskRepo {
         budget: budget,
         discription: discription,
         taskId: taskId,
-      payId: payId
+      payId: payId,
+      img2: img2,
+      img3: img3,
+      img4: img4,
+      img5: img5,
+      img1: img1
 
 
     );
@@ -429,6 +471,36 @@ class TaskRepo {
         review: review,
         reviewdBy: reviewedBy,
         taskId: taskId
+
+
+    );
+    if (restAPIresponse.data) {
+      return DataResponse(data:restAPIresponse.data, error: restAPIresponse.error);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "");
+    }
+  }
+  //update review
+  Future<DataResponse> updateReviewTask({
+    required int? parant,
+    required int? id,
+    required bool? isActive,
+    required int taskId,
+    required String reviewdBy,
+    required dynamic image,
+    required String review,
+    required String notas,
+  }) async {
+    final restAPIresponse = await _dataSource.updateReviewTask(
+
+        parant: parant,
+        taskId: taskId,
+        image: image,
+        notas: notas,
+        review: review,
+        reviewdBy: reviewdBy,
+        isActive: isActive,
+      id: id
 
 
     );
@@ -465,7 +537,11 @@ class TaskRepo {
   //createRewards
   Future<DataResponse> createReward({
     required String name,
-    required int image,
+    required int img1,
+    required int img2,
+    required int img3,
+    required int img4,
+    required int img5,
     required String discription,
     required String notes,
     required String type,
@@ -476,7 +552,11 @@ class TaskRepo {
       type: type,
         typeId: typeId,
         discription: discription,
-        image: image,
+        img5: img5,
+        img4: img4,
+        img3: img3,
+        img2: img2,
+        img1: img1,
         notas: notes,
         name: name,
 
@@ -493,7 +573,11 @@ class TaskRepo {
   //updaterew
   Future<DataResponse> updateRewards({
     required String name,
-    required int image,
+    required dynamic img1,
+    required dynamic img2,
+    required dynamic img3,
+    required dynamic img4,
+    required dynamic img5,
     required String discription,
     required String notes,
     required String type,
@@ -505,7 +589,11 @@ class TaskRepo {
       type: type,
       typeId: typeId,
       discription: discription,
-      image: image,
+     img1: img1,
+      img2: img2,
+        img5: img5,
+      img3: img3,
+      img4: img4,
       notas: notes,
       name: name,
       isActive: isActive,
@@ -532,5 +620,35 @@ class TaskRepo {
     }
     return DataResponse(error: "error Text");
   }
+
+  //
+  Future<Either<Failure, PaginatedResponse<List<GetTaskList>>>> TaskAssignedGroupListState(
+      String code, String? next) async {
+    return repoExecute<PaginatedResponse<List<GetTaskList>>>(
+            () async => _dataSource.TaskAssignedGroupListState(code, next));
+  }
+  //
+  Future<DataResponse> getCriteriaRead(String? taskCode) async {
+    try {
+      final apiResponse = await _dataSource.getCriteriaRead(taskCode!);
+
+      if (apiResponse.punctuality!.isNotEmpty) {
+        return DataResponse(
+          data: apiResponse,
+        );
+      } else {
+        return DataResponse(
+          error: "implement Error conersion Text",
+        );
+      }
+    } catch (e) {
+      debugPrint("implement Error conersion Text$e");
+    }
+    return DataResponse(
+      error: "implement Error conersion Text",
+    );
+  }
+
+
 
 }

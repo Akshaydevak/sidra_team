@@ -470,12 +470,13 @@ class _JobTitleState extends State<JobTitle> {
                     GestureDetector(
                       onTap: (){
                         JobRead?.paymentId!=null?context.read<TaskBloc>().add(
-                            GetPaymentReadListEvent(JobRead?.paymentId??0)):null;
+                            GetPaymentReadListEvent(Variable.jobReadId??0,false)):null;
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen: PaymentOption(isJob: true,isTask: false,
                             update: JobRead?.paymentId==null?false:true,
-                            jobId: Variable.jobReadId,paymentId: JobRead?.paymentId??0,
+                            jobId: Variable.jobReadId,
+                            paymentId: JobRead?.paymentId??0,
                             joblist: JobRead,),
                           withNavBar: true, // OPTIONAL VALUE. True by default.
                           pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -517,7 +518,7 @@ class _JobTitleState extends State<JobTitle> {
 
                       onTap: (){
                         JobRead?.rewardId!=null?context.read<TaskBloc>().add(
-                            GetReadRewardsEvent(JobRead?.rewardId??0)):null;
+                            GetReadRewardsEvent(JobRead?.id??0,false)):null;
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen: RewardsScreen(type: "Job",typeId: JobRead?.id??0,
@@ -556,14 +557,14 @@ class _JobTitleState extends State<JobTitle> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
                     // GestureDetector(
                     //   onTap: (){
                     //     PersistentNavBarNavigator.pushNewScreen(
                     //       context,
-                    //       screen: PerformanceAppraisal(),
+                    //       screen: PerformanceAppraisal(tasklist: ),
                     //       withNavBar: true, // OPTIONAL VALUE. True by default.
                     //       pageTransitionAnimation: PageTransitionAnimation.fade,
                     //     );
@@ -597,9 +598,9 @@ class _JobTitleState extends State<JobTitle> {
                     //     ),
                     //   ),
                     // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     GestureDetector(
                       onTap: (){
                         print("EdIT");

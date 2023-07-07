@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:cluster/presentation/inventory/widget/inventory_card.dart';
 import '../../mpos/search_card.dart';
 import '../inventory_create_new_list.dart';
 

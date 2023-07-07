@@ -1,21 +1,25 @@
 import 'package:cluster/common_widgets/cluster_card.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/presentation/inventory/inventory_svg.dart';
+import 'package:cluster/presentation/inventory/model/inventory_model.dart';
+import 'package:cluster/presentation/inventory/update_varient.dart';
 import 'package:cluster/presentation/mpos/mpos_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
-import '../../common_widgets/gradient_button.dart';
-import '../../core/color_palatte.dart';
-import '../order_app/order_svg.dart';
-import '../order_app/orderapp_card.dart';
+import '../../../common_widgets/gradient_button.dart';
+import '../../../core/color_palatte.dart';
+import '../../order_app/order_svg.dart';
+import '../../order_app/orderapp_card.dart';
 
 class InventoryProductCard extends StatefulWidget {
   bool isSearch;
-
-  InventoryProductCard({Key? key, this.isSearch = false}) : super(key: key);
+InventoryModel? data;
+VoidCallback? onTap;
+  InventoryProductCard({Key? key, this.isSearch = false,this.data,this.onTap}) : super(key: key);
 
   @override
   State<InventoryProductCard> createState() => _InventoryProductCardState();
@@ -33,13 +37,24 @@ class _InventoryProductCardState extends State<InventoryProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    print("Imagess${widget.data?.image1}");
     return GestureDetector(
       onTap: () {
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  UpdateVariant(id: widget.data?.id??0,),
+          withNavBar: true,
+          // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
         // _showModalBottomSheet();
       },
       child: Container(
-        width: w,
+        width: w1,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -69,6 +84,9 @@ class _InventoryProductCardState extends State<InventoryProductCard> {
                     borderRadius: BorderRadius.circular(5),
                     color: Color(0xfff0f1f2),
                   ),
+                  child: Image.network(widget.data?.image1!=null?widget.data?.image1??"":""
+                  // "https://constructivo.com/images/not-found.png"
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -77,21 +95,32 @@ class _InventoryProductCardState extends State<InventoryProductCard> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "15464646545 ",
-                      style: GoogleFonts.roboto(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    Container(
+                      width: w1 / 1.65,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.data?.code.toString()??"15464646545 ",
+                            style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: widget.onTap,
+                              child: Icon(Icons.delete_outlined))
+                        ],
                       ),
                     ),
                     SizedBox(
                       height: 5,
                     ),
                     Container(
-                      width: w / 1.8,
+                      width: w1 / 1.8,
                       child: Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing ea...",
+                        widget.data?.name??"Lorem ipsum dolor sit amet, consectetur adipiscing ea...",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -122,7 +151,7 @@ class _InventoryProductCardState extends State<InventoryProductCard> {
                         ),
                         SizedBox(width: 10,),
                         Text(
-                          "24",
+                          widget.data?.stockCount.toString()??"24",
                           style: GoogleFonts.roboto(
                             color: Colors.black,
                             fontSize: w/25,
@@ -152,47 +181,51 @@ class _InventoryProductCardState extends State<InventoryProductCard> {
                           ),
                         ),
                         SizedBox(width: 10,),
-                        Text(
-                          "Specimen",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: w/25,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-
-                      ],
-                    ), Row(
-                      children: [
-                       Container(
-                         width: w/4,
-                         child: Text(
-                              "Price ",
-                              style: TextStyle(
-                                color: Color(0xff666161),
-                                fontSize: w/24,
-                              ),
+                        Container(
+                          width: w/4,
+                          child: Text(
+                            widget.data?.brandName??"Specimen",
+                            style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w/25,
+                              fontWeight: FontWeight.w500,
                             ),
-                       ),
-                        Text(
-                          ":",
-                          style: TextStyle(
-                            color: Color(0xff666161),
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Text(
-                          "AED 145.50",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: w/25,
-                            fontWeight: FontWeight.w500,
                           ),
                         )
 
                       ],
                     ),
+                    // Row(
+                    //   children: [
+                    //    Container(
+                    //      width: w/4,
+                    //      child: Text(
+                    //           "Price ",
+                    //           style: TextStyle(
+                    //             color: Color(0xff666161),
+                    //             fontSize: w/24,
+                    //           ),
+                    //         ),
+                    //    ),
+                    //     Text(
+                    //       ":",
+                    //       style: TextStyle(
+                    //         color: Color(0xff666161),
+                    //         fontSize: 16,
+                    //       ),
+                    //     ),
+                    //     SizedBox(width: 10,),
+                    //     Text(
+                    //       "AED 145.50",
+                    //       style: GoogleFonts.roboto(
+                    //         color: Colors.black,
+                    //         fontSize: w/25,
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     )
+                    //
+                    //   ],
+                    // ),
 
                   ],
                 )

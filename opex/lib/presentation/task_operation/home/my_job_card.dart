@@ -89,6 +89,8 @@ class _MyJobCardState extends State<MyJobCard> {
              gravity: ToastGravity.BOTTOM,
              backgroundColor: Colors.white,
              textColor: Colors.black);
+         context.read<TaskBloc>().add(
+             const GetPinnedTaskListEvent());
 
 
        }
@@ -225,13 +227,19 @@ class _MyJobCardState extends State<MyJobCard> {
                                     ),
                                   ):Container(),
                                   widget.status=="STARTED"?  Text(
-                                    "Pending",
+                                    "Started",
                                     style: GoogleFonts.roboto(
                                       color: const Color(0xffe70c0c),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                  ):Container(),
+                                  ):Text(
+                                    "Started",
+                                    style: GoogleFonts.roboto(
+                                      color: const Color(0xffe70c0c),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),),
                                   const SizedBox(
                                     width: 10,
                                   ),
@@ -265,6 +273,9 @@ class _MyJobCardState extends State<MyJobCard> {
                                                   userCode: authentication.authenticatedUser.code??"",
                                                   taskId: widget.tasksList?.id??0,
                                                   isPinned: false));
+                                          context.read<TaskBloc>().add(
+                                              const GetPinnedTaskListEvent());
+                                          Navigator.pop(context);
 
                                         },
                                         child: Container(
@@ -594,12 +605,13 @@ class _MyJobCardState extends State<MyJobCard> {
                       itemBuilder: (BuildContext context, int i) {
                         return GestureDetector(
                           onTap: (){
-                            refresh();
+                            // refresh();
 
                             changeTappedTile(i);
                             BlocProvider.of<TaskBloc>(context).add(
                                 UpdateTaskEvent(
-                                  locationUrl: Variable.locationUrl,
+                                  longitude: widget.tasksList?.longitude,
+                                  latitude: widget.tasksList?.latitude,
                                   taskType: widget.tasksList?.taskType??0,
                                     discription: widget.tasksList?.description??"",
                                     createdBy: widget.tasksList?.createdPersonCode??"",
@@ -619,7 +631,14 @@ class _MyJobCardState extends State<MyJobCard> {
                                   parant: widget.tasksList?.parent??null,
                                   lastmodified: widget.tasksList?.lastModified??null,
                                   jobid: widget.tasksList?.jobId??0,
-                                  id: widget.tasksList?.id??0
+                                  id: widget.tasksList?.id??0,
+                                    img5: widget.tasksList?.metaData?.image5,
+                                    img1: widget.tasksList?.metaData?.image1,
+                                    img4: widget.tasksList?.metaData?.image4,
+                                    img2: widget.tasksList?.metaData?.image2,
+                                    img3: widget.tasksList?.metaData?.image3,
+                                    attachmentDescription: widget.tasksList?.metaData?.description,
+                                    attachmentNote: widget.tasksList?.metaData?.note
 
 
                                 ));

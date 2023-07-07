@@ -370,7 +370,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   Stream<JobState> updateJobState(
       {
         required String name,
-        required int jobType,
+        required int? jobType,
         required String reportingPerson,
         required String assignedBy,
         required String createdBy,

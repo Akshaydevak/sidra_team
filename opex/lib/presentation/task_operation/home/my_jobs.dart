@@ -120,137 +120,139 @@ class _MyJobsState extends State<MyJobs> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-              ]),
-                    Row(
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 37,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0), width: 1,),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: DropdownButton(
-                              isExpanded: true,
-                              icon: Icon(Icons.keyboard_arrow_down_outlined),
-                              underline: Container(),
-                              items: assignTypeList.map((String items) {
-                                return DropdownMenuItem(
-                                  enabled: true,
-                                  value: items,
-                                  child: Text(items,
-                                      style: TextStyle(
-                                          color: Colors.black)),
-                                );
-                              }).toList(),
-                              value: selectedType,
-                              onChanged: (dynamic value) {
-
-
-                                setState(() {
-                                  selectedType = value;
-                                  selectedType=="Pending Jobs"?context.read<JobBloc>().add( GetFilterJobListEvent("PENDING")):
-                                  selectedType=="On Progress"?context.read<JobBloc>().add( GetFilterJobListEvent("ON PROGRESS")):
-                                  selectedType=="Completed"?context.read<JobBloc>().add( GetFilterJobListEvent("COMPLETED")):
-                                  context.read<JobBloc>().add(const GetNewJobListEvent());
-                                });
-
-                              },
-                              hint: Text(
-                                "All Jobs",
-                                style: GoogleFonts.poppins(
-                                    color:Colors.grey,fontSize: 14),
-                              )),
-                        ), SizedBox(width: 10,),
-                        Container(
-                            width: 37,
-                            height: 37,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0), width: 1,),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-
+                      Container(
+                        width: 120,
+                        height: 37,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Color(0xffe6ecf0), width: 1,),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 8,
+                              offset: Offset(1, 1),
                             ),
-                            child: DropdownButton(
-                              elevation: 0,
-                                borderRadius: BorderRadius.circular(8),
-                                isExpanded: true,
+                          ],
+                          color: Colors.white,
+                        ),
+                        child: DropdownButton(
+                            isExpanded: true,
+                            icon: Icon(Icons.keyboard_arrow_down_outlined),
+                            underline: Container(),
+                            items: assignTypeList.map((String items) {
+                              return DropdownMenuItem(
+                                enabled: true,
+                                value: items,
+                                child: Text(items,
+                                    style: TextStyle(
+                                        color: Colors.black)),
+                              );
+                            }).toList(),
+                            value: selectedType,
+                            onChanged: (dynamic value) {
 
-                                icon: Icon(Icons.keyboard_arrow_down_outlined),
-                                underline: Container(),
-                                items: assignTypeList.map((String items) {
-                                  return DropdownMenuItem(
-                                    enabled: true,
-                                    value: items,
-                                    child: Text(" $items",
-                                        style: TextStyle(color: Colors.black)),
-                                  );
-                                }).toList(),
-                                value: selectedType,
-                                onChanged: (dynamic value) {
-                                  setState(() {
-                                    selectedType = value;
-                                    selectedType == "Pending Jobs"
-                                        ? context.read<JobBloc>().add(
-                                            GetFilterJobListEvent("PENDING"))
-                                        : selectedType == "On Progress"
-                                            ? context.read<JobBloc>().add(
-                                                GetFilterJobListEvent(
-                                                    "ON PROGRESS"))
-                                            : selectedType == "Completed"
-                                                ? context.read<JobBloc>().add(
-                                                    GetFilterJobListEvent(
-                                                        "COMPLETED"))
-                                                : context.read<JobBloc>().add(
-                                                    const GetNewJobListEvent());
-                                  });
-                                },
-                                hint: Text(
-                                  " All Jobs",
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.grey, fontSize: 14),
-                                )),
-                          ),
-                          // SizedBox(width: 10,),
-                          // Container(
-                          //     width: 37,
-                          //     height: 37,
-                          //     padding: EdgeInsets.all(8),
-                          //     decoration: BoxDecoration(
-                          //       borderRadius: BorderRadius.circular(5),
-                          //       border: Border.all(
-                          //         color: Color(0xffe6ecf0), width: 1,),
-                          //       boxShadow: const [
-                          //         BoxShadow(
-                          //           color: Color(0x05000000),
-                          //           blurRadius: 8,
-                          //           offset: Offset(1, 1),
-                          //         ),
-                          //       ],
-                          //       color: Colors.white,
-                          //
-                          //     ),
-                          //     child: SvgPicture.string(
-                          //         TaskSvg().moreTaskIcon)),
-                        ],
+
+                              setState(() {
+                                selectedType = value;
+                                selectedType=="Pending Jobs"?context.read<JobBloc>().add( GetFilterJobListEvent("PENDING")):
+                                selectedType=="On Progress"?context.read<JobBloc>().add( GetFilterJobListEvent("ON PROGRESS")):
+                                selectedType=="Completed"?context.read<JobBloc>().add( GetFilterJobListEvent("COMPLETED")):
+                                context.read<JobBloc>().add(const GetNewJobListEvent());
+                              });
+
+                            },
+                            hint: Text(
+                              "All Jobs",
+                              style: GoogleFonts.poppins(
+                                  color:Colors.grey,fontSize: 14),
+                            )),
                       ),
+              ]),
+                    // Row(
+                    //   children: [
+                    //
+                    //     // SizedBox(width: 10,),
+                    //     // Container(
+                    //     //     width: 37,
+                    //     //     height: 37,
+                    //     //     decoration: BoxDecoration(
+                    //     //       borderRadius: BorderRadius.circular(5),
+                    //     //       border: Border.all(
+                    //     //         color: Color(0xffe6ecf0), width: 1,),
+                    //     //       boxShadow: const [
+                    //     //         BoxShadow(
+                    //     //           color: Color(0x05000000),
+                    //     //           blurRadius: 8,
+                    //     //           offset: Offset(1, 1),
+                    //     //         ),
+                    //     //       ],
+                    //     //       color: Colors.white,
+                    //     //
+                    //     //     ),
+                    //     //     child: DropdownButton(
+                    //     //       elevation: 0,
+                    //     //         borderRadius: BorderRadius.circular(8),
+                    //     //         isExpanded: true,
+                    //     //
+                    //     //         icon: Icon(Icons.keyboard_arrow_down_outlined),
+                    //     //         underline: Container(),
+                    //     //         items: assignTypeList.map((String items) {
+                    //     //           return DropdownMenuItem(
+                    //     //             enabled: true,
+                    //     //             value: items,
+                    //     //             child: Text(" $items",
+                    //     //                 style: TextStyle(color: Colors.black)),
+                    //     //           );
+                    //     //         }).toList(),
+                    //     //         value: selectedType,
+                    //     //         onChanged: (dynamic value) {
+                    //     //           setState(() {
+                    //     //             selectedType = value;
+                    //     //             selectedType == "Pending Jobs"
+                    //     //                 ? context.read<JobBloc>().add(
+                    //     //                     GetFilterJobListEvent("PENDING"))
+                    //     //                 : selectedType == "On Progress"
+                    //     //                     ? context.read<JobBloc>().add(
+                    //     //                         GetFilterJobListEvent(
+                    //     //                             "ON PROGRESS"))
+                    //     //                     : selectedType == "Completed"
+                    //     //                         ? context.read<JobBloc>().add(
+                    //     //                             GetFilterJobListEvent(
+                    //     //                                 "COMPLETED"))
+                    //     //                         : context.read<JobBloc>().add(
+                    //     //                             const GetNewJobListEvent());
+                    //     //           });
+                    //     //         },
+                    //     //         hint: Text(
+                    //     //           " All Jobs",
+                    //     //           style: GoogleFonts.poppins(
+                    //     //               color: Colors.grey, fontSize: 14),
+                    //     //         )),
+                    //     //   ),
+                    //       // SizedBox(width: 10,),
+                    //       // Container(
+                    //       //     width: 37,
+                    //       //     height: 37,
+                    //       //     padding: EdgeInsets.all(8),
+                    //       //     decoration: BoxDecoration(
+                    //       //       borderRadius: BorderRadius.circular(5),
+                    //       //       border: Border.all(
+                    //       //         color: Color(0xffe6ecf0), width: 1,),
+                    //       //       boxShadow: const [
+                    //       //         BoxShadow(
+                    //       //           color: Color(0x05000000),
+                    //       //           blurRadius: 8,
+                    //       //           offset: Offset(1, 1),
+                    //       //         ),
+                    //       //       ],
+                    //       //       color: Colors.white,
+                    //       //
+                    //       //     ),
+                    //       //     child: SvgPicture.string(
+                    //       //         TaskSvg().moreTaskIcon)),
+                    //     ],
+                    //   ),
                     
                 const SizedBox(
                   height: 16,

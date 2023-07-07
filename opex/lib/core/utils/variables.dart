@@ -13,6 +13,23 @@ class Variable{
   static String? reportingEmail="";
   static bool isselected=true;
   static String locationUrl="";
+  static String errorMessage="";
+
+  static int offerGroupId=0;
+  static String typeData="";
+  static bool isTypeDataCheck=false;
+
+  //inventory
+  static int? division;
+  static int ?category;
+  static int? subcategory;
+  static int? group;
+  static int? item;
+  static int? uom;
+  static int? stock;
+  static String? inventoryName;
+
+  static int? uomGroupId;
 
 
 }

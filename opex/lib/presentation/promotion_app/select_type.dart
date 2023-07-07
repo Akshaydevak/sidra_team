@@ -1,4 +1,8 @@
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/presentation/promotion_app/coupons/coupon_form_one.dart';
+import 'package:cluster/presentation/promotion_app/negotiation_screens/negotiation_page_one.dart';
+import 'package:cluster/presentation/promotion_app/promotion_sale/promotion_sale.dart';
+import 'package:cluster/presentation/promotion_app/promotion_sale/promotion_sale_form.dart';
 import 'package:cluster/presentation/promotion_app/promotion_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,9 @@ import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/headline_text.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'buy_more_get_form/buy_more_get_form.dart';
+import 'buy_one_get_one/buy_one_get_form.dart';
+import 'multy_buy/multy_buy_form.dart';
 import 'new_promotion.dart';
 
 class SelectTypeScreen extends StatefulWidget {
@@ -22,18 +29,21 @@ class SelectTypeScreen extends StatefulWidget {
 class _SelectTypeScreenState extends State<SelectTypeScreen> {
   List<String> tile = [
     'Discount',
-    'Promotion Sale',
-    'MultiBuy',
-    'Buy 1 Get 1',
+    // 'Promotion Sale',
+    // 'MultiBuy',
+    // 'Buy 1 Get 1',
     'Buy More Get More',
-    'Dynamic Promotion'
+    // 'Dynamic Promotion',
+    'Coupon',
+    // 'Negotiation'
   ]; List<String> icon = [
     PromotionSvg().discountIcon,
-    PromotionSvg().saleIcon,
-    PromotionSvg().multibuyIcon,
-    PromotionSvg().buyIcon,
+    // PromotionSvg().saleIcon,
+    // PromotionSvg().multibuyIcon,
+    // PromotionSvg().buyIcon,
     PromotionSvg().moreIcon,
     PromotionSvg().promotionIcon,
+    // PromotionSvg().promotionIcon,
 
   ];
   int isSelect = 0;
@@ -47,13 +57,21 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: BackAppBar(label: "Select Type"),
+        child: BackAppBar(label: "Select Type",
+            isBack: true,
+            isAction: false,
+            onTap: (){
+              Navigator.pop(context);
+            }),
       ),
       body: ScrollConfiguration(
         behavior: NoGlow(),
@@ -74,7 +92,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 16,
                 ),
                 GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -146,7 +164,41 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 GradientButton(
                     color:ColorPalette.primary ,
                     onPressed: () {
+                      type=="Coupon"?PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  CouponFormOne(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):
+                      type=="Promotion Sale"?PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  PromotionSaleForm(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):type=="MultiBuy"?PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  MultyBuyFormOne(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):type=="Buy 1 Get 1"?
                       PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  BuyOneGetForm(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):type=="Buy More Get More"?
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  BuyMoreGetForm(editDiscount: false,),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):type=="Negotiation"?
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen:  NegotiationPageOne(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      ):PersistentNavBarNavigator.pushNewScreen(
                         context,
                         screen:  NewPromotion(type: type),
                         withNavBar: true, // OPTIONAL VALUE. True by default.

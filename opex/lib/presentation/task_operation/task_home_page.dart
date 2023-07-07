@@ -35,7 +35,9 @@ class _TaskAndOperationHomePageState extends State<TaskAndOperationHomePage> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: BackAppBar(label: "Task"),
+          child: BackAppBar(label: "Task",
+          isAction: false,),
+
         ),
         body: DefaultTabController(
           length: 2,

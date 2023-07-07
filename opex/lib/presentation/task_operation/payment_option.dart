@@ -1,5 +1,8 @@
 
+import 'dart:io';
+
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
@@ -9,12 +12,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../../common_widgets/loading.dart';
 import '../../../../core/color_palatte.dart';
 import '../../../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
+import '../inventory/inventory_new_list.dart';
+import '../inventory/new_list_tab/profiling_tab.dart';
+import '../promotion_app/dropdown_card.dart';
 import 'attachment_screen.dart';
 import 'create/add_text.dart';
 import 'create/model/task_models.dart';
@@ -53,11 +60,49 @@ class _PaymentOptionState extends State<PaymentOption> {
   TextEditingController budgetController=TextEditingController();
   TextEditingController discriptionController=TextEditingController();
   TextEditingController notesController=TextEditingController();
+
+  final picker = ImagePicker();
+  File? cropImage;
+  bool _cropped = false;
+  dynamic? imageId;
+  String imgUrl='';
+  String? imageFileName;
+
+  int indexImage=0;
+  int catindexImage=0;
+  bool isCatalogue=false;
+  @override
+  void initState() {
+    catalogueList.clear();
+    picModel.clear();
+    for(int i=0;i<5;i++) {
+      picModel.add(PicModel(data: null,url: ""));
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    print("Task Id${widget.taskId}");
     var w =MediaQuery.of(context).size.width;
     return MultiBlocListener(
   listeners: [
+    BlocListener<EmployeeBloc, EmployeeState>(
+      listener: (context, state) {
+        if(state is PicLoading){
+          print("Inside Loading");
+        }
+        if(state is PicSuccess){
+          print("Inside Success${state.data}\t${state.url}");
+          setState(() {
+            isCatalogue? catalogueList.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]):picModel.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]);
+          });
+          print("pic model length${picModel.length}");
+
+        }
+      },
+    ),
     BlocListener<TaskBloc, TaskState>(
   listener: (context, state) {
     if (state is CreatePaymentLoading) {
@@ -88,7 +133,7 @@ class _PaymentOptionState extends State<PaymentOption> {
       context.read<JobBloc>().add(
           GetJobReadListEvent(Variable.jobReadId));
       context.read<TaskBloc>().add(
-          GetTaskReadListEvent(Variable.taskReadId));
+          GetTaskReadListEvent(widget.taskId));
       Navigator.pop(context);
     }
   },
@@ -156,6 +201,31 @@ class _PaymentOptionState extends State<PaymentOption> {
           selectedType=paymentRead?.assigningType??"";
           selCode=paymentRead?.assigningCode??"";
           selectedCode=paymentRead?.assigningCode??"";
+          picModel.setAll(0, [
+            PicModel(
+                url: paymentRead?.costingMeta?.image1 ??
+                    "")
+          ]);
+          picModel.setAll(1, [
+            PicModel(
+                url: paymentRead?.costingMeta?.image2 ??
+                    "")
+          ]);
+          picModel.setAll(2, [
+            PicModel(
+                url: paymentRead?.costingMeta?.image3 ??
+                    "")
+          ]);
+          picModel.setAll(3, [
+            PicModel(
+                url: paymentRead?.costingMeta?.image4 ??
+                    "")
+          ]);
+          picModel.setAll(4, [
+            PicModel(
+                url: paymentRead?.costingMeta?.image5 ??
+                    "")
+          ]);
           setState(() {
 
           });
@@ -200,7 +270,12 @@ class _PaymentOptionState extends State<PaymentOption> {
                           jobId: paymentRead?.jobId,
                           AssigningCode: selCode??"",
                           assigningType: selectedType??"",
-                          payId: paymentRead?.id
+                          payId: paymentRead?.id,
+                          img1: picModel[0].data??picModel[0].url,
+                          img5: picModel[4].data??picModel[4].url,
+                          img4: picModel[3].data??picModel[3].url,
+                          img3: picModel[2].data??picModel[2].url,
+                          img2: picModel[1].data??picModel[1].url
                       )):
                   BlocProvider.of<TaskBloc>(context).add(
                       CreatePaymentEvent(
@@ -211,7 +286,13 @@ class _PaymentOptionState extends State<PaymentOption> {
                           notas: notesController.text,
                           jobId: widget.jobId,
                           AssigningCode: selCode??"",
-                          assigningType: selectedType??""
+                          assigningType: selectedType??"",
+                        img1: picModel[0].data??0,
+                        img5: picModel[4].data??0,
+                        img4: picModel[3].data??0,
+                        img3: picModel[2].data??0,
+                        img2: picModel[1].data??0
+
 
                       ));
                 },
@@ -252,7 +333,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                   widget.isJob?Container():widget.isTask?
                   Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      widget.update?Container():Text(
                         "Assigning Type",
                         style: GoogleFonts.roboto(
                           color: Colors.black,
@@ -261,8 +342,12 @@ class _PaymentOptionState extends State<PaymentOption> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      Container(
+                      widget.update?Container():SizedBox(height: 10,),
+                      widget.update?
+                      ReadDropDownCard(
+                        label: "Assigning Type",
+                        selValue: paymentRead?.assigningType??"",
+                      ):Container(
                         width: w / 1,
                         // padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         //height: 20.0,
@@ -304,7 +389,11 @@ class _PaymentOptionState extends State<PaymentOption> {
                             )),
                       ),
                       SizedBox(height: 10,),
-                      selectedType=="Task_Group"?
+                      widget.update?
+                      ReadDropDownCard(
+                        label: "Assigning Code",
+                        selValue: paymentRead?.assigningCode??"",
+                      ):selectedType=="Task_Group"?
                       Flex(direction: Axis.vertical,
                           children:[
                             Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,10 +455,10 @@ class _PaymentOptionState extends State<PaymentOption> {
                                     isExpanded: true,
                                     icon: Icon(Icons.keyboard_arrow_down_outlined),
                                     hint: const Text("Assigning Code"),
-                                    value: selectedCode,
+                                    value: selCode,
                                     onChanged: (value) {
                                       setState(() {
-                                        selectedCode = value;
+                                        selCode = value;
                                       });
                                     },
 
@@ -485,38 +574,74 @@ class _PaymentOptionState extends State<PaymentOption> {
                     ),
                   ),
                   SizedBox(height: 26),
-                  Row(
-                    children: [
-                      // GestureDetector(
-                      //   onTap: (){
-                      //
-                      //   },
-                      //   child: Container(
-                      //     // width: 150,
-                      //     padding: EdgeInsets.symmetric(horizontal: 14,vertical: 14),
-                      //     decoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
-                      //       color: Color(0xfff8f7f5),
-                      //     ),
-                      //     child: Row(
-                      //       children: [
-                      //         SvgPicture.string(TaskSvg().attachIcon),
-                      //         SizedBox(width: 10,),
-                      //         Text(
-                      //           "Attach",
-                      //           style: GoogleFonts.roboto(
-                      //             color: Color(0xff151522),
-                      //             fontSize: 18,
-                      //             fontWeight: FontWeight.w500,
-                      //           ),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  )
+                  Text(
+                    "Images",
+                    style: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+
+                      width: MediaQuery.of(context).size.width,
+                      child: GridView.builder(
+                          padding: const EdgeInsets.all(0),
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: 5,
+                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 100,
+                              childAspectRatio: 1.5 / 2,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 8),
+                          itemBuilder: (context, i) {
+                            // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                            return GestureDetector(
+                              onTap: (){
+                                isCatalogue=false;
+                                indexImage=i;
+                                setState(() {
+
+                                });
+                                getCoverImage(ImageSource.gallery);
+                              },
+                              // getImage(ImageSource.gallery);
+                              // onTap: isAdmin?onTapListTileAdmin(i, context):onTapListTile(i, context),
+                              child:
+                              picModel[i].url!=""&&picModel[i].url!.isNotEmpty?
+                              Container(
+                                  width: 88,
+                                  height: 100,
+                                  decoration:BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(picModel[i].url.toString()),fit: BoxFit.fill
+                                      )
+                                  )
+                              )
+                                  :
+                              Container(
+                                  width: 88,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Colors.white,
+                                  ),
+                                  child: const Icon(Icons.add,color:Color(0x7f666161))
+                              ),
+                            );
+                          })),
                 ],
               ),
             )
@@ -525,5 +650,26 @@ class _PaymentOptionState extends State<PaymentOption> {
       ),
     ),
 );
+  }
+  Future<void> getCoverImage(source) async {
+    try {
+      final pickedFile = await picker.pickImage(
+          source: source, maxHeight: 512, maxWidth: 512);
+
+      cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
+
+      if (cropImage != null) {
+        // BlocProvider.of<DiscountBloc>(context)
+        //     .add(PostImageDiscountEvent(cropImage!));
+        BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(cropImage!));
+        imageFileName=cropImage?.path.split("_")[1];
+        print("cropppp$imageFileName");
+      }
+      setState(() {
+        _cropped = true;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
