@@ -13,7 +13,6 @@ import '../../../core/utils/variables.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../../mpos/search_card.dart';
 import '../bloc/inventory_bloc.dart';
-import '../inventory_hierarchy_screens/create_screen.dart';
 import '../model/inventory_model.dart';
 import '../widget/inventory_card.dart';
 import 'create_brand_screen.dart';

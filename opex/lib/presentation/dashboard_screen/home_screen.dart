@@ -434,13 +434,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       case 4:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: const InventoryDashBoard(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: const InventoryDashBoard(),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         };
         break;
       case 5:

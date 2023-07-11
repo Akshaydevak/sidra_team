@@ -101,15 +101,15 @@ class SearchOrderView extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            ListView.separated(
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.only(top: 20),
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => InventoryProductCard(),
-                                separatorBuilder: (context, index) => SizedBox(
-                                      height: 10,
-                                    ),
-                                itemCount: 5)
+                            // ListView.separated(
+                            //     physics: NeverScrollableScrollPhysics(),
+                            //     padding: EdgeInsets.only(top: 20),
+                            //     shrinkWrap: true,
+                            //     itemBuilder: (context, index) => InventoryProductCard(),
+                            //     separatorBuilder: (context, index) => SizedBox(
+                            //           height: 10,
+                            //         ),
+                            //     itemCount: 5)
                           ],
                         ),
                       )

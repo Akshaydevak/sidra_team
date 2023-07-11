@@ -1,5 +1,4 @@
 import 'package:cluster/common_widgets/no_glow.dart';
-import 'package:cluster/presentation/inventory/inventory_hierarchy_screens/create_screen.dart';
 import 'package:cluster/presentation/inventory/model/inventory_model.dart';
 import 'package:cluster/presentation/inventory/widget/inventory_card.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-
 import '../../../common_widgets/gradient_button.dart';
-import '../../../common_widgets/loading.dart';
 import '../../../core/color_palatte.dart';
 import '../../../core/common_snackBar.dart';
 import '../../../core/utils/variables.dart';

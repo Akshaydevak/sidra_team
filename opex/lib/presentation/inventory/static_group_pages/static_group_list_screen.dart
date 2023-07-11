@@ -1,5 +1,4 @@
 import 'package:cluster/common_widgets/no_glow.dart';
-import 'package:cluster/presentation/inventory/inventory_hierarchy_screens/create_screen.dart';
 import 'package:cluster/presentation/inventory/model/inventory_model.dart';
 import 'package:cluster/presentation/inventory/widget/inventory_card.dart';
 import 'package:flutter/material.dart';

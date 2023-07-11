@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
+import '../../../authentication/authentication.dart';
 import '../../../task_operation/create/create_job.dart';
 import '../../profile/profile_bloc/profile_bloc.dart';
 import '../home_svg.dart';
@@ -121,15 +121,17 @@ class _AppBarState extends State<AppBarScreen> {
             const SizedBox(
               width: 30,
             ),
-            GestureDetector(
-                onTap: () {
-                  _showModalBottomSheet();
-                },
-                child: SvgPicture.string(
-                  HomeSvg().addIcon,
-                  height: 19,
-                  width: 19,
-                )),
+            authentication.isAdmin
+                ? GestureDetector(
+                    onTap: () {
+                      _showModalBottomSheet();
+                    },
+                    child: SvgPicture.string(
+                      HomeSvg().addIcon,
+                      height: 19,
+                      width: 19,
+                    ))
+                : Container(),
             const SizedBox(
               width: 16,
             )
@@ -387,11 +389,11 @@ class _BackAppBarState extends State<BackAppBar> {
           ),
           titleSpacing: 0,
           leading: GestureDetector(
-
-              onTap:widget.isBack? () {
-                widget.isBack ? Navigator.pop(context) : print("hello");
-              }:widget.onTap,
-
+              onTap: widget.isBack
+                  ? () {
+                      widget.isBack ? Navigator.pop(context) : print("hello");
+                    }
+                  : widget.onTap,
               child: const Icon(
                 Icons.arrow_back,
                 color: Colors.black,
@@ -439,7 +441,6 @@ class _BackAppBarState extends State<BackAppBar> {
           height: 1.50,
           decoration: const BoxDecoration(
             color: Color(0xb2e6e6e6),
-
           ),
         ),
       ],

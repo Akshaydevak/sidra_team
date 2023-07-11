@@ -94,21 +94,21 @@ class _ManageDeliveryScreenState extends State<ManageDeliveryScreen> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                Container(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      primary: false,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return InventoryProductCard(
-isSearch: false,
-                        );
-                      },
-                      separatorBuilder: (context, index) => Container(
-                        height: 10,
-                      ),
-                      itemCount: 5),
-                ),
+//                 Container(
+//                   child: ListView.separated(
+//                       shrinkWrap: true,
+//                       primary: false,
+//                       physics: NeverScrollableScrollPhysics(),
+//                       itemBuilder: (context, index) {
+//                         return InventoryProductCard(
+// isSearch: false,
+//                         );
+//                       },
+//                       separatorBuilder: (context, index) => Container(
+//                         height: 10,
+//                       ),
+//                       itemCount: 5),
+//                 ),
               ],
             ),
           ),
