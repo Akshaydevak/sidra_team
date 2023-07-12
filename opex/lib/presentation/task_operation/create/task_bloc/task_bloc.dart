@@ -23,7 +23,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getTaskTypeListState();
     }
     if (event is GetTaskListEvent) {
-      yield* getTaskListState(event.id);
+      yield* getTaskListState(id:event.id,
+      prev: event.prev,
+      next: event.next,
+      search: event.search);
     }
     if (event is GetPendingTaskListEvent) {
       yield* getPendingTaskListState();
@@ -257,15 +260,31 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
   //task list
-  Stream<TaskState> getTaskListState(int? id) async* {
+  // Stream<TaskState> getTaskListState(int? id) async* {
+  //   yield GetTaskListLoading();
+  //
+  //   final dataResponse = await _taskRepo.getTaskList(id);
+  //
+  //   if (dataResponse.data.isNotEmpty) {
+  //     yield GetTaskListSuccess(dataResponse.data);
+  //   } else {
+  //     yield GetTaskListFailed();
+  //   }
+  // }
+
+  Stream<TaskState> getTaskListState({
+    String? search,String? next,String? prev,int? id
+  }) async* {
     yield GetTaskListLoading();
+    final dataResponse = await _taskRepo.getTaskList(search,next,prev,id);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetTaskListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          taskList:  dataResponse.data);  }
 
-    final dataResponse = await _taskRepo.getTaskList(id);
-
-    if (dataResponse.data.isNotEmpty) {
-      yield GetTaskListSuccess(dataResponse.data);
-    } else {
-      yield GetTaskListFailed();
+    else {
+      yield GetTaskListFailed("failed");
     }
   }
 
@@ -421,11 +440,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     );
 
-    if (dataResponse.data) {
+    if (dataResponse.data==true) {
       print("sucsess ");
       yield CreateTaskSuccess(dataResponse.error??"");
     } else {
-      print("failed ");
+      print("failed ${dataResponse.error}");
       yield CreateTaskFailed(
         dataResponse.error ?? "",);
     }
@@ -498,7 +517,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     );
 
-    if (dataResponse.data) {
+    if (dataResponse.data==true) {
       print("task succcess atv repo");
       yield UpdateTaskSuccess(dataResponse.error??"",);
     } else {

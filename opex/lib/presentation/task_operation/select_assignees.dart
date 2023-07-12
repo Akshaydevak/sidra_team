@@ -96,16 +96,6 @@ class _SelectAssigneesState extends State<SelectAssignees> {
               print("grpVal${Variable.assignCode}");
               Navigator.pop(context);
             },
-            action: GestureDetector(
-              onTap: () {
-                widget.groupVal!(groupActived);
-                print("grpVal$groupActived");
-              },
-              child: SvgPicture.string(
-                CartSvg().searchIcon,
-                color: Colors.black,
-              ),
-            ),
           ),
         ),
         backgroundColor: Colors.white,
@@ -300,102 +290,103 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 30),
-                        itemBuilder: (context, index) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0), width: 1,),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 0,right: 10,top: 10,bottom: 10),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Radio(
-
-                                  value: index,
-                                  groupValue: indValue,
-                                  activeColor: ColorPalette.primary,
-                                  onChanged: (int? value) async {
-                                    final SharedPreferences prefs =
-                                    await SharedPreferences
-                                        .getInstance();
-                                    prefs.setInt('index', value!);
-                                    setState(() {
-                                      groupActived = false;
-                                      indValue = value;
-                                      grpValue;
-
-                                      Variable.assignType=
-                                      "Individual";
-                                      Variable.assignCode =
-                                          employeeList[index].code ??
-                                              "";
-                                    });
-                                    print("ASSSS${Variable.assignType}");
-                                  },
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-
-                                    CircleAvatar(
-                                      backgroundColor: ColorPalette.inactiveGrey,
-                                      backgroundImage: NetworkImage(
-                                          employeeList[index]
-                                              .profile ??
-                                              ""),
-                                    ),
-                                    SizedBox(
-                                      width: 14,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          employeeList[index].fname ??
-                                              "",
-                                          style: TextStyle(
-                                            color: ColorPalette.black,
-                                            fontSize: w/22,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Container(
-                                          width: w / 1.8,
-                                          child: Text(
-                                            employeeList[index]
-                                                .primaryMail ??
-                                                "",
-                                            style: TextStyle(
-                                              color:
-                                              ColorPalette.black,
-                                              fontSize: w/24,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                        itemBuilder: (context, index) => GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Color(0xffe6ecf0), width: 1,),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
                                 ),
                               ],
+                              color: Colors.white,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 0,right: 10,top: 10,bottom: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Radio(
+
+                                    value: index,
+                                    groupValue: indValue,
+                                    activeColor: ColorPalette.primary,
+                                    onChanged: (int? value) async {
+                                      final SharedPreferences prefs =
+                                      await SharedPreferences
+                                          .getInstance();
+                                      prefs.setInt('index', value!);
+                                      setState(() {
+                                        groupActived = false;
+                                        indValue = value;
+                                        grpValue;
+
+                                        Variable.assignType=
+                                        "Individual";
+                                        Variable.assignCode =
+                                            employeeList[index].code ??
+                                                "";
+                                      });
+                                    },
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+
+                                      CircleAvatar(
+                                        backgroundColor: ColorPalette.inactiveGrey,
+                                        backgroundImage: NetworkImage(
+                                            employeeList[index]
+                                                .profile ??
+                                                ""),
+                                      ),
+                                      SizedBox(
+                                        width: 14,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            employeeList[index].fname ??
+                                                "",
+                                            style: TextStyle(
+                                              color: ColorPalette.black,
+                                              fontSize: w/22,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Container(
+                                            width: w / 1.8,
+                                            child: Text(
+                                              employeeList[index]
+                                                  .primaryMail ??
+                                                  "",
+                                              style: TextStyle(
+                                                color:
+                                                ColorPalette.black,
+                                                fontSize: w/24,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -574,220 +565,210 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(
           label: "Select Assignees",
-          isAction: true,
-          action: GestureDetector(
-            onTap: () {},
-            child: SvgPicture.string(
-              CartSvg().searchIcon,
-              color: Colors.black,
-            ),
-          ),
+          isAction: false,
         ),
       ),
-      body: Container(
-        // padding: EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: w,
-                // height: 120,
-                // padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Color(0xffe6ecf0),
-                    width: 1,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: w,
+              // height: 120,
+              // padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Color(0xffe6ecf0),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x05000000),
+                    blurRadius: 8,
+                    offset: Offset(1, 1),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x05000000),
-                      blurRadius: 8,
-                      offset: Offset(1, 1),
-                    ),
-                  ],
-                  color: Colors.white,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 20, bottom: 10),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xff1ECAC0),
-                            ),
-                            child: Center(
-                              child:
-                              SvgPicture.string(CreateSvg().calenderIcon),
-                            ),
+                ],
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                        left: 16, right: 16, top: 20, bottom: 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Color(0xff1ECAC0),
                           ),
-                          SizedBox(
-                            width: 10,
+                          child: Center(
+                            child:
+                            SvgPicture.string(CreateSvg().calenderIcon),
                           ),
-                          Text(
-                            "Invite from device contacts",
-                            style: TextStyle(
-                              color: Color(0xff151522),
-                              fontSize: 18,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      indent: 50,
-                      color: Color(0xffE6ECF0),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 10, bottom: 20),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xffFC3B98),
-                            ),
-                            child: Center(
-                              child: SvgPicture.string(CreateSvg().clockIcon),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "Invite from device contacts",
-                            style: TextStyle(
-                              color: Color(0xff151522),
-                              fontSize: 18,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                "Task Assign To",
-                style: GoogleFonts.roboto(
-                  color: Color(0xff151522),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                "Select from List",
-                style: GoogleFonts.roboto(
-                  color: Color(0xff151522),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              BlocBuilder<JobBloc, JobState>(
-                builder: (context, state) {
-                  if (state is GetUserUderGroupLoading) {
-                    customCupertinoLoading();
-                  }
-                  if (state is GetUserUderGroupSuccess) {
-                    return Container(
-                      width: w,
-                      // height: 577,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
                         ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Invite from device contacts",
+                          style: TextStyle(
+                            color: Color(0xff151522),
+                            fontSize: 18,
                           ),
-                        ],
-                        color: Colors.white,
+                        )
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    indent: 50,
+                    color: Color(0xffE6ECF0),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                        left: 16, right: 16, top: 10, bottom: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Color(0xffFC3B98),
+                          ),
+                          child: Center(
+                            child: SvgPicture.string(CreateSvg().clockIcon),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Invite from device contacts",
+                          style: TextStyle(
+                            color: Color(0xff151522),
+                            fontSize: 18,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Task Assign To",
+              style: GoogleFonts.roboto(
+                color: Color(0xff151522),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Select from List",
+              style: GoogleFonts.roboto(
+                color: Color(0xff151522),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            BlocBuilder<JobBloc, JobState>(
+              builder: (context, state) {
+                if (state is GetUserUderGroupLoading) {
+                  customCupertinoLoading();
+                }
+                if (state is GetUserUderGroupSuccess) {
+                  return Container(
+                    width: w,
+                    // height: 577,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xffe6ecf0),
+                        width: 1,
                       ),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Radio(
-                                    value: index,
-                                    groupValue: indValue,
-                                    onChanged: (int? value) {
-                                      setState(() {
-                                        indValue = value!;
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x05000000),
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Radio(
+                                  value: index,
+                                  groupValue: indValue,
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      indValue = value!;
 
-                                        Variable.assignType = "Individual";
-                                        Variable.assignCode =
-                                            state.userlist[index].code ??
-                                                "";
-                                      });
-                                    },
-                                  ),
-                                  Row(
-                                    children: [
-                                      Image.asset("asset/newprofile.png",
-                                          width: 42, height: 42),
-                                      SizedBox(
-                                        width: 5,
+                                      Variable.assignType = "Individual";
+                                      Variable.assignCode =
+                                          state.userlist[index].code ??
+                                              "";
+                                    });
+                                  },
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset("asset/newprofile.png",
+                                        width: 42, height: 42),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      state.userlist[index].email ?? "",
+                                      style: TextStyle(
+                                        color: Color(0xff151522),
+                                        fontSize: 18,
                                       ),
-                                      Text(
-                                        state.userlist[index].email ?? "",
-                                        style: TextStyle(
-                                          color: Color(0xff151522),
-                                          fontSize: 18,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 5,
-                            );
-                          },
-                          itemCount: state.userlist.length),
-                    );
-                  }
-                  return Container();
-                },
-              )
-            ],
-          ),
+                        ),
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                            height: 5,
+                          );
+                        },
+                        itemCount: state.userlist.length),
+                  );
+                }
+                return Container();
+              },
+            )
+          ],
         ),
       ),
     );

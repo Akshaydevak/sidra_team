@@ -24,12 +24,17 @@ class GetNewJobListInitial extends JobState {}
 class GetNewJobListLoading extends JobState {}
 
 class GetNewJobListSuccess extends JobState {
-  final List<GetJobList> jobList;
-
-  const GetNewJobListSuccess(this.jobList);
+  final List<GetJobList>? jobList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetNewJobListSuccess(
+      {this.jobList, this.prevPageUrl, this.nextPageUrl});
 }
 
-class GetNewJobListFailed extends JobState {}
+class GetNewJobListFailed extends JobState {
+  final String msg;
+  const GetNewJobListFailed( this.msg);
+}
 //instant
 class GetInstantJobListInitial extends JobState {}
 
@@ -98,12 +103,18 @@ class GetAssignedMeListInitial extends JobState {}
 class GetAssignedMeListLoading extends JobState {}
 
 class GetAssignedMeListSuccess extends JobState {
-  final List<GetJobList> assignMeList;
+  final List<GetJobList>? assignMeList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
 
-  const GetAssignedMeListSuccess(this.assignMeList);
+  const GetAssignedMeListSuccess(
+      {this.assignMeList, this.prevPageUrl, this.nextPageUrl});
 }
 
-class GetAssignedMeListFailed extends JobState {}
+class GetAssignedMeListFailed extends JobState {
+  final String msg;
+  const GetAssignedMeListFailed( this.msg);
+}
 //assigntaskcount
 class TaskCountInitial extends JobState {}
 

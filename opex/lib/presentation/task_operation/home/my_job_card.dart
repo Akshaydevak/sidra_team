@@ -233,13 +233,7 @@ class _MyJobCardState extends State<MyJobCard> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                  ):Text(
-                                    "Started",
-                                    style: GoogleFonts.roboto(
-                                      color: const Color(0xffe70c0c),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),),
+                                  ):Container(),
                                   const SizedBox(
                                     width: 10,
                                   ),

@@ -76,44 +76,65 @@ class JobDataSource {
     return jobList;
   }
   //newJoblist
-  Future<List<GetJobList>> getNewJobList() async {
+  // Future<List<GetJobList>> getNewJobList() async {
+  //
+  //   List<GetJobList> jobList = [];
+  //   print("URL NEW JOB:${ClusterUrls.newJoblistUrl}${authentication.authenticatedUser.code.toString()}");
+  //
+  //   final response = await client.get(ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString(),
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //         'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+  //       },
+  //     ),
+  //   );
+  //   print("asssign${response.data}");
+  //   (response.data['data']['results'] as List).forEach((element) {
+  //     jobList.add(GetJobList.fromJson(element));
+  //   });
+  //   return jobList;
+  // }
 
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<GetJobList> jobList = [];
-    print("URL NEW JOB:${ClusterUrls.newJoblistUrl}${authentication.authenticatedUser.code.toString()}");
-    try{
-      final response = await client.get(ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString(),
+
+  Future<PaginatedResponse<List<GetJobList>>> getNewJobList(
+      String? search,String? next,String? prev) async {
+    print("URL Job List:${ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString()}");
+    List<GetJobList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString()}?name=$search"
+          :ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString();
+    }
+
+
+    final response = await client.get(api,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
-        ),
-      );
-      print("asssign${response.data}");
-      (response.data['data']['results'] as List).forEach((element) {
-        jobList.add(GetJobList.fromJson(element));
-      });
-      return jobList;
-    }catch(f){
-      print("ERROR NEW JOB$f");
-    }
-
-    final response = await client.get(ClusterUrls.newJoblistUrl+authentication.authenticatedUser.code.toString(),
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-        },
-      ),
-    );
-    print("asssign${response.data}");
+        ));
+    print("api $api");
+    print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
-      jobList.add(GetJobList.fromJson(element));
+      nationalityModel.add(GetJobList.fromJson(element));
     });
-    return jobList;
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
   }
   //userverfy
   Future<DataResponse> getUserVerify() async {
@@ -222,44 +243,61 @@ class JobDataSource {
   }
 
   //assignMe
-  Future<List<GetJobList>> getAssignedMeList() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<GetJobList> assignMeList = [];
-    int id=1;
-    print("URL:${ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString()}");
+  // Future<List<GetJobList>> getAssignedMeList() async {
+  //   List<GetJobList> assignMeList = [];
+  //   print("URL:${ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString()}");
+  //   final response = await client.get(ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString(),
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //         'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+  //       },
+  //     ),
+  //   );
+  //   (response.data['data']['results'] as List).forEach((element) {
+  //     assignMeList.add(GetJobList.fromJson(element));
+  //   });
+  //   return assignMeList;
+  // }
 
-    try {
-      final response = await client.get(
-        ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString(),
+  Future<PaginatedResponse<List<GetJobList>>> getAssignedMeList(
+      String? search,String? next,String? prev) async {
+    print("URL Job List:${ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString()}");
+    List<GetJobList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString()}?name=$search"
+          :ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString();
+    }
+
+
+    final response = await client.get(api,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        assignMeList.add(GetJobList.fromJson(element));
-      });
-
-      return assignMeList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
-    final response = await client.get(ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString(),
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-        },
-      ),
-    );
+        ));
+    print("api $api");
+    print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
-      assignMeList.add(GetJobList.fromJson(element));
+      nationalityModel.add(GetJobList.fromJson(element));
     });
-    return assignMeList;
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
   }
 
   //assignCount

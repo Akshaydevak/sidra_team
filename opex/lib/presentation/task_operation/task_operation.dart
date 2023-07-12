@@ -94,7 +94,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
   void initState() {
     print("init");
     context.read<JobBloc>().add(const GetUserVerifyEvent());
-    context.read<JobBloc>().add(const GetNewJobListEvent());
+    context.read<JobBloc>().add(GetNewJobListEvent('','',''));
     super.initState();
   }
 
@@ -112,7 +112,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
         }
         if (state is GetNewJobListSuccess) {
           setState(() {});
-          joblist = state.jobList;
+          joblist = state.jobList??[];
         }
       },
       child: Scaffold(

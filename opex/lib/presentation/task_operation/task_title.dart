@@ -166,7 +166,7 @@ class _TaskTitleState extends State<TaskTitle> {
                     backgroundColor: Colors.white,
                     textColor: Colors.black);
                 context.read<TaskBloc>().add(GetTaskListEvent(
-                    int.tryParse(getTaskRead?.jobId.toString() ?? "")));
+                    int.tryParse(getTaskRead?.jobId.toString() ?? ""),'','',''));
                 Navigator.pop(context);
               }
             },
@@ -247,7 +247,7 @@ class _TaskTitleState extends State<TaskTitle> {
               isBack: false,
               onTap: () {
                 print("BACK");
-                context.read<JobBloc>().add(const GetNewJobListEvent());
+                context.read<JobBloc>().add(GetNewJobListEvent('','',''));
                 Navigator.pop(context);
               },
               label: " ${getTaskRead?.taskName ?? ""}",

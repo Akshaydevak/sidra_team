@@ -28,7 +28,11 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       yield* getFilterJobListState(event.status);
     }
     if (event is GetNewJobListEvent) {
-      yield* getNewJobListState();
+      yield* getNewJobListState(
+        prev: event.prev,
+        next: event.next,
+        search: event.search
+      );
     }
     if (event is GetUserVerifyEvent) {
       yield* getUserVerifyState();
@@ -43,7 +47,10 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       yield* getUserUderGroupState();
     }
     if (event is GetAssignedMeListEvent) {
-      yield* getAssignedMeListState();
+      yield* getAssignedMeListState(
+          search: event.search,
+      next: event.next,
+      prev: event.prev);
     }
     if (event is GetDesignationListEvent) {
       yield* getDesignationListState();
@@ -155,17 +162,34 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     }
   }
   //getNewJobList
-  Stream<JobState> getNewJobListState() async* {
+  // Stream<JobState> getNewJobListState() async* {
+  //   yield GetNewJobListLoading();
+  //
+  //   final dataResponse = await _jobRepo.getNewJobList();
+  //
+  //   if (dataResponse.data.isNotEmpty) {
+  //     yield GetNewJobListSuccess(dataResponse.data);
+  //   } else {
+  //     yield GetNewJobListFailed();
+  //   }
+  // }
+
+  Stream<JobState> getNewJobListState({
+    String? search,String? next,String? prev
+  }) async* {
     yield GetNewJobListLoading();
+    final dataResponse = await _jobRepo.getNewJobList(search,next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetNewJobListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          jobList:  dataResponse.data);  }
 
-    final dataResponse = await _jobRepo.getNewJobList();
-
-    if (dataResponse.data.isNotEmpty) {
-      yield GetNewJobListSuccess(dataResponse.data);
-    } else {
-      yield GetNewJobListFailed();
+    else {
+      yield GetNewJobListFailed("failed");
     }
   }
+
   //userverify
   Stream<JobState> getUserVerifyState() async* {
     yield GetUserVerifyLoading();
@@ -204,15 +228,31 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   }
 
   //assignmelist
-  Stream<JobState> getAssignedMeListState() async* {
+  // Stream<JobState> getAssignedMeListState() async* {
+  //   yield GetAssignedMeListLoading();
+  //
+  //   final dataResponse = await _jobRepo.getAssignedMeList();
+  //
+  //   if (dataResponse.data.isNotEmpty) {
+  //     yield GetAssignedMeListSuccess(dataResponse.data);
+  //   } else {
+  //     yield GetAssignedMeListFailed();
+  //   }
+  // }
+
+  Stream<JobState> getAssignedMeListState({
+    String? search,String? next,String? prev
+  }) async* {
     yield GetAssignedMeListLoading();
+    final dataResponse = await _jobRepo.getAssignedMeList(search,next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetAssignedMeListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          assignMeList:  dataResponse.data);  }
 
-    final dataResponse = await _jobRepo.getAssignedMeList();
-
-    if (dataResponse.data.isNotEmpty) {
-      yield GetAssignedMeListSuccess(dataResponse.data);
-    } else {
-      yield GetAssignedMeListFailed();
+    else {
+      yield GetAssignedMeListFailed("failed");
     }
   }
 

@@ -38,7 +38,7 @@ class _MyJobsState extends State<MyJobs> {
   }
   @override
   void initState() {
-    context.read<JobBloc>().add(GetNewJobListEvent());
+    context.read<JobBloc>().add(GetNewJobListEvent('','',''));
     super.initState();
   }
   void refresh(){
@@ -65,7 +65,7 @@ class _MyJobsState extends State<MyJobs> {
               customCupertinoLoading();
             }
             if (state is GetNewJobListSuccess) {
-              jobList = state.jobList;
+              jobList = state.jobList??[];
               setState(() {});
             }
           },
@@ -158,7 +158,7 @@ class _MyJobsState extends State<MyJobs> {
                                 selectedType=="Pending Jobs"?context.read<JobBloc>().add( GetFilterJobListEvent("PENDING")):
                                 selectedType=="On Progress"?context.read<JobBloc>().add( GetFilterJobListEvent("ON PROGRESS")):
                                 selectedType=="Completed"?context.read<JobBloc>().add( GetFilterJobListEvent("COMPLETED")):
-                                context.read<JobBloc>().add(const GetNewJobListEvent());
+                                context.read<JobBloc>().add(GetNewJobListEvent('','',''));
                               });
 
                             },

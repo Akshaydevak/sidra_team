@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../../common_widgets/loading.dart';
+import '../../../core/color_palatte.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../home/bloc/job_bloc.dart';
 import '../home/model/joblist_model.dart';
@@ -30,9 +32,11 @@ class _NewJobListState extends State<NewJobList> {
   bool isFilter=false;
   @override
   void initState() {
-    context.read<JobBloc>().add(const GetNewJobListEvent());
+    context.read<JobBloc>().add(GetNewJobListEvent('','',''));
     super.initState();
   }
+  String nextUrl = "";
+  String prevUrl = "";
 
   @override
   Widget build(BuildContext context) {
@@ -51,26 +55,12 @@ class _NewJobListState extends State<NewJobList> {
               setState(() {});
             }
             if (state is GetFilterJobListFailed) {
-              print("Failed JOBLIST");
 
               joblist.clear();
               setState(() {});
             }
           },
         ),
-        // BlocListener<JobBloc, JobState>(
-        //   listener: (context, state) {
-        //   if(state is GetNewJobListLoading){
-        //
-        //   }
-        //   if(state is GetNewJobListSuccess){
-        //     joblist=state.jobList;
-        //     setState(() {
-        //
-        //     });
-        //   }
-        //   },
-        // ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -148,8 +138,7 @@ class _NewJobListState extends State<NewJobList> {
                                   ? context.read<JobBloc>().add(
                                   GetFilterJobListEvent(
                                       "COMPLETED"))
-                                  : context.read<JobBloc>().add(
-                                  const GetNewJobListEvent());
+                                  : context.read<JobBloc>().add(GetNewJobListEvent('','',''));
 
                               if(selectedType=="Pending Jobs"||selectedType=="On Progress"||selectedType=="Completed"){
                                 isFilter=true;
@@ -245,15 +234,19 @@ class _NewJobListState extends State<NewJobList> {
         ):BlocBuilder<JobBloc, JobState>(
           builder: (context, state) {
             if (state is GetNewJobListLoading) {
-              Container(
-                padding: EdgeInsets.only(top: 10),
-                alignment: Alignment.center,
-                height: h / 3.5,
-                child: customCupertinoLoading(),
-              );
+              return Container(
+                  height: 200,
+                  width: w,
+                  alignment: Alignment.center,
+                  child: LoadingAnimationWidget.threeRotatingDots(
+                    color: Colors.red,
+                    size: 30,
+                  ));
             }
             if (state is GetNewJobListSuccess) {
-              joblist = state.jobList;
+              nextUrl=state.nextPageUrl??"";
+              prevUrl=state.prevPageUrl??"";
+              joblist = state.jobList??[];
               return SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
@@ -320,8 +313,7 @@ class _NewJobListState extends State<NewJobList> {
                                                 ? context.read<JobBloc>().add(
                                                     GetFilterJobListEvent(
                                                         "COMPLETED"))
-                                                : context.read<JobBloc>().add(
-                                                    const GetNewJobListEvent());
+                                                : context.read<JobBloc>().add(GetNewJobListEvent('','',''));
                                   });
                                 },
                                 hint: Text(
@@ -330,29 +322,29 @@ class _NewJobListState extends State<NewJobList> {
                                       color: Colors.grey, fontSize: 14),
                                 )),
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                              width: 37,
-                              height: 37,
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Colors.white,
-                              ),
-                              child: SvgPicture.string(TaskSvg().moreTaskIcon)),
+                          // SizedBox(
+                          //   width: 10,
+                          // ),
+                          // Container(
+                          //     width: 37,
+                          //     height: 37,
+                          //     padding: EdgeInsets.all(8),
+                          //     decoration: BoxDecoration(
+                          //       borderRadius: BorderRadius.circular(5),
+                          //       border: Border.all(
+                          //         color: Color(0xffe6ecf0),
+                          //         width: 1,
+                          //       ),
+                          //       boxShadow: const [
+                          //         BoxShadow(
+                          //           color: Color(0x05000000),
+                          //           blurRadius: 8,
+                          //           offset: Offset(1, 1),
+                          //         ),
+                          //       ],
+                          //       color: Colors.white,
+                          //     ),
+                          //     child: SvgPicture.string(TaskSvg().moreTaskIcon)),
                           SizedBox(
                             width: 15,
                           ),
@@ -404,6 +396,57 @@ class _NewJobListState extends State<NewJobList> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 15,bottom: 20,right: 15,left: 15
+                        ),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            prevUrl != ""
+                                ? GestureDetector(
+                              onTap: () {
+                                context.read<JobBloc>().add(
+                                    GetNewJobListEvent(
+                                        '',
+                                        '',
+                                        prevUrl));
+                                // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
+                              },
+                              child: Text(
+                                "Previous",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorPalette.primary,
+                                    fontSize: w / 24),
+                              ),
+                            )
+                                : Container(),
+                            nextUrl != ""
+                                ? GestureDetector(
+                              onTap: () {
+                                // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                setState(() {
+                                  context.read<JobBloc>().add(
+                                      GetNewJobListEvent(
+                                          '',
+                                          nextUrl,
+                                          ""));
+                                });
+                              },
+                              child: Text(
+                                "Next",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorPalette.primary,
+                                    fontSize: w / 24),
+                              ),
+                            )
+                                : Text("")
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

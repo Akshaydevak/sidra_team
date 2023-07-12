@@ -25,13 +25,12 @@ class AssignedMeCard extends StatefulWidget {
 class _AssignedMeCardState extends State<AssignedMeCard> {
   @override
   Widget build(BuildContext context) {
-    print("DATeee${widget.assignedMe?.endDate}");
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
         Variable.jobReadId=widget.assignedMe?.id??0;
         print("HHH${Variable.jobReadId}");
-        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId));
+        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
         context.read<JobBloc>().add(GetJobReadListEvent(Variable.jobReadId??0));
         PersistentNavBarNavigator.pushNewScreen(
           context,

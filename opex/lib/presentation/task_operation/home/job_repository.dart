@@ -49,18 +49,41 @@ class JobRepo {
     return DataResponse(error: "error Text");
   }
   //newJobList
-  Future<DataResponse> getNewJobList() async {
-    final apiResponse = await _dataSource.getNewJobList();
+  // Future<DataResponse> getNewJobList() async {
+  //   final apiResponse = await _dataSource.getNewJobList();
+  //   try {
+  //     if (apiResponse.isNotEmpty) {
+  //       return DataResponse(data: apiResponse);
+  //     } else {
+  //       return DataResponse(error: "error Text");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("error Text$e");
+  //   }
+  //   return DataResponse(error: "error Text");
+  // }
+
+  Future<PaginatedResponse> getNewJobList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getNewJobList(search,next,prev);
     try {
-      if (apiResponse.isNotEmpty) {
-        return DataResponse(data: apiResponse);
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
       } else {
-        return DataResponse(error: "error Text");
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
       }
     } catch (e) {
       debugPrint("error Text$e");
     }
-    return DataResponse(error: "error Text");
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
   }
   //userverify
   Future<DataResponse> getUserVerify() async {
@@ -100,18 +123,41 @@ class JobRepo {
     return DataResponse(error: "error Text");
   }
   //assignMe
-  Future<DataResponse> getAssignedMeList() async {
-    final apiResponse = await _dataSource.getAssignedMeList();
+  // Future<DataResponse> getAssignedMeList() async {
+  //   final apiResponse = await _dataSource.getAssignedMeList();
+  //   try {
+  //     if (apiResponse.isNotEmpty) {
+  //       return DataResponse(data: apiResponse);
+  //     } else {
+  //       return DataResponse(error: "error Text");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("error Text$e");
+  //   }
+  //   return DataResponse(error: "error Text");
+  // }
+
+  Future<PaginatedResponse> getAssignedMeList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getAssignedMeList(search,next,prev);
     try {
-      if (apiResponse.isNotEmpty) {
-        return DataResponse(data: apiResponse);
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
       } else {
-        return DataResponse(error: "error Text");
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
       }
     } catch (e) {
       debugPrint("error Text$e");
     }
-    return DataResponse(error: "error Text");
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
   }
 //taskcount
 

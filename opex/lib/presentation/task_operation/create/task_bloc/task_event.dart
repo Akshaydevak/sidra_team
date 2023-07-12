@@ -12,7 +12,10 @@ class GetTaskTypeListEvent extends TaskEvent {
 }
 class GetTaskListEvent extends TaskEvent {
   final int? id;
-  const GetTaskListEvent(this.id);
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetTaskListEvent(this.id, this.search, this.next, this.prev);
 }
 
 class GetPendingTaskListEvent extends TaskEvent {

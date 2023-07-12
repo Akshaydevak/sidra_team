@@ -213,6 +213,7 @@ class _CreateJobState extends State<CreateJob> {
                       gravity: ToastGravity.BOTTOM,
                       backgroundColor: Colors.white,
                       textColor: Colors.black);
+                  Navigator.pop(context);
                   Variable.jobReadId=int.tryParse(state.jobId)??0;
                   context.read<JobBloc>().add(
                       GetJobReadListEvent(int.tryParse(state.jobId)??0));
@@ -1007,7 +1008,13 @@ class _CreateJobState extends State<CreateJob> {
                             //     textColor: Colors.black):Container();
                             print("DATETIME${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00");
 
-                            widget.edit?BlocProvider.of<JobBloc>(context)
+                            jobtitle.text==""||jobdiscription.text==""||_range==""?Fluttertoast.showToast(
+                                  msg: 'Please Fill Fields',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.white,
+                                  textColor: Colors.black):
+                                  widget.edit?BlocProvider.of<JobBloc>(context)
                                 .add(UpdateJobEvent(
                               startDate: "$startDate $startTime",
                               endDate: "$ebdDate $endTime",

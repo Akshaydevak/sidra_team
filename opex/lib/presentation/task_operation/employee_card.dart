@@ -62,7 +62,7 @@ class EmployeeCard extends StatelessWidget {
       },
   child: Container(
       // width: w,
-      height: h/8,
+      // height: h/7,
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -82,46 +82,58 @@ class EmployeeCard extends StatelessWidget {
          children: [
            CircleAvatar(
              radius: 30,
+             backgroundImage: NetworkImage(employeeList?.profile??"",),
            ),
+           // CircleAvatar(
+           //   radius: 25, // set the radius of the circular avatar
+           //   backgroundColor: Colors.transparent, // set the background color to transparent
+           //   backgroundImage: ClipOval(
+           //     child: Image.network(employeeList?.profile??"",fit: BoxFit.cover, // replace with your image path// make sure the image covers the entire avatar area
+           //     ),
+           //   ),
+           // ),
            SizedBox(width: 8,),
-           Column(
-             mainAxisAlignment: MainAxisAlignment.start,
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-               Text(
-                 "${employeeList?.fname}"" ""${employeeList?.lname}",
-                 style: GoogleFonts.roboto(
-                   color: Colors.black,
-                   fontSize: 16,
-                   fontWeight: FontWeight.w500,
+           SizedBox(
+             width: w/1.7,
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.start,
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text(
+                   "${employeeList?.fname}"" ""${employeeList?.lname}",
+                   style: GoogleFonts.roboto(
+                     color: Colors.black,
+                     fontSize: 16,
+                     fontWeight: FontWeight.w500,
+                   ),
                  ),
-               ),
-               // SizedBox(height: 5,),
-               // Text(
-               //   "Manager  |  Rawabi Hypermarket",
-               //   style: GoogleFonts.roboto(
-               //     color: Color(0xff9b9b9b),
-               //     fontSize: 14,
-               //     fontWeight: FontWeight.w500,
-               //   ),
-               // ),
-               SizedBox(height: 5,),
-               Text(
-                 employeeList?.primaryMobile??"",
-                 style: const TextStyle(
-                   color: Colors.black,
-                   fontSize: 15,
+                 // SizedBox(height: 5,),
+                 // Text(
+                 //   "Manager  |  Rawabi Hypermarket",
+                 //   style: GoogleFonts.roboto(
+                 //     color: Color(0xff9b9b9b),
+                 //     fontSize: 14,
+                 //     fontWeight: FontWeight.w500,
+                 //   ),
+                 // ),
+                 SizedBox(height: 5,),
+                 Text(
+                   employeeList?.primaryMobile??"",
+                   style: const TextStyle(
+                     color: Colors.black,
+                     fontSize: 15,
+                   ),
                  ),
-               ),
-               const SizedBox(height: 5,),
-               Text(
-                 employeeList?.primaryMail??"",
-                 style: const TextStyle(
-                   color: Colors.black,
-                   fontSize: 15,
-                 ),
-               )
-             ],
+                 const SizedBox(height: 5,),
+                 Text(
+                   employeeList?.primaryMail??"",
+                   style: const TextStyle(
+                     color: Colors.black,
+                     fontSize: 15,
+                   ),
+                 )
+               ],
+             ),
            ),
            Spacer(),
            // PopupMenuButton(

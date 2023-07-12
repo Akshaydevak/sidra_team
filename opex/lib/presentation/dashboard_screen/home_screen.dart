@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    context.read<JobBloc>().add(const GetNewJobListEvent());
+    context.read<JobBloc>().add(const GetNewJobListEvent('','',''));
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
     ));

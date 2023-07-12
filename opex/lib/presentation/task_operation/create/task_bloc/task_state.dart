@@ -24,12 +24,16 @@ class GetTaskListInitial extends TaskState {}
 class GetTaskListLoading extends TaskState {}
 
 class GetTaskListSuccess extends TaskState {
-  final List<GetTaskList> taskList;
-
-  const GetTaskListSuccess(this.taskList);
+  final List<GetTaskList>? taskList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetTaskListSuccess({this.taskList, this.prevPageUrl, this.nextPageUrl});
 }
 
-class GetTaskListFailed extends TaskState {}
+class GetTaskListFailed extends TaskState {
+  final String msg;
+  const GetTaskListFailed( this.msg);
+}
 
 //pendinglist
 class GetPendingTaskListInitial extends TaskState {}

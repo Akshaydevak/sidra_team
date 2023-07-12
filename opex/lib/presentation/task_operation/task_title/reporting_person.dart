@@ -137,6 +137,9 @@ class _ReportingPersonState extends State<ReportingPerson> {
               }
               if (state is GetEmployeeListSuccess) {
                 employee = state.employeeList;
+                setState(() {
+
+                });
                 print("sucsess${state.employeeList}");
               }
             },
@@ -175,19 +178,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                 preferredSize: Size.fromHeight(60),
                 child: BackAppBar(
                   label: "Reporting Person",
-                  isAction: true,
-                  action: GestureDetector(
-                    onTap: () {
-                      context.read<JobBloc>().add(
-                          GetJobReadListEvent(
-                              int.tryParse(Variable.jobReadId.toString()) ??
-                                  0));
-                    },
-                    child: SvgPicture.string(
-                      CartSvg().searchIcon,
-                      color: Colors.black,
-                    ),
-                  ),
+                  isAction: false,
                 )
             ),
             body: Container(

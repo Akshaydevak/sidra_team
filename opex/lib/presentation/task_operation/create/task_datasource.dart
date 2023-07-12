@@ -49,42 +49,62 @@ class TaskDataSource {
   }
 
   //task list
-  Future<List<GetTaskList>> getTaskList(int? id) async {
-    List<GetTaskList> taskList = [];
-    print("URL Task:${ClusterUrls.taskListUrl+id.toString()}");
+  // Future<List<GetTaskList>> getTaskList(int? id) async {
+  //   List<GetTaskList> taskList = [];
+  //   print("URL Task Under Job List:${ClusterUrls.taskListUrl+id.toString()}");
+  //
+  //   final response = await client.get(ClusterUrls.taskListUrl+id.toString(),
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //         'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+  //       },
+  //     ),
+  //   );
+  //   (response.data['data']['results'] as List).forEach((element) {
+  //     taskList.add(GetTaskList.fromJson(element));
+  //   });
+  //   return taskList;
+  // }
 
-    try {
-      final response = await client.get(
-        ClusterUrls.taskListUrl+id.toString(),
+  Future<PaginatedResponse<List<GetTaskList>>> getTaskList(
+      String? search,String? next,String? prev,int? id) async {
+    print("URL Task Under Job List:${ClusterUrls.taskListUrl+id.toString()}");
+    List<GetTaskList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.taskListUrl+id.toString()}?name=$search"
+          : ClusterUrls.taskListUrl+id.toString();
+    }
+
+
+    final response = await client.get(api,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        taskList.add(GetTaskList.fromJson(element));
-      });
-
-      return taskList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
-    final response = await client.get(ClusterUrls.taskListUrl+id.toString(),
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-        },
-      ),
-    );
+        ));
+    print("api " + api);
+    print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
-      taskList.add(GetTaskList.fromJson(element));
+      nationalityModel.add(GetTaskList.fromJson(element));
     });
-    return taskList;
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
   }
 
   //pendinglist
@@ -370,7 +390,7 @@ class TaskDataSource {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['task_id'].toString());
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
 
@@ -481,7 +501,7 @@ class TaskDataSource {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
 

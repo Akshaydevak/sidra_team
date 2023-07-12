@@ -25,18 +25,41 @@ class TaskRepo {
     return DataResponse(error: "error Text");
   }
 
-  Future<DataResponse> getTaskList(int? id) async {
-    final apiResponse = await _dataSource.getTaskList(id);
+  // Future<DataResponse> getTaskList(int? id) async {
+  //   final apiResponse = await _dataSource.getTaskList(id);
+  //   try {
+  //     if (apiResponse.isNotEmpty) {
+  //       return DataResponse(data: apiResponse);
+  //     } else {
+  //       return DataResponse(error: "error Text");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("error Text$e");
+  //   }
+  //   return DataResponse(error: "error Text");
+  // }
+
+  Future<PaginatedResponse> getTaskList(String? search,String? next,String? prev,int? id) async {
+    final apiResponse = await _dataSource.getTaskList(search,next,prev,id);
     try {
-      if (apiResponse.isNotEmpty) {
-        return DataResponse(data: apiResponse);
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
       } else {
-        return DataResponse(error: "error Text");
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
       }
     } catch (e) {
       debugPrint("error Text$e");
     }
-    return DataResponse(error: "error Text");
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
   }
   //pendinglist
   Future<DataResponse> getPendingTaskList() async {

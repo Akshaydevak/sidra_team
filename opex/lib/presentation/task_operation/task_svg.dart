@@ -28,6 +28,34 @@ class TaskSvg{
 </defs>
 </svg>
 ''';
+
+  String nolistIcon='''<svg width="164" height="164" viewBox="0 0 164 164" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="82" cy="82" r="82" fill="#FE5762" fill-opacity="0.1"/>
+<rect x="38" y="69" width="87" height="26" rx="13" fill="#FE5762" fill-opacity="0.54"/>
+<ellipse cx="49.5" cy="82" rx="3.5" ry="3" fill="white"/>
+<rect x="57" y="79" width="46" height="6" rx="3" fill="url(#paint0_linear_14077_20296)"/>
+<rect x="38.0762" y="101.074" width="87.3065" height="25.6784" rx="12.8392" fill="#FE5762"/>
+<circle cx="48.8975" cy="113.731" r="3.48492" fill="white"/>
+<rect x="55.6846" y="110.613" width="46.9548" height="6.60302" rx="3.30151" fill="url(#paint1_linear_14077_20296)"/>
+<rect x="38.0762" y="37.2461" width="87.3065" height="25.6784" rx="12.8392" fill="#FE5762" fill-opacity="0.2"/>
+<circle cx="48.8975" cy="49.9029" r="3.48492" fill="white"/>
+<rect x="55.6846" y="46.7852" width="46.9548" height="6.60302" rx="3.30151" fill="url(#paint2_linear_14077_20296)"/>
+<defs>
+<linearGradient id="paint0_linear_14077_20296" x1="57" y1="82.5" x2="103" y2="82.6937" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_14077_20296" x1="56.2348" y1="113.548" x2="102.639" y2="113.915" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_14077_20296" x1="55.6846" y1="50.0867" x2="92.7348" y2="50.0867" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>
+''';
   String moreIcon='''<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="18" cy="18" r="18" fill="#F8F7F5"/>
 <path d="M11 19C11.5523 19 12 18.5523 12 18C12 17.4477 11.5523 17 11 17C10.4477 17 10 17.4477 10 18C10 18.5523 10.4477 19 11 19Z" stroke="#969090" stroke-width="2"/>

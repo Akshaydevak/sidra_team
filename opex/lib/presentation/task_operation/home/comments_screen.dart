@@ -13,10 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:image_downloader/image_downloader.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/common_snackBar.dart';
 import '../../inventory/inventory_new_list.dart';
@@ -24,7 +21,6 @@ import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../employee_bloc/employee_bloc.dart';
 import '../task_operation_appbar.dart';
-import 'comment_img_card.dart';
 
 class CommentsScreen extends StatefulWidget {
   final int? taskId;

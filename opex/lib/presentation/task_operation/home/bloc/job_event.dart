@@ -14,7 +14,10 @@ class GetRoleListEvent extends JobEvent {
   const GetRoleListEvent();
 }
 class GetNewJobListEvent extends JobEvent {
-  const GetNewJobListEvent();
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetNewJobListEvent(this.search, this.next, this.prev);
 }
 class GetInstantJobListEvent extends JobEvent {
   const GetInstantJobListEvent();
@@ -36,7 +39,10 @@ class GetUserUderGroupEvent extends JobEvent {
   const GetUserUderGroupEvent();
 }
 class GetAssignedMeListEvent extends JobEvent {
-  const GetAssignedMeListEvent();
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetAssignedMeListEvent(this.search, this.next, this.prev);
 }
 class PinAJobPostEvent extends JobEvent {
   final int taskId;

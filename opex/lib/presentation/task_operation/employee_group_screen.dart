@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../common_widgets/loading.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -84,7 +85,14 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                 BlocBuilder<JobBloc, JobState>(
                  builder: (context, state) {
                  if (state is GetEmployeeListLoading) {
-                 customCupertinoLoading();
+                   return Container(
+                       height: 300,
+                       width: w,
+                       alignment: Alignment.center,
+                       child: LoadingAnimationWidget.threeRotatingDots(
+                         color: Colors.red,
+                         size: 30,
+                       ));
                 }
                 if (state is GetEmployeeListSuccess) {
                   print("Sucsess shifu");
@@ -127,50 +135,20 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                     ],
                   );
                 }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "1 Employees",
-                      style: GoogleFonts.roboto(
-                        color: ColorPalette.black,
-                        fontSize: w/22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    Container(
-                      //color: Colors.yellow,
-                      padding: const EdgeInsets.only(
-                        bottom: 20,
-                      ),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          separatorBuilder: (BuildContext cxt, int i) {
-                            return const SizedBox(
-                              height: 5,
-                            );
-                          },
-                          itemBuilder: (BuildContext context, int i) {
-                            return InkWell(
-                              onTap: () {
-
-                              },
-                              child:  EmployeeCard(),
-                            );
-                          },
-                          itemCount: 2),
-                    ),
-                  ],
-                );
+                return Container();
   },
 ):
                 BlocBuilder<JobBloc, JobState>(
                 builder: (context, state) {
                 if (state is GetGroupListLoading) {
-                customCupertinoLoading();
+                  return Container(
+                      height: 300,
+                      width: w,
+                      alignment: Alignment.center,
+                      child: LoadingAnimationWidget.threeRotatingDots(
+                        color: Colors.red,
+                        size: 30,
+                      ));
                 }
                 if (state is GetGroupListSuccess) {
                   print("Sucsess shifu");
