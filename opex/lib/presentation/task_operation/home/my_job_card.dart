@@ -495,21 +495,21 @@ class _MyJobCardState extends State<MyJobCard> {
                     children: [
                       Row(
                         children: [
-                          SvgPicture.string(TaskSvg().attachmIcon),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "1",
-                            style: GoogleFonts.roboto(
-                              color: const Color(0xff939393),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 15,
-                          ),
+                          // SvgPicture.string(TaskSvg().attachmIcon),
+                          // const SizedBox(
+                          //   width: 5,
+                          // ),
+                          // Text(
+                          //   "1",
+                          //   style: GoogleFonts.roboto(
+                          //     color: const Color(0xff939393),
+                          //     fontSize: 15,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
+                          // const SizedBox(
+                          //   width: 15,
+                          // ),
                           SvgPicture.string(TaskSvg().timerIcon),
                           const SizedBox(
                             width: 5,

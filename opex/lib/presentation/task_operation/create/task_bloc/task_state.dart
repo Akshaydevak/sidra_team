@@ -186,6 +186,25 @@ class UpdateTaskFailed extends TaskState {
   @override
   List<Object> get props => [];
 }
+
+class UpdateReportingTaskLoading extends TaskState {}
+
+class UpdateReportingSuccess extends TaskState {
+  final String taskId;
+
+  const UpdateReportingSuccess(this.taskId);
+
+  @override
+  List<Object> get props => [taskId];
+}
+
+class UpdateReportingFailed extends TaskState {
+  final String error;
+
+  const UpdateReportingFailed(this.error);
+  @override
+  List<Object> get props => [];
+}
 //deleteTask
 class DeleteTaskInitial extends TaskState {}
 

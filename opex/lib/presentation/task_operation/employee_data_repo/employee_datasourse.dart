@@ -270,36 +270,15 @@ print(groupRead.userId);
   //listActivity
   Future<List<ActivityList>> getActivityList(int? id) async {
     List<ActivityList> activityList = [];
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
+
     print("URL:${ClusterUrls.activityLogsUrl+id.toString()}");
 
-    try {
-      final response = await client.get(
-        ClusterUrls.activityLogsUrl+id.toString(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
-      (response.data['data'] as List).forEach((element) {
-        activityList.add(ActivityList.fromJson(element));
-      });
-
-      return activityList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
     final response = await client.get(ClusterUrls.activityLogsUrl+id.toString(),
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          'Authorization': '${authentication.authenticatedUser.token}',
         },
       ),
     );

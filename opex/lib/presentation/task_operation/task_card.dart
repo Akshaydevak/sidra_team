@@ -18,7 +18,7 @@ class TaskCard extends StatelessWidget {
   String? endstdDate;
   @override
   Widget build(BuildContext context) {
-    var date2 = taskList?.createdOn;
+    var date2 = taskList?.endDate;
     var dateTime = DateTime.parse("$date2");
     endstdDate = DateFormat('dd-MM-yyyy').format(dateTime).toString();
     var w = MediaQuery.of(context).size.width;
@@ -30,7 +30,7 @@ class TaskCard extends StatelessWidget {
           screen: TaskTitle(
             isMyJob: true,
           ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
+          withNavBar: false, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
         //  TaskTitle

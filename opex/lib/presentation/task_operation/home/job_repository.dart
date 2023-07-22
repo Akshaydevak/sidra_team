@@ -94,9 +94,33 @@ class JobRepo {
       return DataResponse(error: apiResponse.error ?? "");
     }
   }
+  //admin
+  Future<DataResponse> getAdminData() async {
+    final apiResponse = await _dataSource.getAdminData();
+    if (apiResponse.hasData) {
+      return DataResponse(error: apiResponse.error);
+    } else {
+      return DataResponse(error: apiResponse.error ?? "");
+    }
+  }
   //employeelist
   Future<DataResponse> getEmployeeList() async {
     final apiResponse = await _dataSource.getEmployeeList();
+    try {
+      if (apiResponse.isNotEmpty) {
+        return DataResponse(data: apiResponse);
+      } else {
+        return DataResponse(error: "error Text");
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return DataResponse(error: "error Text");
+  }
+
+  //
+  Future<DataResponse> getReportingPersonList() async {
+    final apiResponse = await _dataSource.getReportingPersonList();
     try {
       if (apiResponse.isNotEmpty) {
         return DataResponse(data: apiResponse);

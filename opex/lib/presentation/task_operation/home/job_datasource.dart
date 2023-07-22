@@ -162,6 +162,31 @@ class JobDataSource {
       return DataResponse(data: null, error: response.data['message']);
     }
   }
+  //admin
+  Future<DataResponse> getAdminData() async {
+
+    List<GetJobList> jobList = [];
+    print("URL admin:${ClusterUrls.adminDataUrl}");
+
+    final response = await client.get(ClusterUrls.adminDataUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print("admin data${response}");
+    if (response.data['status'] == 'success') {
+      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
+
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message'].toString());
+    } else {
+      return DataResponse(data: null, error: response.data['message']);
+    }
+  }
   //employeelist
   Future<List<GetEmployeeList>> getEmployeeList() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -188,6 +213,27 @@ class JobDataSource {
       print("SHIFAS ERROR$h");
     }
     final response = await client.get(ClusterUrls.employeeListUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    (response.data['data']['results'] as List).forEach((element) {
+      employeeList.add(GetEmployeeList.fromJson(element));
+    });
+    return employeeList;
+  }
+
+  //report
+  Future<List<GetEmployeeList>> getReportingPersonList() async {
+    List<GetEmployeeList> employeeList = [];
+    print("URL:${ClusterUrls.reportingListUrl}");
+
+
+    final response = await client.get(ClusterUrls.reportingListUrl,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -307,9 +353,12 @@ class JobDataSource {
     required String endDate,
 
   }) async {
+    print("startDDDDD$startDate");
+    print("startDDDDD$endDate");
     GetCountTask employeeDetails;
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     final response = await client.post(ClusterUrls.taskCountUrl+authentication.authenticatedUser.code.toString(),
+
 
       data: {
         "starting_date":startDate,

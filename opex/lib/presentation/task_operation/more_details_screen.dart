@@ -74,267 +74,280 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
 
-    return MultiBlocListener(
+    return WillPopScope(
+      onWillPop: () async {
+       Navigator.pop(context);
+       Navigator.pop(context);
+        return true;
+      },
+      child: MultiBlocListener(
   listeners: [
-    BlocListener<TaskBloc, TaskState>(
+      BlocListener<TaskBloc, TaskState>(
   listener: (context, state) {
-    if(state is GetTaskReadLoading){
+      if(state is GetTaskReadLoading){
 
-    }
-    if(state is GetTaskReadSuccess){
-      readTask=state.getTaskRead;
-      if(readTask?.latitude!=null||readTask?.longitude!=null){
-        isLocation=true;
-      }else{
-        isLocation=false;
       }
-      print("readTask$readTask");
-      print("readTask$isLocation");
-      print("readTask${readTask?.latitude}");
-      print("readTask${readTask?.longitude}");
-      Variable.taskReadId=readTask?.id??0;
+      if(state is GetTaskReadSuccess){
+        readTask=state.getTaskRead;
+        if(readTask?.latitude!=null||readTask?.longitude!=null){
+          isLocation=true;
+        }else{
+          isLocation=false;
+        }
+        print("readTask$readTask");
+        print("readTask$isLocation");
+        print("readTask${readTask?.latitude}");
+        print("readTask${readTask?.longitude}");
+        Variable.taskReadId=readTask?.id??0;
 
-      setState(() {
+        setState(() {
 
-      });
-    }
+        });
+      }
   },
 )
   ],
   child: Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
-        child: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.white, // Navigation bar
-            statusBarColor: Colors.white, // Status bar
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.white, // Navigation bar
+              statusBarColor: Colors.white, // Status bar
+            ),
+
+            elevation: 0,
+
           ),
-
-          elevation: 0,
-
         ),
-      ),
-      body: SafeArea(
-          child: SingleChildScrollView(
-              child: Column(children: [
-        BackAppBar(
-          onTap: (){},
-            label: "More Details",
-            isAction: false,
-        ),
-        Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if(isLocation==false){
-                      isLocation = !isLocation;
-                    }
-                    else{
+        body: SafeArea(
+            child: SingleChildScrollView(
+                child: Column(children: [
+          BackAppBar(
+            onTap: (){
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            isBack: false,
+              label: "More Details",
+              isAction: false,
+          ),
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if(isLocation==false){
+                        isLocation = !isLocation;
+                      }
+                      else{
 
-                    }
+                      }
 
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen: AddressPickFromMap(taskRead: readTask,),
+                        withNavBar: true,
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      );
+                    });
+                  },
+                  child: Container(
+                    width: w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xffe6ecf0),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x05000000),
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: Container(
+                      margin: isLocation
+                          ? EdgeInsets.only(
+                              left: 16, right: 16, bottom: 10, top: 20)
+                          : EdgeInsets.all(16),
+                      child: SingleRow(
+                          color: Color(0xff3B9FFC),
+                          label: "Share Location",
+                          svg: CreateSvg().locationIcon,
+                          onTap: () {
+                            setState(() {
+                              if(isLocation==false){
+                                isLocation = !isLocation;
+                              }
+                              else{
+
+                              }
+
+                              PersistentNavBarNavigator.pushNewScreen(
+                                context,
+                                screen: AddressPickFromMap(taskRead: readTask),
+                                withNavBar: true,
+                                pageTransitionAnimation: PageTransitionAnimation.fade,
+                              );
+                            });
+                          },
+                          endIcon: isLocation
+                              ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
+                              : SvgPicture.string(HomeSvg().toggleInActive,height: 22)),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+
+                  onTap: (){
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
-                      screen: AddressPickFromMap(taskRead: readTask,),
+                      screen: AttachmentScreen(readData: readTask),
+                      withNavBar: true, // OPTIONAL VALUE. True by default.
+                      pageTransitionAnimation: PageTransitionAnimation.fade,
+                    );
+                  },
+                  child: Container(
+                    width: w,
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xffe6ecf0),
+                        width: 1,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x05000000),
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child:  SingleRow(
+                        color: Color(0xffFFC800),
+                      label: "Add Attachments",
+                      svg: TaskSvg().attachmentIcon,
+                      onTap: () {
+
+                      },
+                      endIcon: Icon(Icons.arrow_forward_ios_sharp)),
+                  ),
+                ),
+
+              SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                  onTap: (){
+                    readTask?.paymentId!=null?context.read<TaskBloc>().add(
+                        GetPaymentReadListEvent(readTask?.id??0,true)):null;
+                    Variable.taskReadId=readTask?.id??0;
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: PaymentOption(
+                        isJob: false,
+                        isTask: true,
+                        update: readTask?.paymentId==null?false:readTask?.paymentId==null?false:true,
+                        paymentId: readTask?.paymentId??0,
+                        taskId: readTask?.id??0,jobId: null,),
+                      withNavBar: true, // OPTIONAL VALUE. True by default.
+                      pageTransitionAnimation: PageTransitionAnimation.fade,
+                    );
+                  },
+                  child: Container(
+                    width: w,
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xffe6ecf0),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x05000000),
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child:  SingleRow(
+                        color: Color(0xff519BE0),
+                        svg: TaskSvg().walletIcon,
+                      label: "Payment Option",
+                      onTap: () {
+
+
+                      },
+                      endIcon: Icon(Icons.arrow_forward_ios_sharp,size: 18,)),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                  onTap: (){
+                    readTask?.rewardid!=null?context.read<TaskBloc>().add(
+                        GetReadRewardsEvent(readTask?.id??0,true)):null;
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: RewardsScreen(type: "Task",typeId: readTask?.id??0,
+                      update: readTask?.rewardid==null?false:readTask?.rewardid==null?false:true,),
                       withNavBar: true,
                       pageTransitionAnimation: PageTransitionAnimation.fade,
                     );
-                  });
-                },
-                child: Container(
-                  width: w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xffe6ecf0),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x05000000),
-                        blurRadius: 8,
-                        offset: Offset(1, 1),
-                      ),
-                    ],
-                    color: Colors.white,
-                  ),
+                  },
                   child: Container(
-                    margin: isLocation
-                        ? EdgeInsets.only(
-                            left: 16, right: 16, bottom: 10, top: 20)
-                        : EdgeInsets.all(16),
-                    child: SingleRow(
-                        color: Color(0xff3B9FFC),
-                        label: "Share Location",
-                        svg: CreateSvg().locationIcon,
-                        onTap: () {
-                          setState(() {
-                            if(isLocation==false){
-                              isLocation = !isLocation;
-                            }
-                            else{
-
-                            }
-
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: AddressPickFromMap(taskRead: readTask),
-                              withNavBar: true,
-                              pageTransitionAnimation: PageTransitionAnimation.fade,
-                            );
-                          });
-                        },
-                        endIcon: isLocation
-                            ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
-                            : SvgPicture.string(HomeSvg().toggleInActive,height: 22)),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              GestureDetector(
-
-                onTap: (){
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: AttachmentScreen(readData: readTask),
-                    withNavBar: true, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
-                },
-                child: Container(
-                  width: w,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xffe6ecf0),
-                      width: 1,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x05000000),
-                        blurRadius: 8,
-                        offset: Offset(1, 1),
+                    width: w,
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xffe6ecf0),
+                        width: 1,
                       ),
-                    ],
-                    color: Colors.white,
-                  ),
-                  child:  SingleRow(
-                      color: Color(0xffFFC800),
-                    label: "Add Attachments",
-                    svg: TaskSvg().attachmentIcon,
-                    onTap: () {
-
-                    },
-                    endIcon: Icon(Icons.arrow_forward_ios_sharp)),
-                ),
-              ),
-
-            SizedBox(
-                height: 10,
-              ),
-              GestureDetector(
-                onTap: (){
-                  readTask?.paymentId!=null?context.read<TaskBloc>().add(
-                      GetPaymentReadListEvent(readTask?.paymentId??0,true)):null;
-                  Variable.taskReadId=readTask?.id??0;
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: PaymentOption(isJob: false,isTask: true,
-                      update: readTask?.paymentId==null?false:readTask?.paymentId==null?false:true,
-                      paymentId: readTask?.paymentId??0,
-                      taskId: readTask?.id??0,jobId: null,),
-                    withNavBar: true, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
-                },
-                child: Container(
-                  width: w,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xffe6ecf0),
-                      width: 1,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x05000000),
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                      color: Colors.white,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x05000000),
-                        blurRadius: 8,
-                        offset: Offset(1, 1),
-                      ),
-                    ],
-                    color: Colors.white,
+                    child:  SingleRow(
+                        label: "Rewards",
+                        color: Color(0xffE051B8),
+                        svg: TaskSvg().rewardIcon,
+                      onTap: () {
+
+                      },
+                      endIcon: Icon(Icons.arrow_forward_ios_sharp,size: 18,)),
                   ),
-                  child:  SingleRow(
-                      color: Color(0xff519BE0),
-                      svg: TaskSvg().walletIcon,
-                    label: "Payment Option",
-                    onTap: () {
-
-
-                    },
-                    endIcon: Icon(Icons.arrow_forward_ios_sharp,size: 18,)),
+                ), SizedBox(
+                  height: 10,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              GestureDetector(
-                onTap: (){
-                  readTask?.rewardid!=null?context.read<TaskBloc>().add(
-                      GetReadRewardsEvent(readTask?.id??0,true)):null;
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: RewardsScreen(type: "Task",typeId: readTask?.id??0,
-                    update: readTask?.rewardid==null?false:readTask?.rewardid==null?false:true,),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
-                },
-                child: Container(
-                  width: w,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xffe6ecf0),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x05000000),
-                        blurRadius: 8,
-                        offset: Offset(1, 1),
-                      ),
-                    ],
-                    color: Colors.white,
-                  ),
-                  child:  SingleRow(
-                      label: "Rewards",
-                      color: Color(0xffE051B8),
-                      svg: TaskSvg().rewardIcon,
-                    onTap: () {
 
-                    },
-                    endIcon: Icon(Icons.arrow_forward_ios_sharp,size: 18,)),
-                ),
-              ), SizedBox(
-                height: 10,
-              ),
-
-            ],
+              ],
+            ),
           ),
-        ),
-      ]))),
-    ),
-);
+        ]))),
+      ),
+),
+    );
   }
 
 }

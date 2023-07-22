@@ -38,6 +38,8 @@ class GetTaskList extends Equatable {
   final int? id;
   @JsonKey(name: 'task_name')
   final String? taskName;
+  @JsonKey(name: 'task_type_name')
+  final String? taskTypeName;
   @JsonKey(name: 'job_title')
   final String? jobTitle;
   @JsonKey(name: 'job_description')
@@ -129,6 +131,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.taskTypeName,
     this.paymentMeta,
     this.rewardsData,
     this.locayionUrl,

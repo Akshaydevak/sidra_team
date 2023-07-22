@@ -8,6 +8,8 @@ class GetEmployeeList extends Equatable {
   final int? id;
   @JsonKey(name: 'primary_mail')
   final String? primaryMail;
+  @JsonKey(name: 'email')
+  final String? email;
   @JsonKey(name: 'primary_mobile')
   final String? primaryMobile;
   @JsonKey(name: 'fname')
@@ -30,6 +32,8 @@ class GetEmployeeList extends Equatable {
   final String? roleName;
   @JsonKey(name: 'employee_code')
   final String? code;
+  @JsonKey(name: 'user_code')
+  final String? userCode;
   @JsonKey(name: 'organization_type')
   final String? orgType;
   @JsonKey(name: 'organization_code')
@@ -51,9 +55,11 @@ class GetEmployeeList extends Equatable {
 
   const GetEmployeeList( {
       this.gender,
+      this.userCode,
       this.orgCode,
       this.id,
       this.isActive,
+      this.email,
     this.primaryMail,
     this.primaryMobile,
     this.fname,

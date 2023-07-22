@@ -29,8 +29,14 @@ class GetFilterJobListEvent extends JobEvent {
 class GetUserVerifyEvent extends JobEvent {
   const GetUserVerifyEvent();
 }
+class GetAdminDataEvent extends JobEvent {
+  const GetAdminDataEvent();
+}
 class GetEmployeeListEvent extends JobEvent {
   const GetEmployeeListEvent();
+}
+class GetReportingPersonListEvent extends JobEvent {
+  const GetReportingPersonListEvent();
 }
 class GetGroupListEvent extends JobEvent {
   const GetGroupListEvent();

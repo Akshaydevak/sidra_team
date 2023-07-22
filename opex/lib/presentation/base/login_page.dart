@@ -128,6 +128,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormReusable(
                               label: "Employee Code",
                               hint: "eg.EMPY000",
+                              onchange: (bb){
+                                codeController.value = codeController.value.copyWith(
+                                  text: bb.toUpperCase(),
+                                  selection: TextSelection.collapsed(offset: bb.length),
+                                );
+                              },
                               controller: codeController),
                           // PhoneWidget(),
                           SizedBox(

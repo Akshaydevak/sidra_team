@@ -7,16 +7,13 @@ import 'package:cluster/presentation/task_operation/create/single_row.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/model/joblist_model.dart';
 import 'package:cluster/presentation/task_operation/job_title.dart';
-import 'package:cluster/presentation/task_operation/more_details_screen.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../common_widgets/loading.dart';
 import '../../../../core/common_snackBar.dart';
 import '../../../../core/utils/variables.dart';
@@ -48,40 +45,6 @@ class _CreateJobState extends State<CreateJob> {
     selectInstat = val;
     setState(() {});
   }
-  static Route<DateTime> _datePickerRoute(
-      BuildContext context,
-      Object? arguments,
-      ) {
-    return DialogRoute<DateTime>(
-      context: context,
-      builder: (BuildContext context) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.white,
-              onPrimary: Colors.green,
-              onSurface: Colors.black,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
-              ),
-            ),
-          ),
-          child: DatePickerDialog(
-
-            restorationId: 'date_picker_dialog',
-            initialEntryMode: DatePickerEntryMode.calendar,
-
-            initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
-            firstDate: DateTime(2021),
-            lastDate: DateTime(2022),
-          ),
-        );
-      },
-    );
-  }
-
   GetJobList? JobRead;
 
   String _selectedDate1 = '';
@@ -107,16 +70,16 @@ class _CreateJobState extends State<CreateJob> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-      print("searjjj${_range2}");
       startDate=_range.split(" - ")[0];
       startDate2=_range2.split(" - ")[0];
       ebdDate=_range.split(" - ")[1];
       ebdDate2=_range2.split(" - ")[1];
 
+      validationCheck();
     });
   }
-  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
-  TimeOfDay _time2 = TimeOfDay(hour: 8, minute: 15);
+  TimeOfDay _time = const TimeOfDay(hour: 7, minute: 15);
+  TimeOfDay _time2 = const TimeOfDay(hour: 8, minute: 15);
 
   TextEditingController jobtitle=TextEditingController();
   TextEditingController jobdiscription=TextEditingController();
@@ -132,7 +95,16 @@ class _CreateJobState extends State<CreateJob> {
         startTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
       });
     }
-    print("TYM${_time.hour}"":""${_time.minute}");
+    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30);
+
+    final twentyFourHourFormat = DateFormat('HH:mm:00');
+    final twelveHourFormat = DateFormat('h:mm a');
+
+    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+     startTime = twelveHourFormat.format(dateTime);
+     startTime2 = twentyFourHourFormat.format(dateTime);
+    validationCheck();
+    print(startTime);
   }
   void _endTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -146,6 +118,17 @@ class _CreateJobState extends State<CreateJob> {
       });
     }
     print("TYM${_time2.hour}"":""${_time2.minute}");
+    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30); // Example time of day (3:30 PM)
+
+    final twentyFourHourFormat = DateFormat('HH:mm:00');
+    final twelveHourFormat = DateFormat('h:mm a');
+
+    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+    endTime = twelveHourFormat.format(dateTime);
+    endTime2 = twentyFourHourFormat.format(dateTime);
+
+    print(endTime);
+    validationCheck();
   }
 
   void onselct(index){
@@ -160,12 +143,13 @@ class _CreateJobState extends State<CreateJob> {
   String startDate2="";
   String ebdDate="";
   String ebdDate2="";
-  String startTime="";
-  String endTime="";
+  String startTime="Select Time";
+  String startTime2="00:00";
+  String endTime="Select Time";
+  String endTime2="00:00";
   List<GetJobList>? joblist=[];
   String PriorityLeval="";
-  var endstdDate="";
-  var startstdDate="";
+
   void refreah(){
     setState(() {
 
@@ -173,8 +157,19 @@ class _CreateJobState extends State<CreateJob> {
   }
   @override
   void initState() {
-    context.read<JobBloc>().add(GetJobTypeListEvent());
+    context.read<JobBloc>().add(const GetJobTypeListEvent());
     super.initState();
+  }
+  FocusNode focusNode=FocusNode();
+  FocusNode descriptionfocusNode=FocusNode();
+  bool? isValid=false;
+  validationCheck(){
+    if(jobtitle.text!=""&&jobdiscription.text!=""&&_range!=""&&startTime!="Select Time"&&endTime!="Select Time"){
+      isValid=true;
+    }
+    else{
+      isValid=false;
+    }
   }
 
   @override
@@ -185,7 +180,8 @@ class _CreateJobState extends State<CreateJob> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: BackAppBar(label: widget.edit==true? "Edit Job" : "Create Job",isAction: false,action: Container(), ),
+          child: BackAppBar(label: widget.edit==true? "Edit Job" : "Create Job",
+            isAction: false,action: Container(), ),
         ),
         body: MultiBlocListener(
           listeners: [
@@ -278,19 +274,40 @@ class _CreateJobState extends State<CreateJob> {
                   jobdiscription.text=JobRead?.description??"";
                   select=JobRead?.jobType??0;
                   JobRead?.jobType==1?select=0:JobRead?.jobType==2?select=1:JobRead?.jobType==3?select=2:0;
+                  print("Read${JobRead?.startDate}");
+                  print("Read${JobRead?.endDate}");
                   startDate=JobRead?.startDate?.split("T")[0]??"";
                   ebdDate=JobRead?.endDate?.split("T")[0]??"";
                   startTime=JobRead?.startDate?.split("T")[1].split("+")[0]??"";
                   endTime=JobRead?.endDate?.split("T")[1].split("+")[0]??"";
+                  final timeOfDay = TimeOfDay(hour: int.tryParse(startTime.split(":")[0])??0, minute: int.tryParse(startTime.split(":")[1])??0); // Example time of day (3:30 PM)
+                  final timeOfDayEnd = TimeOfDay(hour: int.tryParse(endTime.split(":")[0])??0, minute: int.tryParse(endTime.split(":")[1])??0); // Example time of day (3:30 PM)
+
+                  final twentyFourHourFormat = DateFormat('HH:mm:00');
+                  final twelveHourFormat = DateFormat('h:mm a');
+
+                  final dateTimet = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+                  final dateTimett = DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
+                  startTime = twelveHourFormat.format(dateTimet);
+                  startTime2 = twentyFourHourFormat.format(dateTimet);
+                  endTime=twelveHourFormat.format(dateTimett);
+                  endTime2=twentyFourHourFormat.format(dateTimett);
                   jobtype=JobRead?.jobType??0;
                   PriorityLeval=JobRead?.priority??"";
-                  var date = JobRead?.endDate;
-                  var date2 = JobRead?.startDate;
+                  var date = ebdDate;
+                  var date2 = startDate;
                   var dateTime =  DateTime.parse("$date");
                   var dateTime2 =  DateTime.parse("$date2");
-                  endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
-                  startstdDate =  DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+                  ebdDate2 =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
+                  startDate2 =  DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+                  _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date"))} -'
+                      ' ${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date2"))}';
+                  _range = '${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date"))} -'
+                      ' ${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date2"))}';
                   print("JOB COME${startTime}");
+                  print("JOB COME${startDate2}");
+                  print("JOB COME${ebdDate2}");
+                  print("JOB COME${endTime}");
                   setState(() {
 
                   });
@@ -424,6 +441,13 @@ class _CreateJobState extends State<CreateJob> {
                                 style:GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600
                                 ) ,
+                                onChanged: (n){
+                                  validationCheck();
+                                  setState(() {
+
+                                  });
+                                },
+                                focusNode: focusNode,
                                 decoration:  InputDecoration(
                                   contentPadding: EdgeInsets.only(left:16,right: 16 ),
                                   hintText: "Job Title",
@@ -450,6 +474,13 @@ class _CreateJobState extends State<CreateJob> {
                                 controller: jobdiscription,
                                 maxLines: 4,
                                 minLines: 1,
+                                onChanged: (n){
+                                  validationCheck();
+                                  setState(() {
+
+                                  });
+                                },
+                                focusNode: descriptionfocusNode,
                                 decoration:  InputDecoration(
                                   contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
                                   hintText: "Enter Description",
@@ -533,6 +564,8 @@ class _CreateJobState extends State<CreateJob> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
+                                            focusNode.unfocus();
+                                            descriptionfocusNode.unfocus();
                                             showDialog(
                                                 context: context,
                                                 builder: (BuildContext
@@ -567,12 +600,15 @@ class _CreateJobState extends State<CreateJob> {
                                                               selectionMode:
                                                               DateRangePickerSelectionMode
                                                                   .range,
-                                                              initialSelectedRange: PickerDateRange(
-                                                                  DateTime.now().subtract(const Duration(
-                                                                      days:
-                                                                      4)),
-                                                                  DateTime.now()
-                                                                      .add(const Duration(days: 3))),
+                                                              initialSelectedRange: widget.edit?PickerDateRange(
+                                                                  DateTime.parse(startDate),
+                                                                  DateTime.parse(ebdDate)):
+                                                              startDate!=""?PickerDateRange(
+                                                                  DateTime.parse(startDate),
+                                                                  DateTime.parse(ebdDate)):
+                                                              PickerDateRange(
+                                                                  DateTime.now(),
+                                                                  DateTime.now()),
                                                             ),
                                                           ),
                                                         ),
@@ -598,7 +634,7 @@ class _CreateJobState extends State<CreateJob> {
                                                 });
                                           },
                                           child: Text(
-                                            widget.edit?startstdDate:_range2.isNotEmpty? startDate2:"Choose Date",
+                                            _range2.isNotEmpty? startDate2:"Choose Date",
                                             style: GoogleFonts.roboto(
                                               color: ColorPalette.primary,
                                               fontSize: w/22,
@@ -610,15 +646,10 @@ class _CreateJobState extends State<CreateJob> {
                                         GestureDetector(
                                           onTap: _selectTime,
                                           child: Text(
-                                            widget.edit
-                                                ? startTime
-                                                : "${_time.hour}"
-                                                ":"
-                                                "${_time.minute} ${_time.period.name}" ??
-                                                "",
+                                            startTime,
                                             style: GoogleFonts.roboto(
-                                              color: Color(0xfffe5762),
-                                              fontSize: 18,
+                                              color: const Color(0xfffe5762),
+                                              fontSize: w/22,
                                               fontWeight:
                                               FontWeight.w500,
                                             ),
@@ -649,7 +680,7 @@ class _CreateJobState extends State<CreateJob> {
                                           ),
                                         ),
                                         Text(
-                                          widget.edit?endstdDate:_range2.isNotEmpty?ebdDate2:"Choose Date",
+                                          _range2.isNotEmpty?ebdDate2:"Choose Date",
                                           style: GoogleFonts.roboto(
                                             color: Color(0xfffe5762),
                                             fontSize: w/22,
@@ -659,12 +690,7 @@ class _CreateJobState extends State<CreateJob> {
                                         GestureDetector(
                                           onTap: _endTime,
                                           child: Text(
-                                            widget.edit
-                                                ? endTime
-                                                : "${_time2.hour}"
-                                                ":"
-                                                "${_time2.minute} ${_time2.period.name}" ??
-                                                "",
+                                            endTime,
                                             style: GoogleFonts.roboto(
                                               color: Color(0xfffe5762),
                                               fontSize: w/22,
@@ -704,12 +730,12 @@ class _CreateJobState extends State<CreateJob> {
                                 return GestureDetector(
                                     onTap: (){
                                       onSelect(i);
-                                      jobtitle.text=joblist?[i].taskName??"";
+                                      jobtitle.text=joblist?[i].name??"";
                                       jobdiscription.text=joblist?[i].description??"";
                                       relatedJobId=joblist?[i].id??0;
 
-                                      print(jobdiscription.text);
-                                      print(relatedJobId);
+                                      print("GGGG${jobtitle.text}");
+                                      print("GGGG${jobdiscription.text}");
                                     },
                                     child:Container(
                                       width: 120,
@@ -854,7 +880,7 @@ class _CreateJobState extends State<CreateJob> {
                                                 });
                                           },
                                           child: Text(
-                                            widget.edit?startstdDate:_range2.isNotEmpty?startDate2:"Choose Date",
+                                            _range2.isNotEmpty?startDate2:"Choose Date",
                                             style: GoogleFonts.roboto(
                                               color: Color(0xfffe5762),
                                               fontSize: w/22,
@@ -868,7 +894,7 @@ class _CreateJobState extends State<CreateJob> {
                                           _selectTime,
 
                                           child: Text(
-                                            widget.edit?startTime:"${_time.hour}"":""${_time.minute} ${_time.period.name}"??"",
+                                            widget.edit?startTime:startTime,
                                             style: GoogleFonts.roboto(
                                               color: Color(0xfffe5762),
                                               fontSize: w/22,
@@ -897,7 +923,7 @@ class _CreateJobState extends State<CreateJob> {
                                         ),
 
                                         Text(
-                                          widget.edit?endstdDate:_range2.isNotEmpty?ebdDate2:"Choose Date",
+                                          _range2.isNotEmpty?ebdDate2:"Choose Date",
                                           style: GoogleFonts.roboto(
                                             color: Color(0xfffe5762),
                                             fontSize: 18,
@@ -909,7 +935,7 @@ class _CreateJobState extends State<CreateJob> {
                                           onTap:_endTime,
 
                                           child: Text(
-                                            widget.edit?endTime:"${_time2.hour}"":""${_time2.minute} ${_time2.period.name}"??"",
+                                            widget.edit?endTime:endTime,
                                             style: GoogleFonts.roboto(
                                               color: Color(0xfffe5762),
                                               fontSize: 18,
@@ -935,7 +961,13 @@ class _CreateJobState extends State<CreateJob> {
 
                     GestureDetector(
                       onTap: (){
+                        isValid=true;
+                        focusNode.unfocus();
+                        descriptionfocusNode.unfocus();
                         _showModalBottomSheet();
+                        setState(() {
+
+                        });
                       },
                       child: Container(
                         width: w,
@@ -962,6 +994,7 @@ class _CreateJobState extends State<CreateJob> {
                             onTap: () {
 
                               _showModalBottomSheet();
+
                             },
                             endIcon: Row(
                               children: [
@@ -986,28 +1019,17 @@ class _CreateJobState extends State<CreateJob> {
                       ),
                     ),
                     const SizedBox(height: 5,),
-                    Text("* Please fill in all the fields listed  above",style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: w/28
+                    Text("* Please fill in all the fields listed  above",style: GoogleFonts.roboto(
+                        fontSize: w/30
                     ),),
-                    SizedBox(
-                      height: 35,
-                    ),
+
                     SizedBox(height: h/40,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GestureDetector(
+                        isValid==true?GestureDetector(
                           onTap: (){
-                            // jobtitle.text==""||jobdiscription.text==""||Variable.prioritys==""||_range==""?Fluttertoast.showToast(
-                            //     msg: 'Please Fill Fields',
-                            //     toastLength: Toast.LENGTH_SHORT,
-                            //     gravity: ToastGravity.BOTTOM,
-                            //     backgroundColor: Colors.white,
-                            //     textColor: Colors.black):Container();
-                            print("DATETIME${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00");
-
                             jobtitle.text==""||jobdiscription.text==""||_range==""?Fluttertoast.showToast(
                                   msg: 'Please Fill Fields',
                                   toastLength: Toast.LENGTH_SHORT,
@@ -1016,10 +1038,10 @@ class _CreateJobState extends State<CreateJob> {
                                   textColor: Colors.black):
                                   widget.edit?BlocProvider.of<JobBloc>(context)
                                 .add(UpdateJobEvent(
-                              startDate: "$startDate $startTime",
-                              endDate: "$ebdDate $endTime",
+                              startDate: "$startDate $startTime2",
+                              endDate: "$ebdDate $endTime2",
                               originFrom: "Suggestions",
-                              reportingPerson: authentication.authenticatedUser.code??"",
+                              reportingPerson: JobRead?.reportingCode??"",
                               priority: Variable.prioritys,
                               name: jobtitle.text,
                               jobType: jobtype??0,
@@ -1039,9 +1061,9 @@ class _CreateJobState extends State<CreateJob> {
                                     priority: Variable.prioritys,
                                     relatedJob: relatedJobId,
                                     reportingPerson: authentication.authenticatedUser.code??"",
-                                    endDate: "${_range.split(" - ")[1]} ${_time2.hour}"":""${_time2.minute}"":""00",
+                                    endDate: "${_range.split(" - ")[1]} $endTime2",
                                     originFrom: "Suggestions",
-                                    startDate: "${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00"
+                                    startDate: "${_range.split(" - ")[0]} $startTime2"
                                 )):
                             BlocProvider.of<JobBloc>(context).add(
                                 CreateJobEvent(
@@ -1054,11 +1076,10 @@ class _CreateJobState extends State<CreateJob> {
                                     priority: Variable.prioritys,
                                     relatedJob: null,
                                     reportingPerson: authentication.authenticatedUser.code??"",
-                                    endDate: "${_range.split(" - ")[1]} ${_time2.hour}"":""${_time2.minute}"":""00",
+                                    endDate: "${_range.split(" - ")[1]} $endTime2",
                                     originFrom: "Suggestions",
-                                    startDate: "${_range.split(" - ")[0]} ${_time.hour}"":""${_time.minute}"":""00"
+                                    startDate: "${_range.split(" - ")[0]} $startTime2"
                                 ));
-                            print("Varr${Variable.jobReadId}");
                             // Navigator.pop(context);
                           },
                           child: Container(
@@ -1067,6 +1088,25 @@ class _CreateJobState extends State<CreateJob> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               color: const Color(0xfffe5762),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              widget.edit?"Update":"Create",
+
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ):GestureDetector(
+                          child: Container(
+                            width: w / 2.6,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: const Color(0xffD3D3D3),
                             ),
                             alignment: Alignment.center,
                             child: Text(
@@ -1149,7 +1189,6 @@ class _CreateJobState extends State<CreateJob> {
                         PriorityLeval="High";
                         setState((){});
                         refreah();
-                        print("TASK PRIORITY${PriorityLeval}");
                         Navigator.pop(context);
                       },
                       child: Row(

@@ -6,9 +6,10 @@ class AddText extends StatefulWidget {
   String? label;
   String? hint;
    bool isActive;
+  void Function(String)? onchange;
    TextEditingController controller=TextEditingController();
 
-  AddText({Key? key, this.label,required this.controller,this.hint,required this.isActive}) : super(key: key);
+  AddText({Key? key, this.label,required this.controller,this.hint,required this.isActive,this.onchange}) : super(key: key);
 
   @override
   State<AddText> createState() => _AddTextState();
@@ -30,6 +31,8 @@ class _AddTextState extends State<AddText> {
             });
           },
           child: Container(
+            width: w,
+            color: Colors.white,
             padding: widget.isActive
                 ? EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 5)
                 : EdgeInsets.all(16),
@@ -66,6 +69,7 @@ class _AddTextState extends State<AddText> {
               controller: widget.controller,
               maxLines: 4,
               minLines: 1,
+              onChanged: widget.onchange,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: widget.hint,

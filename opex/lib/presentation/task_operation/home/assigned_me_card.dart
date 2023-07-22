@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../core/utils/variables.dart';
@@ -23,8 +24,13 @@ class AssignedMeCard extends StatefulWidget {
 }
 
 class _AssignedMeCardState extends State<AssignedMeCard> {
+  String endstdDate='';
   @override
   Widget build(BuildContext context) {
+    var date = widget.assignedMe?.endDate;
+    var dateTime = DateTime.parse("$date");
+    endstdDate =
+        DateFormat('dd-MM-yyyy').format(dateTime).toString();
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
@@ -35,7 +41,7 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
         PersistentNavBarNavigator.pushNewScreen(
           context,
           screen: JobTitle(isMyJob: true),
-          withNavBar: true,
+          withNavBar: false,
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       },
@@ -152,7 +158,7 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
                             width: 5,
                           ),
                           Text(
-                            widget.assignedMe?.endDate.toString().split("T")[0]??"",
+                            endstdDate,
                             style: GoogleFonts.roboto(
                               color: Color(0xff939393),
                               fontSize: w/25,

@@ -1,12 +1,9 @@
-
 import 'dart:io';
-
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +11,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../core/common_snackBar.dart';
 import '../../inventory/inventory_new_list.dart';
 import '../create/model/task_models.dart';
@@ -186,7 +182,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle(
+          systemOverlayStyle: const SystemUiOverlayStyle(
             systemNavigationBarColor: Colors.white, // Navigation bar
             statusBarColor: Colors.white, // Status bar
           ),
@@ -226,7 +222,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                              CircleAvatar(
+                              const CircleAvatar(
                                         backgroundImage:AssetImage("asset/newprofile.png"),
                                       ),
                                   // BlocBuilder<ProfileBloc, ProfileState>(
@@ -241,10 +237,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   //     return Image.asset("asset/newprofile.png");
                                   //   }
                                   // ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: w / 1.3,
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,

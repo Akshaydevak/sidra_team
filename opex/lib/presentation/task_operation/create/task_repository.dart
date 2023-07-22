@@ -327,8 +327,8 @@ class TaskRepo {
   }
 
   //subtasklist
-  Future<DataResponse> getSubTaskList() async {
-    final apiResponse = await _dataSource.getSubTaskList();
+  Future<DataResponse> getSubTaskList(int? taskId) async {
+    final apiResponse = await _dataSource.getSubTaskList(taskId);
     try {
       if (apiResponse.isNotEmpty) {
         return DataResponse(data: apiResponse);

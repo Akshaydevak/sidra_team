@@ -72,6 +72,16 @@ class GetUserVerifySuccess extends JobState {
 }
 
 class GetUserVerifyFailed extends JobState {}
+//ad,mi
+class GetAdminDataLoading extends JobState {}
+
+class GetAdminDataSuccess extends JobState {
+  final String jobList;
+
+  const GetAdminDataSuccess(this.jobList);
+}
+
+class GetAdminDataFailed extends JobState {}
 //employeelist
 class GetEmployeeListInitial extends JobState {}
 
@@ -84,6 +94,17 @@ class GetEmployeeListSuccess extends JobState {
 }
 
 class GetEmployeeListFailed extends JobState {}
+
+//report
+class GetReportingPersonListLoading extends JobState {}
+
+class GetReportingPersonListSuccess extends JobState {
+  final List<GetEmployeeList> employeeList;
+
+  const GetReportingPersonListSuccess(this.employeeList);
+}
+
+class GetReportingPersonListFailed extends JobState {}
 //groupplist
 class GetGroupListInitial extends JobState {}
 
@@ -232,8 +253,9 @@ class UpdateJobInitial extends JobState {}
 class UpdateJobLoading extends JobState {}
 
 class UpdateJobSuccess extends JobState {
+  final String?  successMessage;
 
-  const UpdateJobSuccess();
+  const UpdateJobSuccess(this.successMessage);
 
   @override
   List<Object> get props => [];

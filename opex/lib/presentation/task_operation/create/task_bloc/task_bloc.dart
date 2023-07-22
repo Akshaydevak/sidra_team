@@ -35,7 +35,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getPinnedTaskListState();
     }
     if (event is GetSubTaskListEvent) {
-      yield* getSubTaskListState();
+      yield* getSubTaskListState(event.taskId);
     }
     if (event is GetReviewListEvent) {
       yield* getReviewListState(event.taskId);
@@ -95,6 +95,40 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is UpdateTaskEvent) {
       yield* updateTaskstate(
+        attachNote: event.attachmentNote?.trim(),
+        attachdescription: event.attachmentDescription?.trim(),
+        img5: event.img5,
+        img1: event.img1,
+        img2: event.img2,
+        img3: event.img3,
+        img4: event.img4,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        startDate: event.startDate.trim(),
+        endDate: event.endDate.trim(),
+        reportingPerson: event.reportingPerson,
+        priority: event.priority.trim(),
+        isActive: event.isActive,
+        discription: event.discription.trim(),
+        createdBy: event.createdBy,
+        AssigningCode: event.AssigningCode.trim(),
+        AssigningType: event.AssigningType.trim(),
+        createdOn: event.createdOn.trim(),
+        jobid: event.jobid,
+        id:event.id,
+        lastmodified: event.lastmodified?.trim(),
+        notas: event.notas.trim(),
+        parant: event.parant,
+        priorityLeval: event.priorityLeval.trim(),
+        remarks: event.remarks.trim(),
+        taskName: event.taskName.trim(),
+        taskType: event.taskType,
+        statusStagesId: event.statusStagesId,
+
+      );
+    }
+    if (event is UpdateReportingTaskEvent) {
+      yield* updateReportingTaskstate(
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
         img5: event.img5,
@@ -525,6 +559,81 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         dataResponse.error ?? "",);
     }
   }
+  Stream<TaskState> updateReportingTaskstate(
+      {
+        required dynamic img1,
+        required dynamic img2,
+        required dynamic img3,
+        required dynamic img4,
+        required dynamic img5,
+        required String? attachdescription,
+        required String? attachNote,
+        required int? parant,
+        required int taskType,
+        required int id,
+        final int? statusStagesId,
+        required String reportingPerson,
+        required String createdBy,
+        required String taskName,
+        required String discription,
+        required String priorityLeval,
+        required String startDate,
+        required String endDate,
+        required bool isActive,
+        required String AssigningType,
+        required String AssigningCode,
+        required String notas,
+        required String remarks,
+        required String priority,
+        required String createdOn,
+        required String? lastmodified,
+        required int? jobid,
+        required String? longitude,
+        required String? latitude,
+      }) async* {
+    yield UpdateReportingTaskLoading();
+
+    final dataResponse = await _taskRepo.taskUpdatePost(
+      longitude: longitude,
+      latitude: latitude,
+      img4: img4,
+      img3: img3,
+      img2: img2,
+      img1: img1,
+      img5: img5,
+      attachdescription: attachdescription,
+      attachNote: attachNote,
+      statusStagesId:statusStagesId,
+      startDate: startDate,
+      endDate: endDate,
+      createdBy: createdBy,
+      discription: discription,
+      isActive: isActive,
+      priority: priority,
+      reportingPerson: reportingPerson,
+      taskType: taskType,
+      taskName: taskName,
+      remarks: remarks,
+      id: id,
+      priorityLeval: priorityLeval,
+      parant: parant,
+      notas: notas,
+      lastmodified: lastmodified,
+      jobid: jobid,
+      createdOn: createdOn,
+      AssigningType: AssigningType,
+      AssigningCode: AssigningCode,
+
+    );
+
+    if (dataResponse.data==true) {
+      print("task succcess atv repo");
+      yield UpdateReportingSuccess(dataResponse.error??"",);
+    } else {
+      yield UpdateReportingFailed(
+        dataResponse.error ?? "",);
+    }
+  }
   //deleteTask
   Stream<TaskState> deleteTask({required int jobId}) async* {
     yield DeleteTaskLoading();
@@ -546,10 +655,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
   //subtasklist
-  Stream<TaskState> getSubTaskListState() async* {
+  Stream<TaskState> getSubTaskListState(int? taskId) async* {
     yield GetSubTaskListLoading();
 
-    final dataResponse = await _taskRepo.getSubTaskList();
+    final dataResponse = await _taskRepo.getSubTaskList(taskId);
 
     if (dataResponse.data.isNotEmpty) {
       print("sub tast is a success");

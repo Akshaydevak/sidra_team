@@ -543,30 +543,11 @@ class TaskDataSource {
   }
 
   //subtasklist
-  Future<List<GetTaskList>> getSubTaskList() async {
+  Future<List<GetTaskList>> getSubTaskList(int? taskId) async {
     List<GetTaskList> taskList = [];
-    print("sub URL:${ClusterUrls.subtaskListUrl+Variable.taskIdForSubtask.toString()}");
+    print("sub URL:${ClusterUrls.subtaskListUrl+taskId.toString()}");
 
-    try {
-      final response = await client.get(
-        ClusterUrls.subtaskListUrl+Variable.taskIdForSubtask.toString(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        taskList.add(GetTaskList.fromJson(element));
-      });
-
-      return taskList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
-    final response = await client.get(ClusterUrls.subtaskListUrl+Variable.taskIdForSubtask.toString(),
+    final response = await client.get(ClusterUrls.subtaskListUrl+taskId.toString(),
       options: Options(
         headers: {
           'Content-Type': 'application/json',

@@ -74,6 +74,8 @@ class _TaskTitleState extends State<TaskTitle> {
 
   var endstdDate = "";
   var startstdDate = "";
+  String startTime='';
+  String endTime='';
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -81,8 +83,9 @@ class _TaskTitleState extends State<TaskTitle> {
     return WillPopScope(
       onWillPop: () async {
         print("popScope");
-        Navigator.of(context, rootNavigator: true).pop();
-        Navigator.of(context, rootNavigator: true).pop();
+        context.read<TaskBloc>().add(GetTaskListEvent(getTaskRead?.jobId,'','',''));
+        context.read<JobBloc>().add(GetJobReadListEvent(getTaskRead?.jobId??0));
+        context.read<JobBloc>().add(GetNewJobListEvent('','',''));
         return true;
       },
       child: MultiBlocListener(
@@ -92,7 +95,6 @@ class _TaskTitleState extends State<TaskTitle> {
               if (state is GetTaskReadLoading) {}
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
-                Variable.taskIdForSubtask = getTaskRead?.id ?? 0;
                 var date = getTaskRead?.endDate;
                 var date2 = getTaskRead?.startDate;
                 var dateTime = DateTime.parse("$date");
@@ -101,9 +103,23 @@ class _TaskTitleState extends State<TaskTitle> {
                     DateFormat('dd-MM-yyyy').format(dateTime).toString();
                 startstdDate =
                     DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+                startTime=getTaskRead?.startDate?.split("T")[1].split("+")[0]??"";
+                endTime=getTaskRead?.endDate?.split("T")[1].split("+")[0]??"";
+                final timeOfDay = TimeOfDay(hour: int.tryParse(startTime.split(":")[0])??0, minute: int.tryParse(startTime.split(":")[1])??0); // Example time of day (3:30 PM)
+                final timeOfDayEnd = TimeOfDay(hour: int.tryParse(endTime.split(":")[0])??0, minute: int.tryParse(endTime.split(":")[1])??0); // Example time of day (3:30 PM)
+
+                final twentyFourHourFormat = DateFormat('HH:mm:00');
+                final twelveHourFormat = DateFormat('h:mm a');
+
+                final dateTimet = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+                final dateTimett = DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
+                startTime = twelveHourFormat.format(dateTimet);
+                // startTime2 = twentyFourHourFormat.format(dateTimet);
+                endTime=twelveHourFormat.format(dateTimett);
+                // endTime2=twentyFourHourFormat.format(dateTimett);
                 getTaskRead?.assigningType == "Individual"
                     ? null
-                    : context.read<TaskBloc>().add(const GetSubTaskListEvent());
+                    : context.read<TaskBloc>().add( GetSubTaskListEvent(getTaskRead?.id));
                 isNotify = getTaskRead?.isNotify ?? false;
                 setState(() {});
               }
@@ -248,6 +264,8 @@ class _TaskTitleState extends State<TaskTitle> {
               onTap: () {
                 print("BACK");
                 context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+                context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
+
                 Navigator.pop(context);
               },
               label: " ${getTaskRead?.taskName ?? ""}",
@@ -339,48 +357,48 @@ class _TaskTitleState extends State<TaskTitle> {
                                     ),
                                   ),
                                 ),
-                          const Divider(
-                            indent: 30,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Row(
-                              children: [
-                                SvgPicture.string(TaskSvg().msgSendIcon),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'Share by message',
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            indent: 30,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Row(
-                              children: [
-                                SvgPicture.string(TaskSvg().shareJobIcon),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'Share this Job',
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // const Divider(
+                          //   indent: 30,
+                          // ),
+                          // Container(
+                          //   padding: const EdgeInsets.only(left: 10),
+                          //   child: Row(
+                          //     children: [
+                          //       SvgPicture.string(TaskSvg().msgSendIcon),
+                          //       const SizedBox(
+                          //         width: 10,
+                          //       ),
+                          //       Text(
+                          //         'Share by message',
+                          //         style: GoogleFonts.poppins(
+                          //             color: Colors.black54,
+                          //             fontSize: 13,
+                          //             fontWeight: FontWeight.w500),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // const Divider(
+                          //   indent: 30,
+                          // ),
+                          // Container(
+                          //   padding: const EdgeInsets.only(left: 10),
+                          //   child: Row(
+                          //     children: [
+                          //       SvgPicture.string(TaskSvg().shareJobIcon),
+                          //       const SizedBox(
+                          //         width: 10,
+                          //       ),
+                          //       Text(
+                          //         'Share this Job',
+                          //         style: GoogleFonts.poppins(
+                          //             color: Colors.black54,
+                          //             fontSize: 13,
+                          //             fontWeight: FontWeight.w500),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           const Divider(
                             indent: 30,
                           ),
@@ -446,6 +464,16 @@ class _TaskTitleState extends State<TaskTitle> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        "Job Details",
+                        style: GoogleFonts.roboto(
+                          color: const Color(
+                              0xff151522),
+                          fontSize: w/24,
+                          fontWeight:
+                          FontWeight.w500,
+                        ),
+                      ),
                       TaskTitleCard(
                           paddingg: const EdgeInsets.symmetric(vertical: 16),
                           widget: TextCard(
@@ -455,6 +483,16 @@ class _TaskTitleState extends State<TaskTitle> {
                           )),
                       const SizedBox(
                         height: 10,
+                      ),
+                      Text(
+                        "Task Details",
+                        style: GoogleFonts.roboto(
+                          color: const Color(
+                              0xff151522),
+                          fontSize: w/24,
+                          fontWeight:
+                          FontWeight.w500,
+                        ),
                       ),
                       TaskTitleCard(
                           paddingg: const EdgeInsets.symmetric(vertical: 16),
@@ -500,7 +538,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                               Row(
                                                 children: [
                                                   Container(
-                                                    width: 28,
                                                     height: 28,
                                                     padding:
                                                         const EdgeInsets.all(8),
@@ -522,7 +559,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     style: GoogleFonts.roboto(
                                                       color: const Color(
                                                           0xff151522),
-                                                      fontSize: 18,
+                                                      fontSize: w/24,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -623,13 +660,13 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                         .w500,
                                                               ),
                                                             ),
-                                                            CircleAvatar(
-                                                              radius: 16,
-                                                              backgroundImage:
-                                                                  AssetImage(
-                                                                "asset/newprofile.png",
-                                                              ),
-                                                            ),
+                                                            // CircleAvatar(
+                                                            //   radius: 16,
+                                                            //   backgroundImage:
+                                                            //       AssetImage(
+                                                            //     "asset/newprofile.png",
+                                                            //   ),
+                                                            // ),
                                                             // Image.asset(
                                                             //
                                                             //   height: 27,
@@ -712,7 +749,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           Text(
                                             startstdDate,
                                             style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
+                                              color: ColorPalette.black,
                                               fontSize: w / 22,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -721,13 +758,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                             width: 16,
                                           ),
                                           Text(
-                                            getTaskRead?.startDate
-                                                    .toString()
-                                                    .split("T")[1]
-                                                    .split("+")[0] ??
-                                                "",
+                                            startTime,
                                             style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
+                                              color: ColorPalette.black,
                                               fontSize: w / 22,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -752,7 +785,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           Text(
                                             endstdDate,
                                             style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
+                                              color: ColorPalette.black,
                                               fontSize: w / 22,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -761,13 +794,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                             width: 16,
                                           ),
                                           Text(
-                                            getTaskRead?.endDate
-                                                    .toString()
-                                                    .split("T")[1]
-                                                    .split("+")[0] ??
-                                                "",
+                                           endTime,
                                             style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
+                                              color: ColorPalette.black,
                                               fontSize: w / 22,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -785,9 +814,9 @@ class _TaskTitleState extends State<TaskTitle> {
                       const SizedBox(
                         height: 10,
                       ),
-                      getTaskRead?.latitude != null ||
+                      getTaskRead?.latitude != null &&
                               getTaskRead?.latitude != "" &&
-                                  getTaskRead?.longitude != null ||
+                                  getTaskRead?.longitude != null &&
                               getTaskRead?.latitude != ""
                           ? GestureDetector(
                               onTap: () {
@@ -852,17 +881,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                 label: "Reporting Person",
                                 color: const Color(0xffAD51E0),
                                 svg: TaskSvg().personIcon,
-                                endIcon: widget.isMyJob
-                                    ? isReporting
-                                        ? SvgPicture.string(
-                                            HomeSvg().toggleActive)
-                                        : SvgPicture.string(
-                                            HomeSvg().toggleInActive)
-                                    : Container(),
+                                endIcon: Container(),
                                 onTap: () {
                                   widget.isMyJob
                                       ? setState(() {
-                                          isReporting = !isReporting;
+                                          // isReporting = !isReporting;
                                         })
                                       : print("");
                                 },
@@ -959,9 +982,7 @@ class _TaskTitleState extends State<TaskTitle> {
                       SizedBox(
                         height: 10,
                       ),
-                      authentication.isAdmin
-                          ? Container()
-                          : getTaskRead?.paymentMeta?.image1 != null
+                     getTaskRead?.paymentMeta?.image1 != null
                               ? TaskTitleCard(
                                   paddingg:
                                       const EdgeInsets.symmetric(vertical: 16),
@@ -1121,7 +1142,14 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                         FontWeight
                                                                             .w500,
                                                                     color: ColorPalette.primary))
-                                                            : Text("")),
+                                                            : Text(
+                                              "STARTED",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                  color: ColorPalette
+                                                      .primary),
+                                            )),
                                       ],
                                     )),
                               ),
@@ -1155,7 +1183,8 @@ class _TaskTitleState extends State<TaskTitle> {
                               children: [
                                 Container(
                                     // color:Colors.red,
-                                    width: w / 5,
+                                    // width: w / 5,
+                                  padding: EdgeInsets.only(right: 15),
                                     child: getTaskRead?.priority == "Low"
                                         ? Row(
                                             children: [
@@ -1302,7 +1331,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                       screen: PerformanceAppraisal(
                                         tasklist: getTaskRead,
                                       ),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                           PageTransitionAnimation.fade,
@@ -1384,62 +1413,62 @@ class _TaskTitleState extends State<TaskTitle> {
                           },
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      authentication.isAdmin
-                          ? GestureDetector(
-                              onTap: () {
-                                context.read<TaskBloc>().add(
-                                    GetPaymentReadListEvent(
-                                        getTaskRead?.id ?? 0, true));
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: PaymentOption(
-                                    update: getTaskRead?.paymentId == null
-                                        ? false
-                                        : true,
-                                    isJob: false,
-                                    isTask: true,
-                                    paymentId: getTaskRead?.paymentId ?? 0,
-                                    taskId: getTaskRead?.id ?? 0,
-                                  ),
-                                  withNavBar:
-                                      true, // OPTIONAL VALUE. True by default.
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.fade,
-                                );
-                              },
-                              child: Container(
-                                width: w,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Color(0xffe6ecf0),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Color(0x05000000),
-                                      blurRadius: 8,
-                                      offset: Offset(1, 1),
-                                    ),
-                                  ],
-                                  color: Colors.white,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Payment Option",
-                                  style: GoogleFonts.roboto(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // authentication.isAdmin
+                      //     ? GestureDetector(
+                      //         onTap: () {
+                      //           context.read<TaskBloc>().add(
+                      //               GetPaymentReadListEvent(
+                      //                   getTaskRead?.id ?? 0, true));
+                      //           PersistentNavBarNavigator.pushNewScreen(
+                      //             context,
+                      //             screen: PaymentOption(
+                      //               update: getTaskRead?.paymentId == null
+                      //                   ? false
+                      //                   : true,
+                      //               isJob: false,
+                      //               isTask: true,
+                      //               paymentId: getTaskRead?.paymentId ?? 0,
+                      //               taskId: getTaskRead?.id ?? 0,
+                      //             ),
+                      //             withNavBar:
+                      //                 true, // OPTIONAL VALUE. True by default.
+                      //             pageTransitionAnimation:
+                      //                 PageTransitionAnimation.fade,
+                      //           );
+                      //         },
+                      //         child: Container(
+                      //           width: w,
+                      //           height: 60,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(10),
+                      //             border: Border.all(
+                      //               color: Color(0xffe6ecf0),
+                      //               width: 1,
+                      //             ),
+                      //             boxShadow: [
+                      //               BoxShadow(
+                      //                 color: Color(0x05000000),
+                      //                 blurRadius: 8,
+                      //                 offset: Offset(1, 1),
+                      //               ),
+                      //             ],
+                      //             color: Colors.white,
+                      //           ),
+                      //           alignment: Alignment.center,
+                      //           child: Text(
+                      //             "Payment Option",
+                      //             style: GoogleFonts.roboto(
+                      //               color: Colors.black,
+                      //               fontSize: 18,
+                      //               fontWeight: FontWeight.w500,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     : Container(),
                       SizedBox(
                         height: 10,
                       ),
@@ -1588,7 +1617,8 @@ class _TaskTitleState extends State<TaskTitle> {
                             ),
                           ),
                         ),
-                      )
+                      ),
+                      SizedBox(height: h/40,)
                     ],
                   ),
                 ),

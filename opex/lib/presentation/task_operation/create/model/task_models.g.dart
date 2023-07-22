@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      taskTypeName: json['task_type_name'] as String?,
       paymentMeta: json['payment_data'] == null
           ? null
           : CostingMeta.fromJson(json['payment_data'] as Map<String, dynamic>),
@@ -83,6 +84,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
     <String, dynamic>{
       'id': instance.id,
       'task_name': instance.taskName,
+      'task_type_name': instance.taskTypeName,
       'job_title': instance.jobTitle,
       'job_description': instance.jobDiscription,
       'name': instance.name,

@@ -200,9 +200,79 @@ class UpdateTaskEvent extends TaskEvent {
   ];
 }
 
+
+class UpdateReportingTaskEvent extends TaskEvent {
+  final int? parant;
+  final int taskType;
+  final int id;
+  final int? statusStagesId;
+  final String reportingPerson;
+  final String createdBy;
+  final String taskName;
+  final String discription;
+  final String priorityLeval;
+  final String startDate;
+  final String endDate;
+  final bool isActive;
+  final String AssigningType;
+  final String AssigningCode;
+  final String notas;
+  final String remarks;
+  final String priority;
+  final String createdOn;
+  final String? lastmodified;
+  final int? jobid;
+  final String? longitude;
+  final String? latitude;
+  final String? attachmentNote;
+  final String? attachmentDescription;
+  final dynamic img1;
+  final dynamic img2;
+  final dynamic img3;
+  final dynamic img4;
+  final dynamic img5;
+
+  const UpdateReportingTaskEvent( {
+    required this.longitude,
+    required this.latitude,
+    required this.img4,
+    required this.img3,
+    required this.img2,
+    required this.img5,
+    required this.attachmentDescription,
+    required this.img1,
+    required this.attachmentNote,
+    this.parant,
+    required this.taskType,
+    this.statusStagesId,
+    required this.reportingPerson,
+    required this.createdBy,
+    required this.taskName,
+    required this.discription,
+    required this.priorityLeval,
+    required this.startDate,
+    required this.endDate,
+    required this.isActive,
+    required this.AssigningType,
+    required this.AssigningCode,
+    required this.notas,
+    required this.remarks,
+    required this.priority,
+    required this.createdOn,
+    this.lastmodified,
+    this.jobid,required this.id,
+
+  });
+  @override
+  List<Object> get props => [
+    taskName,
+  ];
+}
+
 //subtaskList
 class GetSubTaskListEvent extends TaskEvent {
-  const GetSubTaskListEvent();
+  final int? taskId;
+  const GetSubTaskListEvent(this.taskId);
 }
 //reviewlist
 class GetReviewListEvent extends TaskEvent {

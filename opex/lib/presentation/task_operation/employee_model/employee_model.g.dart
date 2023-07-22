@@ -9,9 +9,11 @@ part of 'employee_model.dart';
 GetEmployeeList _$GetEmployeeListFromJson(Map<String, dynamic> json) =>
     GetEmployeeList(
       gender: json['gender'] as String?,
+      userCode: json['user_code'] as String?,
       orgCode: json['organization_code'] as String?,
       id: json['id'] as int?,
       isActive: json['is_active'] as bool? ?? false,
+      email: json['email'] as String?,
       primaryMail: json['primary_mail'] as String?,
       primaryMobile: json['primary_mobile'] as String?,
       fname: json['fname'] as String?,
@@ -36,6 +38,7 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
     <String, dynamic>{
       'id': instance.id,
       'primary_mail': instance.primaryMail,
+      'email': instance.email,
       'primary_mobile': instance.primaryMobile,
       'fname': instance.fname,
       'lname': instance.lname,
@@ -47,6 +50,7 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
       'date_joined': instance.dateJoined,
       'role_name': instance.roleName,
       'employee_code': instance.code,
+      'user_code': instance.userCode,
       'organization_type': instance.orgType,
       'organization_code': instance.orgCode,
       'alternative_mobile_no': instance.altMobile,

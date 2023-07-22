@@ -53,67 +53,70 @@ class _JobTitleState extends State<JobTitle> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<JobBloc, JobState>(
-          listener: (context, state) {
-            if (state is DeleteJobLoading) {
-              showSnackBar(context,
-                  message: "Loading...",
-                  color: Colors.white,
-                  // icon: HomeSvg().SnackbarIcon,
-                  autoDismiss: true);
-            }
-
-            if (state is DeleteJobFailed) {
-              showSnackBar(
-                context,
-                message: "Job Not Deleted",
-                color: Colors.red,
-                // icon: Icons.admin_panel_settings_outlined
-              );
-            }
-            if (state is DeleteJobSuccess) {
-              // createJob = state.user;
-
-              Fluttertoast.showToast(
-                  msg: 'Job Deleted Successfully ',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black);
-              Navigator.pop(context);
-              context
-                  .read<JobBloc>()
-                  .add(const GetAssignedMeListEvent('', '', ''));
-            }
-          },
-        ),
-        BlocListener<JobBloc, JobState>(
-          listener: (context, state) {
-            if (state is GetJobReadLoading) {}
-            if (state is GetJobReadSuccess) {
-              JobRead = state.getjobRead;
-
-              print("Succsess read");
-              setState(() {});
-            }
-          },
-        ),
-      ],
-      child: WillPopScope(
+    return WillPopScope(
         onWillPop: () async {
-          Navigator.pop(context);
-          Navigator.pop(context);
-          return true;
-        },
+          context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+      return true;},
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<JobBloc, JobState>(
+            listener: (context, state) {
+              if (state is DeleteJobLoading) {
+                showSnackBar(context,
+                    message: "Loading...",
+                    color: Colors.white,
+                    // icon: HomeSvg().SnackbarIcon,
+                    autoDismiss: true);
+              }
+
+              if (state is DeleteJobFailed) {
+                showSnackBar(
+                  context,
+                  message: "Job Not Deleted",
+                  color: Colors.red,
+                  // icon: Icons.admin_panel_settings_outlined
+                );
+              }
+              if (state is DeleteJobSuccess) {
+                // createJob = state.user;
+
+                Fluttertoast.showToast(
+                    msg: 'Job Deleted Successfully ',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black);
+                Navigator.pop(context);
+                context
+                    .read<JobBloc>()
+                    .add(const GetAssignedMeListEvent('', '', ''));
+              }
+            },
+          ),
+          BlocListener<JobBloc, JobState>(
+            listener: (context, state) {
+              if (state is GetJobReadLoading) {}
+              if (state is GetJobReadSuccess) {
+                JobRead = state.getjobRead;
+
+                print("Succsess read");
+                setState(() {});
+              }
+            },
+          ),
+        ],
         child: Scaffold(
           backgroundColor: ColorPalette.white,
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(60),
               child: BackAppBar(
-                label: "${JobRead?.name ?? 0}",
+                label: JobRead?.name ?? "",
                 isAction: false,
+                isBack: false,
+                onTap: (){
+                  context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+                  Navigator.pop(context);
+                },
                 action: PopupMenuButton(
                   icon: SvgPicture.string(TaskSvg().moreIcon),
                   color: ColorPalette.white,

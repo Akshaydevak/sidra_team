@@ -25,27 +25,27 @@ class _AttachmentCardState extends State<AttachmentCard> {
     picModel.setAll(0, [
       PicModel(
           url: widget.readData?.metaData?.image1 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(1, [
       PicModel(
           url: widget.readData?.metaData?.image2 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(2, [
       PicModel(
           url: widget.readData?.metaData?.image3 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(3, [
       PicModel(
           url: widget.readData?.metaData?.image4 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(4, [
       PicModel(
           url: widget.readData?.metaData?.image5 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
 
   }
@@ -99,27 +99,27 @@ class _RewardsCardState extends State<RewardsCard> {
     picModel.setAll(0, [
       PicModel(
           url: widget.readData?.rewardsData?.image1 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(1, [
       PicModel(
           url: widget.readData?.rewardsData?.image2 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(2, [
       PicModel(
           url: widget.readData?.rewardsData?.image3 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(3, [
       PicModel(
           url: widget.readData?.rewardsData?.image4 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(4, [
       PicModel(
           url: widget.readData?.rewardsData?.image5 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
 
   }
@@ -173,27 +173,27 @@ class _PaymentCardState extends State<PaymentCard> {
     picModel.setAll(0, [
       PicModel(
           url: widget.readData?.paymentMeta?.image1 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(1, [
       PicModel(
           url: widget.readData?.paymentMeta?.image2 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(2, [
       PicModel(
           url: widget.readData?.paymentMeta?.image3 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(3, [
       PicModel(
           url: widget.readData?.paymentMeta?.image4 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
     picModel.setAll(4, [
       PicModel(
           url: widget.readData?.paymentMeta?.image5 ??
-              "")
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png")
     ]);
 
   }

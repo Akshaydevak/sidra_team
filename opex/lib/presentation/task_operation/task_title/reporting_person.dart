@@ -42,7 +42,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
 
   @override
   void initState() {
-    context.read<JobBloc>().add(GetEmployeeListEvent());
+    context.read<JobBloc>().add(GetReportingPersonListEvent());
     context.read<JobBloc>().add(GetRoleListEvent());
     context.read<JobBloc>().add(const GetUserUderGroupEvent());
     setState(() {});
@@ -76,7 +76,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
         listeners: [
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is UpdateTaskLoading) {
+              if (state is UpdateReportingTaskLoading) {
                 showSnackBar(context,
                     message: "Loading...",
                     color: Colors.white,
@@ -84,7 +84,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                     autoDismiss: true);
               }
 
-              if (state is UpdateTaskFailed) {
+              if (state is UpdateReportingFailed) {
                 showSnackBar(
                   context,
                   message: state.error,
@@ -92,9 +92,9 @@ class _ReportingPersonState extends State<ReportingPerson> {
                   // icon: Icons.admin_panel_settings_outlined
                 );
               }
-              if (state is UpdateTaskSuccess) {
+              if (state is UpdateReportingSuccess) {
                 Fluttertoast.showToast(
-                    msg: 'Task Updated Successfully',
+                    msg: state.taskId,
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.white,
@@ -132,10 +132,10 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetEmployeeListLoading) {
+              if (state is GetReportingPersonListLoading) {
                 customCupertinoLoading();
               }
-              if (state is GetEmployeeListSuccess) {
+              if (state is GetReportingPersonListSuccess) {
                 employee = state.employeeList;
                 setState(() {
 
@@ -177,7 +177,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(60),
                 child: BackAppBar(
-                  label: "Reporting Person",
+                  label: "Reporting Person Task",
                   isAction: false,
                 )
             ),
@@ -300,7 +300,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                     widget.editTask
                                                         ? BlocProvider.of<
                                                         TaskBloc>(context).add(
-                                                        UpdateTaskEvent(
+                                                        UpdateReportingTaskEvent(
                                                             img5: widget.readTask?.metaData?.image5,
                                                             img1: widget.readTask?.metaData?.image1,
                                                             img4: widget.readTask?.metaData?.image4,
@@ -327,7 +327,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                                 ?.priority ??
                                                                 "",
                                                             reportingPerson: employee[i]
-                                                                .code ?? "",
+                                                                .userCode ?? "",
                                                             endDate: "${widget
                                                                 .readTask
                                                                 ?.endDate
@@ -403,7 +403,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                         ))
                                                         : Variable
                                                         .reportingCode =
-                                                        employee[i].code ?? "";
+                                                        employee[i].userCode ?? "";
                                                     read();
                                                   },
                                                   child: Container(
@@ -525,11 +525,11 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                   onTap: () {
                                                     Variable.reportingEmail =
                                                         employee[i]
-                                                            .primaryMail ?? "";
+                                                            .email ?? "";
                                                     widget.editTask
                                                         ? BlocProvider.of<
                                                         TaskBloc>(context).add(
-                                                        UpdateTaskEvent(
+                                                        UpdateReportingTaskEvent(
                                                           img5: widget.readTask?.metaData?.image5,
                                                           img1: widget.readTask?.metaData?.image1,
                                                           img4: widget.readTask?.metaData?.image4,
@@ -589,7 +589,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                               .readTask
                                                               ?.priority ?? "",
                                                           reportingPerson: employee[i]
-                                                              .code ?? "",
+                                                              .userCode ?? "",
                                                           endDate: "${widget
                                                               .readTask?.endDate
                                                               ?.split(
@@ -611,7 +611,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                         ))
                                                         : Variable
                                                         .reportingCode =
-                                                        employee[i].code ?? "";
+                                                        employee[i].userCode ?? "";
 
                                                     context.read<TaskBloc>()
                                                         .add(
@@ -658,7 +658,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                                 width: w / 1.5,
                                                                 child: Text(
                                                                   employee[i]
-                                                                      .primaryMail ??
+                                                                      .email ??
                                                                       "",
                                                                   style: TextStyle(
                                                                     color: ColorPalette
@@ -694,137 +694,6 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                         ),
                                       ],
                                     )
-                                    // Column(
-                                    //   mainAxisAlignment: MainAxisAlignment.start,
-                                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                                    //   children: [
-                                    //
-                                    //     Text(
-                                    //       "Total ${employee.length} Assignee",
-                                    //       style: GoogleFonts.roboto(
-                                    //         color: Color(0xff151522),
-                                    //         fontSize: w/22,
-                                    //         fontWeight: FontWeight.w500,
-                                    //       ),
-                                    //     ),
-                                    //     SizedBox(height: 16,),
-                                    //     Container(
-                                    //       decoration: BoxDecoration(
-                                    //         borderRadius: BorderRadius.circular(10),
-                                    //         border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                    //         boxShadow: [
-                                    //           BoxShadow(
-                                    //             color: Color(0x05000000),
-                                    //             blurRadius: 8,
-                                    //             offset: Offset(1, 1),
-                                    //           ),
-                                    //         ],
-                                    //         color: Colors.white,
-                                    //       ),
-                                    //       child: Column(
-                                    //         children: [
-                                    //           Container(
-                                    //             margin: EdgeInsets.only(
-                                    //                 left: 16,
-                                    //                 right: 16,
-                                    //                 bottom:  16,
-                                    //                 top:  16),
-                                    //             child: SingleRow(
-                                    //               label: "Reporting Person",
-                                    //               color: Color(0xffAD51E0),
-                                    //               svg: TaskSvg().personIcon,
-                                    //               endIcon:  Container()
-                                    //
-                                    //               ,
-                                    //               onTap: () {
-                                    //                 setState(() {
-                                    //                   // isReporting = !isReporting;
-                                    //                 });
-                                    //
-                                    //               },
-                                    //             ),
-                                    //           ),
-                                    //           Container(
-                                    //               padding: EdgeInsets.all(15),
-                                    //               child: Row(
-                                    //                 children: [
-                                    //                   CircleAvatar(),
-                                    //                   SizedBox(width: 20,),
-                                    //                   Text(Variable.reportingEmail??""),
-                                    //                 ],
-                                    //               ))
-                                    //         ],
-                                    //       ),
-                                    //     ),
-                                    //
-                                    //     SizedBox(height: 20,),
-                                    //     ListView.separated(
-                                    //         shrinkWrap: true,
-                                    //         physics: const NeverScrollableScrollPhysics(),
-                                    //         separatorBuilder: (BuildContext cxt, int i) {
-                                    //           return const SizedBox(
-                                    //             height: 5,
-                                    //           );
-                                    //         },
-                                    //         itemBuilder: (BuildContext context, int i) {
-                                    //           return InkWell(
-                                    //             onTap: () {
-                                    //               Variable.reportingCode=employee[i].code;
-                                    //               Variable.reportingEmail=employee[i].primaryMail;
-                                    //               BlocProvider.of<JobBloc>(context)
-                                    //                   .add(UpdateJobEvent(
-                                    //                 startDate: "${JobRead?.startDate?.split("T")[0]}"" ""${JobRead?.startDate?.split("T")[1].split("+")[0]}"??"",
-                                    //                 endDate: "${JobRead?.endDate?.split("T")[0]}"" ""${JobRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                    //                 originFrom: JobRead?.orginFrom??"",
-                                    //                 reportingPerson: employee[i].code??"",
-                                    //                 priority:JobRead?.priority??"",
-                                    //                 name: JobRead?.name??"",
-                                    //                 jobType: JobRead?.jobType??0,
-                                    //                 isActive: JobRead?.isActive??true,
-                                    //                 assignedBy: JobRead?.assignCode??"",
-                                    //                 createdBy:JobRead?.createdCode??"",
-                                    //                 discription: JobRead?.description??"",
-                                    //               ));
-                                    //               read();
-                                    //               setState(() {
-                                    //
-                                    //               });
-                                    //             },
-                                    //             child:  Container(
-                                    //               decoration: BoxDecoration(
-                                    //                   borderRadius: BorderRadius.circular(10),
-                                    //                   border: Border.all(color: Color(0xffe6ecf0))),
-                                    //               padding: EdgeInsets.symmetric(vertical: 10,horizontal: 16),
-                                    //               width: w,
-                                    //
-                                    //               child:   Row(
-                                    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //                   children: [
-                                    //                     Row(
-                                    //                       children: [
-                                    //                         CircleAvatar(),
-                                    //                         SizedBox(width: 10,),
-                                    //                         Container(
-                                    //                           width: w/1.8,
-                                    //                           child: Text(
-                                    //                             employee[i].primaryMail??"",
-                                    //                             style: TextStyle(
-                                    //                               color: ColorPalette.black,
-                                    //                               fontSize: w/22,
-                                    //                             ),
-                                    //                           ),
-                                    //                         ),
-                                    //
-                                    //                       ],
-                                    //                     ),
-                                    //
-                                    //                   ]),
-                                    //             ),
-                                    //           );
-                                    //         },
-                                    //         itemCount: employee.length),
-                                    //   ],
-                                    // )
 
                                   ])
                             ]))))));

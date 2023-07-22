@@ -1,16 +1,10 @@
 
 
 import 'dart:io';
-
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
-import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:cluster/presentation/task_operation/task_title/attachment_card.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,39 +39,50 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
   int indexImage=0;
   int catindexImage=0;
   bool isCatalogue=false;
+  List<PicModel> picModelAttachment = [];
   @override
   void initState() {
-    picModel.clear();
+    picModelAttachment.clear();
     for(int i=0;i<5;i++) {
-      picModel.add(PicModel(data: null,url: ""));
+      picModelAttachment.add(PicModel(data: null,url: ""));
     }
     readAttach();
     super.initState();
   }
+  bool? isValid=false;
+  validationCheck(){
+    if(discription.text!=""&&notes.text!=''){
+      isValid=true;
+    }
+    else{
+      isValid=false;
+    }
+  }
   readAttach(){
+    print("vvvvv${widget.readData?.metaData?.description}");
     discription.text=widget.readData?.metaData?.description??"";
     notes.text=widget.readData?.metaData?.note??"";
-    picModel.setAll(0, [
+    picModelAttachment.setAll(0, [
       PicModel(
           url: widget.readData?.metaData?.image1 ??
               "")
     ]);
-    picModel.setAll(1, [
+    picModelAttachment.setAll(1, [
       PicModel(
           url: widget.readData?.metaData?.image2 ??
               "")
     ]);
-    picModel.setAll(2, [
+    picModelAttachment.setAll(2, [
       PicModel(
           url: widget.readData?.metaData?.image3 ??
               "")
     ]);
-    picModel.setAll(3, [
+    picModelAttachment.setAll(3, [
       PicModel(
           url: widget.readData?.metaData?.image4 ??
               "")
     ]);
-    picModel.setAll(4, [
+    picModelAttachment.setAll(4, [
       PicModel(
           url: widget.readData?.metaData?.image5 ??
               "")
@@ -119,17 +124,17 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
           print("Inside Success${state.data}\t${state.url}");
           setState(() {
             isCatalogue? catalogueList.replaceRange(indexImage, indexImage+1,
-                [PicModel(data: state.data,url: state.url)]):picModel.replaceRange(indexImage, indexImage+1,
+                [PicModel(data: state.data,url: state.url)]):picModelAttachment.replaceRange(indexImage, indexImage+1,
                 [PicModel(data: state.data,url: state.url)]);
           });
-          print("pic model length${picModel.length}");
+          print("pic model length${picModelAttachment.length}");
 
         }
       },
     ),
     BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state is UpdateTaskLoading) {
+        if (state is UpdateReportingTaskLoading) {
           print("task loading");
           showSnackBar(context,
               message: "Loading...",
@@ -138,7 +143,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
               autoDismiss: true);
         }
 
-        if (state is UpdateTaskFailed) {
+        if (state is UpdateReportingFailed) {
           showSnackBar(
             context,
             message: state.error,
@@ -146,14 +151,16 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             // icon: Icons.admin_panel_settings_outlined
           );
         }
-        if (state is UpdateTaskSuccess) {
+        if (state is UpdateReportingSuccess) {
           print("attachment success ");
-          // Fluttertoast.showToast(
-          //     msg: 'Successfully Updated',
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.BOTTOM,
-          //     backgroundColor: Colors.white,
-          //     textColor: Colors.black);
+          Fluttertoast.showToast(
+              msg: state.taskId,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.white,
+              textColor: Colors.black);
+          context.read<TaskBloc>().add(
+              GetTaskReadListEvent(widget.readData?.id??0));
           Navigator.pop(context);
         }
       },
@@ -165,17 +172,39 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             children: [
               TaskAndOperationAppBar(
                 label: "Attachment",
-                EndIcon: GestureDetector(
+                EndIcon: isValid==false?GestureDetector(
+                  onTap: (){
+
+                  },
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xffd3d3d3),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Add",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ):GestureDetector(
                   onTap: (){
                     BlocProvider.of<TaskBloc>(context).add(
-                        UpdateTaskEvent(
+                        UpdateReportingTaskEvent(
                           latitude: widget?.readData?.latitude??"",
                           longitude: widget?.readData?.longitude??"",
-                          img5: picModel[4].url,
-                          img1: picModel[0].url,
-                          img4: picModel[3].url,
-                          img2: picModel[1].url,
-                          img3: picModel[2].url,
+                          img5: picModelAttachment[4].url,
+                          img1: picModelAttachment[0].url,
+                          img4: picModelAttachment[3].url,
+                          img2: picModelAttachment[1].url,
+                          img3: picModelAttachment[2].url,
                           attachmentDescription: discription.text,
                           attachmentNote: notes.text,
                           id: widget.readData?.id??0,
@@ -199,7 +228,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                           endDate: "${widget.readData?.endDate?.split("T")[0]}"" ""${widget.readData?.endDate?.split("T")[1].split("+")[0]}"??"",
                           startDate: "${widget.readData?.startDate?.split("T")[0]}"" ""${widget.readData?.startDate?.split("T")[1].split("+")[0]}"??"",
                         ));
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   },
                   child: Container(
                     // width: 110,
@@ -247,6 +276,12 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                       ),
                       child: TextFormField(
                         controller: discription,
+                        onChanged: (l){
+                          validationCheck();
+                          setState(() {
+
+                          });
+                        },
                         decoration: const InputDecoration(
                           contentPadding: EdgeInsets.zero,
                           border: InputBorder.none,
@@ -276,7 +311,13 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                         ],
                         color: Colors.white,
                       ),
-                      child: AddText(label: "Add Notes",controller: notes,isActive: true),
+                      child: AddText(label: "Add Notes",controller: notes,isActive: true,
+                      onchange:  (l){
+                        validationCheck();
+                        setState(() {
+
+                        });
+                      },),
                     ),
                     SizedBox(
                       height: 15,
@@ -311,19 +352,20 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                                 onTap: (){
                                   isCatalogue=false;
                                   indexImage=i;
+                                  isValid=true;
                                   setState(() {
 
                                   });
                                   getCoverImage(ImageSource.gallery);
                                 },
                                 child:
-                                picModel[i].url!=""&&picModel[i].url!.isNotEmpty?
+                                picModelAttachment[i].url!=""&&picModelAttachment[i].url!.isNotEmpty?
                                 Container(
                                     width: 88,
                                     height: 100,
                                     decoration:BoxDecoration(
                                         image: DecorationImage(
-                                            image: NetworkImage(picModel[i].url.toString()),fit: BoxFit.fill
+                                            image: NetworkImage(picModelAttachment[i].url.toString()),fit: BoxFit.fill
                                         )
                                     )
                                 )

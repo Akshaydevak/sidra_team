@@ -291,11 +291,33 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                         physics: NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 30),
                         itemBuilder: (context, index) => GestureDetector(
+                          onTap: ()async{
+                            final SharedPreferences prefs =
+                                await SharedPreferences
+                                .getInstance();
+                            prefs.setInt('index', index!);
+                            setState(() {
+                              groupActived = false;
+                              indValue = index;
+                              grpValue;
+
+                              Variable.assignType=
+                              "Individual";
+                              Variable.assignCode =
+                                  employeeList[index].code ??
+                                      "";
+                            });
+                            widget.groupVal!(groupActived);
+                            print("grpVal$groupActived");
+                            print("grpVal${Variable.assignType}");
+                            print("grpVal${Variable.assignCode}");
+                            Navigator.pop(context);
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: Color(0xffe6ecf0), width: 1,),
+                                color: index==indValue?ColorPalette.primary:Color(0xffe6ecf0), width: 1,),
                               boxShadow: [
                                 BoxShadow(
                                   color: Color(0x05000000),
@@ -419,87 +441,117 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                       child: ListView.separated(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0), width: 1,),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 0,right: 10,top: 10,bottom: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                children: [
-                                  Radio(
-                                    value: index,
-                                    activeColor: ColorPalette.primary,
-                                    groupValue: grpValue,
-                                    onChanged: (int? value) async {
-                                      setState(() {
-                                        grpValue = value!;
-                                        Variable.assignType =
-                                        "Task_Group";
-                                        Variable.assignCode =
-                                            grouplist[index]
-                                                .groupCode ??
-                                                "";
-                                        Variable.groupId =
-                                            grouplist[index].id ?? 0;
-                                        groupActived = true;
-                                        indValue = 0;
-                                        print("GRRR${Variable.assignType}");
-                                      });
-                                      final SharedPreferences prefs =
-                                      await SharedPreferences
-                                          .getInstance();
-                                      prefs.setInt('groupId',
-                                          grouplist[index].id ?? 0);
-                                      prefs.setInt('index2', value!);
-                                      setState(() {});
-                                    },
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: ()async{
+                              setState(() {
+                                grpValue = index!;
+                                Variable.assignType =
+                                "Task_Group";
+                                Variable.assignCode =
+                                    grouplist[index]
+                                        .groupCode ??
+                                        "";
+                                Variable.groupId =
+                                    grouplist[index].id ?? 0;
+                                groupActived = true;
+                                indValue = 0;
+                                print("GRRR${Variable.assignType}");
+                              });
+                              final SharedPreferences prefs =
+                                  await SharedPreferences
+                                  .getInstance();
+                              prefs.setInt('groupId',
+                                  grouplist[index].id ?? 0);
+                              prefs.setInt('index2', index);
+                              widget.groupVal!(groupActived);
+                              print("grpVal$groupActived");
+                              print("grpVal${Variable.assignType}");
+                              print("grpVal${Variable.assignCode}");
+                              Navigator.pop(context);
+                              setState(() {});
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: index==grpValue?ColorPalette.primary:Color(0xffe6ecf0), width: 1,),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x05000000),
+                                    blurRadius: 8,
+                                    offset: Offset(1, 1),
                                   ),
-                                  Row(
-                                    children: [
-                                      TextAvatar(
-                                        textColor: Colors.white,
-                                        shape: Shape.Circular,
-                                        text: "${grouplist[index].gName![0]} ",
-                                        numberLetters: 2,
-                                      ),
-                                      // CircleAvatar(
-                                      //   child: Text(
-                                      //     grouplist[index].gName![0],
-                                      //     style: GoogleFonts.roboto(
-                                      //       color: Colors.white,
-                                      //       fontSize: 26,
-                                      //       fontWeight:
-                                      //           FontWeight.w500,
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      SizedBox(
-                                        width: 14,
-                                      ),
-                                      Text(
-                                        grouplist[index].gName ?? "",
-                                        style: TextStyle(
-                                          color: ColorPalette.black,
-                                          fontSize: w/22,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  //
                                 ],
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 0,right: 10,top: 10,bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  children: [
+                                    Radio(
+                                      value: index,
+                                      activeColor: ColorPalette.primary,
+                                      groupValue: grpValue,
+                                      onChanged: (int? value) async {
+                                        setState(() {
+                                          grpValue = value!;
+                                          Variable.assignType =
+                                          "Task_Group";
+                                          Variable.assignCode =
+                                              grouplist[index]
+                                                  .groupCode ??
+                                                  "";
+                                          Variable.groupId =
+                                              grouplist[index].id ?? 0;
+                                          groupActived = true;
+                                          indValue = 0;
+                                          print("GRRR${Variable.assignType}");
+                                        });
+                                        final SharedPreferences prefs =
+                                        await SharedPreferences
+                                            .getInstance();
+                                        prefs.setInt('groupId',
+                                            grouplist[index].id ?? 0);
+                                        prefs.setInt('index2', value!);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    Row(
+                                      children: [
+                                        TextAvatar(
+                                          textColor: Colors.white,
+                                          shape: Shape.Circular,
+                                          text: "${grouplist[index].gName![0]} ",
+                                          numberLetters: 2,
+                                        ),
+                                        // CircleAvatar(
+                                        //   child: Text(
+                                        //     grouplist[index].gName![0],
+                                        //     style: GoogleFonts.roboto(
+                                        //       color: Colors.white,
+                                        //       fontSize: 26,
+                                        //       fontWeight:
+                                        //           FontWeight.w500,
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                        SizedBox(
+                                          width: 14,
+                                        ),
+                                        Text(
+                                          grouplist[index].gName ?? "",
+                                          style: TextStyle(
+                                            color: ColorPalette.black,
+                                            fontSize: w/22,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    //
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -569,206 +621,223 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: w,
-              // height: 120,
-              // padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: Color(0xffe6ecf0),
-                  width: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Container(
+              //   width: w,
+              //   // height: 120,
+              //   // padding: EdgeInsets.all(16),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     border: Border.all(
+              //       color: Color(0xffe6ecf0),
+              //       width: 1,
+              //     ),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Color(0x05000000),
+              //         blurRadius: 8,
+              //         offset: Offset(1, 1),
+              //       ),
+              //     ],
+              //     color: Colors.white,
+              //   ),
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       // Container(
+              //       //   padding: EdgeInsets.only(
+              //       //       left: 16, right: 16, top: 20, bottom: 10),
+              //       //   child: Row(
+              //       //     children: [
+              //       //       Container(
+              //       //         width: 32,
+              //       //         height: 32,
+              //       //         decoration: BoxDecoration(
+              //       //           borderRadius: BorderRadius.circular(5),
+              //       //           color: Color(0xff1ECAC0),
+              //       //         ),
+              //       //         child: Center(
+              //       //           child:
+              //       //           SvgPicture.string(CreateSvg().calenderIcon),
+              //       //         ),
+              //       //       ),
+              //       //       SizedBox(
+              //       //         width: 10,
+              //       //       ),
+              //       //       Text(
+              //       //         "Invite from device contacts",
+              //       //         style: TextStyle(
+              //       //           color: Color(0xff151522),
+              //       //           fontSize: 18,
+              //       //         ),
+              //       //       )
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //       // Divider(
+              //       //   indent: 50,
+              //       //   color: Color(0xffE6ECF0),
+              //       // ),
+              //       // Container(
+              //       //   padding: EdgeInsets.only(
+              //       //       left: 16, right: 16, top: 10, bottom: 20),
+              //       //   child: Row(
+              //       //     children: [
+              //       //       Container(
+              //       //         width: 32,
+              //       //         height: 32,
+              //       //         decoration: BoxDecoration(
+              //       //           borderRadius: BorderRadius.circular(5),
+              //       //           color: Color(0xffFC3B98),
+              //       //         ),
+              //       //         child: Center(
+              //       //           child: SvgPicture.string(CreateSvg().clockIcon),
+              //       //         ),
+              //       //       ),
+              //       //       SizedBox(
+              //       //         width: 10,
+              //       //       ),
+              //       //       Text(
+              //       //         "Invite from device contacts",
+              //       //         style: TextStyle(
+              //       //           color: Color(0xff151522),
+              //       //           fontSize: 18,
+              //       //         ),
+              //       //       )
+              //       //     ],
+              //       //   ),
+              //       // ),
+              //     ],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 16,
+              // ),
+              // Text(
+              //   "Task Assign To",
+              //   style: GoogleFonts.roboto(
+              //     color: Color(0xff151522),
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 16,
+              // ),
+              Text(
+                "Select from List",
+                style: GoogleFonts.roboto(
+                  color: Color(0xff151522),
+                  fontSize: w/22,
+                  fontWeight: FontWeight.w500,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x05000000),
-                    blurRadius: 8,
-                    offset: Offset(1, 1),
-                  ),
-                ],
-                color: Colors.white,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 16, right: 16, top: 20, bottom: 10),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Color(0xff1ECAC0),
-                          ),
-                          child: Center(
-                            child:
-                            SvgPicture.string(CreateSvg().calenderIcon),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Invite from device contacts",
-                          style: TextStyle(
-                            color: Color(0xff151522),
-                            fontSize: 18,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    indent: 50,
-                    color: Color(0xffE6ECF0),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 16, right: 16, top: 10, bottom: 20),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Color(0xffFC3B98),
-                          ),
-                          child: Center(
-                            child: SvgPicture.string(CreateSvg().clockIcon),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Invite from device contacts",
-                          style: TextStyle(
-                            color: Color(0xff151522),
-                            fontSize: 18,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+              SizedBox(
+                height: 16,
               ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              "Task Assign To",
-              style: GoogleFonts.roboto(
-                color: Color(0xff151522),
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              "Select from List",
-              style: GoogleFonts.roboto(
-                color: Color(0xff151522),
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            BlocBuilder<JobBloc, JobState>(
-              builder: (context, state) {
-                if (state is GetUserUderGroupLoading) {
-                  customCupertinoLoading();
-                }
-                if (state is GetUserUderGroupSuccess) {
-                  return Container(
-                    width: w,
-                    // height: 577,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Color(0xffe6ecf0),
-                        width: 1,
+              BlocBuilder<JobBloc, JobState>(
+                builder: (context, state) {
+                  if (state is GetUserUderGroupLoading) {
+                    customCupertinoLoading();
+                  }
+                  if (state is GetUserUderGroupSuccess) {
+                    return Container(
+                      width: w,
+                      // height: 577,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xffe6ecf0),
+                          width: 1,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x05000000),
+                            blurRadius: 8,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                        color: Color(0xffd3d3d3).withOpacity(0.2),
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x05000000),
-                          blurRadius: 8,
-                          offset: Offset(1, 1),
-                        ),
-                      ],
-                      color: Colors.white,
-                    ),
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Radio(
-                                  value: index,
-                                  groupValue: indValue,
-                                  onChanged: (int? value) {
-                                    setState(() {
-                                      indValue = value!;
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                indValue = index;
+                                Variable.assignType = "Individual";
+                                Variable.assignCode =
+                                    state.userlist[index].code ??
+                                        "";
 
-                                      Variable.assignType = "Individual";
-                                      Variable.assignCode =
-                                          state.userlist[index].code ??
-                                              "";
-                                    });
-                                  },
-                                ),
-                                Row(
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Image.asset("asset/newprofile.png",
-                                        width: 42, height: 42),
-                                    SizedBox(
-                                      width: 5,
+                                    Radio(
+                                      value: index,
+                                      groupValue: indValue,
+                                      activeColor: ColorPalette.primary,
+                                      onChanged: (int? value) {
+                                        setState(() {
+                                          indValue = value!;
+                                          Variable.assignType = "Individual";
+                                          Variable.assignCode =
+                                              state.userlist[index].code ??
+                                                  "";
+                                        });
+                                      },
                                     ),
-                                    Text(
-                                      state.userlist[index].email ?? "",
-                                      style: TextStyle(
-                                        color: Color(0xff151522),
-                                        fontSize: 18,
-                                      ),
-                                    )
+                                    Row(
+                                      children: [
+                                        Image.asset("asset/newprofile.png",
+                                            width: 35, height: 35),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          width: w/1.7,
+                                          child: Text(
+                                            state.userlist[index].email ?? "",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Color(0xff151522),
+                                              fontSize: w/24,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                        separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 5,
-                          );
-                        },
-                        itemCount: state.userlist.length),
-                  );
-                }
-                return Container();
-              },
-            )
-          ],
+                          separatorBuilder: (context, index) {
+                            return SizedBox(
+                              height: 2,
+                            );
+                          },
+                          itemCount: state.userlist.length),
+                    );
+                  }
+                  return Container();
+                },
+              )
+            ],
+          ),
         ),
       ),
     );

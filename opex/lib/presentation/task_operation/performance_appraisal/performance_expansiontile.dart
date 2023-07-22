@@ -15,7 +15,8 @@ class PerformanceExpansionTile extends StatefulWidget {
   final VoidCallback? onTap;
   final List<PointsList>? pointlist;
   final GetTaskList? tasklist;
-   PerformanceExpansionTile({Key? key,this.label="", this.pointlist, this.tasklist,  this.isExpand=false, this.onTap}) : super(key: key);
+  final Function(bool val) load;
+   PerformanceExpansionTile({Key? key,this.label="", this.pointlist, this.tasklist,  this.isExpand=false, this.onTap, required this.load}) : super(key: key);
 
   @override
   State<PerformanceExpansionTile> createState() =>
@@ -24,7 +25,7 @@ class PerformanceExpansionTile extends StatefulWidget {
 
 class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
 
-  int select=0;
+  int? select;
   void onSelect(int val) {
     select = val;
     setState(() {});
@@ -36,11 +37,11 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
   listener: (context, state) {
     print('StateCreate$state');
     if (state is CreatePerformanceLoading) {
-      showSnackBar(context,
-          message: "Loading...",
-          color: Colors.white,
-          // icon: HomeSvg().SnackbarIcon,
-          autoDismiss: true);
+      // showSnackBar(context,
+      //     message: "Loading...",
+      //     color: Colors.white,
+      //     // icon: HomeSvg().SnackbarIcon,
+      //     autoDismiss: true);
     }
 
     if (state is CreatePerformanceFailed) {
@@ -52,14 +53,14 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
       );
     }
     if (state is CreatePerformanceSuccess) {
+      // Fluttertoast.showToast(
+      //     msg: 'Performance Created',
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     backgroundColor: Colors.white,
+      //     textColor: Colors.black);
       context.read<TaskBloc>().add(
           GetTotalPerformanceEvent(employeeCode: widget.tasklist?.assigningCode??"",widget.tasklist?.id));
-      Fluttertoast.showToast(
-          msg: 'Performance Created',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.white,
-          textColor: Colors.black);
 
     }
   },
@@ -116,7 +117,9 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
                             return GestureDetector(
                               onTap: (){
                                 onSelect(index);
+                                widget.load(true);
                                 setState((){
+
                                   BlocProvider.of<TaskBloc>(context)
                                       .add(CreatePerfomanceAppraisalTaskEvent(
                                     name: Variable.perfomanceName,
@@ -147,12 +150,16 @@ class _PerformanceExpansionTileState extends State<PerformanceExpansionTile> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      "${index+1}-${widget.pointlist?[index].name}",
-                                      style: GoogleFonts.roboto(
-                                        color: Color(0xff151522),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                    SizedBox(
+                                      width: w/1.8,
+                                      child: Text(
+
+                                        "${index+1}-${widget.pointlist?[index].name}",
+                                        style: GoogleFonts.roboto(
+                                          color: Color(0xff151522),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Text(

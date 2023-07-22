@@ -48,16 +48,31 @@ class TaskAndOperation extends StatefulWidget {
 
 class _TaskAndOperationState extends State<TaskAndOperation> {
   String? finalDate;
-  String startDate = "2020-12-10";
+
+  String startDate = "";
   String startDate2 = "10-12-2020";
-  String ebdDate = "2022-1-25";
+  String ebdDate = "";
   String ebdDate2 = "25-1-2022";
-  final TextEditingController startDateController = TextEditingController();
-  final TextEditingController startMonthController = TextEditingController();
-  final TextEditingController startYearController = TextEditingController();
-  final TextEditingController endDateController = TextEditingController();
-  final TextEditingController endMonthController = TextEditingController();
-  final TextEditingController endYearController = TextEditingController();
+  kkkk(){
+    var date2 = DateTime.now();
+    var date3 = DateTime.now().subtract(Duration(days: 30));
+    var dateTime2 =  DateTime.parse("$date2");
+    var dateTime3 =  DateTime.parse("$date3");
+    startDate =  DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+    startDate2 =  DateFormat('yyyy-MM-dd').format(dateTime2).toString();
+    ebdDate =  DateFormat('dd-MM-yyyy').format(dateTime3).toString();
+    ebdDate2 =  DateFormat('yyyy-MM-dd').format(dateTime3).toString();
+    BlocProvider.of<JobBloc>(
+        context)
+        .add(
+        FilterAssignTaskCountEvent(
+            startDate:
+            ebdDate2,
+            endDate:
+            startDate2));
+    print("endDate$startDate");
+    print("endDate$ebdDate");
+  }
   GetCountTask? taskcount;
   bool isStaff = false;
 
@@ -82,11 +97,14 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-      print(_range1);
-      startDate = _range.split(" - ")[0];
-      startDate2 = _range1.split(" - ")[0];
-      ebdDate = _range.split(" - ")[1];
-      ebdDate2 = _range1.split(" - ")[1];
+
+      ebdDate = _range.split(" - ")[0];
+      ebdDate2 = _range1.split(" - ")[0];
+      startDate = _range.split(" - ")[1];
+      startDate2 = _range1.split(" - ")[1];
+
+      print("statatat$startDate");
+      print("statatat$ebdDate");
     });
   }
 
@@ -94,7 +112,10 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
   void initState() {
     print("init");
     context.read<JobBloc>().add(const GetUserVerifyEvent());
+    context.read<JobBloc>().add(const GetAdminDataEvent());
     context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+    kkkk();
+
     super.initState();
   }
 
@@ -185,15 +206,10 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                       selectionMode:
                                                       DateRangePickerSelectionMode
                                                           .range,
-                                                      initialSelectedRange:
-                                                      PickerDateRange(
-                                                          DateTime.now().subtract(
-                                                              const Duration(
-                                                                  days: 4)),
-                                                          DateTime.now().add(
-                                                              const Duration(
-                                                                  days:
-                                                                  3))),
+                                                      // initialSelectedRange:PickerDateRange(
+                                                      //     DateTime.parse(startDate),
+                                                      //     DateTime.parse(ebdDate))
+
                                                     ),
                                                   ),
                                                 ),
@@ -204,9 +220,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                         .add(
                                                         FilterAssignTaskCountEvent(
                                                             startDate:
-                                                            startDate,
+                                                            ebdDate,
                                                             endDate:
-                                                            ebdDate));
+                                                            startDate));
                                                     setState(() {});
                                                     Navigator.pop(context);
                                                   },
@@ -268,7 +284,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      startDate2,
+                                      ebdDate,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: ColorPalette.black),
@@ -296,7 +312,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      ebdDate2,
+                                      startDate,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: ColorPalette.black),
@@ -350,7 +366,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         .pushNewScreen(
                                       context,
                                       screen: CreateJob(),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -397,7 +413,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         .pushNewScreen(
                                       context,
                                       screen: const PinnedJobs(),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -452,7 +468,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         context,
                                         screen:
                                         const TaskAndOperationHomePage(),
-                                        withNavBar: true,
+                                        withNavBar: false,
                                         // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation:
                                         PageTransitionAnimation.fade,
@@ -468,7 +484,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         context,
                                         screen: EmployeesGroupScreen(
                                             newIndex: 0),
-                                        withNavBar: true,
+                                        withNavBar: false,
                                         // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation:
                                         PageTransitionAnimation.fade,
@@ -482,7 +498,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       context,
                                       screen: EmployeesGroupScreen(
                                           newIndex: 1),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -497,7 +513,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
                                         screen: CreatePerformance(),
-                                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                                        withNavBar: false, // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation: PageTransitionAnimation.fade,
                                       );
                                     },
@@ -516,7 +532,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         .pushNewScreen(
                                       context,
                                       screen: const NewJobList(),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -532,7 +548,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         .pushNewScreen(
                                       context,
                                       screen: const PinnedJobs(),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -551,7 +567,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         .pushNewScreen(
                                       context,
                                       screen: const PendingJobs(),
-                                      withNavBar: true,
+                                      withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.fade,
@@ -593,7 +609,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                           .pushNewScreen(
                                         context,
                                         screen: const CreateGroup(),
-                                        withNavBar: true,
+                                        withNavBar: false,
                                         // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation:
                                         PageTransitionAnimation.fade,
@@ -633,7 +649,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               newIndex: 0,
                                             )
                                                 : NewJobList(),
-                                            withNavBar: true,
+                                            withNavBar: false,
                                             // OPTIONAL VALUE. True by default.
                                             pageTransitionAnimation:
                                             PageTransitionAnimation
@@ -735,7 +751,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                           PersistentNavBarNavigator.pushNewScreen(
                             context,
                             screen: CreateJob(),
-                            withNavBar: true,
+                            withNavBar: false,
                             // OPTIONAL VALUE. True by default.
                             pageTransitionAnimation:
                             PageTransitionAnimation.fade,

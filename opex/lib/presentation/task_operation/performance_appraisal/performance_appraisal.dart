@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../../../core/color_palatte.dart';
@@ -36,6 +37,11 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
   bool isExpand5 = false;
   int TotalMark = 0;
   ReadPerformanceAppraisal? performanceList;
+  void grpVal(bool val) {
+    loadingBool = val;
+    setState(() {});
+    print("uuu$loadingBool");
+  }
   @override
   void initState() {
     context.read<TaskBloc>().add(GetPointsListEvent());
@@ -46,9 +52,9 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
   String? offerPeriodName;
 
   bool isSelected=false;
+  bool loadingBool=true;
   @override
   Widget build(BuildContext context) {
-    print("KKKKKK${widget.tasklist}");
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
     return MultiBlocListener(
@@ -65,6 +71,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
         ),
         BlocListener<TaskBloc, TaskState>(
           listener: (context, state) {
+
             if (state is GetPerformanceListLoading) {}
             if (state is GetPerformanceListSuccess) {
               perfomences = state.performanceList;
@@ -75,9 +82,13 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
         ),
         BlocListener<TaskBloc, TaskState>(
           listener: (context, state) {
-            if (state is GetTotalPerformanceLoading) {}
+            print("mark state$state");
+            if (state is GetTotalPerformanceLoading) {
+              loadingBool=true;
+            }
             if (state is GetTotalPerformanceSuccess) {
               TotalMark = state.totalMark;
+              loadingBool=false;
               setState(() {
                 print(("total Appraisal$TotalMark"));
               });
@@ -305,7 +316,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Image.network(
-                              "https://pps.whatsapp.net/v/t61.24694-24/311789630_1281413702694658_5579894103182886884_n.jpg?ccb=11-4&oh=01_AdTPkfgPISxtj6SouNZ_KDHUDiLPxLeE5pq0L_hmWoDslQ&oe=6380B7F4"),
+                              "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"),
                         ),
                         SizedBox(
                           height: 10,
@@ -331,7 +342,14 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                         SizedBox(
                           height: 20,
                         ),
-                        Container(
+                        loadingBool==true?Container(
+                            height: 100,
+                            width: w,
+                            alignment: Alignment.center,
+                            child: LoadingAnimationWidget.threeRotatingDots(
+                              color: Colors.red,
+                              size: 30,
+                            )):Container(
                           width: w,
                           padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -355,9 +373,9 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                               children: [
                                 Text(
                                   "OVERALL EMPLOYEE PERFORMANCE",
-                                  style: TextStyle(
+                                  style: GoogleFonts.roboto(
                                     color: Color(0xff939393),
-                                    fontSize: 14,
+                                    fontSize: w/26,
                                   ),
                                 ),
                                 Container(
@@ -415,6 +433,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                         //       itemCount: perfomences.length),
                         // ),
                         PerformanceExpansionTile(
+                          load: grpVal,
                           label: "Project Completion",
                           pointlist: pointList,
                           tasklist: widget.tasklist,
@@ -431,6 +450,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                           height: 16,
                         ),
                         PerformanceExpansionTile(
+                          load: grpVal,
                           label: "Punctuality",
                           pointlist: pointList,
                           tasklist: widget.tasklist,
@@ -447,6 +467,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                           height: 10,
                         ),
                         PerformanceExpansionTile(
+                          load: grpVal,
                           label: "Time Management",
                           pointlist: pointList,
                           tasklist: widget.tasklist,
@@ -463,6 +484,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                           height: 10,
                         ),
                         PerformanceExpansionTile(
+                          load: grpVal,
                           label: "Team Management & Leadership",
                           pointlist: pointList,
                           tasklist: widget.tasklist,
@@ -480,6 +502,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                           height: 10,
                         ),
                         PerformanceExpansionTile(
+                          load: grpVal,
                           label: "Attitude",
                           pointlist: pointList,
                           tasklist: widget.tasklist,
@@ -502,230 +525,5 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
         ),
       ),
     );
-  }
-  _showModalBottomSheetOfferPeriod(String? offerPeriodNameNew) {
-    int selectIndex = 0;
-    void onselect(int index) {
-      setState(() {
-        selectIndex = index;
-      });
-    }
-
-    showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
-        ),
-        context: context,
-        builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          var w = MediaQuery.of(context).size.width;
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                    )),
-                alignment: Alignment.center,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10,),
-                      Text(
-                        "Select Offer Period",
-                        style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontSize: w / 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      // SizedBox(height: 10,),
-                      BlocBuilder<JobBloc, JobState>(
-                        builder: (context, state) {
-                          print("SASAFA$state");
-                          if (state is GetEmployeeListLoading) {
-                            Container(
-                                width: w,
-                                height: 300,
-                                child: customCupertinoLoading());
-                          }
-                          if (state is GetEmployeeListSuccess) {
-                            print("OZFFDARA${state.employeeList}");
-                            // print("OZFFDARA${state.offerPeriod.nextPageUrl}");
-                            // print("OZFFDARA${state.offerPeriod.count}");
-                            // print("OZFFDARA${state.offerPeriod.count}");
-                            return Container(
-                              padding: EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListView.separated(
-                                    primary: true,
-                                    shrinkWrap: true,
-                                    itemCount: state.employeeList.length,
-                                    physics:
-                                    const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) => Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            onselect(index);
-                                            setState(() {});
-                                            offerperiodId = state.employeeList[index].id ??
-                                                0;
-                                            offerPeriodName = state.employeeList[index].fname ??
-                                                "";
-                                            Navigator.pop(context);
-                                          },
-                                          child: Row(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  onselect(index);
-                                                  setState(() {});
-                                                  offerperiodId = state.employeeList[index].id ??
-                                                      0;
-                                                  offerPeriodName = state.employeeList[index].fname ??
-                                                      "";
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 8,
-                                                      bottom: 10,
-                                                      top: 5,
-                                                      right: 8),
-                                                  child: SvgPicture.string(state
-                                                      .employeeList[index]
-                                                      .fname ==
-                                                      offerPeriodNameNew
-                                                  // selectIndex == index
-                                                      ? HomeSvg().radioButtonActive
-                                                      : HomeSvg().radioInActive),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                state.employeeList[index].fname ??
-                                                    "",
-                                                style: GoogleFonts.roboto(
-                                                  color: Colors.black,
-                                                  fontSize: w / 22,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        // Spacer(),
-                                        // GestureDetector(
-                                        //   onTap: () {
-                                        //
-                                        //     context.read<DiscountBloc>().add(
-                                        //         GetOfferPeriodReadEvent(state
-                                        //             .offerPeriod
-                                        //             .data[index]
-                                        //             .id ??
-                                        //             0));
-                                        //     context.read<DiscountBloc>().add(
-                                        //         PaginatedOfferPeriodEvent("",""));
-                                        //   },
-                                        //   child: Text(
-                                        //     "View",
-                                        //     style: TextStyle(
-                                        //         fontWeight: FontWeight.w500,
-                                        //         color: ColorPalette.primary,
-                                        //         fontSize: w / 24),
-                                        //   ),
-                                        // )
-                                      ],
-                                    ),
-                                    separatorBuilder: (context, index) =>
-                                        Container(
-                                          color: ColorPalette.divider,
-                                          height: 1,
-                                          width: w,
-                                        ),
-                                  ),
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  //   children: [
-                                  //     state.offerPeriod.count==null?Text(""):
-                                  //     GestureDetector(
-                                  //       onTap: (){
-                                  //         context.read<DiscountBloc>().add(PaginatedOfferPeriodEvent(state.offerPeriod.nextPageUrl??"",state.offerPeriod.count));
-                                  //       },
-                                  //       child: Text(
-                                  //         "Previous",
-                                  //         style: TextStyle(
-                                  //             fontWeight: FontWeight.w500,
-                                  //             color: ColorPalette.primary,
-                                  //             fontSize: w / 24),
-                                  //       ),
-                                  //     ),
-                                  //     state.offerPeriod.nextPageUrl==null?Text(""):
-                                  //     GestureDetector(
-                                  //       onTap: (){
-                                  //         context.read<DiscountBloc>().add(PaginatedOfferPeriodEvent(state.offerPeriod.nextPageUrl??"",""));
-                                  //       },
-                                  //       child: Text(
-                                  //         "Next",
-                                  //         style: TextStyle(
-                                  //             fontWeight: FontWeight.w500,
-                                  //             color: ColorPalette.primary,
-                                  //             fontSize: w / 24),
-                                  //       ),
-                                  //     ),
-                                  //
-                                  //   ],
-                                  // ),
-                                  // GradientButton(
-                                  //     color: ColorPalette.primary,
-                                  //     onPressed: () {
-                                  //
-                                  //     },
-                                  //     gradient: const LinearGradient(
-                                  //         begin: Alignment.topCenter,
-                                  //         end: Alignment.bottomCenter,
-                                  //         colors: [
-                                  //           ColorPalette.primary,
-                                  //           ColorPalette.primary
-                                  //         ]),
-                                  //     child: Text(
-                                  //       "Create New",
-                                  //       textAlign: TextAlign.center,
-                                  //       style: GoogleFonts.roboto(
-                                  //         color: Colors.white,
-                                  //         fontSize: w / 22,
-                                  //         fontWeight: FontWeight.w600,
-                                  //       ),
-                                  //     )),
-                                ],
-                              ),
-                            );
-                          }
-                          return Container(
-                              width: w,
-                              height: 300,
-                              child: customCupertinoLoading());
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        });
   }
 }

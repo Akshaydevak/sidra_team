@@ -37,8 +37,14 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     if (event is GetUserVerifyEvent) {
       yield* getUserVerifyState();
     }
+    if (event is GetAdminDataEvent) {
+      yield* getAdminDataState();
+    }
     if (event is GetEmployeeListEvent) {
       yield* getEmployeeListState();
+    }
+    if (event is GetReportingPersonListEvent) {
+      yield* getReportingPersonList();
     }
     if (event is GetGroupListEvent) {
       yield* getGroupListState();
@@ -202,6 +208,19 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       yield GetUserVerifyFailed();
     }
   }
+  //admin
+  Stream<JobState> getAdminDataState() async* {
+    yield GetAdminDataLoading();
+
+    final dataResponse = await _jobRepo.getAdminData();
+
+    if (dataResponse.data.isNotEmpty) {
+      yield GetAdminDataSuccess(dataResponse.data);
+    } else {
+      yield GetAdminDataFailed();
+    }
+  }
+
   //employeelist
   Stream<JobState> getEmployeeListState() async* {
     yield GetEmployeeListLoading();
@@ -212,6 +231,19 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       yield GetEmployeeListSuccess(dataResponse.data);
     } else {
       yield GetEmployeeListFailed();
+    }
+  }
+
+  //reporting
+  Stream<JobState> getReportingPersonList() async* {
+    yield GetReportingPersonListLoading();
+
+    final dataResponse = await _jobRepo.getReportingPersonList();
+
+    if (dataResponse.data.isNotEmpty) {
+      yield GetReportingPersonListSuccess(dataResponse.data);
+    } else {
+      yield GetReportingPersonListFailed();
     }
   }
   //grouplist
@@ -438,9 +470,9 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     );
 
-    if (dataResponse.hasData) {
+    if (dataResponse.data) {
       print("sucsess ");
-      yield UpdateJobSuccess();
+      yield UpdateJobSuccess(dataResponse.error);
     } else {
       print("failed ");
       yield UpdateJobFailed(

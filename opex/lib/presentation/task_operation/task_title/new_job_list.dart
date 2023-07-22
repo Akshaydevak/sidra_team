@@ -452,12 +452,7 @@ class _NewJobListState extends State<NewJobList> {
                 ),
               );
             }
-            return  Container(
-              padding: EdgeInsets.only(top: 10),
-              alignment: Alignment.center,
-              height: h / 3.5,
-              child: customCupertinoLoading(),
-            );
+            return  Container();
           },
         ),
       ),

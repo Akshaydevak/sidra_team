@@ -167,10 +167,10 @@ class JobCard extends StatelessWidget {
               ],
             ),
           ),
-          Positioned(
-              top: 0,
-              right: 10,
-              child: Image.asset("asset/img_10.png",height: 55,width: 55,))
+          // Positioned(
+          //     top: 0,
+          //     right: 10,
+          //     child: Image.asset("asset/img_10.png",height: 55,width: 55,))
         ],
       ),
     );

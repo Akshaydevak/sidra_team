@@ -1,17 +1,10 @@
-import 'package:cluster/core/color_palatte.dart';
-import 'package:cluster/presentation/task_operation/performance_appraisal/performance_expansiontile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import '../create/create_svg.dart';
 import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../task_operation_appbar.dart';
 import 'critirea_performance.dart';
-import 'individual_performance.dart';
 
 class CreatePerformance extends StatefulWidget {
   final GetTaskList? taskList;
@@ -94,117 +87,8 @@ class _CreatePerformanceState extends State<CreatePerformance> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                // Text(
-                //   "Choose One",
-                //   style: GoogleFonts.roboto(
-                //     color: Colors.black,
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.w500,
-                //   ),
-                // ),
-                // SizedBox(height: 16,),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     GestureDetector(
-                //       onTap:(){
-                //         setState((){
-                //           isCritiria=true;
-                //         isIndividual=false;});
-                //       },
-                //       child: Container(
-                //         width: w/2.3,
-                //        padding: EdgeInsets.all(10),
-                //         decoration: isCritiria? BoxDecoration(
-                //           borderRadius: BorderRadius.circular(10),
-                //           boxShadow: [
-                //             BoxShadow(
-                //               color: Color(0x05000000),
-                //               blurRadius: 8,
-                //               offset: Offset(1, 1),
-                //             ),
-                //           ],
-                //           color:  ColorPalette.cardBackground,
-                //         ):BoxDecoration(
-                //           borderRadius: BorderRadius.circular(10),
-                //           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                //           boxShadow: [
-                //             BoxShadow(
-                //               color: Color(0x05000000),
-                //               blurRadius: 8,
-                //               offset: Offset(1, 1),
-                //             ),
-                //           ],
-                //           color: Colors.white,
-                //         ),
-                //         child: Row(
-                //           children: [
-                //             SvgPicture.string(isCritiria?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
-                //             SizedBox(width: 10,),
-                //             Text(
-                //               "Criteria",
-                //               style: GoogleFonts.roboto(
-                //                 color: Color(0xff151522),
-                //                 fontSize: 18,
-                //                 fontWeight: FontWeight.w500,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),  GestureDetector(
-                //       onTap: (){
-                //         setState((){
-                //           isIndividual=true;
-                //           isCritiria=false;
-                //         });
-                //       },
-                //       child: Container(
-                //         width: w/2.3,
-                //        padding: EdgeInsets.all(10),
-                //         decoration: isIndividual? BoxDecoration(
-                //           borderRadius: BorderRadius.circular(10),
-                //           boxShadow: [
-                //             BoxShadow(
-                //               color: Color(0x05000000),
-                //               blurRadius: 8,
-                //               offset: Offset(1, 1),
-                //             ),
-                //           ],
-                //           color:  ColorPalette.cardBackground,
-                //         ):BoxDecoration(
-                //           borderRadius: BorderRadius.circular(10),
-                //           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                //           boxShadow: [
-                //             BoxShadow(
-                //               color: Color(0x05000000),
-                //               blurRadius: 8,
-                //               offset: Offset(1, 1),
-                //             ),
-                //           ],
-                //           color: Colors.white,
-                //         ),
-                //         child: Row(
-                //           children: [
-                //             SvgPicture.string(isIndividual?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton),
-                //             SizedBox(width: 10,),
-                //             Text(
-                //               "Individual",
-                //               style: GoogleFonts.roboto(
-                //                 color: Color(0xff151522),
-                //                 fontSize: 18,
-                //                 fontWeight: FontWeight.w500,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //
-                //   ],
-                // ),
                   SizedBox(height: 16,),
-                  isIndividual? IndividualPerformance(pointList: pointList,taskList: widget.taskList,totalMark: totalMark,):Container(),
+                  // isIndividual? IndividualPerformance(pointList: pointList,taskList: widget.taskList,totalMark: totalMark,):Container(),
                   isCritiria? CritireaPerformance():Container(),
               ],),
             )
