@@ -105,7 +105,7 @@ class _AppBarState extends State<AppBarScreen> {
           titleSpacing: 16,
           centerTitle: false,
           title: Text(
-            "Cluster",
+            "Sidrateams",
             style: GoogleFonts.roboto(
               color: Colors.black,
               fontSize: w / 18,

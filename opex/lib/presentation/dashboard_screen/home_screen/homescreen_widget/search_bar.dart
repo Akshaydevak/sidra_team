@@ -72,6 +72,7 @@ class SearchBar extends StatelessWidget {
               ),
               SvgPicture.string(
                 HomeSvg().searchIcon,
+                color: Color(0xff222222),
                 height: 17,
                 width: 17,
               ),

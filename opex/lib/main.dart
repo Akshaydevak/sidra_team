@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
-              title: 'Cluster',
+              title: 'Sidrateams',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
               ),

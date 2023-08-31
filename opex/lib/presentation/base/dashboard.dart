@@ -1,4 +1,5 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
@@ -45,38 +46,40 @@ class _DashBoardState extends State<DashBoard> {
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().homeIcon,
-            color: ColorPalette.primary,
+            color: Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().homeIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary: ColorPalette.primary,
+          activeColorPrimary:  Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
       PersistentBottomNavBarItem( 
           icon: SvgPicture.string(
             IconConstants().chatIcon,
-            color: ColorPalette.primary,
+            color: Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().chatIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary: ColorPalette.primary,
+          activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().taskIcon,
-            color: ColorPalette.primary,
+            color:  Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().inactivetaskIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary: ColorPalette.primary,
+          activeColorPrimary:  Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
       PersistentBottomNavBarItem(
+
           icon: SvgPicture.string(
             IconConstants().profileIcon,
-            color: ColorPalette.primary,
+            
+                      color:  Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().profileIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary: ColorPalette.primary,
+          activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
       // PersistentBottomNavBarItem(
       //     icon: SvgPicture.string(
@@ -143,7 +146,9 @@ class _DashBoardState extends State<DashBoard> {
                   content: Text('Tap back again to leave'),
                 ),
                 child: PersistentTabView(
+
                   context,
+
                   padding: const NavBarPadding.only(left: 10, right: 10),
                   controller: _controller,
                   onItemSelected: (value) {
@@ -160,7 +165,11 @@ class _DashBoardState extends State<DashBoard> {
                   handleAndroidBackButtonPress: true,
                   resizeToAvoidBottomInset: true,
                   stateManagement: false,
-                  decoration: const NavBarDecoration(),
+                  decoration:  NavBarDecoration( boxShadow: [BoxShadow(
+        color: Colors.grey.shade200.withOpacity(0.8),
+        blurRadius: 2.0,
+        spreadRadius: 1, //New
+      )]),
                   popAllScreensOnTapOfSelectedTab: true,
                   popActionScreens: PopActionScreensType.all,
                   itemAnimationProperties: const ItemAnimationProperties(

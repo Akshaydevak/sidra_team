@@ -45,7 +45,7 @@ class _AppBarCommunicationState extends State<AppBarCommunication> {
                 width: 16,
               ),
               Text(
-                "Cluster",
+                "Sidrateams",
                 style: GoogleFonts.roboto(
                   color: Colors.black,
                   fontSize: w / 17,
