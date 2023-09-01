@@ -2,6 +2,7 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:async';
 import 'dashboard.dart';
 
@@ -48,8 +49,8 @@ class SplashScreenState extends State<SplashScreen> {
                     Container(
                      height: h/2,
                       alignment: Alignment.center,
-                      child: 
-                      Image.asset('asset/app_icon/Logo-intro.gif'),
+                      child: Lottie.asset('asset/Logo.json'),
+                      // Image.asset('asset/Logo'),
                       //child: SvgPicture.string(IconConstants().SplashIcon),
                     )
                   ]),

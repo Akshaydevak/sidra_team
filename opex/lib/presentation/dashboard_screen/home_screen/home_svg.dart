@@ -1,4 +1,9 @@
 class HomeSvg {
+  String notificationHomeIcon='''<svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.379 16.913C17.867 15.635 17 13.767 17 11.788V9C17 5.481 14.386 2.568 11 2.08V1C11 0.447 10.552 0 10 0C9.448 0 9 0.447 9 1V2.08C5.613 2.568 3 5.481 3 9V11.788C3 13.767 2.133 15.635 0.612 16.921C0.223 17.254 0 17.738 0 18.25C0 19.215 0.785 20 1.75 20H18.25C19.215 20 20 19.215 20 18.25C20 17.738 19.777 17.254 19.379 16.913Z" fill="#555555"/>
+<path d="M10 23.75C11.8485 23.75 13.3948 22.6742 13.75 21.25H6.25C6.6052 22.6742 8.15154 23.75 10 23.75Z" fill="#555555"/>
+</svg>
+''';
   String msgIcon =
       '''<svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <mask id="mask0_3751_13109" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="30">
