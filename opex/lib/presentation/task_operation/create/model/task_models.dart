@@ -118,6 +118,8 @@ class GetTaskList extends Equatable {
   final int? parent;
   @JsonKey(name: "job_id")
   final int? jobId;
+  @JsonKey(name: "image_count")
+  final int? imgCount;
   @JsonKey(name: "task_type")
   final int? taskType;
   @JsonKey(name: "status_stages_id")
@@ -131,6 +133,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.imgCount,
     this.taskTypeName,
     this.paymentMeta,
     this.rewardsData,
@@ -229,6 +232,8 @@ class PaymentModel extends Equatable {
   final double? budget;
   @JsonKey(name: 'assigning_code')
   final String? assigningCode;
+  @JsonKey(name: 'assigning_name')
+  final String? assigningName;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'notes')
@@ -246,6 +251,7 @@ class PaymentModel extends Equatable {
 
   const PaymentModel({
     this.taskId,
+    this.assigningName,
     this.costingMeta,
     this.jobId,
     this.description,

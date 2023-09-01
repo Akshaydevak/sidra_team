@@ -4,6 +4,7 @@ import 'package:cluster/presentation/task_operation/employee_group_screen.dart';
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/new_employee.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,8 +81,18 @@ class EmployeeCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
+           employeeList?.profile==""?
+           TextAvatar(
+             shape: Shape.Circular,
+             size: 55,
+             numberLetters: 2,
+             fontSize: w/16,
+             textColor: Colors.white,
+             fontWeight: FontWeight.w500,
+             text: employeeList?.fname.toString().toUpperCase(),
+           ):
            CircleAvatar(
-             radius: 30,
+             radius: 28,
              backgroundImage: NetworkImage(employeeList?.profile??"",),
            ),
            // CircleAvatar(

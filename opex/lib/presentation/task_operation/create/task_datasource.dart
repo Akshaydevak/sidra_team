@@ -179,7 +179,7 @@ class TaskDataSource {
         },
       ),
     );
-    (response.data['data']['results'] as List).forEach((element) {
+    (response.data['data'] as List).forEach((element) {
       taskList.add(GetTaskList.fromJson(element));
     });
     return taskList;
@@ -538,7 +538,7 @@ class TaskDataSource {
       ),
     );
     statusCode = (response.data['status']);
-    print("statusCode");
+    print("statusCode${statusCode}");
     return statusCode;
   }
 

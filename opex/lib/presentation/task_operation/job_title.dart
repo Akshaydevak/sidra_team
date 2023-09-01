@@ -12,7 +12,7 @@ import 'package:cluster/presentation/task_operation/task_card.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:cluster/presentation/task_operation/task_title/reporting_person.dart';
+import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +26,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../common_widgets/loading.dart';
 import '../../../../core/common_snackBar.dart';
 import '../../../../core/utils/variables.dart';
+import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'create/create_job.dart';
 import 'create/create_newtask.dart';
@@ -287,7 +288,7 @@ class _JobTitleState extends State<JobTitle> {
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                          childAspectRatio: 1.4,
+                                          childAspectRatio: 1.2,
                                           crossAxisCount: 2,
                                           mainAxisSpacing: 10,
                                           crossAxisSpacing: 10),
@@ -363,67 +364,93 @@ class _JobTitleState extends State<JobTitle> {
                     SizedBox(
                       height: 16,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: CreateNewTask(
-                            isSubTask: false,
+                    GradientButton(
+                        color: ColorPalette.primary,
+                        onPressed: () {
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen: CreateNewTask(
+                              isSubTask: false,
+                            ),
+                            withNavBar: true,
+                            // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation: PageTransitionAnimation.fade,
+                          );
+                        },
+                        gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [ColorPalette.primary, ColorPalette.primary]),
+                        child: Text(
+                          "Create New Task",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w600,
                           ),
-                          withNavBar: true,
-                          // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        width: w,
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  color: Color(0xffe70c0c),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Create New Task",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xffe70c0c),
-                                    fontSize: w / 22,
-                                  ),
-                                )
-                              ],
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_sharp,
-                              color: Colors.black,
-                              size: 18,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        )),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     PersistentNavBarNavigator.pushNewScreen(
+                    //       context,
+                    //       screen: CreateNewTask(
+                    //         isSubTask: false,
+                    //       ),
+                    //       withNavBar: true,
+                    //       // OPTIONAL VALUE. True by default.
+                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     width: w,
+                    //     padding: EdgeInsets.all(16),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       border: Border.all(
+                    //         color: Color(0xffe6ecf0),
+                    //         width: 1,
+                    //       ),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Color(0x05000000),
+                    //           blurRadius: 8,
+                    //           offset: Offset(1, 1),
+                    //         ),
+                    //       ],
+                    //       color: Colors.white,
+                    //     ),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Row(
+                    //           children: [
+                    //             Icon(
+                    //               Icons.add,
+                    //               color: Color(0xffe70c0c),
+                    //             ),
+                    //             SizedBox(
+                    //               width: 10,
+                    //             ),
+                    //             Text(
+                    //               "Create New Task",
+                    //               textAlign: TextAlign.center,
+                    //               style: TextStyle(
+                    //                 color: Color(0xffe70c0c),
+                    //                 fontSize: w / 22,
+                    //               ),
+                    //             )
+                    //           ],
+                    //         ),
+                    //         Icon(
+                    //           Icons.arrow_forward_ios_sharp,
+                    //           color: Colors.black,
+                    //           size: 18,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 26,
                     ),
@@ -574,7 +601,9 @@ class _JobTitleState extends State<JobTitle> {
                           label: "Payment Option",
                           color: Color(0xff519BE0),
                           svg: TaskSvg().walletIcon,
-                          endIcon: Icon(
+                          endIcon: JobRead?.paymentId!=null?
+                          SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):
+                          Icon(
                             Icons.arrow_forward_ios_sharp,
                             size: 18,
                           ),
@@ -627,7 +656,8 @@ class _JobTitleState extends State<JobTitle> {
                           label: "Rewards",
                           color: Color(0xffE051B8),
                           svg: TaskSvg().walletIcon,
-                          endIcon: Icon(
+                          endIcon: JobRead?.rewardId!=null?
+                          SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
                             Icons.arrow_forward_ios_sharp,
                             size: 18,
                           ),
@@ -678,130 +708,130 @@ class _JobTitleState extends State<JobTitle> {
                     //     ),
                     //   ),
                     // ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print("EdIT");
-                        context
-                            .read<JobBloc>()
-                            .add(GetJobReadListEvent(Variable.jobReadId));
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: const CreateJob(
-                            edit: true,
-                          ),
-                          withNavBar: true, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        width: w,
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: SingleRow(
-                          label: "Edit this Job",
-                          color: Color(0xff0094FF),
-                          svg: TaskSvg().editIcon,
-                          endIcon: Icon(
-                            Icons.arrow_forward_ios_sharp,
-                            size: 18,
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // Container(
-                    //   width: w,
-                    //   padding: EdgeInsets.all(16),
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(10),
-                    //     border: Border.all(
-                    //       color: Color(0xffe6ecf0),
-                    //       width: 1,
-                    //     ),
-                    //     boxShadow: [
-                    //       BoxShadow(
-                    //         color: Color(0x05000000),
-                    //         blurRadius: 8,
-                    //         offset: Offset(1, 1),
-                    //       ),
-                    //     ],
-                    //     color: Colors.white,
-                    //
-                    //   ),
-                    //   child: SingleRow(
-                    //     label: "Notify me on due date",
-                    //     color: Color(0xffFFC800),
-                    //     svg: TaskSvg().notificationIcon,
-                    //     endIcon: isNotify
-                    //         ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
-                    //         : SvgPicture.string(HomeSvg().toggleInActive,height: 22),
-                    //     onTap: () {
-                    //       setState(() {
-                    //         isNotify = !isNotify;
-                    //       });
-                    //     },
-                    //   ),
-                    //
+                    // SizedBox(
+                    //   height: 10,
                     // ),
-                    // SizedBox(height: 30,),
-                    GestureDetector(
-                      onTap: () {
-                        context.read<EmployeeBloc>().add(
-                            GetActivityLogListingEvent(Variable.jobReadId));
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: ActivityLog(),
-                          withNavBar: false, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                          width: w,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                            child: Text("View Activity Logs",
-                                style: GoogleFonts.roboto(
-                                  color: Colors.black,
-                                  fontSize: w / 24,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                          )),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     print("EdIT");
+                    //     context
+                    //         .read<JobBloc>()
+                    //         .add(GetJobReadListEvent(Variable.jobReadId));
+                    //     PersistentNavBarNavigator.pushNewScreen(
+                    //       context,
+                    //       screen: const CreateJob(
+                    //         edit: true,
+                    //       ),
+                    //       withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     width: w,
+                    //     padding: EdgeInsets.all(16),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       border: Border.all(
+                    //         color: Color(0xffe6ecf0),
+                    //         width: 1,
+                    //       ),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Color(0x05000000),
+                    //           blurRadius: 8,
+                    //           offset: Offset(1, 1),
+                    //         ),
+                    //       ],
+                    //       color: Colors.white,
+                    //     ),
+                    //     child: SingleRow(
+                    //       label: "Edit this Job",
+                    //       color: Color(0xff0094FF),
+                    //       svg: TaskSvg().editIcon,
+                    //       endIcon: Icon(
+                    //         Icons.arrow_forward_ios_sharp,
+                    //         size: 18,
+                    //       ),
+                    //       onTap: () {},
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // // Container(
+                    // //   width: w,
+                    // //   padding: EdgeInsets.all(16),
+                    // //   decoration: BoxDecoration(
+                    // //     borderRadius: BorderRadius.circular(10),
+                    // //     border: Border.all(
+                    // //       color: Color(0xffe6ecf0),
+                    // //       width: 1,
+                    // //     ),
+                    // //     boxShadow: [
+                    // //       BoxShadow(
+                    // //         color: Color(0x05000000),
+                    // //         blurRadius: 8,
+                    // //         offset: Offset(1, 1),
+                    // //       ),
+                    // //     ],
+                    // //     color: Colors.white,
+                    // //
+                    // //   ),
+                    // //   child: SingleRow(
+                    // //     label: "Notify me on due date",
+                    // //     color: Color(0xffFFC800),
+                    // //     svg: TaskSvg().notificationIcon,
+                    // //     endIcon: isNotify
+                    // //         ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
+                    // //         : SvgPicture.string(HomeSvg().toggleInActive,height: 22),
+                    // //     onTap: () {
+                    // //       setState(() {
+                    // //         isNotify = !isNotify;
+                    // //       });
+                    // //     },
+                    // //   ),
+                    // //
+                    // // ),
+                    // // SizedBox(height: 30,),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     context.read<EmployeeBloc>().add(
+                    //         GetActivityLogListingEvent(Variable.jobReadId));
+                    //     PersistentNavBarNavigator.pushNewScreen(
+                    //       context,
+                    //       screen: ActivityLog(),
+                    //       withNavBar: false, // OPTIONAL VALUE. True by default.
+                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //       width: w,
+                    //       height: 60,
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(
+                    //           color: Color(0xffe6ecf0),
+                    //           width: 1,
+                    //         ),
+                    //         boxShadow: [
+                    //           BoxShadow(
+                    //             color: Color(0x05000000),
+                    //             blurRadius: 8,
+                    //             offset: Offset(1, 1),
+                    //           ),
+                    //         ],
+                    //         color: Colors.white,
+                    //       ),
+                    //       child: Center(
+                    //         child: Text("View Activity Logs",
+                    //             style: GoogleFonts.roboto(
+                    //               color: Colors.black,
+                    //               fontSize: w / 24,
+                    //               fontWeight: FontWeight.w400,
+                    //             )),
+                    //       )),
+                    // ),
                     SizedBox(
                       height: 10,
                     ),

@@ -1,4 +1,5 @@
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
@@ -40,7 +41,7 @@ class _CreateJobState extends State<CreateJob> {
   bool isTime = false;
   GetJobList? createJob;
 
-  int selectInstat = 0;
+  int? selectInstat;
   void onSelect(int val) {
     selectInstat = val;
     setState(() {});
@@ -148,7 +149,7 @@ class _CreateJobState extends State<CreateJob> {
   String endTime="Select Time";
   String endTime2="00:00";
   List<GetJobList>? joblist=[];
-  String PriorityLeval="";
+  String PriorityLeval="Low";
 
   void refreah(){
     setState(() {
@@ -180,7 +181,7 @@ class _CreateJobState extends State<CreateJob> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: BackAppBar(label: widget.edit==true? "Edit Job" : "Create Job",
+          child: BackAppBar(label: widget.edit==true? "Edit Job" : "Create New Job",
             isAction: false,action: Container(), ),
         ),
         body: MultiBlocListener(
@@ -189,10 +190,10 @@ class _CreateJobState extends State<CreateJob> {
               listener: (context, state) {
                 print('StateCreate$state');
                 if (state is CreateJobLoading) {
-                  showSnackBar(context,
-                      message: "Loading...",
-                      color: Colors.white,
-                      autoDismiss: true);
+                  // showSnackBar(context,
+                  //     message: "Loading...",
+                  //     color: Colors.white,
+                  //     autoDismiss: true);
                 }
                 if (state is CreateJobFailed) {
                   showSnackBar(
@@ -207,8 +208,8 @@ class _CreateJobState extends State<CreateJob> {
                       msg: 'Successfully Created',
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black);
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white);
                   Navigator.pop(context);
                   Variable.jobReadId=int.tryParse(state.jobId)??0;
                   context.read<JobBloc>().add(
@@ -226,11 +227,11 @@ class _CreateJobState extends State<CreateJob> {
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
                 if (state is UpdateJobLoading) {
-                  showSnackBar(context,
-                      message: "Loading...",
-                      color: Colors.white,
-                      // icon: HomeSvg().SnackbarIcon,
-                      autoDismiss: true);
+                  // showSnackBar(context,
+                  //     message: "Loading...",
+                  //     color: Colors.white,
+                  //     // icon: HomeSvg().SnackbarIcon,
+                  //     autoDismiss: true);
                 }
 
                 if (state is UpdateJobFailed) {
@@ -247,8 +248,8 @@ class _CreateJobState extends State<CreateJob> {
                       msg: 'Job Updated Successfully',
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black);
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white);
                   Navigator.pop(context);
 
                   // context.read<JobBloc>().add(
@@ -351,7 +352,7 @@ class _CreateJobState extends State<CreateJob> {
                       builder: (context, state) {
                         print("DASS${state}");
                         if (state is GetJobTypeListLoading) {
-                          customCupertinoLoading();
+                          return customCupertinoLoading();
                         }
                         if (state is GetJobTypeListSuccess) {
 
@@ -407,7 +408,7 @@ class _CreateJobState extends State<CreateJob> {
                       },
                     ),
 
-                    SizedBox(height: 16,),
+                    SizedBox(height: h/80,),
                     select==0||select==1?
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -532,7 +533,83 @@ class _CreateJobState extends State<CreateJob> {
                                         // isTime = !isTime;
                                       });
                                     },
-                                    endIcon: Container()),
+                                    endIcon: GestureDetector(
+
+                                        onTap: () {
+                                          focusNode.unfocus();
+                                          descriptionfocusNode.unfocus();
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext
+                                              context) {
+                                                return AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                    MainAxisSize
+                                                        .min,
+                                                    children: [
+                                                      Container(
+                                                        height: 300,
+                                                        child:
+                                                        Scaffold(
+                                                          body:
+                                                          SfDateRangePicker(
+                                                            backgroundColor:
+                                                            Colors.white,
+                                                            endRangeSelectionColor:
+                                                            ColorPalette.primary,
+                                                            startRangeSelectionColor:
+                                                            ColorPalette.primary,
+                                                            rangeSelectionColor:
+                                                            ColorPalette.primary
+                                                                .withOpacity(0.1),
+                                                            selectionColor:
+                                                            Colors.grey,
+                                                            todayHighlightColor:
+                                                            ColorPalette.primary,
+                                                            onSelectionChanged:
+                                                            _onSelectionChanged,
+                                                            selectionMode:
+                                                            DateRangePickerSelectionMode
+                                                                .range,
+                                                            initialSelectedRange: widget.edit?PickerDateRange(
+                                                                DateTime.parse(startDate),
+                                                                DateTime.parse(ebdDate)):
+                                                            startDate!=""?PickerDateRange(
+                                                                DateTime.parse(startDate),
+                                                                DateTime.parse(ebdDate)):
+                                                            PickerDateRange(
+                                                                DateTime.now(),
+                                                                DateTime.now()),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 25,
+                                                          width: 75,
+                                                          color: ColorPalette
+                                                              .primary,
+                                                          child: Center(
+                                                              child: Text(
+                                                                  "Ok")),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              });
+                                        },
+
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                          child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),
+                                    )),
                               ),
                               Column(
                                 children: [
@@ -563,80 +640,80 @@ class _CreateJobState extends State<CreateJob> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {
-                                            focusNode.unfocus();
-                                            descriptionfocusNode.unfocus();
-                                            showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                context) {
-                                                  return AlertDialog(
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                      MainAxisSize
-                                                          .min,
-                                                      children: [
-                                                        Container(
-                                                          height: 300,
-                                                          child:
-                                                          Scaffold(
-                                                            body:
-                                                            SfDateRangePicker(
-                                                              backgroundColor:
-                                                              Colors.white,
-                                                              endRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              startRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              rangeSelectionColor:
-                                                              ColorPalette.primary
-                                                                  .withOpacity(0.1),
-                                                              selectionColor:
-                                                              Colors.grey,
-                                                              todayHighlightColor:
-                                                              ColorPalette.primary,
-                                                              onSelectionChanged:
-                                                              _onSelectionChanged,
-                                                              selectionMode:
-                                                              DateRangePickerSelectionMode
-                                                                  .range,
-                                                              initialSelectedRange: widget.edit?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              startDate!=""?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              PickerDateRange(
-                                                                  DateTime.now(),
-                                                                  DateTime.now()),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 25,
-                                                            width: 75,
-                                                            color: ColorPalette
-                                                                .primary,
-                                                            child: Center(
-                                                                child: Text(
-                                                                    "Ok")),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                });
-                                          },
+                                          // onTap: () {
+                                          //   focusNode.unfocus();
+                                          //   descriptionfocusNode.unfocus();
+                                          //   showDialog(
+                                          //       context: context,
+                                          //       builder: (BuildContext
+                                          //       context) {
+                                          //         return AlertDialog(
+                                          //           content: Column(
+                                          //             mainAxisSize:
+                                          //             MainAxisSize
+                                          //                 .min,
+                                          //             children: [
+                                          //               Container(
+                                          //                 height: 300,
+                                          //                 child:
+                                          //                 Scaffold(
+                                          //                   body:
+                                          //                   SfDateRangePicker(
+                                          //                     backgroundColor:
+                                          //                     Colors.white,
+                                          //                     endRangeSelectionColor:
+                                          //                     ColorPalette.primary,
+                                          //                     startRangeSelectionColor:
+                                          //                     ColorPalette.primary,
+                                          //                     rangeSelectionColor:
+                                          //                     ColorPalette.primary
+                                          //                         .withOpacity(0.1),
+                                          //                     selectionColor:
+                                          //                     Colors.grey,
+                                          //                     todayHighlightColor:
+                                          //                     ColorPalette.primary,
+                                          //                     onSelectionChanged:
+                                          //                     _onSelectionChanged,
+                                          //                     selectionMode:
+                                          //                     DateRangePickerSelectionMode
+                                          //                         .range,
+                                          //                     initialSelectedRange: widget.edit?PickerDateRange(
+                                          //                         DateTime.parse(startDate),
+                                          //                         DateTime.parse(ebdDate)):
+                                          //                     startDate!=""?PickerDateRange(
+                                          //                         DateTime.parse(startDate),
+                                          //                         DateTime.parse(ebdDate)):
+                                          //                     PickerDateRange(
+                                          //                         DateTime.now(),
+                                          //                         DateTime.now()),
+                                          //                   ),
+                                          //                 ),
+                                          //               ),
+                                          //               GestureDetector(
+                                          //                 onTap: () {
+                                          //                   Navigator.pop(
+                                          //                       context);
+                                          //                 },
+                                          //                 child:
+                                          //                 Container(
+                                          //                   height: 25,
+                                          //                   width: 75,
+                                          //                   color: ColorPalette
+                                          //                       .primary,
+                                          //                   child: Center(
+                                          //                       child: Text(
+                                          //                           "Ok")),
+                                          //                 ),
+                                          //               )
+                                          //             ],
+                                          //           ),
+                                          //         );
+                                          //       });
+                                          // },
                                           child: Text(
                                             _range2.isNotEmpty? startDate2:"Choose Date",
                                             style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
+                                              color: ColorPalette.black,
                                               fontSize: w/22,
                                               fontWeight:
                                               FontWeight.w500,
@@ -682,7 +759,7 @@ class _CreateJobState extends State<CreateJob> {
                                         Text(
                                           _range2.isNotEmpty?ebdDate2:"Choose Date",
                                           style: GoogleFonts.roboto(
-                                            color: Color(0xfffe5762),
+                                            color: ColorPalette.black,
                                             fontSize: w/22,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -718,28 +795,26 @@ class _CreateJobState extends State<CreateJob> {
                     select==2?
                     Column(
                       children: [
-                        Container(
-                            height: h / 8,
+                        widget.edit==true?Container():
+                        SizedBox(
+                            height: h / 12,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.only(right: 16, left: 12, bottom: 10),
+                              padding: const EdgeInsets.only(right: 16, bottom: 10),
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: joblist!.length,
                               itemBuilder: (BuildContext context, int i) {
+
                                 return GestureDetector(
                                     onTap: (){
                                       onSelect(i);
                                       jobtitle.text=joblist?[i].name??"";
                                       jobdiscription.text=joblist?[i].description??"";
                                       relatedJobId=joblist?[i].id??0;
-
-                                      print("GGGG${jobtitle.text}");
-                                      print("GGGG${jobdiscription.text}");
                                     },
                                     child:Container(
-                                      width: 120,
-                                      height: 73,
+                                      width: w/3,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         border: selectInstat==i?Border.all(color: Colors.red, width: 1, ):
@@ -755,10 +830,11 @@ class _CreateJobState extends State<CreateJob> {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        joblist?[i].name??"",
+                                        joblist?[i].name.toString().toTitleCase()??"",
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 16,
+                                          fontSize: w/24,
+                                          fontWeight: FontWeight.w500
                                         ),
                                       ),
                                     ));
@@ -771,7 +847,6 @@ class _CreateJobState extends State<CreateJob> {
                             )),
                         Container(
                           width: w,
-                          // height: 120,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
@@ -800,7 +875,70 @@ class _CreateJobState extends State<CreateJob> {
                                         // isTime = !isTime;
                                       });
                                     },
-                                    endIcon: Container()
+                                    endIcon: GestureDetector(
+                                        onTap: (){
+
+
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        height: 300,
+                                                        child: Scaffold(
+                                                          body: SfDateRangePicker(
+                                                            backgroundColor:
+                                                            Colors.white,
+                                                            endRangeSelectionColor:
+                                                            ColorPalette.primary,
+                                                            startRangeSelectionColor:
+                                                            ColorPalette.primary,
+                                                            rangeSelectionColor:
+                                                            ColorPalette.primary
+                                                                .withOpacity(0.1),
+                                                            selectionColor:
+                                                            Colors.grey,
+                                                            todayHighlightColor:
+                                                            ColorPalette.primary,
+                                                            onSelectionChanged:
+                                                            _onSelectionChanged,
+                                                            selectionMode:
+                                                            DateRangePickerSelectionMode
+                                                                .range,
+                                                            initialSelectedRange: widget.edit?PickerDateRange(
+                                                                DateTime.parse(startDate),
+                                                                DateTime.parse(ebdDate)):
+                                                            startDate!=""?PickerDateRange(
+                                                                DateTime.parse(startDate),
+                                                                DateTime.parse(ebdDate)):
+                                                            PickerDateRange(
+                                                                DateTime.now(),
+                                                                DateTime.now()),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: (){
+                                                          Navigator.pop(context);
+                                                        },
+                                                        child: Container(width: w/3,
+                                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                                                          alignment: Alignment.center,
+                                                          color: ColorPalette.primary,
+                                                          child: Text("Ok",style: GoogleFonts.roboto(color: Colors.white),),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              });
+                                        },
+                                        child: Container(
+                                            padding: EdgeInsets.all(5),
+                                            child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),)
                                 ),
                               ),
                               Column(
@@ -814,75 +952,79 @@ class _CreateJobState extends State<CreateJob> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            // _restorableDatePickerRouteFuture.present();
-                                          },
-                                          child:  Text(
-                                            "Start Date :",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: w/22,
-                                            ),
+                                        Text(
+                                          "Start Date :",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: w/22,
                                           ),
                                         ),
 
                                         GestureDetector(
-                                          onTap: (){
-
-
-                                            showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    content: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Container(
-                                                          height: 300,
-                                                          child: Scaffold(
-                                                            body: SfDateRangePicker(
-                                                              backgroundColor:
-                                                              Colors.white,
-                                                              endRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              startRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              rangeSelectionColor:
-                                                              ColorPalette.primary
-                                                                  .withOpacity(0.1),
-                                                              selectionColor:
-                                                              Colors.grey,
-                                                              todayHighlightColor:
-                                                              ColorPalette.primary,
-                                                              onSelectionChanged: _onSelectionChanged,
-                                                              selectionMode: DateRangePickerSelectionMode.range,
-                                                              initialSelectedRange: PickerDateRange(
-                                                                  DateTime.now().subtract(const Duration(days: 4)),
-                                                                  DateTime.now().add(const Duration(days: 3))),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: (){
-                                                            Navigator.pop(context);
-                                                          },
-                                                          child: Container(width: w/3,
-                                                            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
-                                                            alignment: Alignment.center,
-                                                            color: ColorPalette.primary,
-                                                            child: Text("Ok",style: GoogleFonts.roboto(color: Colors.white),),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                });
-                                          },
+                                          // onTap: (){
+                                          //
+                                          //
+                                          //   showDialog(
+                                          //       context: context,
+                                          //       builder: (BuildContext context) {
+                                          //         return AlertDialog(
+                                          //           content: Column(
+                                          //             mainAxisSize: MainAxisSize.min,
+                                          //             children: [
+                                          //               Container(
+                                          //                 height: 300,
+                                          //                 child: Scaffold(
+                                          //                   body: SfDateRangePicker(
+                                          //                     backgroundColor:
+                                          //                     Colors.white,
+                                          //                     endRangeSelectionColor:
+                                          //                     ColorPalette.primary,
+                                          //                     startRangeSelectionColor:
+                                          //                     ColorPalette.primary,
+                                          //                     rangeSelectionColor:
+                                          //                     ColorPalette.primary
+                                          //                         .withOpacity(0.1),
+                                          //                     selectionColor:
+                                          //                     Colors.grey,
+                                          //                     todayHighlightColor:
+                                          //                     ColorPalette.primary,
+                                          //                     onSelectionChanged:
+                                          //                     _onSelectionChanged,
+                                          //                     selectionMode:
+                                          //                     DateRangePickerSelectionMode
+                                          //                         .range,
+                                          //                     initialSelectedRange: widget.edit?PickerDateRange(
+                                          //                         DateTime.parse(startDate),
+                                          //                         DateTime.parse(ebdDate)):
+                                          //                     startDate!=""?PickerDateRange(
+                                          //                         DateTime.parse(startDate),
+                                          //                         DateTime.parse(ebdDate)):
+                                          //                     PickerDateRange(
+                                          //                         DateTime.now(),
+                                          //                         DateTime.now()),
+                                          //                   ),
+                                          //                 ),
+                                          //               ),
+                                          //               GestureDetector(
+                                          //                 onTap: (){
+                                          //                   Navigator.pop(context);
+                                          //                 },
+                                          //                 child: Container(width: w/3,
+                                          //                   padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                                          //                   alignment: Alignment.center,
+                                          //                   color: ColorPalette.primary,
+                                          //                   child: Text("Ok",style: GoogleFonts.roboto(color: Colors.white),),
+                                          //                 ),
+                                          //               )
+                                          //             ],
+                                          //           ),
+                                          //         );
+                                          //       });
+                                          // },
                                           child: Text(
                                             _range2.isNotEmpty?startDate2:"Choose Date",
                                             style: GoogleFonts.roboto(
-                                              color: Color(0xfffe5762),
+                                              color: ColorPalette.black,
                                               fontSize: w/22,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -925,8 +1067,8 @@ class _CreateJobState extends State<CreateJob> {
                                         Text(
                                           _range2.isNotEmpty?ebdDate2:"Choose Date",
                                           style: GoogleFonts.roboto(
-                                            color: Color(0xfffe5762),
-                                            fontSize: 18,
+                                            color: ColorPalette.black,
+                                            fontSize: w/22,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -938,7 +1080,7 @@ class _CreateJobState extends State<CreateJob> {
                                             widget.edit?endTime:endTime,
                                             style: GoogleFonts.roboto(
                                               color: Color(0xfffe5762),
-                                              fontSize: 18,
+                                              fontSize: w/22,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -961,10 +1103,10 @@ class _CreateJobState extends State<CreateJob> {
 
                     GestureDetector(
                       onTap: (){
-                        isValid=true;
+                        validationCheck();
                         focusNode.unfocus();
                         descriptionfocusNode.unfocus();
-                        _showModalBottomSheet();
+                        _showModalBottomSheet(PriorityLeval);
                         setState(() {
 
                         });
@@ -992,9 +1134,14 @@ class _CreateJobState extends State<CreateJob> {
                             label: "Set Priority",
                             svg: CreateSvg().priorityIcon,
                             onTap: () {
+                              validationCheck();
+                              focusNode.unfocus();
+                              descriptionfocusNode.unfocus();
+                              _showModalBottomSheet(PriorityLeval);
 
-                              _showModalBottomSheet();
+                              setState(() {
 
+                              });
                             },
                             endIcon: Row(
                               children: [
@@ -1132,7 +1279,7 @@ class _CreateJobState extends State<CreateJob> {
 
     );
   }
-  _showModalBottomSheet() {
+  _showModalBottomSheet(String priorityread) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -1191,34 +1338,38 @@ class _CreateJobState extends State<CreateJob> {
                         refreah();
                         Navigator.pop(context);
                       },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
+                      child: Container(
+                        padding: priorityread=="High"?EdgeInsets.all(10):null,
+                        color: priorityread=="High"?Colors.red.withOpacity(0.1):Colors.white,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                color: Colors.white,
                               ),
-                              color: Colors.white,
+                              child: SvgPicture.string(TaskSvg().priorityIcon),
                             ),
-                            child: SvgPicture.string(TaskSvg().priorityIcon),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Text(
-                            "High Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: w/22,
-                              fontWeight: FontWeight.w500,
+                            SizedBox(
+                              width: 16,
                             ),
-                          )
-                        ],
+                            Text(
+                              "High Priority",
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w/22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -1240,37 +1391,41 @@ class _CreateJobState extends State<CreateJob> {
                       Navigator.pop(context);
 
                     },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
+                      child: Container(
+                        padding: priorityread=="Medium"?EdgeInsets.all(10):null,
+                        color: priorityread=="Medium"?Colors.red.withOpacity(0.1):Colors.white,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                color: Colors.white,
                               ),
-                              color: Colors.white,
+                              child: SvgPicture.string(
+                                TaskSvg().priorityIcon,
+                                color: Color(0xffF18F1C),
+                              ),
                             ),
-                            child: SvgPicture.string(
-                              TaskSvg().priorityIcon,
-                              color: Color(0xffF18F1C),
+                            const SizedBox(
+                              width: 16,
                             ),
-                          ),
-                          const SizedBox(
-                            width: 16,
-                          ),
-                          Text(
-                            "Medium Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: w/22,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
+                            Text(
+                              "Medium Priority",
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w/22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -1295,37 +1450,41 @@ class _CreateJobState extends State<CreateJob> {
 
 
                       },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
+                      child: Container(
+                        padding: priorityread=="Low"?EdgeInsets.all(10):null,
+                        color: priorityread=="Low"?Colors.red.withOpacity(0.1):Colors.white,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                color: Colors.white,
                               ),
-                              color: Colors.white,
+                              child: SvgPicture.string(
+                                TaskSvg().priorityIcon,
+                                color: Color(0xff50D166),
+                              ),
                             ),
-                            child: SvgPicture.string(
-                              TaskSvg().priorityIcon,
-                              color: Color(0xff50D166),
+                            SizedBox(
+                              width: 16,
                             ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Text(
-                            "Low Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: w/22,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
+                            Text(
+                              "Low Priority",
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w/22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],

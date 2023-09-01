@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../../../core/utils/variables.dart';
+import '../create/task_bloc/task_bloc.dart';
+import '../job_title.dart';
 import '../task_svg.dart';
 import 'assigned_me_card.dart';
 import 'model/joblist_model.dart';
+import 'my_job_card.dart';
 
 class AssignedByMe extends StatefulWidget {
   const AssignedByMe({Key? key}) : super(key: key);
@@ -27,161 +33,439 @@ class _AssignedByMeState extends State<AssignedByMe> {
     context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
     super.initState();
   }
+  bool isExpanded=false;
+  int ?select;
 
+  void onselect(index){
+    setState(() {
+      select=index;
+    });
+
+  }
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return ScrollConfiguration(
-      behavior: NoGlow(),
-      child: SingleChildScrollView(child:
-          // jobList.isEmpty? Container(
-          //   padding: EdgeInsets.only(top: 10),
-          //   alignment: Alignment.center,
-          //   height: h/2,
-          //   child: SvgPicture.string(TaskSvg().nolistSvg,height: h/4.5,),
-          // ):
-          BlocBuilder<JobBloc, JobState>(
-        builder: (context, state) {
-          if (state is GetAssignedMeListLoading) {
+    return RefreshIndicator(
+      onRefresh: ()async{
+        context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+        // context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+        return Future<void>.delayed(const Duration(seconds: 3));
+      },
+      key: _refreshIndicatorKey,
+      color: ColorPalette.primary,
+      // backgroundColor: Colors.transparent,
+
+      strokeWidth: 2.0,
+      child: ScrollConfiguration(
+        behavior: NoGlow(),
+        child: SingleChildScrollView(child:
+            // jobList.isEmpty? Container(
+            //   padding: EdgeInsets.only(top: 10),
+            //   alignment: Alignment.center,
+            //   height: h/2,
+            //   child: SvgPicture.string(TaskSvg().nolistSvg,height: h/4.5,),
+            // ):
+            BlocBuilder<JobBloc, JobState>(
+          builder: (context, state) {
+            if (state is GetAssignedMeListLoading) {
+              return Container(
+                  height: 300,
+                  width: w,
+                  alignment: Alignment.center,
+                  child: LoadingAnimationWidget.threeRotatingDots(
+                    color: Colors.red,
+                    size: 30,
+                  ));
+            }
+            if (state is GetAssignedMeListSuccess) {
+              jobList = state.assignMeList ?? [];
+              nextUrl = state.nextPageUrl ?? "";
+              prevUrl = state.prevPageUrl ?? "";
+              return Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Total ${jobList.length} Jobs",
+                            style: GoogleFonts.roboto(
+                              color: ColorPalette.black,
+                              fontSize: w / 22,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          // Row(
+                          //   children: [
+                          //
+                          //     Container(
+                          //         width: 37,
+                          //         height: 37,
+                          //         padding: EdgeInsets.all(8),
+                          //         decoration: BoxDecoration(
+                          //           borderRadius: BorderRadius.circular(5),
+                          //           border: Border.all(
+                          //             color: Color(0xffe6ecf0), width: 1,),
+                          //           boxShadow: const [
+                          //             BoxShadow(
+                          //               color: Color(0x05000000),
+                          //               blurRadius: 8,
+                          //               offset: Offset(1, 1),
+                          //             ),
+                          //           ],
+                          //           color: Colors.white,
+                          //         ),
+                          //         child: SvgPicture.string(TaskSvg().moreTaskIcon))
+                          //   ],
+                          // ),
+                        ]),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      //color: Colors.yellow,
+                      padding: const EdgeInsets.only(
+                        bottom: 20,
+                      ),
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const ScrollPhysics(),
+                          separatorBuilder: (BuildContext cxt, int i) {
+                            return const SizedBox(
+                              height: 10,
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int i) {
+                            return InkWell(
+                              onTap: () {
+                                // Variable.jobReadId=jobList[i].id??0;
+                                // print("HHH${Variable.jobReadId}");
+                                context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','',''));
+                                context.read<JobBloc>().add(GetJobReadListEvent(jobList[i].id??0));
+                                PersistentNavBarNavigator.pushNewScreen(
+                                  context,
+                                  screen: JobTitle(isMyJob: true),
+                                  withNavBar: false,
+                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                );
+                              },
+                              child:
+                              CardExpaned(
+                                assignedMe: jobList[i],
+                                isExpanded: select==i,
+                                onTap: (){
+                                  onselect(i);
+                                  setState(() {
+
+                                  });
+                                },
+                              ),
+
+                            );
+                          },
+                          itemCount: jobList.length),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 15,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          prevUrl != ""
+                              ? GestureDetector(
+                                  onTap: () {
+                                    context.read<JobBloc>().add(
+                                        GetAssignedMeListEvent('', '', prevUrl));
+                                    // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
+                                  },
+                                  child: Text(
+                                    "Previous",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 24),
+                                  ),
+                                )
+                              : Container(),
+                          nextUrl != ""
+                              ? GestureDetector(
+                                  onTap: () {
+                                    // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                    setState(() {
+                                      context.read<JobBloc>().add(
+                                          GetAssignedMeListEvent(
+                                              '', nextUrl, ""));
+                                    });
+                                  },
+                                  child: Text(
+                                    "Next",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 24),
+                                  ),
+                                )
+                              : Text("")
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
             return Container(
-                height: 300,
-                width: w,
-                alignment: Alignment.center,
-                child: LoadingAnimationWidget.threeRotatingDots(
-                  color: Colors.red,
-                  size: 30,
-                ));
-          }
-          if (state is GetAssignedMeListSuccess) {
-            jobList = state.assignMeList ?? [];
-            nextUrl = state.nextPageUrl ?? "";
-            prevUrl = state.prevPageUrl ?? "";
-            return Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.only(top: 10),
+              alignment: Alignment.center,
+              height: h / 2,
+              child: SvgPicture.string(
+                TaskSvg().nolistSvg,
+                height: h / 4.5,
+              ),
+            );
+          },
+        )),
+      ),
+    );
+  }
+}
+
+
+class CardExpaned extends StatefulWidget {
+  final GetJobList? assignedMe;
+  final bool? isExpanded;
+
+  final VoidCallback? onTap;
+  const CardExpaned({super.key, this.assignedMe, this.isExpanded, this.onTap});
+
+  @override
+  State<CardExpaned> createState() => _CardExpanedState();
+}
+
+class _CardExpanedState extends State<CardExpaned> {
+  String endstdDate='';
+  String startstdDate='';
+  String startTime="Select Time";
+  String startTime2="00:00";
+  String endTime="Select Time";
+  String endTime2="00:00";
+  @override
+  Widget build(BuildContext context) {
+    // print("sta${widget.assignedMe?.startDate}");
+    // print("sta${widget.assignedMe?.endDate}");
+
+
+    var date = widget.assignedMe?.endDate;
+    var date2 = widget.assignedMe?.startDate;
+    var dateTime = DateTime.parse("$date");
+    var dateTime2 = DateTime.parse("$date2");
+    endstdDate =
+        DateFormat('dd-MM-yyyy').format(dateTime).toString();
+    startstdDate =
+        DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+
+    startTime=widget.assignedMe?.startDate?.split("T")[1].split("+")[0]??"";
+    endTime=widget.assignedMe?.endDate?.split("T")[1].split("+")[0]??"";
+    final timeOfDay = TimeOfDay(hour: int.tryParse(startTime.split(":")[0])??0, minute: int.tryParse(startTime.split(":")[1])??0); // Example time of day (3:30 PM)
+    final timeOfDayEnd = TimeOfDay(hour: int.tryParse(endTime.split(":")[0])??0, minute: int.tryParse(endTime.split(":")[1])??0); // Example time of day (3:30 PM)
+
+    final twentyFourHourFormat = DateFormat('HH:mm:00');
+    final twelveHourFormat = DateFormat('h:mm a');
+
+    final dateTimet = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+    final dateTimett = DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
+    startTime = twelveHourFormat.format(dateTimet);
+    startTime2 = twentyFourHourFormat.format(dateTimet);
+    endTime=twelveHourFormat.format(dateTimett);
+    endTime2=twentyFourHourFormat.format(dateTimett);
+    var w = MediaQuery.of(context).size.width;
+    return Container(
+      width: w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0x4ca9a8a8),
+          width: 1,
+        ),
+        color: const Color(0xfff8f7f5),
+      ),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
               child: Column(
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Total ${jobList.length} Jobs",
+                          widget.assignedMe?.name??"",
                           style: GoogleFonts.roboto(
                             color: ColorPalette.black,
-                            fontSize: w / 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        // Row(
-                        //   children: [
-                        //
-                        //     Container(
-                        //         width: 37,
-                        //         height: 37,
-                        //         padding: EdgeInsets.all(8),
-                        //         decoration: BoxDecoration(
-                        //           borderRadius: BorderRadius.circular(5),
-                        //           border: Border.all(
-                        //             color: Color(0xffe6ecf0), width: 1,),
-                        //           boxShadow: const [
-                        //             BoxShadow(
-                        //               color: Color(0x05000000),
-                        //               blurRadius: 8,
-                        //               offset: Offset(1, 1),
-                        //             ),
-                        //           ],
-                        //           color: Colors.white,
-                        //         ),
-                        //         child: SvgPicture.string(TaskSvg().moreTaskIcon))
-                        //   ],
-                        // ),
-                      ]),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Container(
-                    //color: Colors.yellow,
-                    padding: const EdgeInsets.only(
-                      bottom: 20,
-                    ),
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        separatorBuilder: (BuildContext cxt, int i) {
-                          return const SizedBox(
-                            height: 10,
-                          );
-                        },
-                        itemBuilder: (BuildContext context, int i) {
-                          return InkWell(
-                            onTap: () {},
-                            child: AssignedMeCard(
-                              assignedMe: jobList[i],
-                            ),
-                          );
-                        },
-                        itemCount: jobList.length),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        prevUrl != ""
-                            ? GestureDetector(
-                                onTap: () {
-                                  context.read<JobBloc>().add(
-                                      GetAssignedMeListEvent('', '', prevUrl));
-                                  // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
-                                },
-                                child: Text(
-                                  "Previous",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: ColorPalette.primary,
-                                      fontSize: w / 24),
-                                ),
-                              )
-                            : Container(),
-                        nextUrl != ""
-                            ? GestureDetector(
-                                onTap: () {
-                                  // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
-                                  setState(() {
-                                    context.read<JobBloc>().add(
-                                        GetAssignedMeListEvent(
-                                            '', nextUrl, ""));
-                                  });
-                                },
-                                child: Text(
-                                  "Next",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: ColorPalette.primary,
-                                      fontSize: w / 24),
-                                ),
-                              )
-                            : Text("")
+
+                        GestureDetector(
+                          onTap: widget.onTap,
+                            child: Icon(Icons.arrow_drop_down))
                       ],
                     ),
-                  )
-                ],
-              ),
-            );
-          }
-          return Container(
-            padding: EdgeInsets.only(top: 10),
-            alignment: Alignment.center,
-            height: h / 2,
-            child: SvgPicture.string(
-              TaskSvg().nolistSvg,
-              height: h / 4.5,
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      widget.assignedMe?.description??"",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ]),
             ),
-          );
-        },
-      )),
+            Divider(
+              color: const Color(0xffA9A8A8).withOpacity(0.3),
+            ),
+            widget.isExpanded==true?Column(
+              children: [
+                Container(
+                  padding:
+                  const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+                  child: Column(
+                    children: [
+                      Row(children: [
+                        Container(
+                          width: w/3.5,
+                          child: const Text(
+                            "Start On",
+                            style: TextStyle(
+                              color: Color(0xff6d6d6d),
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 16,
+                          child: const Text(":",
+                            style: TextStyle(
+                              color: Color(0xff6d6d6d),
+                              fontSize: 15,
+                            ),),
+                        ),
+                        Text(
+                          "${startstdDate}  ${startTime}" ,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: "Roboto",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],),
+                      const SizedBox(height: 5,),
+                      Row(children: [
+                        Container(
+                          width: w/3.5,
+                          child: const Text(
+                            "Due On",
+                            style: TextStyle(
+                              color: Color(0xff6d6d6d),
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 16,
+                          child: const Text(":",
+                            style: TextStyle(
+                              color: Color(0xff6d6d6d),
+                              fontSize: 15,
+                            ),),
+                        ),
+                        Text(
+                          "$endstdDate  $endTime",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: 15,
+
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],),
+
+
+
+
+                    ],
+                  ),
+                ),
+                Divider(
+                  color: const Color(0xffA9A8A8).withOpacity(0.3),
+                ),
+              ],
+            ):Container(),
+            Container(
+                padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // SvgPicture.string(TaskSvg().attachmIcon),
+                        // const SizedBox(
+                        //   width: 5,
+                        // ),
+                        // Text(
+                        //   "1",
+                        //   style: GoogleFonts.roboto(
+                        //     color: const Color(0xff939393),
+                        //     fontSize: 15,
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   width: 15,
+                        // ),
+                        SvgPicture.string(
+                          TaskSvg().priorityIcon,
+                          color: widget.assignedMe?.priority=="Low"?Color(0xff50D166):
+                          widget.assignedMe?.priority=="Medium"?Color(0xffF18F1C):
+                          null,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(widget.assignedMe?.priority??"",style: TextStyle(fontSize: w/24,fontWeight: FontWeight.w500),),
+
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        // SvgPicture.string(TaskSvg().priorityIcon,
+                        //     color: widget.tasksList?.priority=="Low"?const Color(0xff50D166):
+                        //     widget.tasksList?.priority=="Medium"?const Color(0xffF18F1C):null)
+                      ],
+                    ),
+                    // GestureDetector(
+                    //     onTap: (){
+                    //       setState((){
+                    //         onselect(i);
+                    //         isExpanded=!isExpanded;
+                    //       });
+                    //     },
+                    //     child: isExpanded?const Icon(Icons.keyboard_arrow_up):const Icon(Icons.keyboard_arrow_down_sharp))
+                  ],
+                ))
+          ]),
     );
   }
 }

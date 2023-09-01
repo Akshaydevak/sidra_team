@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -72,7 +74,7 @@ class _PaymentOptionState extends State<PaymentOption> {
   void initState() {
     picModelPayment.clear();
     for(int i=0;i<5;i++) {
-      picModelPayment.add(PicModel(data: null,url: ""));
+      picModelPayment.add(PicModel(data: null,url: null));
     }
     super.initState();
   }
@@ -85,6 +87,13 @@ class _PaymentOptionState extends State<PaymentOption> {
       isValid=false;
     }
   }
+  void clearDataAtIndex(int index) {
+    if (index >= 0 && index < picModelPayment.length) {
+      picModelPayment[index] = PicModel(data: null, url: null);
+    }
+    setState(() {});
+  }
+  int count = 0;
   @override
   Widget build(BuildContext context) {
     print("Task Id${widget.taskId}");
@@ -110,18 +119,17 @@ class _PaymentOptionState extends State<PaymentOption> {
                   [PicModel(data: state.data,url: state.url)]);
             });
             print("pic model length${picModelPayment.length}");
-
           }
         },
       ),
       BlocListener<TaskBloc, TaskState>(
   listener: (context, state) {
       if (state is CreatePaymentLoading) {
-        showSnackBar(context,
-            message: "Loading...",
-            color: Colors.white,
-            // icon: HomeSvg().SnackbarIcon,
-            autoDismiss: true);
+        // showSnackBar(context,
+        //     message: "Loading...",
+        //     color: Colors.white,
+        //     // icon: HomeSvg().SnackbarIcon,
+        //     autoDismiss: true);
       }
 
       if (state is CreatePaymentFailed) {
@@ -139,8 +147,8 @@ class _PaymentOptionState extends State<PaymentOption> {
             msg: 'Successfully Created',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.white,
-            textColor: Colors.black);
+            backgroundColor: Colors.black,
+            textColor: Colors.white);
         context.read<JobBloc>().add(
             GetJobReadListEvent(Variable.jobReadId));
         context.read<TaskBloc>().add(
@@ -152,11 +160,11 @@ class _PaymentOptionState extends State<PaymentOption> {
       BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
           if (state is UpdatePaymentLoading) {
-            showSnackBar(context,
-                message: "Loading...",
-                color: Colors.white,
-                // icon: HomeSvg().SnackbarIcon,
-                autoDismiss: true);
+            // showSnackBar(context,
+            //     message: "Loading...",
+            //     color: Colors.white,
+            //     // icon: HomeSvg().SnackbarIcon,
+            //     autoDismiss: true);
           }
 
           if (state is UpdatePaymentFailed) {
@@ -174,8 +182,8 @@ class _PaymentOptionState extends State<PaymentOption> {
                 msg: 'Successfully Updated',
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.white,
-                textColor: Colors.black);
+                backgroundColor: Colors.black,
+                textColor: Colors.white);
             context.read<JobBloc>().add(
                 GetJobReadListEvent(Variable.jobReadId));
             context.read<TaskBloc>().add(
@@ -215,28 +223,29 @@ class _PaymentOptionState extends State<PaymentOption> {
             picModelPayment.setAll(0, [
               PicModel(
                   url: paymentRead?.costingMeta?.image1 ??
-                      "")
+                      null)
             ]);
             picModelPayment.setAll(1, [
               PicModel(
                   url: paymentRead?.costingMeta?.image2 ??
-                      "")
+                      null)
             ]);
             picModelPayment.setAll(2, [
               PicModel(
                   url: paymentRead?.costingMeta?.image3 ??
-                      "")
+                      null)
             ]);
             picModelPayment.setAll(3, [
               PicModel(
                   url: paymentRead?.costingMeta?.image4 ??
-                      "")
+                      null)
             ]);
             picModelPayment.setAll(4, [
               PicModel(
                   url: paymentRead?.costingMeta?.image5 ??
-                      "")
+                      null)
             ]);
+            widget.update==false?count=0:count=picModelPayment.length;
             setState(() {
 
             });
@@ -311,7 +320,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                             payId: paymentRead?.id,
                             img1: picModelPayment[0].data??picModelPayment[0].url,
                             img5: picModelPayment[4].data??picModelPayment[4].url,
-                            img4: picModelPayment[3].data??picModel[3].url,
+                            img4: picModelPayment[3].data??picModelPayment[3].url,
                             img3: picModelPayment[2].data??picModelPayment[2].url,
                             img2: picModelPayment[1].data??picModelPayment[1].url
                         )):
@@ -430,13 +439,13 @@ class _PaymentOptionState extends State<PaymentOption> {
                         widget.update?
                         ReadDropDownCard(
                           label: "Assigning Code",
-                          selValue: paymentRead?.assigningCode??"",
+                          selValue: paymentRead?.assigningName??"",
                         ):selectedType=="Task_Group"?
                         Flex(direction: Axis.vertical,
                             children:[
                               Column(crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Assigning Code",
+                                  Text("Assigning Name",
                                     style: GoogleFonts.roboto(
                                       color: ColorPalette.black,
                                       fontSize: w/24,
@@ -452,7 +461,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                       underline:Container(),
                                       isExpanded: true,
                                       icon: Icon(Icons.keyboard_arrow_down_outlined),
-                                      hint: const Text("Assigning Code"),
+                                      hint: const Text("Assigning Name"),
                                       value: selCode,
                                       onChanged: (value) {
                                         setState(() {
@@ -619,80 +628,235 @@ class _PaymentOptionState extends State<PaymentOption> {
                         child: AddText(
                           label: "Add Notes",
                           hint: "Add Notes",
+                          onchange: (dd){
+                            isValid=true;
+                            setState(() {
+
+                            });
+                          },
                           controller: notesController,
                           isActive: active==true?true:notesController.text==""?false:true,),
                       ),
                     ),
                     SizedBox(height: 26),
-                    Text(
-                      "Images",
-                      style: GoogleFonts.roboto(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    // Text(
+                    //   "Images",
+                    //   style: GoogleFonts.roboto(
+                    //     color: Colors.black,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),
+                    // Container(
+                    //
+                    //     width: MediaQuery.of(context).size.width,
+                    //     child: GridView.builder(
+                    //         padding: const EdgeInsets.all(0),
+                    //         physics: const NeverScrollableScrollPhysics(),
+                    //         shrinkWrap: true,
+                    //         itemCount: 5,
+                    //         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    //             maxCrossAxisExtent: 100,
+                    //             childAspectRatio: 1.5 / 2,
+                    //             crossAxisSpacing: 5,
+                    //             mainAxisSpacing: 8),
+                    //         itemBuilder: (context, i) {
+                    //           // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                    //           return GestureDetector(
+                    //             onTap: (){
+                    //               isValid=true;
+                    //               isCatalogue=false;
+                    //               indexImage=i;
+                    //               setState(() {
+                    //
+                    //               });
+                    //               getCoverImage(ImageSource.gallery);
+                    //             },
+                    //             // getImage(ImageSource.gallery);
+                    //             // onTap: isAdmin?onTapListTileAdmin(i, context):onTapListTile(i, context),
+                    //             child:
+                    //             picModelPayment[i].url!=""&&picModelPayment[i].url!.isNotEmpty?
+                    //             Container(
+                    //                 width: 88,
+                    //                 height: 100,
+                    //                 decoration:BoxDecoration(
+                    //                     image: DecorationImage(
+                    //                         image: NetworkImage(picModelPayment[i].url.toString()),fit: BoxFit.fill
+                    //                     )
+                    //                 )
+                    //             )
+                    //                 :
+                    //             Container(
+                    //                 width: 88,
+                    //                 height: 100,
+                    //                 decoration: BoxDecoration(
+                    //                   borderRadius: BorderRadius.circular(5),
+                    //                   border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                    //                   boxShadow: const [
+                    //                     BoxShadow(
+                    //                       color: Color(0x05000000),
+                    //                       blurRadius: 8,
+                    //                       offset: Offset(1, 1),
+                    //                     ),
+                    //                   ],
+                    //                   color: Colors.white,
+                    //                 ),
+                    //                 child: const Icon(Icons.add,color:Color(0x7f666161))
+                    //             ),
+                    //           );
+                    //         })),
                     SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
-                    Container(
-
-                        width: MediaQuery.of(context).size.width,
-                        child: GridView.builder(
-                            padding: const EdgeInsets.all(0),
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: 5,
-                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 100,
-                                childAspectRatio: 1.5 / 2,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 8),
-                            itemBuilder: (context, i) {
-                              // print("eeeeeeeeeeeee  ${picModel[i].url}");
-                              return GestureDetector(
+                    count>=5?Container():TextButton(
+                      child:  Text(
+                        " + Add Attachment",
+                        style: GoogleFonts.roboto(
+                            color: ColorPalette.primary,
+                            fontSize: w/26,
+                            fontWeight: FontWeight.w500
+                        ),
+                      ),
+                      onPressed: () {
+                        getCoverImage(ImageSource.gallery);
+                        isCatalogue = false;
+                        isValid = true;
+                        indexImage =count++;
+                        setState(() {});
+                      },
+                    ),
+                    if (picModelPayment.isNotEmpty) ...[
+                      for (var i = 0; i < count; i++) ...{
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: Stack(
+                            children: [
+                              GestureDetector(
                                 onTap: (){
-                                  isValid=true;
-                                  isCatalogue=false;
-                                  indexImage=i;
-                                  setState(() {
-
-                                  });
+                                  isCatalogue = false;
+                                  indexImage = i;
+                                  isValid = true;
+                                  setState(() {});
                                   getCoverImage(ImageSource.gallery);
                                 },
-                                // getImage(ImageSource.gallery);
-                                // onTap: isAdmin?onTapListTileAdmin(i, context):onTapListTile(i, context),
-                                child:
-                                picModelPayment[i].url!=""&&picModelPayment[i].url!.isNotEmpty?
+                                child: picModelPayment[i].url==null?
                                 Container(
-                                    width: 88,
-                                    height: 100,
-                                    decoration:BoxDecoration(
-                                        image: DecorationImage(
-                                            image: NetworkImage(picModelPayment[i].url.toString()),fit: BoxFit.fill
-                                        )
-                                    )
-                                )
-                                    :
-                                Container(
-                                    width: 88,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Color(0x05000000),
-                                          blurRadius: 8,
-                                          offset: Offset(1, 1),
-                                        ),
-                                      ],
-                                      color: Colors.white,
+                                  height: 120,
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Color(0xffe6ecf0),
+                                      width: 1,
                                     ),
-                                    child: const Icon(Icons.add,color:Color(0x7f666161))
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Color(0xffD9D9D9).withOpacity(0.25),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add,size: 30,color: ColorPalette.primary,),
+                                      Text("Upload Image",
+                                        style: GoogleFonts.roboto(
+                                            color: ColorPalette.primary,
+                                            fontSize: w/26,
+                                            fontWeight: FontWeight.w600
+                                        ),),
+                                    ],
+                                  ),
+                                ):
+                                Container(
+                                  height: 120,
+                                  width: w,
+                                  color: Colors.white,
+                                  child: Image.network(
+                                    picModelPayment[i].url ?? "",
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              );
-                            })),
+                              ),
+
+                              picModelPayment[i].url==null?Text(""):Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      picModelPayment[i].url == "";
+                                      clearDataAtIndex(i);
+                                      isValid = true;
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      height: 40,
+                                      color: Color(0xffD9D9D9),
+                                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: Align(
+                                          alignment:
+                                          Alignment.centerRight,
+                                          child: SvgPicture.string(TaskSvg().deleteBox,color: ColorPalette.primary,height: 18,width: 18,),),
+                                      ),
+                                    ),
+                                  )),
+                              picModelPayment[i].url==null?Text(""):Positioned(
+                                  bottom: 13,
+                                  left: 10,
+                                  child: SizedBox(
+                                    width: w/1.6,
+                                    child:
+                                    Text(
+                                        picModelPayment[i].url?.split("/")[5]??"",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis),
+                                  )),
+                            ],
+                          ),
+                        )
+
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     isCatalogue = false;
+                        //     indexImage = i;
+                        //     isValid = true;
+                        //     setState(() {});
+                        //     getCoverImage(ImageSource.gallery);
+                        //   },
+                        //   child: Container(
+                        //       width: 88,
+                        //       height: 100,
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(5),
+                        //         border: Border.all(
+                        //           color: Color(0xffe6ecf0),
+                        //           width: 1,
+                        //         ),
+                        //         boxShadow: const [
+                        //           BoxShadow(
+                        //             color: Color(0x05000000),
+                        //             blurRadius: 8,
+                        //             offset: Offset(1, 1),
+                        //           ),
+                        //         ],
+                        //         color: Colors.white,
+                        //       ),
+                        //       child: const Icon(Icons.add,
+                        //           color: Color(0x7f666161))),
+                        // ),
+                      },
+                    ],
                   ],
                 ),
               )

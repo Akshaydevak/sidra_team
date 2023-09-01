@@ -1,4 +1,5 @@
 
+import 'package:cluster/presentation/task_operation/update_group.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class GroupCard extends StatelessWidget {
             GetGroupTReadEvent(groupList?.id?? 0));
         PersistentNavBarNavigator.pushNewScreen(
           context,
-          screen: const CreateGroup(edit: true),
+          screen: const UpdateGroup(edit: true),
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
@@ -53,12 +54,12 @@ class GroupCard extends StatelessWidget {
           children: [
             TextAvatar(
               shape: Shape.Circular,
-              size: 55,
+              size: 45,
               numberLetters: 2,
-              fontSize: 32,
+              fontSize: w/16,
               textColor: Colors.white,
               fontWeight: FontWeight.w500,
-              text: "R",
+              text: groupList?.gName.toString().toUpperCase(),
             ),
             SizedBox(width: 10,),
             Column(

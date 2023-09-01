@@ -1,18 +1,13 @@
-import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
-import 'package:cluster/presentation/task_operation/job_title.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../../../core/utils/variables.dart';
 import '../../../core/common_snackBar.dart';
 import '../../authentication/authentication.dart';
 import '../create/model/task_models.dart';
@@ -57,9 +52,22 @@ class _MyJobCardState extends State<MyJobCard> {
     });
     super.initState();
   }
-
+  String endstdDate='';
+  String startstdDate='';
+  String assignstdDate='';
   @override
   Widget build(BuildContext context) {
+    var date = widget.tasksList?.endDate;
+    var dateTime =  DateTime.parse("$date");
+    endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
+
+    var date1 = widget.tasksList?.startDate;
+    var dateTime1 =  DateTime.parse("$date1");
+    startstdDate =  DateFormat('dd-MM-yyyy').format(dateTime1).toString();
+
+    var date2 = widget.tasksList?.createdOn;
+    var dateTime2 =  DateTime.parse("$date2");
+    assignstdDate =  DateFormat('dd-MM-yyyy').format(dateTime2).toString();
 
     var w = MediaQuery.of(context).size.width;
     return MultiBlocListener(
@@ -403,8 +411,7 @@ class _MyJobCardState extends State<MyJobCard> {
                               ),),
                           ),
                           Text(
-                            "${widget.tasksList?.createdOn.toString().split("T")[0]}"" "
-                                "${widget.tasksList?.createdOn.toString().split("T")[1].split(".")[0]}",
+                            assignstdDate,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 15,
@@ -434,8 +441,7 @@ class _MyJobCardState extends State<MyJobCard> {
                               ),),
                           ),
                           Text(
-                            "${widget.tasksList?.startDate.toString().split("T")[0]}"" "
-                                "${widget.tasksList?.startDate.toString().split("T")[1].split("+")[0]}" ,
+                            startstdDate ,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 15,
@@ -465,8 +471,7 @@ class _MyJobCardState extends State<MyJobCard> {
                               ),),
                           ),
                           Text(
-                            "${widget.tasksList?.endDate.toString().split("T")[0]}"" "
-                                "${widget.tasksList?.endDate.toString().split("T")[1].split("+")[0]}",
+                            endstdDate,
                             style: GoogleFonts.roboto(
                               color: Colors.black,
                               fontSize: 15,
@@ -515,7 +520,7 @@ class _MyJobCardState extends State<MyJobCard> {
                             width: 5,
                           ),
                           Text(
-                            widget.tasksList?.createdOn.toString().split("T")[0]??"",
+                            assignstdDate,
                             style: GoogleFonts.roboto(
                               color: const Color(0xff939393),
                               fontSize: 15,

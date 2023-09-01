@@ -1,3 +1,4 @@
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title.dart';
 import 'package:flutter/cupertino.dart';
@@ -97,12 +98,17 @@ class TaskCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          taskList?.taskName?.toString() ?? "",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: w / 26,
-                            fontWeight: FontWeight.w500,
+                        Container(
+                          width: w/2,
+                          child: Text(
+                            taskList?.taskName?.toString().toTitleCase() ?? "",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w / 26,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         // SizedBox(height: 10,),

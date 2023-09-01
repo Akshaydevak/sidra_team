@@ -189,35 +189,16 @@ class JobDataSource {
   }
   //employeelist
   Future<List<GetEmployeeList>> getEmployeeList() async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     List<GetEmployeeList> employeeList = [];
     print("URL:${ClusterUrls.employeeListUrl}");
 
-    try {
-      final response = await client.get(
-        ClusterUrls.employeeListUrl,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'token ${authentication.authenticatedUser.token}'
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        employeeList.add(GetEmployeeList.fromJson(element));
-      });
-
-      return employeeList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
-    final response = await client.get(ClusterUrls.employeeListUrl,
+    final response = await client.get(
+      "${ClusterUrls.employeeListUrl}?action=fname_acce",
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          'Authorization': 'token ${authentication.authenticatedUser.token}',
         },
       ),
     );
@@ -473,8 +454,6 @@ print("DATASS${response.data['data']}");
     required String? priority,
     required int? relatedJob,
   }) async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    GetJobList jobDetails;
 
     print("JOB CREATION$name");
     print("JOB CREATION$jobType");

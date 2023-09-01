@@ -18,6 +18,7 @@ class Variable{
   static int offerGroupId=0;
   static String typeData="";
   static bool isTypeDataCheck=false;
+  static String assignName="";
 
   //inventory
   static int? division;

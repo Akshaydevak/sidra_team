@@ -362,7 +362,7 @@ class TaskRepo {
       if (apiResponse.isNotEmpty) {
         return DataResponse(data: apiResponse);
       } else {
-        return DataResponse(error: "error Text",data: null);
+        return DataResponse(error: "error Text",data: []);
       }
     } catch (e) {
       debugPrint("error Text$e");

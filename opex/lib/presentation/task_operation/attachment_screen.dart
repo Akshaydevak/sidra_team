@@ -1,10 +1,10 @@
-
-
 import 'dart:io';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +17,6 @@ import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_bloc/employee_bloc.dart';
 
-
 class AttachmentScreen extends StatefulWidget {
   final GetTaskList? readData;
   const AttachmentScreen({Key? key, this.readData}) : super(key: key);
@@ -27,78 +26,69 @@ class AttachmentScreen extends StatefulWidget {
 }
 
 class _AttachmentScreenState extends State<AttachmentScreen> {
-  TextEditingController discription=TextEditingController();
-  TextEditingController notes=TextEditingController();
+  TextEditingController discription = TextEditingController();
+  TextEditingController notes = TextEditingController();
   final picker = ImagePicker();
   File? cropImage;
   bool _cropped = false;
   dynamic? imageId;
-  String imgUrl='';
+  String imgUrl = '';
   String? imageFileName;
 
-  int indexImage=0;
-  int catindexImage=0;
-  bool isCatalogue=false;
+  int indexImage = 0;
+  int catindexImage = 0;
+  bool isCatalogue = false;
   List<PicModel> picModelAttachment = [];
+  int count = 0;
   @override
   void initState() {
     picModelAttachment.clear();
-    for(int i=0;i<5;i++) {
-      picModelAttachment.add(PicModel(data: null,url: ""));
+    for (int i = 0; i < 5; i++) {
+      picModelAttachment.add(PicModel(data: null, url: null));
     }
     readAttach();
+    print("that count$count");
     super.initState();
   }
-  bool? isValid=false;
-  validationCheck(){
-    if(discription.text!=""&&notes.text!=''){
-      isValid=true;
-    }
-    else{
-      isValid=false;
+
+  bool? isValid = false;
+  validationCheck() {
+    if (discription.text != "" && notes.text != '') {
+      isValid = true;
+    } else {
+      isValid = false;
     }
   }
-  readAttach(){
+
+  readAttach() {
     print("vvvvv${widget.readData?.metaData?.description}");
-    discription.text=widget.readData?.metaData?.description??"";
-    notes.text=widget.readData?.metaData?.note??"";
-    picModelAttachment.setAll(0, [
-      PicModel(
-          url: widget.readData?.metaData?.image1 ??
-              "")
-    ]);
-    picModelAttachment.setAll(1, [
-      PicModel(
-          url: widget.readData?.metaData?.image2 ??
-              "")
-    ]);
-    picModelAttachment.setAll(2, [
-      PicModel(
-          url: widget.readData?.metaData?.image3 ??
-              "")
-    ]);
-    picModelAttachment.setAll(3, [
-      PicModel(
-          url: widget.readData?.metaData?.image4 ??
-              "")
-    ]);
-    picModelAttachment.setAll(4, [
-      PicModel(
-          url: widget.readData?.metaData?.image5 ??
-              "")
-    ]);
-    setState(() {
-
-    });
+    discription.text = widget.readData?.metaData?.description ?? "";
+    notes.text = widget.readData?.metaData?.note ?? "";
+    picModelAttachment
+        .setAll(0, [PicModel(url: widget.readData?.metaData?.image1 ?? null)]);
+    picModelAttachment
+        .setAll(1, [PicModel(url: widget.readData?.metaData?.image2 ?? null)]);
+    picModelAttachment
+        .setAll(2, [PicModel(url: widget.readData?.metaData?.image3 ?? null)]);
+    picModelAttachment
+        .setAll(3, [PicModel(url: widget.readData?.metaData?.image4 ?? null)]);
+    picModelAttachment
+        .setAll(4, [PicModel(url: widget.readData?.metaData?.image5 ?? null)]);
+    widget.readData?.imgCount==0?count=0:count=picModelAttachment.length;
+    setState(() {});
   }
 
+  void clearDataAtIndex(int index) {
+    if (index >= 0 && index < picModelAttachment.length) {
+      picModelAttachment[index] = PicModel(data: null, url: null);
+    }
+    setState(() {});
+  }
 
-
-  List<String>fileType=["Open Camera","Image","Document","Video File"];
+  List<String> fileType = ["Open Camera", "Image", "Document", "Video File"];
   @override
   Widget build(BuildContext context) {
-
-    var w=MediaQuery.of(context).size.width;
+    var w = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -108,296 +98,505 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
               systemNavigationBarColor: Colors.white, // Navigation bar
               statusBarColor: Colors.white, // Status bar
             ),
-
             elevation: 0,
-
           ),
         ),
-        body:MultiBlocListener(
-  listeners: [
-    BlocListener<EmployeeBloc, EmployeeState>(
-      listener: (context, state) {
-        if(state is PicLoading){
-          print("Inside Loading");
-        }
-        if(state is PicSuccess){
-          print("Inside Success${state.data}\t${state.url}");
-          setState(() {
-            isCatalogue? catalogueList.replaceRange(indexImage, indexImage+1,
-                [PicModel(data: state.data,url: state.url)]):picModelAttachment.replaceRange(indexImage, indexImage+1,
-                [PicModel(data: state.data,url: state.url)]);
-          });
-          print("pic model length${picModelAttachment.length}");
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<EmployeeBloc, EmployeeState>(
+              listener: (context, state) {
+                if (state is PicLoading) {
+                  print("Inside Loading");
+                }
+                if (state is PicSuccess) {
+                  print("Inside Success${state.data}\t${state.url}");
+                  setState(() {
+                    isCatalogue
+                        ? catalogueList.replaceRange(indexImage, indexImage + 1,
+                            [PicModel(data: state.data, url: state.url)])
+                        : picModelAttachment.replaceRange(
+                            indexImage,
+                            indexImage + 1,
+                            [PicModel(data: state.data, url: state.url)]);
+                  });
+                  print("pic model length${picModelAttachment.length}");
+                }
+              },
+            ),
+            BlocListener<TaskBloc, TaskState>(
+              listener: (context, state) {
+                if (state is UpdateReportingTaskLoading) {
+                  print("task loading");
+                  // showSnackBar(context,
+                  //     message: "Loading...",
+                  //     color: Colors.white,
+                  //     // icon: HomeSvg().SnackbarIcon,
+                  //     autoDismiss: true);
+                }
 
-        }
-      },
-    ),
-    BlocListener<TaskBloc, TaskState>(
-      listener: (context, state) {
-        if (state is UpdateReportingTaskLoading) {
-          print("task loading");
-          showSnackBar(context,
-              message: "Loading...",
-              color: Colors.white,
-              // icon: HomeSvg().SnackbarIcon,
-              autoDismiss: true);
-        }
-
-        if (state is UpdateReportingFailed) {
-          showSnackBar(
-            context,
-            message: state.error,
-            color: Colors.red,
-            // icon: Icons.admin_panel_settings_outlined
-          );
-        }
-        if (state is UpdateReportingSuccess) {
-          print("attachment success ");
-          Fluttertoast.showToast(
-              msg: state.taskId,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.white,
-              textColor: Colors.black);
-          context.read<TaskBloc>().add(
-              GetTaskReadListEvent(widget.readData?.id??0));
-          Navigator.pop(context);
-        }
-      },
-    ),
-  ],
-  child: SingleChildScrollView(
-          child: SafeArea(child:
-          Column(
-            children: [
-              TaskAndOperationAppBar(
-                label: "Attachment",
-                EndIcon: isValid==false?GestureDetector(
-                  onTap: (){
-
-                  },
-                  child: Container(
-                    // width: 110,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Color(0xffd3d3d3),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Add",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ):GestureDetector(
-                  onTap: (){
-                    BlocProvider.of<TaskBloc>(context).add(
-                        UpdateReportingTaskEvent(
-                          latitude: widget?.readData?.latitude??"",
-                          longitude: widget?.readData?.longitude??"",
-                          img5: picModelAttachment[4].url,
-                          img1: picModelAttachment[0].url,
-                          img4: picModelAttachment[3].url,
-                          img2: picModelAttachment[1].url,
-                          img3: picModelAttachment[2].url,
-                          attachmentDescription: discription.text,
-                          attachmentNote: notes.text,
-                          id: widget.readData?.id??0,
-                          AssigningCode: widget.readData?.assigningCode??"",
-                          AssigningType: widget.readData?.assigningType??"",
-                          createdOn: "${widget.readData?.createdOn?.split("T")[0]}"" ""${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
-                          jobid: widget.readData?.jobId,
-                          notas: widget.readData?.notes??"",
-                          priorityLeval: "1",
-                          remarks: widget.readData?.remarks??"",
-                          taskName: widget.readData?.taskName??"",
-                          taskType: widget.readData?.taskType??0,
-                          lastmodified: null,
-                          parant: widget.readData?.parent??null,
-                          statusStagesId: null,
-                          discription:widget.readData?.description??"",
-                          createdBy: widget.readData?.createdPersonCode??"",
-                          isActive: true,
-                          priority: widget.readData?.priority??"",
-                          reportingPerson: widget.readData?.reportingPersonCode??"",
-                          endDate: "${widget.readData?.endDate?.split("T")[0]}"" ""${widget.readData?.endDate?.split("T")[1].split("+")[0]}"??"",
-                          startDate: "${widget.readData?.startDate?.split("T")[0]}"" ""${widget.readData?.startDate?.split("T")[1].split("+")[0]}"??"",
-                        ));
-                    // Navigator.pop(context);
-                  },
-                  child: Container(
-                    // width: 110,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: ColorPalette.primary,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Add",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: w,
-                padding: EdgeInsets.all(16),
+                if (state is UpdateReportingFailed) {
+                  showSnackBar(
+                    context,
+                    message: state.error,
+                    color: Colors.red,
+                    // icon: Icons.admin_panel_settings_outlined
+                  );
+                }
+                if (state is UpdateReportingSuccess) {
+                  print("attachment success ");
+                  Fluttertoast.showToast(
+                      msg: state.taskId,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white);
+                  context
+                      .read<TaskBloc>()
+                      .add(GetTaskReadListEvent(widget.readData?.id ?? 0));
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+          child: SingleChildScrollView(
+            child: SafeArea(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    Container(
-                      width: w,
-                      height: 145,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
+              children: [
+                TaskAndOperationAppBar(
+                  label: "Attachment",
+                  EndIcon: isValid == false
+                      ? GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            // width: 110,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Color(0xffd3d3d3),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Add",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: TextFormField(
-                        controller: discription,
-                        onChanged: (l){
-                          validationCheck();
-                          setState(() {
-
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          hintText: "Description",
-                          hintStyle:  TextStyle(
-                            color: Color(0xff939393),
-                            fontSize: 18,
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<TaskBloc>(context)
+                                .add(UpdateReportingTaskEvent(
+                              latitude: widget.readData?.latitude ?? "",
+                              longitude: widget.readData?.longitude ?? "",
+                              img5: picModelAttachment[4].url,
+                              img1: picModelAttachment[0].url,
+                              img4: picModelAttachment[3].url,
+                              img2: picModelAttachment[1].url,
+                              img3: picModelAttachment[2].url,
+                              attachmentDescription: discription.text,
+                              attachmentNote: notes.text,
+                              id: widget.readData?.id ?? 0,
+                              AssigningCode:
+                                  widget.readData?.assigningCode ?? "",
+                              AssigningType:
+                                  widget.readData?.assigningType ?? "",
+                              createdOn:
+                                  "${widget.readData?.createdOn?.split("T")[0]}"
+                                  " "
+                                  "${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
+                              jobid: widget.readData?.jobId,
+                              notas: widget.readData?.notes ?? "",
+                              priorityLeval: "1",
+                              remarks: widget.readData?.remarks ?? "",
+                              taskName: widget.readData?.taskName ?? "",
+                              taskType: widget.readData?.taskType ?? 0,
+                              lastmodified: null,
+                              parant: widget.readData?.parent ?? null,
+                              statusStagesId: null,
+                              discription: widget.readData?.description ?? "",
+                              createdBy:
+                                  widget.readData?.createdPersonCode ?? "",
+                              isActive: true,
+                              priority: widget.readData?.priority ?? "",
+                              reportingPerson:
+                                  widget.readData?.reportingPersonCode ?? "",
+                              endDate: "${widget.readData?.endDate?.split("T")[0]}"
+                                      " "
+                                      "${widget.readData?.endDate?.split("T")[1].split("+")[0]}" ??
+                                  "",
+                              startDate:
+                                  "${widget.readData?.startDate?.split("T")[0]}"
+                                          " "
+                                          "${widget.readData?.startDate?.split("T")[1].split("+")[0]}" ??
+                                      "",
+                            ));
+                            // Navigator.pop(context);
+                          },
+                          child: Container(
+                            // width: 110,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: ColorPalette.primary,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Add",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    Container(
-                      width: w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: AddText(label: "Add Notes",controller: notes,isActive: true,
-                      onchange:  (l){
-                        validationCheck();
-                        setState(() {
-
-                        });
-                      },),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      "Images",
-                      style: GoogleFonts.roboto(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-
-                        width: MediaQuery.of(context).size.width,
-                        child: GridView.builder(
-                            padding: const EdgeInsets.all(0),
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: 5,
-                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 100,
-                                childAspectRatio: 1.5 / 2,
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 8),
-                            itemBuilder: (context, i) {
-                              // print("eeeeeeeeeeeee  ${picModel[i].url}");
-                              return GestureDetector(
-                                onTap: (){
-                                  isCatalogue=false;
-                                  indexImage=i;
-                                  isValid=true;
-                                  setState(() {
-
-                                  });
-                                  getCoverImage(ImageSource.gallery);
-                                },
-                                child:
-                                picModelAttachment[i].url!=""&&picModelAttachment[i].url!.isNotEmpty?
-                                Container(
-                                    width: 88,
-                                    height: 100,
-                                    decoration:BoxDecoration(
-                                        image: DecorationImage(
-                                            image: NetworkImage(picModelAttachment[i].url.toString()),fit: BoxFit.fill
-                                        )
-                                    )
-                                )
-                                    :
-                                Container(
-                                    width: 88,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Color(0x05000000),
-                                          blurRadius: 8,
-                                          offset: Offset(1, 1),
-                                        ),
-                                      ],
-                                      color: Colors.white,
-                                    ),
-                                    child: const Icon(Icons.add,color:Color(0x7f666161))
-                                ),
-                              );
-                            })),
-                    SizedBox(height: 10,),
-                  ],
                 ),
-              )
-            ],
-          )),
-        ),
-)
-    );
+                Container(
+                  width: w,
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: w,
+                        height: 145,
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Color(0xffe6ecf0),
+                            width: 1,
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 8,
+                              offset: Offset(1, 1),
+                            ),
+                          ],
+                          color: Colors.white,
+                        ),
+                        child: TextFormField(
+                          controller: discription,
+                          onChanged: (l) {
+                            validationCheck();
+                            setState(() {});
+                          },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            hintText: "Description",
+                            hintStyle: TextStyle(
+                              color: Color(0xff939393),
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Color(0xffe6ecf0),
+                            width: 1,
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 8,
+                              offset: Offset(1, 1),
+                            ),
+                          ],
+                          color: Colors.white,
+                        ),
+                        child: AddText(
+                          label: "Add Notes",
+                          controller: notes,
+                          isActive: true,
+                          onchange: (l) {
+                            validationCheck();
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      // Text(
+                      //   "Images",
+                      //   style: GoogleFonts.roboto(
+                      //     color: Colors.black,
+                      //     fontSize: 16,
+                      //     fontWeight: FontWeight.w500,
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 5,
+                      // ),
+                      // SizedBox(
+                      //     width: MediaQuery.of(context).size.width,
+                      //     child: GridView.builder(
+                      //         padding: const EdgeInsets.all(0),
+                      //         physics: const NeverScrollableScrollPhysics(),
+                      //         shrinkWrap: true,
+                      //         itemCount: picModelAttachment.length,
+                      //         gridDelegate:
+                      //             const SliverGridDelegateWithMaxCrossAxisExtent(
+                      //                 maxCrossAxisExtent: 100,
+                      //                 childAspectRatio: 1.5 / 2,
+                      //                 crossAxisSpacing: 5,
+                      //                 mainAxisSpacing: 8),
+                      //         itemBuilder: (context, i) {
+                      //           // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                      //           return GestureDetector(
+                      //             onTap: () {
+                      //               isCatalogue = false;
+                      //               indexImage = i;
+                      //               isValid = true;
+                      //               setState(() {});
+                      //               getCoverImage(ImageSource.gallery);
+                      //             },
+                      //             child: picModelAttachment[i].url != "" &&
+                      //                     picModelAttachment[i].url!.isNotEmpty
+                      //                 ? Stack(
+                      //                     children: [
+                      //                       Container(
+                      //                           width: 88,
+                      //                           height: 100,
+                      //                           decoration: BoxDecoration(
+                      //                               borderRadius:
+                      //                                   BorderRadius.circular(
+                      //                                       5),
+                      //                               border: Border.all(
+                      //                                 color: Colors.grey
+                      //                                     .withOpacity(0.2),
+                      //                                 width: 1,
+                      //                               ),
+                      //                               image: DecorationImage(
+                      //                                   image: NetworkImage(
+                      //                                       picModelAttachment[
+                      //                                               i]
+                      //                                           .url
+                      //                                           .toString()),
+                      //                                   fit: BoxFit.fill))),
+                      //                       Positioned(
+                      //                           right: 2,
+                      //                           top: 2,
+                      //                           child: GestureDetector(
+                      //                             onTap: () {
+                      //                               picModelAttachment[i].url ==
+                      //                                   "";
+                      //                               clearDataAtIndex(i);
+                      //                               isValid = true;
+                      //                               setState(() {});
+                      //                             },
+                      //                             child: Container(
+                      //                                 decoration: BoxDecoration(
+                      //                                     borderRadius:
+                      //                                         BorderRadius
+                      //                                             .circular(30),
+                      //                                     color: ColorPalette
+                      //                                         .primary),
+                      //                                 child: const Icon(
+                      //                                   Icons.close_sharp,
+                      //                                   color:
+                      //                                       ColorPalette.white,
+                      //                                   size: 20,
+                      //                                 )),
+                      //                           ))
+                      //                     ],
+                      //                   )
+                      //                 : Container(
+                      //                     width: 88,
+                      //                     height: 100,
+                      //                     decoration: BoxDecoration(
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(5),
+                      //                       border: Border.all(
+                      //                         color: Color(0xffe6ecf0),
+                      //                         width: 1,
+                      //                       ),
+                      //                       boxShadow: const [
+                      //                         BoxShadow(
+                      //                           color: Color(0x05000000),
+                      //                           blurRadius: 8,
+                      //                           offset: Offset(1, 1),
+                      //                         ),
+                      //                       ],
+                      //                       color: Colors.white,
+                      //                     ),
+                      //                     child: const Icon(Icons.add,
+                      //                         color: Color(0x7f666161))),
+                      //           );
+                      //         })),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      count>=5?Container():TextButton(
+                        child:  Text(
+                            " + Add Attachment",
+                          style: GoogleFonts.roboto(
+                            color: ColorPalette.primary,
+                            fontSize: w/26,
+                            fontWeight: FontWeight.w500
+                          ),
+                        ),
+                        onPressed: () {
+                          getCoverImage(ImageSource.gallery);
+                          isCatalogue = false;
+                          isValid = true;
+                          indexImage =count++;
+                          setState(() {});
+                        },
+                      ),
+                      if (picModelAttachment.isNotEmpty) ...[
+                        for (var i = 0; i < count; i++) ...{
+                           Padding(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Stack(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){
+                                          isCatalogue = false;
+                                                        indexImage = i;
+                                                        isValid = true;
+                                                        setState(() {});
+                                                        getCoverImage(ImageSource.gallery);
+                                        },
+                                        child: picModelAttachment[i].url==null?
+                                        Container(
+                                          height: 120,
+                                          width: w,
+                                          decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(5),
+                                                                  border: Border.all(
+                                                                    color: Color(0xffe6ecf0),
+                                                                    width: 1,
+                                                                  ),
+                                                                  boxShadow: const [
+                                                                    BoxShadow(
+                                                                      color: Color(0x05000000),
+                                                                      blurRadius: 8,
+                                                                      offset: Offset(1, 1),
+                                                                    ),
+                                                                  ],
+                                                                  color: Color(0xffD9D9D9).withOpacity(0.25),
+                                                                ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.add,size: 30,color: ColorPalette.primary,),
+                                              Text("Upload Image",
+                                              style: GoogleFonts.roboto(
+                                                color: ColorPalette.primary,
+                                                fontSize: w/26,
+                                                fontWeight: FontWeight.w600
+                                              ),),
+                                            ],
+                                          ),
+                                        ):
+                                        Container(
+                                          height: 120,
+                                          width: w,
+                                          color: Colors.white,
+                                          child: Image.network(
+                                            picModelAttachment[i].url ?? "",
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+
+                                      picModelAttachment[i].url==null?Text(""):Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              picModelAttachment[i].url == "";
+                                              clearDataAtIndex(i);
+                                              isValid = true;
+                                              setState(() {});
+                                            },
+                                            child: Container(
+                                              height: 40,
+                                              color: Color(0xffD9D9D9),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: SvgPicture.string(TaskSvg().deleteBox,color: ColorPalette.primary,height: 18,width: 18,),),
+                                              ),
+                                            ),
+                                          )),
+                                      picModelAttachment[i].url==null?Text(""):Positioned(
+                                          bottom: 13,
+                                          left: 10,
+                                          child: SizedBox(
+                                            width: w/1.6,
+                                              child:
+                                              Text(
+                                                  picModelAttachment[i].url?.split("/")[5]??"",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis),
+                                          )),
+                                    ],
+                                  ),
+                                )
+
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     isCatalogue = false;
+                          //     indexImage = i;
+                          //     isValid = true;
+                          //     setState(() {});
+                          //     getCoverImage(ImageSource.gallery);
+                          //   },
+                          //   child: Container(
+                          //       width: 88,
+                          //       height: 100,
+                          //       decoration: BoxDecoration(
+                          //         borderRadius: BorderRadius.circular(5),
+                          //         border: Border.all(
+                          //           color: Color(0xffe6ecf0),
+                          //           width: 1,
+                          //         ),
+                          //         boxShadow: const [
+                          //           BoxShadow(
+                          //             color: Color(0x05000000),
+                          //             blurRadius: 8,
+                          //             offset: Offset(1, 1),
+                          //           ),
+                          //         ],
+                          //         color: Colors.white,
+                          //       ),
+                          //       child: const Icon(Icons.add,
+                          //           color: Color(0x7f666161))),
+                          // ),
+                        },
+                      ],
+                    ],
+                  ),
+                )
+              ],
+            )),
+          ),
+        ));
   }
 
   // _showModalBottomSheet() {
@@ -514,15 +713,15 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
 
   Future<void> getCoverImage(source) async {
     try {
-      final pickedFile = await picker.pickImage(
-          source: source, maxHeight: 512, maxWidth: 512);
+      final pickedFile =
+          await picker.pickImage(source: source, maxHeight: 512, maxWidth: 512);
 
       cropImage = (pickedFile != null ? File(pickedFile.path) : null)!;
 
       if (cropImage != null) {
-
-        BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(cropImage!));
-        imageFileName=cropImage?.path.split("_")[1];
+        BlocProvider.of<EmployeeBloc>(context)
+            .add(PostImageAllEvent(cropImage!));
+        imageFileName = cropImage?.path.split("_")[1];
         print("cropppp$imageFileName");
       }
       setState(() {
