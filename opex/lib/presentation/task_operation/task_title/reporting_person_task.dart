@@ -35,8 +35,6 @@ class ReportingPerson extends StatefulWidget {
 }
 
 class _ReportingPersonState extends State<ReportingPerson> {
-  bool isSelect = false;
-  bool isReporting = true;
   List<GetEmployeeList> employee = [];
   List<GetUserList> userList = [];
 
@@ -77,11 +75,11 @@ class _ReportingPersonState extends State<ReportingPerson> {
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
               if (state is UpdateReportingTaskLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is UpdateReportingFailed) {
@@ -97,8 +95,8 @@ class _ReportingPersonState extends State<ReportingPerson> {
                     msg: state.taskId,
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black);
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white);
                 Navigator.pop(context);
               }
             },
@@ -106,11 +104,11 @@ class _ReportingPersonState extends State<ReportingPerson> {
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
               if (state is UpdateTaskGroupLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is UpdateTaskGroupFailed) {
@@ -177,7 +175,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(60),
                 child: BackAppBar(
-                  label: "Reporting Person Task",
+                  label: "Reporting Person",
                   isAction: false,
                 )
             ),
@@ -282,235 +280,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                           padding: const EdgeInsets.only(
                                             bottom: 20,
                                           ),
-                                          child: widget.readTask
-                                              ?.assigningType == "Task_Group" ?
-                                          ListView.separated(
-                                              shrinkWrap: true,
-                                              physics: const ScrollPhysics(),
-                                              separatorBuilder: (
-                                                  BuildContext cxt, int i) {
-                                                return const SizedBox(
-                                                  height: 5,
-                                                );
-                                              },
-                                              itemBuilder: (
-                                                  BuildContext context, int i) {
-                                                return InkWell(
-                                                  onTap: () {
-                                                    widget.editTask
-                                                        ? BlocProvider.of<
-                                                        TaskBloc>(context).add(
-                                                        UpdateReportingTaskEvent(
-                                                            img5: widget.readTask?.metaData?.image5,
-                                                            img1: widget.readTask?.metaData?.image1,
-                                                            img4: widget.readTask?.metaData?.image4,
-                                                            img2: widget.readTask?.metaData?.image2,
-                                                            img3: widget.readTask?.metaData?.image3,
-                                                            attachmentDescription: widget.readTask?.metaData?.description,
-                                                            attachmentNote: widget.readTask?.metaData?.note,
-                                                            longitude: widget.readTask?.longitude??'',
-                                                            latitude: widget.readTask?.latitude??'',
-                                                            taskType: widget
-                                                                .readTask
-                                                                ?.taskType ?? 0,
-                                                            discription: widget
-                                                                .readTask
-                                                                ?.description ??
-                                                                "",
-                                                            createdBy: widget
-                                                                .readTask
-                                                                ?.createdPersonCode ??
-                                                                "",
-                                                            isActive: true,
-                                                            priority: widget
-                                                                .readTask
-                                                                ?.priority ??
-                                                                "",
-                                                            reportingPerson: employee[i]
-                                                                .userCode ?? "",
-                                                            endDate: "${widget
-                                                                .readTask
-                                                                ?.endDate
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask
-                                                                ?.endDate
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                "+")[0]}" ?? "",
-                                                            startDate: "${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                "+")[0]}" ?? "",
-                                                            AssigningCode: widget
-                                                                .readTask
-                                                                ?.assigningCode ??
-                                                                "",
-                                                            notas: widget
-                                                                .readTask
-                                                                ?.notes ?? "",
-                                                            taskName: widget
-                                                                .readTask
-                                                                ?.taskName ??
-                                                                "",
-                                                            remarks: widget
-                                                                .readTask
-                                                                ?.remarks ?? "",
-                                                            priorityLeval: widget
-                                                                .readTask
-                                                                ?.priorityLevel
-                                                                .toString() ??
-                                                                "",
-                                                            createdOn: "${widget
-                                                                .readTask
-                                                                ?.createdOn
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask
-                                                                ?.createdOn
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                ".")[0]}" ?? "",
-                                                            AssigningType: widget
-                                                                .readTask
-                                                                ?.assigningType ??
-                                                                "",
-                                                            statusStagesId: widget
-                                                                .readTask
-                                                                ?.statusStagesId ??
-                                                                0,
-                                                            parant: widget
-                                                                .readTask
-                                                                ?.parent ??
-                                                                null,
-                                                            lastmodified: widget
-                                                                .readTask
-                                                                ?.lastModified ??
-                                                                null,
-                                                            jobid: widget
-                                                                .readTask
-                                                                ?.jobId ?? 0,
-                                                            id: widget.readTask
-                                                                ?.id ?? 0
-
-
-                                                        ))
-                                                        : Variable
-                                                        .reportingCode =
-                                                        employee[i].userCode ?? "";
-                                                    read();
-                                                  },
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius
-                                                          .circular(10),
-                                                      border: Border.all(
-                                                        color: Color(
-                                                            0xffe6ecf0),
-                                                        width: 1,),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Color(
-                                                              0x05000000),
-                                                          blurRadius: 8,
-                                                          offset: Offset(1, 1),
-                                                        ),
-                                                      ],
-                                                      color: Colors.white,
-                                                    ),
-                                                    padding: EdgeInsets
-                                                        .symmetric(vertical: 10,
-                                                        horizontal: 10),
-                                                    width: w,
-
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment
-                                                            .spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              CircleAvatar(
-                                                                backgroundColor: ColorPalette
-                                                                    .inactiveGrey,),
-                                                              SizedBox(
-                                                                width: 10,),
-                                                              Container(
-                                                                width: w / 1.5,
-                                                                child: Column(
-                                                                  mainAxisAlignment: MainAxisAlignment
-                                                                      .start,
-                                                                  crossAxisAlignment: CrossAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    Text(
-                                                                      userList[i]
-                                                                          .email ??
-                                                                          "",
-                                                                      style: TextStyle(
-                                                                        color: ColorPalette
-                                                                            .black,
-                                                                        fontSize: w /
-                                                                            22,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 5,),
-                                                                    Text(
-                                                                      userList[i]
-                                                                          .role ??
-                                                                          "",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .red),)
-
-                                                                  ],
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          // PopupMenuButton(
-                                                          //   icon: SvgPicture.string(TaskSvg().moreIcon),
-                                                          //   //don't specify icon if you want 3 dot menu
-                                                          //   color: Colors.white,
-                                                          //   elevation: 2,
-                                                          //   padding: EdgeInsets.zero,
-                                                          //   shape:
-                                                          //   RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                                          //   itemBuilder: (context) {
-                                                          //     return List.generate(roleList.length, (index) {
-                                                          //       return PopupMenuItem(
-                                                          //         child: GestureDetector(
-                                                          //           onTap: () async{
-                                                          //             print("editoe");
-                                                          //             final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                                                          //             int groupId=sharedPreferences.getInt('groupId')??0;
-                                                          //             BlocProvider.of<JobBloc>(context)
-                                                          //                 .add(UpdateTaskGroupEvent(
-                                                          //               userGroupId: userList[i].userGroupId??0,
-                                                          //               isActive: true,
-                                                          //              roleId: roleList[i].id??0,
-                                                          //               taskGroup: groupId,
-                                                          //               userCode: userList[i].code??""
-                                                          //             ));
-                                                          //             read();
-                                                          //           },
-                                                          //             child: Text(roleList[index].roleName??"")),
-                                                          //       );
-                                                          //     });
-                                                          //   },
-                                                          // )
-                                                        ]),
-                                                  ),
-                                                );
-                                              },
-                                              itemCount: userList.length) :
-                                          ListView.separated(
+                                          child: ListView.separated(
                                               shrinkWrap: true,
                                               physics: const ScrollPhysics(),
                                               separatorBuilder: (
@@ -549,7 +319,16 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                               .readTask
                                                               ?.assigningType ??
                                                               "",
-                                                          createdOn: "2023-09-04 18:00:00",
+                                                          createdOn: "${widget
+                                                              .readTask
+                                                              ?.startDate
+                                                              ?.split(
+                                                              "T")[0]}"" ""${widget
+                                                              .readTask
+                                                              ?.startDate
+                                                              ?.split("T")[1]
+                                                              .split(
+                                                              "+")[0]}",
                                                           jobid: widget.readTask
                                                               ?.jobId,
                                                           notas: widget.readTask
@@ -625,10 +404,10 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                       borderRadius: BorderRadius
                                                           .circular(10),
                                                       border: Border.all(
-                                                        color: Color(
-                                                            0xffe6ecf0),
+                                                        color: Variable.reportingEmail ==
+                                                        employee[i].email?ColorPalette.primary: Color(0xffe6ecf0),
                                                         width: 1,),
-                                                      boxShadow: [
+                                                      boxShadow: const [
                                                         BoxShadow(
                                                           color: Color(
                                                               0x05000000),
@@ -638,7 +417,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                       ],
                                                       color: Colors.white,
                                                     ),
-                                                    padding: EdgeInsets
+                                                    padding: const EdgeInsets
                                                         .symmetric(vertical: 10,
                                                         horizontal: 16),
                                                     width: w,

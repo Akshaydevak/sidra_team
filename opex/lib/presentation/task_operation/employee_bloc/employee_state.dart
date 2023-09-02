@@ -33,7 +33,7 @@ class CreateGroupLoading extends EmployeeState {}
 
 
 class CreateGroupSuccess extends EmployeeState {
-  final GetTaskGroupList group;
+  final String? group;
 
   const CreateGroupSuccess(this.group);
 

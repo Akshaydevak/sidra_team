@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      imgCount: json['image_count'] as int?,
       taskTypeName: json['task_type_name'] as String?,
       paymentMeta: json['payment_data'] == null
           ? null
@@ -124,6 +125,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'level': instance.level,
       'parent': instance.parent,
       'job_id': instance.jobId,
+      'image_count': instance.imgCount,
       'task_type': instance.taskType,
       'status_stages_id': instance.statusStagesId,
       'reporting_person': instance.reportingPerson,
@@ -148,6 +150,7 @@ Map<String, dynamic> _$GetCountTaskToJson(GetCountTask instance) =>
 
 PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel(
       taskId: json['task_id'] as int?,
+      assigningName: json['assigning_name'] as String?,
       costingMeta: json['costing_meta'] == null
           ? null
           : CostingMeta.fromJson(json['costing_meta'] as Map<String, dynamic>),
@@ -172,6 +175,7 @@ Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
       'assigning_type': instance.assigningType,
       'budget': instance.budget,
       'assigning_code': instance.assigningCode,
+      'assigning_name': instance.assigningName,
       'description': instance.description,
       'notes': instance.notes,
       'expense': instance.expense,

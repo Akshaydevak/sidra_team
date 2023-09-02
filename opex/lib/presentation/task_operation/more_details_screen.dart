@@ -7,7 +7,7 @@ import 'package:cluster/presentation/task_operation/payment_option.dart';
 import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:cluster/presentation/task_operation/task_title/reporting_person.dart';
+import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,6 +69,50 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
     //     GetTaskReadListEvent(readTask?.id??0));
     super.initState();
   }
+  location(){
+    if(isLocation==false){
+      BlocProvider.of<TaskBloc>(context).add(
+          UpdateTaskEvent(
+            latitude: null,
+            longitude:null,
+            img5:  readTask?.metaData?.image5,
+            img1: readTask?.metaData?.image1,
+            img4: readTask?.metaData?.image4,
+            img2: readTask?.metaData?.image2,
+            img3: readTask?.metaData?.image3,
+            attachmentDescription: readTask?.metaData?.description,
+            attachmentNote: readTask?.metaData?.note,
+            id: readTask?.id??0,
+            AssigningCode: readTask?.assigningCode??"",
+            AssigningType: readTask?.assigningType??"",
+            createdOn: "${readTask?.createdOn?.split("T")[0]}"" ""${readTask?.createdOn?.split("T")[1].split("+")[0]}",
+            jobid: readTask?.jobId,
+            notas: readTask?.notes??"",
+            priorityLeval: "1",
+            remarks: readTask?.remarks??"",
+            taskName: readTask?.taskName??"",
+            taskType: readTask?.taskType??0,
+            lastmodified: null,
+            parant: readTask?.parent??null,
+            statusStagesId: null,
+            discription:readTask?.description??"",
+            createdBy: readTask?.createdPersonCode??"",
+            isActive: true,
+            priority: readTask?.priority??"",
+            reportingPerson: readTask?.reportingPersonCode??"",
+            endDate: "${readTask?.endDate?.split("T")[0]}"" ""${readTask?.endDate?.split("T")[1].split("+")[0]}"??"",
+            startDate: "${readTask?.startDate?.split("T")[0]}"" ""${readTask?.startDate?.split("T")[1].split("+")[0]}"??"",
+          ));
+    }
+    else{
+      PersistentNavBarNavigator.pushNewScreen(
+        context,
+        screen: AddressPickFromMap(taskRead: readTask,),
+        withNavBar: true,
+        pageTransitionAnimation: PageTransitionAnimation.fade,
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -89,7 +133,7 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
       }
       if(state is GetTaskReadSuccess){
         readTask=state.getTaskRead;
-        if(readTask?.latitude!=null||readTask?.longitude!=null){
+        if(readTask?.latitude!=null&&readTask?.longitude!=null&&readTask?.latitude!=''&&readTask?.longitude!=''){
           isLocation=true;
         }else{
           isLocation=false;
@@ -140,20 +184,10 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      if(isLocation==false){
-                        isLocation = !isLocation;
-                      }
-                      else{
-
-                      }
-
-                      PersistentNavBarNavigator.pushNewScreen(
-                        context,
-                        screen: AddressPickFromMap(taskRead: readTask,),
-                        withNavBar: true,
-                        pageTransitionAnimation: PageTransitionAnimation.fade,
-                      );
+                      isLocation = !isLocation;
+                      location();
                     });
+                    // location();
                   },
                   child: Container(
                     width: w,
@@ -183,19 +217,23 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
                           svg: CreateSvg().locationIcon,
                           onTap: () {
                             setState(() {
-                              if(isLocation==false){
+                              // if(isLocation==false){
                                 isLocation = !isLocation;
-                              }
-                              else{
+                                location();
+                                setState(() {
 
-                              }
+                                });
+                              // }
+                              // else{
+                              //
+                              // }
 
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-                                screen: AddressPickFromMap(taskRead: readTask),
-                                withNavBar: true,
-                                pageTransitionAnimation: PageTransitionAnimation.fade,
-                              );
+                              // PersistentNavBarNavigator.pushNewScreen(
+                              //   context,
+                              //   screen: AddressPickFromMap(taskRead: readTask),
+                              //   withNavBar: true,
+                              //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                              // );
                             });
                           },
                           endIcon: isLocation

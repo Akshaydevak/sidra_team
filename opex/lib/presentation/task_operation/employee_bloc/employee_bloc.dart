@@ -123,8 +123,8 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       userlist: userList
     );
 
-    if (dataResponse.hasData) {
-      yield CreateGroupSuccess(dataResponse.data);
+    if (dataResponse.data) {
+      yield CreateGroupSuccess(dataResponse.error);
     } else {
       yield CreateGroupFailed(dataResponse.error ?? "");
     }

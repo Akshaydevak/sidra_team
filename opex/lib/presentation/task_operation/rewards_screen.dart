@@ -51,7 +51,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
    void initState() {
      picModelRewards.clear();
      for(int i=0;i<5;i++) {
-       picModelRewards.add(PicModel(data: null,url: ""));
+       picModelRewards.add(PicModel(data: null,url: null));
      }
      super.initState();
    }
@@ -65,6 +65,13 @@ class _RewardsScreenState extends State<RewardsScreen> {
        isValid=false;
      }
    }
+   void clearDataAtIndex(int index) {
+     if (index >= 0 && index < picModelRewards.length) {
+       picModelRewards[index] = PicModel(data: null, url: null);
+     }
+     setState(() {});
+   }
+   int count = 0;
   @override
   Widget build(BuildContext context) {
     print("Inside Loading${widget.type}");
@@ -111,28 +118,29 @@ class _RewardsScreenState extends State<RewardsScreen> {
             picModelRewards.setAll(0, [
               PicModel(
                   url: rewadsRead?.rewardsMeta?.image1 ??
-                      "")
+                      null)
             ]);
             picModelRewards.setAll(1, [
               PicModel(
                   url: rewadsRead?.rewardsMeta?.image2 ??
-                      "")
+                      null)
             ]);
             picModelRewards.setAll(2, [
               PicModel(
                   url: rewadsRead?.rewardsMeta?.image3 ??
-                      "")
+                      null)
             ]);
             picModelRewards.setAll(3, [
               PicModel(
                   url: rewadsRead?.rewardsMeta?.image4 ??
-                      "")
+                      null)
             ]);
             picModelRewards.setAll(4, [
               PicModel(
                   url: rewadsRead?.rewardsMeta?.image5 ??
-                      "")
+                      null)
             ]);
+            widget.update==false?count=0:count=picModelRewards.length;
             setState(() {
 
             });
@@ -411,73 +419,222 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         child: AddText(label: "Add Notes",controller: notes,hint: "Enter Notes",isActive: notes.text==""?false:true,),
                       ),
                       SizedBox(height: 16,),
-                      Text(
-                        "Images",
-                        style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      // Text(
+                      //   "Images",
+                      //   style: GoogleFonts.roboto(
+                      //     color: Colors.black,
+                      //     fontSize: 16,
+                      //     fontWeight: FontWeight.w500,
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 5,
+                      // ),
+                      // Container(
+                      //
+                      //     width: MediaQuery.of(context).size.width,
+                      //     child: GridView.builder(
+                      //         padding: const EdgeInsets.all(0),
+                      //         physics: const NeverScrollableScrollPhysics(),
+                      //         shrinkWrap: true,
+                      //         itemCount: 5,
+                      //         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      //             maxCrossAxisExtent: 100,
+                      //             childAspectRatio: 1.5 / 2,
+                      //             crossAxisSpacing: 5,
+                      //             mainAxisSpacing: 8),
+                      //         itemBuilder: (context, i) {
+                      //           // print("eeeeeeeeeeeee  ${picModel[i].url}");
+                      //           return GestureDetector(
+                      //             onTap: (){
+                      //               isValid=true;
+                      //               isCatalogue=false;
+                      //               indexImage=i;
+                      //               setState(() {
+                      //
+                      //               });
+                      //               getCoverImage(ImageSource.gallery);
+                      //             },
+                      //           child:
+                      //           picModelRewards[i].url!=""&&picModelRewards[i].url!.isNotEmpty?
+                      //             Container(
+                      //                 width: 88,
+                      //                 height: 100,
+                      //                 decoration:BoxDecoration(
+                      //                     image: DecorationImage(
+                      //                         image: NetworkImage("${picModelRewards[i].url.toString()}"),fit: BoxFit.fill
+                      //                     )
+                      //                 )
+                      //             )
+                      //                 :
+                      //             Container(
+                      //                 width: 88,
+                      //                 height: 100,
+                      //                 decoration: BoxDecoration(
+                      //                   borderRadius: BorderRadius.circular(5),
+                      //                   border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                      //                   boxShadow: const [
+                      //                     BoxShadow(
+                      //                       color: Color(0x05000000),
+                      //                       blurRadius: 8,
+                      //                       offset: Offset(1, 1),
+                      //                     ),
+                      //                   ],
+                      //                   color: Colors.white,
+                      //                 ),
+                      //                 child: const Icon(Icons.add,color:Color(0x7f666161))
+                      //             ),
+                      //           );
+                      //         })),
                       SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
-                      Container(
-
-                          width: MediaQuery.of(context).size.width,
-                          child: GridView.builder(
-                              padding: const EdgeInsets.all(0),
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 100,
-                                  childAspectRatio: 1.5 / 2,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 8),
-                              itemBuilder: (context, i) {
-                                // print("eeeeeeeeeeeee  ${picModel[i].url}");
-                                return GestureDetector(
+                      count>=5?Container():TextButton(
+                        child:  Text(
+                          " + Add Attachment",
+                          style: GoogleFonts.roboto(
+                              color: ColorPalette.primary,
+                              fontSize: w/26,
+                              fontWeight: FontWeight.w500
+                          ),
+                        ),
+                        onPressed: () {
+                          getCoverImage(ImageSource.gallery);
+                          isCatalogue = false;
+                          isValid = true;
+                          indexImage =count++;
+                          setState(() {});
+                        },
+                      ),
+                      if (picModelRewards.isNotEmpty) ...[
+                        for (var i = 0; i < count; i++) ...{
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: Stack(
+                              children: [
+                                GestureDetector(
                                   onTap: (){
-                                    isValid=true;
-                                    isCatalogue=false;
-                                    indexImage=i;
-                                    setState(() {
-
-                                    });
+                                    isCatalogue = false;
+                                    indexImage = i;
+                                    isValid = true;
+                                    setState(() {});
                                     getCoverImage(ImageSource.gallery);
                                   },
-                                child:
-                                picModelRewards[i].url!=""&&picModelRewards[i].url!.isNotEmpty?
+                                  child: picModelRewards[i].url==null?
                                   Container(
-                                      width: 88,
-                                      height: 100,
-                                      decoration:BoxDecoration(
-                                          image: DecorationImage(
-                                              image: NetworkImage("${picModelRewards[i].url.toString()}"),fit: BoxFit.fill
-                                          )
-                                      )
-                                  )
-                                      :
-                                  Container(
-                                      width: 88,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color(0x05000000),
-                                            blurRadius: 8,
-                                            offset: Offset(1, 1),
-                                          ),
-                                        ],
-                                        color: Colors.white,
+                                    height: 120,
+                                    width: w,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: Color(0xffe6ecf0),
+                                        width: 1,
                                       ),
-                                      child: const Icon(Icons.add,color:Color(0x7f666161))
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Color(0xffD9D9D9).withOpacity(0.25),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.add,size: 30,color: ColorPalette.primary,),
+                                        Text("Upload Image",
+                                          style: GoogleFonts.roboto(
+                                              color: ColorPalette.primary,
+                                              fontSize: w/26,
+                                              fontWeight: FontWeight.w600
+                                          ),),
+                                      ],
+                                    ),
+                                  ):
+                                  Container(
+                                    height: 120,
+                                    width: w,
+                                    color: Colors.white,
+                                    child: Image.network(
+                                      picModelRewards[i].url ?? "",
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                );
-                              })),
+                                ),
+
+                                picModelRewards[i].url==null?Text(""):Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        picModelRewards[i].url == "";
+                                        clearDataAtIndex(i);
+                                        isValid = true;
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        color: Color(0xffD9D9D9),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(8.0),
+                                          child: Align(
+                                            alignment:
+                                            Alignment.centerRight,
+                                            child: SvgPicture.string(TaskSvg().deleteBox,color: ColorPalette.primary,height: 18,width: 18,),),
+                                        ),
+                                      ),
+                                    )),
+                                picModelRewards[i].url==null?Text(""):Positioned(
+                                    bottom: 13,
+                                    left: 10,
+                                    child: SizedBox(
+                                      width: w/1.6,
+                                      child:
+                                      Text(
+                                          picModelRewards[i].url?.split("/")[5]??"",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis),
+                                    )),
+                              ],
+                            ),
+                          )
+
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     isCatalogue = false;
+                          //     indexImage = i;
+                          //     isValid = true;
+                          //     setState(() {});
+                          //     getCoverImage(ImageSource.gallery);
+                          //   },
+                          //   child: Container(
+                          //       width: 88,
+                          //       height: 100,
+                          //       decoration: BoxDecoration(
+                          //         borderRadius: BorderRadius.circular(5),
+                          //         border: Border.all(
+                          //           color: Color(0xffe6ecf0),
+                          //           width: 1,
+                          //         ),
+                          //         boxShadow: const [
+                          //           BoxShadow(
+                          //             color: Color(0x05000000),
+                          //             blurRadius: 8,
+                          //             offset: Offset(1, 1),
+                          //           ),
+                          //         ],
+                          //         color: Colors.white,
+                          //       ),
+                          //       child: const Icon(Icons.add,
+                          //           color: Color(0x7f666161))),
+                          // ),
+                        },
+                      ],
 
                     ],
                   ),

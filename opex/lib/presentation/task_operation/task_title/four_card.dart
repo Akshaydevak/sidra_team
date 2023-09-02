@@ -9,9 +9,12 @@ class FourCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w =MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
-      width: w/4.8,
+      width: w1/4.8,
       height: 105,
       padding: EdgeInsets.all(12),
 

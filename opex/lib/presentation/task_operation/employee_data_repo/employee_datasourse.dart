@@ -94,7 +94,7 @@ class EmployeeDataSource {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
   //update
@@ -114,7 +114,8 @@ class EmployeeDataSource {
     print("FAS${ClusterUrls.groupUpdateUrl+id.toString()}");
 
     final response = await client.patch(ClusterUrls.groupUpdateUrl+id.toString(),
-      data: {
+      data:
+      {
         "group_name":groupName,
         "user_id":userList,
         "description":discription,
@@ -131,19 +132,14 @@ class EmployeeDataSource {
     );
 
     if (response.data['status'] == 'success') {
-      print("data is Res${response.data}");
-
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
   //readgroup
   Future<GetTaskGroupList> getGroupRead(int id) async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
     GetTaskGroupList groupRead;
     print("group Read:${ClusterUrls.readGroupUrl + id.toString()}");
     final response = await client.get(

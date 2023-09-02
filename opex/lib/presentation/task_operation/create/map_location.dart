@@ -187,7 +187,7 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
     // BitmapDescriptor.defaultMarker;
     // BitmapDescriptor.defaultMarkerWithHue(50);
     BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)), 'asset/img.jpg',)
+        const ImageConfiguration(size: Size(5, 5)), 'asset/location_marker.png',)
         // const ImageConfiguration(size: Size(0.5, 0.5)), 'asset/pin.png',)
         .then((d) {
       customIcon = d;
@@ -249,23 +249,18 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
         (selectedMapType == MapType.satellite));
     return BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
-        if (state is UpdateTaskLoading) {
-          print("task loading");
-          showSnackBar(context,
-              message: "Loading...",
-              color: Colors.white,
-              // icon: HomeSvg().SnackbarIcon,
-              autoDismiss: true);
-        }
-        else if (state is UpdateTaskSuccess) {
+
+         if (state is UpdateTaskSuccess) {
+          Navigator.pop(context);
+          context.read<TaskBloc>().add(GetTaskReadListEvent(widget.taskRead?.id ?? 0));
          // Navigator.push(context, MaterialPageRoute(builder: (context) => MoreDetailsScreen(),));
           print("task sucsess");
-          showSnackBar(
-            context,
-            message: state.taskId,
-            color: Colors.red,
-            // icon: Icons.admin_panel_settings_outlined
-          );
+          // showSnackBar(
+          //   context,
+          //   message: state.taskId,
+          //   color: Colors.red,
+          //   // icon: Icons.admin_panel_settings_outlined
+          // );
         }
 
         else if (state is UpdateTaskFailed) {
@@ -648,7 +643,7 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
                                                 endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
                                                 startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
                                               ));
-                                          Navigator.pop(context);
+
 
                                         },
                                         gradient: const LinearGradient(

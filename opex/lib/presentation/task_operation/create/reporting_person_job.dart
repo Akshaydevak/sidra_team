@@ -27,7 +27,6 @@ class ReportingPersonJob extends StatefulWidget {
 class _ReportingPersonJobState extends State<ReportingPersonJob> {
   GetJobList? JobRead;
   bool isSelect = false;
-  bool isReporting = true;
   List<GetEmployeeList> employee = [];
 
   @override
@@ -62,11 +61,11 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
         BlocListener<JobBloc, JobState>(
           listener: (context, state) {
             if (state is UpdateJobLoading) {
-              showSnackBar(context,
-                  message: "Loading...",
-                  color: Colors.white,
-                  // icon: HomeSvg().SnackbarIcon,
-                  autoDismiss: true);
+              // showSnackBar(context,
+              //     message: "Loading...",
+              //     color: Colors.white,
+              //     // icon: HomeSvg().SnackbarIcon,
+              //     autoDismiss: true);
             }
 
             if (state is UpdateJobFailed) {
@@ -82,8 +81,8 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                   msg: state.successMessage??"",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black);
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white);
               Navigator.pop(context);
             }
           },
@@ -106,18 +105,18 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: BackAppBar(
-              label: "Reporting Person Job",
+              label: "Reporting Person",
               isAction: false,
-              action: GestureDetector(
-                onTap: () {
-                  context.read<JobBloc>().add(GetJobReadListEvent(
-                      int.tryParse(Variable.jobReadId.toString()) ?? 0));
-                },
-                child: SvgPicture.string(
-                  CartSvg().searchIcon,
-                  color: Colors.black,
-                ),
-              ),
+              // action: GestureDetector(
+              //   onTap: () {
+              //     context.read<JobBloc>().add(GetJobReadListEvent(
+              //         int.tryParse(Variable.jobReadId.toString()) ?? 0));
+              //   },
+              //   child: SvgPicture.string(
+              //     CartSvg().searchIcon,
+              //     color: Colors.black,
+              //   ),
+              // ),
             )),
         body: ScrollConfiguration(
           behavior: NoGlow(),
@@ -244,7 +243,9 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
-                                          color: Color(0xffe6ecf0),
+                                          color: JobRead?.reportingMail==employee[i].email?
+                                          ColorPalette.primary:
+                                          Color(0xffe6ecf0),
                                           width: 1,
                                         ),
                                         boxShadow: [

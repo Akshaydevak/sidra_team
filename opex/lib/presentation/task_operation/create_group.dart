@@ -15,6 +15,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../common_widgets/gradient_button.dart';
 import '../../../../common_widgets/loading.dart';
 
+import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'employee_group_screen.dart';
 import 'group_list.dart';
@@ -39,10 +40,12 @@ class _CreateGroupState extends State<CreateGroup> {
   List<GetUserList>? userList=[];
   GetTaskGroupList? readGroup;
   List<String> newTable=[];
-  void chaneTable(List<String> val,List<GetUserList> update){
+  void chaneTable(List<String> val,List<GetUserList> update,bool changeVal){
     // userList?.clear();
     newTable=val;
     userList=update;
+    isChange=changeVal;
+    validationCheck();
     setState((){});
 
   }
@@ -51,6 +54,18 @@ class _CreateGroupState extends State<CreateGroup> {
 
     context.read<JobBloc>().add(const GetEmployeeListEvent());
     super.initState();
+  }
+  bool isChange=false;
+  FocusNode focusNode=FocusNode();
+  FocusNode descriptionfocusNode=FocusNode();
+  bool? isValid=false;
+  validationCheck(){
+    if(groupName.text!=""&&discription.text!=""&&isChange==true){
+      isValid=true;
+    }
+    else{
+      isValid=false;
+    }
   }
 
   GetTaskGroupList? taskgroup;
@@ -65,7 +80,7 @@ class _CreateGroupState extends State<CreateGroup> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: BackAppBar(label: widget.edit==true?"Edit Group":"Create Group",
+          child: BackAppBar(label: "Create Group",
           isAction: false),
         ),
         body: SingleChildScrollView(
@@ -74,11 +89,11 @@ class _CreateGroupState extends State<CreateGroup> {
     BlocListener<EmployeeBloc, EmployeeState>(
             listener: (context, state) {
               if (state is CreateGroupLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                    // message: "Loading...",
+                    // color: Colors.white,
+                    // // icon: HomeSvg().SnackbarIcon,
+                    // autoDismiss: true);
               }
 
               if (state is CreateGroupFailed) {
@@ -90,17 +105,18 @@ class _CreateGroupState extends State<CreateGroup> {
                 );
               }
               if (state is CreateGroupSuccess) {
-                taskgroup = state.group;
+                // taskgroup = state.group;
 
                 Fluttertoast.showToast(
                     msg: 'Successfully Created Group',
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black);
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white);
+                Navigator.pop(context);
                 PersistentNavBarNavigator.pushNewScreen(
                   context,
-                  screen: EmployeesGroupScreen(newIndex: 0),
+                  screen: EmployeesGroupScreen(newIndex: 1),
                   withNavBar: true,
                   // OPTIONAL VALUE. True by default.
                   pageTransitionAnimation:
@@ -109,76 +125,92 @@ class _CreateGroupState extends State<CreateGroup> {
               }
             },
 ),
-    BlocListener<EmployeeBloc, EmployeeState>(
-      listener: (context, state) {
-        print("state group$state");
-        if(state is GetReadGroupLoading){
-
-        }
-        if(state is GetReadGroupSuccess){
-          readGroup=state.getGroupRead;
-          // print(":GPName4${state.getGroupRead.i}");
-          groupName.text=state.getGroupRead.gName??"";
-          discription.text=state.getGroupRead.description??"";
-          // userList=state.getGroupRead.userList;
-
-          for(var i=0;i<state.getGroupRead.userList!.length;i++){
-            userCodeList.add(state.getGroupRead.userList?[i].code??"");
-            userList?.add(
-                GetUserList(
-                    userCode: state.getGroupRead.userList?[i].code??"",
-            isActive: state.getGroupRead.userList?[i].isActive??false));
-
-          }
-          setState(() {
-
-          });
-        }
-
-      },
-    ),
-    BlocListener<EmployeeBloc, EmployeeState>(
-      listener: (context, state) {
-        if (state is UpdateGroupLoading) {
-          showSnackBar(context,
-              message: "Loading...",
-              color: Colors.white,
-              // icon: HomeSvg().SnackbarIcon,
-              autoDismiss: true);
-        }
-
-        if (state is UpdateGroupFailed) {
-          showSnackBar(
-            context,
-            message: state.error,
-            color: Colors.red,
-            // icon: Icons.admin_panel_settings_outlined
-          );
-        }
-        if (state is UpdateGroupSuccess) {
-
-          Fluttertoast.showToast(
-              msg: 'Successfully Created Group',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.white,
-              textColor: Colors.black);
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: EmployeesGroupScreen(newIndex: 1),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation:
-            PageTransitionAnimation.fade,
-          );
-        }
-      },
-    ),
   ],
   child:  Column(
           children: [
+            Container(
+              width: w,
+              // height: 185,
+              margin: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Color(0xffe6ecf0),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x05000000),
+                    blurRadius: 8,
+                    offset: Offset(1, 1),
+                  ),
+                ],
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    style:GoogleFonts.roboto(
+                        fontWeight: FontWeight.w600
+                    ) ,
+                    onChanged: (n){
+                      validationCheck();
+                      setState(() {
+
+                      });
+                    },
+                    focusNode: focusNode,
+                    decoration:  InputDecoration(
+                      contentPadding: EdgeInsets.only(left:16,right: 16 ),
+                      hintText: "Group Name",
+                      hintStyle: TextStyle(
+                        color: Color(0x66151522),
+                        fontSize: w/26,
+                      ),
+                      border: InputBorder.none,
+
+                    ),
+                    controller: groupName,
+
+                    maxLines: 1,
+                  ),
+
+                  Container(
+                    margin: EdgeInsets.only(left:16),
+                    width: w,
+                    height: 1.50,
+                    color: ColorPalette.divider,
+                  ),
+
+                  TextFormField(
+                    controller: discription,
+                    maxLines: 4,
+                    minLines: 1,
+                    onChanged: (n){
+                      validationCheck();
+                      setState(() {
+
+                      });
+                    },
+                    focusNode: descriptionfocusNode,
+                    decoration:  InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                      hintText: "Group Description",
+                      hintStyle: TextStyle(
+                        color: Color(0x66151522),
+                        fontSize: w/26,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           SizedBox(
-            height: h / 1.25,
+            height: h / 1.6,
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -186,96 +218,7 @@ class _CreateGroupState extends State<CreateGroup> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      // width: w,
-                      padding:
-                      EdgeInsets.all(10),
-                      // height: 117,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(top: 16),
-                            child: Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Colors.grey,
-                                ),
-                                Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor: Colors.white,
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 18,
-                                        )))
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            width: w / 1.57,
-                            // alignment: Alignment.topLeft,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  // color: Colors.yellow,
-                                  width: w / 1.6,
-                                  child: TextFormField(
-                                    controller: groupName,
-                                    decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            bottom: 0, top: 10),
-                                        border: InputBorder.none,
-                                        hintText: "Group Name"),
-                                  ),
-                                ),
-                                Container(
-                                  width: w / 1.57,
-                                  height: 1,
-                                  color: Color(0xffE6ECF0),
-                                ),
-                                Container(
-                                  // color: Colors.yellow,
-                                  width: w / 1.6,
-                                  child: TextFormField(
-                                    controller: discription,
-                                    decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            bottom: 0, top: 10),
-                                        border: InputBorder.none,
-                                        hintText: "Group Description"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+
                     SizedBox(
                       height: 16,
                     ),
@@ -290,120 +233,61 @@ class _CreateGroupState extends State<CreateGroup> {
                     SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      width: w,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: w / 1.5,
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  contentPadding:
-                                  EdgeInsets.only(bottom: 0, top: 0),
-                                  border: InputBorder.none,
-                                  hintText: "Group Name"),
-                            ),
-                          ),
-                          SvgPicture.string(
-                            CartSvg().searchIcon,
-                            color: Colors.black,
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+
                     BlocBuilder<JobBloc, JobState>(
                       builder: (context, state) {
                         if (state is GetEmployeeListLoading) {
-                          customCupertinoLoading();
+                          return customCupertinoLoading();
                         }
                         if (state is GetEmployeeListSuccess) {
 
                           print("Success shifu");
 
                           return SingleChildScrollView(
-                            child: Container(
-                              // width: w,
-                              // height: h / 2.5,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 10,
                                 ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    width: w,
-                                    // height: h / 2.5,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Color(0xffe6ecf0),
-                                        width: 1,
-                                      ),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Color(0x05000000),
-                                          blurRadius: 8,
-                                          offset: Offset(1, 1),
-                                        ),
-                                      ],
-                                      color: Colors.white,
+                                Container(
+                                  width: w,
+                                  // height: h / 2.5,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xffe6ecf0),
+                                      width: 1,
                                     ),
-                                    child: ListView.separated(
-                                        primary: true,
-                                        shrinkWrap: true,
-                                        physics:
-                                        NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index) =>
-                                            GroupList(
-                                              userUpdateList: userList??[],
-                                              userList: userCodeList,
-                                              readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.employeeList[index].code):false,
-
-                                                listuser: chaneTable,
-                                                employeeList: state
-                                                    .employeeList[index]),
-                                        separatorBuilder:
-                                            (context, index) => Divider(),
-                                        itemCount:
-                                        state.employeeList.length),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Colors.white,
                                   ),
-                                ],
-                              ),
+                                  child: ListView.separated(
+                                      primary: true,
+                                      shrinkWrap: true,
+                                      physics:
+                                      NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) =>
+                                          GroupList(
+                                            userUpdateList: userList??[],
+                                            userList: userCodeList,
+                                            readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.employeeList[index].code):false,
+
+                                              listuser: chaneTable,
+                                              employeeList: state
+                                                  .employeeList[index]),
+                                      separatorBuilder:
+                                          (context, index) => Divider(),
+                                      itemCount:
+                                      state.employeeList.length),
+                                ),
+                              ],
                             ),
                           );
                         }
@@ -413,45 +297,71 @@ class _CreateGroupState extends State<CreateGroup> {
                     const SizedBox(
                       height: 20,
                     ),
-                    GradientButton(
-                        onPressed: () {
-                          widget.edit?
-                          BlocProvider.of<EmployeeBloc>(context).add(
-                              UpdateGroupEvent(
-                                  groupName: groupName.text,
-                                  discription: discription.text,
-                                  userList: userList??[],
-                              isActive: true,
-                              id: readGroup?.id??0)):
-                          BlocProvider.of<EmployeeBloc>(context).add(
-                              CreateGroupEvent(
-                                  groupName: groupName.text,
-                                  discription: discription.text,
-                                  userlist: newTable));
-                        },
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xfffe5762),
-                            Color(0xfffe5762),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                        color: const Color(0xfffe5762),
-                        child: Text(
-                          "Continue",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
+
+                    SizedBox(height: h/10,)
                   ],
                 ),
               ),
             ),
           ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16,right: 16),
+              child: isValid==true?GradientButton(
+                  onPressed: () {
+                    widget.edit?
+                    BlocProvider.of<EmployeeBloc>(context).add(
+                        UpdateGroupEvent(
+                            groupName: groupName.text,
+                            discription: discription.text,
+                            userList: userList??[],
+                            isActive: true,
+                            id: readGroup?.id??0)):
+                    BlocProvider.of<EmployeeBloc>(context).add(
+                        CreateGroupEvent(
+                            groupName: groupName.text,
+                            discription: discription.text,
+                            userlist: newTable));
+                  },
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xfffe5762),
+                      Color(0xfffe5762),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  color: const Color(0xfffe5762),
+                  child: Text(
+                    "Continue",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )):
+              GradientButton(
+                  onPressed: () {
+                  },
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xffD3D3D3),
+                      Color(0xffD3D3D3),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  color: const Color(0xffD3D3D3),
+                  child: Text(
+                    "Continue",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+            ),
         ])
 
 ),

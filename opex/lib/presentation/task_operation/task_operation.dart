@@ -98,10 +98,10 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
         _rangeCount = args.value.length.toString();
       }
 
-      ebdDate = _range.split(" - ")[0];
-      ebdDate2 = _range1.split(" - ")[0];
-      startDate = _range.split(" - ")[1];
-      startDate2 = _range1.split(" - ")[1];
+      ebdDate2 = _range.split(" - ")[0];
+      ebdDate = _range1.split(" - ")[0];
+      startDate2 = _range.split(" - ")[1];
+      startDate = _range1.split(" - ")[1];
 
       print("statatat$startDate");
       print("statatat$ebdDate");
@@ -165,7 +165,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                 child: Column(
                   children: [
                     Container(
-                        width: w,
+                        width: w1,
                         padding: EdgeInsets.all(16),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -206,9 +206,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                       selectionMode:
                                                       DateRangePickerSelectionMode
                                                           .range,
-                                                      // initialSelectedRange:PickerDateRange(
-                                                      //     DateTime.parse(startDate),
-                                                      //     DateTime.parse(ebdDate))
+                                                      initialSelectedRange:PickerDateRange(
+                                                          DateTime.parse(startDate2),
+                                                          DateTime.parse(ebdDate2))
 
                                                     ),
                                                   ),
@@ -220,9 +220,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                         .add(
                                                         FilterAssignTaskCountEvent(
                                                             startDate:
-                                                            ebdDate,
+                                                            ebdDate2,
                                                             endDate:
-                                                            startDate));
+                                                            startDate2));
                                                     setState(() {});
                                                     Navigator.pop(context);
                                                   },
@@ -439,7 +439,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               width: 10,
                                             ),
                                             Text(
-                                              "Pinned Job",
+                                              "Pinned Job List",
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: w/22,

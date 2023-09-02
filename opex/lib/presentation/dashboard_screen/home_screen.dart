@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                const SearchBar(),
+                // const SearchBar(),
                 Container(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
                     width: w,

@@ -4,16 +4,13 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart'
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/order_app/activity_log.dart';
 import 'package:cluster/presentation/task_operation/payment_option.dart';
-import 'package:cluster/presentation/task_operation/performance_appraisal/create_performance.dart';
 import 'package:cluster/presentation/task_operation/performance_appraisal/performance_appraisal.dart';
-import 'package:cluster/presentation/task_operation/select_assignees.dart';
-import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
+import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/attachment_card.dart';
 import 'package:cluster/presentation/task_operation/task_title/task_title_card.dart';
 import 'package:cluster/presentation/task_operation/task_title/text_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,6 +22,7 @@ import '../../common_widgets/loading.dart';
 import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
+import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
 import 'create/map_location.dart';
@@ -49,6 +47,50 @@ class _TaskTitleState extends State<TaskTitle> {
   bool isSubTask = true;
   bool isDate = true;
   bool isLocation = false;
+  location(){
+    if(isLocation==false){
+      BlocProvider.of<TaskBloc>(context).add(
+          UpdateTaskEvent(
+            latitude: null,
+            longitude:null,
+            img5:  getTaskRead?.metaData?.image5,
+            img1: getTaskRead?.metaData?.image1,
+            img4: getTaskRead?.metaData?.image4,
+            img2: getTaskRead?.metaData?.image2,
+            img3: getTaskRead?.metaData?.image3,
+            attachmentDescription: getTaskRead?.metaData?.description,
+            attachmentNote: getTaskRead?.metaData?.note,
+            id: getTaskRead?.id??0,
+            AssigningCode: getTaskRead?.assigningCode??"",
+            AssigningType: getTaskRead?.assigningType??"",
+            createdOn: "${getTaskRead?.createdOn?.split("T")[0]}"" ""${getTaskRead?.createdOn?.split("T")[1].split("+")[0]}",
+            jobid: getTaskRead?.jobId,
+            notas: getTaskRead?.notes??"",
+            priorityLeval: "1",
+            remarks: getTaskRead?.remarks??"",
+            taskName: getTaskRead?.taskName??"",
+            taskType: getTaskRead?.taskType??0,
+            lastmodified: null,
+            parant: getTaskRead?.parent,
+            statusStagesId: null,
+            discription:getTaskRead?.description??"",
+            createdBy: getTaskRead?.createdPersonCode??"",
+            isActive: true,
+            priority: getTaskRead?.priority??"",
+            reportingPerson: getTaskRead?.reportingPersonCode??"",
+            endDate: "${getTaskRead?.endDate?.split("T")[0]}"" ""${getTaskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+            startDate: "${getTaskRead?.startDate?.split("T")[0]}"" ""${getTaskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+          ));
+    }
+    else{
+      PersistentNavBarNavigator.pushNewScreen(
+        context,
+        screen: AddressPickFromMap(taskRead: getTaskRead,),
+        withNavBar: true,
+        pageTransitionAnimation: PageTransitionAnimation.fade,
+      );
+    }
+  }
   bool isReporting = true;
   bool isNotify = false;
   String PriorityLeval = "";
@@ -121,6 +163,11 @@ class _TaskTitleState extends State<TaskTitle> {
                     ? null
                     : context.read<TaskBloc>().add( GetSubTaskListEvent(getTaskRead?.id));
                 isNotify = getTaskRead?.isNotify ?? false;
+                if(getTaskRead?.latitude==null&&getTaskRead?.longitude==null||getTaskRead?.latitude==""&&getTaskRead?.longitude==""){
+                  isLocation=false;
+                }else{
+                  isLocation=true;
+                }
                 setState(() {});
               }
             },
@@ -157,11 +204,11 @@ class _TaskTitleState extends State<TaskTitle> {
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
               if (state is DeleteTaskLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is DeleteTaskFailed) {
@@ -179,8 +226,8 @@ class _TaskTitleState extends State<TaskTitle> {
                     msg: 'Successfully Deleted',
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black);
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white);
                 context.read<TaskBloc>().add(GetTaskListEvent(
                     int.tryParse(getTaskRead?.jobId.toString() ?? ""),'','',''));
                 Navigator.pop(context);
@@ -190,11 +237,11 @@ class _TaskTitleState extends State<TaskTitle> {
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
               if (state is PinCreationLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is PinCreationFailed) {
@@ -213,14 +260,14 @@ class _TaskTitleState extends State<TaskTitle> {
                         msg: 'Job Unpinned Successfully',
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black)
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white)
                     : Fluttertoast.showToast(
                         msg: 'Job Pinned Successfully',
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black);
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white);
                 context
                     .read<TaskBloc>()
                     .add(GetTaskReadListEvent(getTaskRead?.id ?? 0));
@@ -231,11 +278,11 @@ class _TaskTitleState extends State<TaskTitle> {
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
               if (state is NotificationDueLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is NotificationDueSuccess) {
@@ -445,15 +492,6 @@ class _TaskTitleState extends State<TaskTitle> {
               ),
             ),
           ),
-          // child: AppBar(
-          //   systemOverlayStyle: const SystemUiOverlayStyle(
-          //     systemNavigationBarColor: Colors.white, // Navigation bar
-          //     statusBarColor: Colors.white, // Status bar
-          //   ),
-          //
-          //   elevation: 0,
-          //
-          // ),
 
           body: ScrollConfiguration(
               behavior: NoGlow(),
@@ -504,6 +542,77 @@ class _TaskTitleState extends State<TaskTitle> {
                       widget.isMyJob
                           ? Column(
                               children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: const Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Colors.white,
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Row(
+                                      // mainAxisAlignment:
+                                      // MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 28,
+                                          padding:
+                                          const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                5),
+                                            color: const Color(
+                                                0xff33c658),
+                                          ),
+                                          child: SvgPicture.string(
+                                              CreateSvg().assignIcon),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 3),
+                                          child: Text(
+                                            "Priority",
+                                            style: GoogleFonts.roboto(
+                                              color: const Color(
+                                                  0xff151522),
+                                              fontSize: w/24,
+                                              fontWeight:
+                                              FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 3),
+                                          child: Text(getTaskRead
+                                              ?.priority ??
+                                              ""),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -648,7 +757,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                   .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              "${index + 1}${taskListNew[index].taskName}",
+                                                              "${index + 1}: ${taskListNew[index].taskName}",
                                                               style: GoogleFonts
                                                                   .roboto(
                                                                 color: const Color(
@@ -814,7 +923,7 @@ class _TaskTitleState extends State<TaskTitle> {
                       const SizedBox(
                         height: 10,
                       ),
-                      getTaskRead?.latitude != null &&
+                      authentication.isAdmin==true?Container():getTaskRead?.latitude != null &&
                               getTaskRead?.latitude != "" &&
                                   getTaskRead?.longitude != null &&
                               getTaskRead?.latitude != ""
@@ -959,7 +1068,7 @@ class _TaskTitleState extends State<TaskTitle> {
                       const SizedBox(
                         height: 10,
                       ),
-                      getTaskRead?.rewardsData?.image1 != null
+                      authentication.isAdmin==false&&getTaskRead?.rewardsData?.description != ""&&getTaskRead?.rewardsData?.description != null
                           ? TaskTitleCard(
                               paddingg:
                                   const EdgeInsets.symmetric(vertical: 16),
@@ -982,7 +1091,7 @@ class _TaskTitleState extends State<TaskTitle> {
                       SizedBox(
                         height: 10,
                       ),
-                     getTaskRead?.paymentMeta?.image1 != null
+                      authentication.isAdmin==false&&getTaskRead?.paymentMeta?.description != ""&&getTaskRead?.paymentMeta?.description != null
                               ? TaskTitleCard(
                                   paddingg:
                                       const EdgeInsets.symmetric(vertical: 16),
@@ -1005,7 +1114,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ))
                               : Container(),
                       SizedBox(height: 10),
-                      getTaskRead?.metaData?.image1 != null
+                      authentication.isAdmin==false&&getTaskRead?.metaData?.description != ""&&getTaskRead?.metaData?.description != null
                           ? TaskTitleCard(
                               paddingg:
                                   const EdgeInsets.symmetric(vertical: 16),
@@ -1032,18 +1141,208 @@ class _TaskTitleState extends State<TaskTitle> {
                       widget.isMyJob
                           ? Column(
                               children: [
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     context.read<TaskBloc>().add(
+                                //         GetTaskReadListEvent(
+                                //             getTaskRead?.id ?? 0));
+                                //     PersistentNavBarNavigator.pushNewScreen(
+                                //       context,
+                                //       screen: CreateNewTask(editTask: true),
+                                //       withNavBar: true,
+                                //       // OPTIONAL VALUE. True by default.
+                                //       pageTransitionAnimation:
+                                //           PageTransitionAnimation.fade,
+                                //     );
+                                //   },
+                                //   child: Container(
+                                //     width: w,
+                                //     padding: EdgeInsets.all(16),
+                                //     decoration: BoxDecoration(
+                                //       borderRadius: BorderRadius.circular(10),
+                                //       border: Border.all(
+                                //         color: Color(0xffe6ecf0),
+                                //         width: 1,
+                                //       ),
+                                //       boxShadow: [
+                                //         BoxShadow(
+                                //           color: Color(0x05000000),
+                                //           blurRadius: 8,
+                                //           offset: Offset(1, 1),
+                                //         ),
+                                //       ],
+                                //       color: Colors.white,
+                                //     ),
+                                //     child: SingleRow(
+                                //       label: "Edit this Task",
+                                //       color: Color(0xff0094FF),
+                                //       svg: TaskSvg().editIcon,
+                                //       endIcon:
+                                //           Icon(Icons.arrow_forward_ios_sharp),
+                                //       onTap: () {},
+                                //     ),
+                                //   ),
+                                // ),
+                                // SizedBox(
+                                //   height: 10,
+                                // ),
                                 GestureDetector(
                                   onTap: () {
-                                    context.read<TaskBloc>().add(
-                                        GetTaskReadListEvent(
-                                            getTaskRead?.id ?? 0));
+                                    setState(() {
+                                      isLocation = !isLocation;
+                                      location();
+                                    });
+                                    // location();
+                                  },
+                                  child: Container(
+                                    width: w,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Color(0xffe6ecf0),
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                    ),
+                                    child: Container(
+                                      margin: isLocation
+                                          ? EdgeInsets.only(
+                                          left: 16, right: 16, bottom: 15, top: 15)
+                                          : EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SingleRow(
+                                              color: Color(0xff3B9FFC),
+                                              label: "Share Location",
+                                              svg: CreateSvg().locationIcon,
+                                              onTap: () {
+                                                setState(() {
+                                                  // if(isLocation==false){
+                                                  isLocation = !isLocation;
+                                                  location();
+                                                  setState(() {
+
+                                                  });
+                                                  // }
+                                                  // else{
+                                                  //
+                                                  // }
+
+                                                  // PersistentNavBarNavigator.pushNewScreen(
+                                                  //   context,
+                                                  //   screen: AddressPickFromMap(taskRead: readTask),
+                                                  //   withNavBar: true,
+                                                  //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                  // );
+                                                });
+                                              },
+                                              endIcon: isLocation
+                                                  ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
+                                                  : SvgPicture.string(HomeSvg().toggleInActive,height: 22),
+                                          ),
+                                           isLocation?Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Divider(),
+                                              GestureDetector(
+                                                onTap: (){
+                                                  PersistentNavBarNavigator.pushNewScreen(
+                                                    context,
+                                                    screen: AddressPickFromMap(taskRead: getTaskRead,),
+                                                    withNavBar: true,
+                                                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: w/1.5,
+                                                  child: Text("https://www.google.com/maps/search/?api=1&query=${getTaskRead?.latitude},${getTaskRead?.longitude}",
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: GoogleFonts.roboto(
+                                                    color: ColorPalette.primary,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: w/24
+                                                  ),),
+                                                ),
+                                              )
+                                            ],
+                                          ):Container()
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                GestureDetector(
+
+                                  onTap: (){
                                     PersistentNavBarNavigator.pushNewScreen(
                                       context,
-                                      screen: CreateNewTask(editTask: true),
-                                      withNavBar: true,
-                                      // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
+                                      screen: AttachmentScreen(readData: getTaskRead),
+                                      withNavBar: true, // OPTIONAL VALUE. True by default.
+                                      pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    );
+                                  },
+                                  child: Container(
+                                    width: w,
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Color(0xffe6ecf0),
+                                        width: 1,
+                                      ),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                    ),
+                                    child:  SingleRow(
+                                        color: Color(0xffFFC800),
+                                        label: "Add Attachments",
+                                        svg: TaskSvg().attachmentIcon,
+                                        onTap: () {
+
+                                        },
+                                        endIcon: getTaskRead?.metaData?.description!=null?
+                                        SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          size: 18,
+                                        ),),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    getTaskRead?.paymentId!=null?context.read<TaskBloc>().add(
+                                        GetPaymentReadListEvent(getTaskRead?.id??0,true)):null;
+                                    Variable.taskReadId=getTaskRead?.id??0;
+                                    PersistentNavBarNavigator.pushNewScreen(
+                                      context,
+                                      screen: PaymentOption(
+                                        isJob: false,
+                                        isTask: true,
+                                        update: getTaskRead?.paymentId==null?false:getTaskRead?.paymentId==null?false:true,
+                                        paymentId: getTaskRead?.paymentId??0,
+                                        taskId: getTaskRead?.id??0,jobId: null,),
+                                      withNavBar: true, // OPTIONAL VALUE. True by default.
+                                      pageTransitionAnimation: PageTransitionAnimation.fade,
                                     );
                                   },
                                   child: Container(
@@ -1064,14 +1363,67 @@ class _TaskTitleState extends State<TaskTitle> {
                                       ],
                                       color: Colors.white,
                                     ),
-                                    child: SingleRow(
-                                      label: "Edit this Task",
-                                      color: Color(0xff0094FF),
-                                      svg: TaskSvg().editIcon,
-                                      endIcon:
-                                          Icon(Icons.arrow_forward_ios_sharp),
-                                      onTap: () {},
+                                    child:  SingleRow(
+                                        color: Color(0xff519BE0),
+                                        svg: TaskSvg().walletIcon,
+                                        label: "Payment Option",
+                                        onTap: () {
+
+
+                                        },
+                                        endIcon: getTaskRead?.paymentId!=null?
+                                        SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          size: 18,
+                                        ),
                                     ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    getTaskRead?.rewardid!=null?context.read<TaskBloc>().add(
+                                        GetReadRewardsEvent(getTaskRead?.id??0,true)):null;
+                                    PersistentNavBarNavigator.pushNewScreen(
+                                      context,
+                                      screen: RewardsScreen(type: "Task",typeId: getTaskRead?.id??0,
+                                        update: getTaskRead?.rewardid==null?false:getTaskRead?.rewardid==null?false:true,),
+                                      withNavBar: true,
+                                      pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    );
+                                  },
+                                  child: Container(
+                                    width: w,
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Color(0xffe6ecf0),
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Colors.white,
+                                    ),
+                                    child:  SingleRow(
+                                        label: "Rewards",
+                                        color: Color(0xffE051B8),
+                                        svg: TaskSvg().rewardIcon,
+                                        onTap: () {
+
+                                        },
+                                        endIcon: getTaskRead?.rewardid!=null?
+                                        SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          size: 18,
+                                        ),),
                                   ),
                                 ),
                               ],
@@ -1154,104 +1506,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     )),
                               ),
                             ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
-                        child: SingleRow(
-                            color: const Color(0xff33c658),
-                            label: "Priority",
-                            svg: CreateSvg().priorityIcon,
-                            onTap: () {},
-                            endIcon: Row(
-                              children: [
-                                Container(
-                                    // color:Colors.red,
-                                    // width: w / 5,
-                                  padding: EdgeInsets.only(right: 15),
-                                    child: getTaskRead?.priority == "Low"
-                                        ? Row(
-                                            children: [
-                                              SvgPicture.string(
-                                                TaskSvg().priorityIcon,
-                                                color: Color(0xff50D166),
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                getTaskRead?.priority ?? "",
-                                                style: GoogleFonts.roboto(
-                                                    fontSize: w / 24,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xff50D166)),
-                                              )
-                                            ],
-                                          )
-                                        : getTaskRead?.priority == "High"
-                                            ? Row(
-                                                children: [
-                                                  SvgPicture.string(
-                                                      TaskSvg().priorityIcon),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    getTaskRead?.priority ?? "",
-                                                    style: GoogleFonts.roboto(
-                                                        fontSize: w / 24,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.red),
-                                                  )
-                                                ],
-                                              )
-                                            : getTaskRead?.priority == "Medium"
-                                                ? Row(
-                                                    children: [
-                                                      SvgPicture.string(
-                                                        TaskSvg().priorityIcon,
-                                                        color:
-                                                            Color(0xffF18F1C),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        getTaskRead?.priority ??
-                                                            "",
-                                                        style:
-                                                            GoogleFonts.roboto(
-                                                                fontSize:
-                                                                    w / 24,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Color(
-                                                                    0xffF18F1C)),
-                                                      )
-                                                    ],
-                                                  )
-                                                : Text("")),
-                              ],
-                            )),
-                      ),
+
                       SizedBox(
                         height: 10,
                       ),

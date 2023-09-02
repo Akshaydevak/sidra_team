@@ -219,7 +219,10 @@ class DeleteReviewInitial extends TaskState {}
 
 class DeleteReviewLoading extends TaskState {}
 
-class DeleteReviewSuccess extends TaskState {}
+class DeleteReviewSuccess extends TaskState {
+  final String? status;
+  const DeleteReviewSuccess(this.status);
+}
 
 class DeleteReviewFailed extends TaskState {}
 
@@ -258,7 +261,10 @@ class GetReviewListSuccess extends TaskState {
   const GetReviewListSuccess(this.reviewList);
 }
 
-class GetReviewListFailed extends TaskState {}
+class GetReviewListFailed extends TaskState {
+  final List<ReviewModel> reviewList;
+  const GetReviewListFailed(this.reviewList);
+}
 
 //createPayment
 class CreatePaymentInitial extends TaskState {}

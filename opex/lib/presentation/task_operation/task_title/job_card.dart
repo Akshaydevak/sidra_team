@@ -35,7 +35,7 @@ class JobCard extends StatelessWidget {
         PersistentNavBarNavigator.pushNewScreen(
           context,
           screen: TaskTitle(),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
+          withNavBar: false, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       },

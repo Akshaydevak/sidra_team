@@ -21,7 +21,7 @@ class _TaskAndOperationAppBarState extends State<TaskAndOperationAppBar> {
       children: [
         Container(color: Colors.white,
           width: w,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20,),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15,),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

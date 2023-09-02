@@ -47,10 +47,10 @@ class EmployeeRepo {
       discription: discription,
       userList: userlist
     );
-    if (restAPIresponse.hasData) {
-      return DataResponse(error: restAPIresponse.error);
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: true);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "");
+      return DataResponse(error: restAPIresponse.error ?? "",data: false);
     }
   }
   //
@@ -71,10 +71,10 @@ class EmployeeRepo {
     );
     print("res data${restAPIresponse.data}");
     print("res data${restAPIresponse.error}");
-    if (restAPIresponse.data==true) {
-      return DataResponse(error: restAPIresponse.error);
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: true);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "");
+      return DataResponse(error: restAPIresponse.error ?? "",data: false);
     }
   }
 //groupread

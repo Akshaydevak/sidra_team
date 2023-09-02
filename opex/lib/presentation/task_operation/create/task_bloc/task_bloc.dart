@@ -648,8 +648,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Stream<TaskState> deleteReview({required int reviewId}) async* {
     yield DeleteReviewLoading();
     final dataResponse = await _taskDataSource.deleteReview(reviewId);
+    print("ddddd$dataResponse");
     if (dataResponse == "success") {
-      yield DeleteReviewSuccess();
+      print("delete inside$dataResponse");
+      yield DeleteReviewSuccess(dataResponse);
     } else {
       yield DeleteReviewFailed();
     }
@@ -686,11 +688,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     final dataResponse = await _taskRepo.getReviewList(taskId);
 
-    if (dataResponse.data!=null &&dataResponse.data?.isNotEmpty) {
-      print("sub tast is a success");
+    if (dataResponse.data.isNotEmpty) {
+      print("review list a success");
       yield GetReviewListSuccess(dataResponse.data);
     } else {
-      yield GetReviewListFailed();
+      yield const GetReviewListFailed([]);
     }
   }
 
