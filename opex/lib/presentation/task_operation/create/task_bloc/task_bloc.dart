@@ -34,6 +34,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is GetPinnedTaskListEvent) {
       yield* getPinnedTaskListState();
     }
+    if (event is GetTopicListEvent) {
+      yield* getTopicListState();
+    }
     if (event is GetSubTaskListEvent) {
       yield* getSubTaskListState(event.taskId);
     }
@@ -91,6 +94,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         taskType: event.taskType,
         statusStagesId: event.statusStagesId,
 
+      );
+    }
+    if (event is CreateReportEvent) {
+      yield* createReport(
+
+        notes: event.notes,
+        taskId: event.taskId,
+        toipicId: event.toipicId,
+        userId: event.userId
       );
     }
     if (event is UpdateTaskEvent) {
@@ -278,6 +290,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is NotificationDueEvent) {
       yield* getNotificationDue(event.id);
     }
+    if (event is ReportListAdminEvent) {
+      yield* ReportListAdminList(
+          next: event.next?.trim(),
+          prev: event.prev?.trim(),
+      );
+    }
+    if (event is ReportListUserEvent) {
+      yield* ReportListUserList(
+
+          next: event.next?.trim(),
+          prev: event.prev?.trim(),
+      );
+    }
   }
 
 
@@ -344,6 +369,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield GetPinnedTaskListSuccess(dataResponse.data);
     } else {
       yield GetPinnedTaskListFailed();
+    }
+  }
+
+  //topic
+  Stream<TaskState> getTopicListState() async* {
+    yield GetTopicListLoading();
+
+    final dataResponse = await _taskRepo.getTopicList();
+
+    if (dataResponse.data.isNotEmpty) {
+      yield GetTopicListSuccess(dataResponse.data);
+    } else {
+      yield GetTopicListFailed();
     }
   }
 
@@ -480,6 +518,33 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     } else {
       print("failed ${dataResponse.error}");
       yield CreateTaskFailed(
+        dataResponse.error ?? "",);
+    }
+  }
+  //report create
+  Stream<TaskState> createReport(
+      {
+        required int? taskId,
+        required String? userId,
+        required int? toipicId,
+        required String? notes
+      }) async* {
+    yield CreateReportLoading();
+
+    final dataResponse = await _taskRepo.createReport(
+userId: userId,
+      toipicId: toipicId,
+      taskId: taskId,
+      notes: notes
+
+    );
+
+    if (dataResponse.data==true) {
+      print("sucsess ");
+      yield CreateReportSuccess(dataResponse.error??"");
+    } else {
+      print("failed ${dataResponse.error}");
+      yield CreateReportFailed(
         dataResponse.error ?? "",);
     }
   }
@@ -1044,5 +1109,42 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
+
+  //report list admin
+  Stream<TaskState> ReportListAdminList({
+
+    String? next,String? prev,
+  }) async* {
+    yield ReportListAdminListLoading();
+    final dataResponse = await _taskRepo.ReportListAdminList(next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield ReportListAdminListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          orders:  dataResponse.data);  }
+
+    else {
+      yield ReportListAdminListFailed("failed");
+    }
+  }
+
+  //report list user
+  Stream<TaskState> ReportListUserList({
+
+    String? next,String? prev,
+
+  }) async* {
+    yield ReportListUserListLoading();
+    final dataResponse = await _taskRepo.ReportListUserList(next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield ReportListUserListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          orders:  dataResponse.data);  }
+
+    else {
+      yield ReportListUserListFailed("failed");
+    }
+  }
 
 }

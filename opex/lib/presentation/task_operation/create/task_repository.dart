@@ -91,6 +91,22 @@ class TaskRepo {
     return DataResponse(error: "error Text");
   }
 
+
+  //topic
+  Future<DataResponse> getTopicList() async {
+    final apiResponse = await _dataSource.getTopicList();
+    try {
+      if (apiResponse.isNotEmpty) {
+        return DataResponse(data: apiResponse);
+      } else {
+        return DataResponse(error: "error Text");
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return DataResponse(error: "error Text");
+  }
+
   //taskRead
   Future<DataResponse> getTaskReadData(int? id) async {
     try {
@@ -247,6 +263,27 @@ class TaskRepo {
       taskName: taskName,
       taskType: taskType,
       statusStagesId: statusStagesId
+
+    );
+    if (restAPIresponse.data) {
+      return DataResponse(data:restAPIresponse.data, error: restAPIresponse.error);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "");
+    }
+  }
+  //report task
+  Future<DataResponse> createReport({
+    required int? taskId,
+    required String? userId,
+    required int? toipicId,
+    required String? notes
+  }) async {
+    final restAPIresponse = await _dataSource.createReport(
+
+      notes: notes,
+      taskId: taskId,
+      toipicId: toipicId,
+      userId: userId
 
     );
     if (restAPIresponse.data) {
@@ -669,6 +706,54 @@ class TaskRepo {
     }
     return DataResponse(
       error: "implement Error conersion Text",
+    );
+  }
+
+  //report admin list
+  Future<PaginatedResponse> ReportListAdminList(String? next,String? prev) async {
+    final apiResponse = await _dataSource.ReportListAdminList(next,prev);
+    try {
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
+      } else {
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
+  }
+
+  //report user list
+  Future<PaginatedResponse> ReportListUserList(String? next,String? prev) async {
+    final apiResponse = await _dataSource.ReportListUserList(next,prev);
+    try {
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
+      } else {
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
     );
   }
 

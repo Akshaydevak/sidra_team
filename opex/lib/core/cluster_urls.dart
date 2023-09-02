@@ -16,6 +16,7 @@ class ClusterUrls{
   static const pinnJobCreationUrl="${taskAndOperationBaseURL}task-manage/create-pinned-jobs";
   static const taskread="${taskAndOperationBaseURL}task-manage/read-task/";
   static const employeeListUrl="https://api-uat-user.sidrabazar.com/user-employee_employeeuser";
+  static const reportingListUrl="https://api-task-and-operation.hilalcart.com/task-manage/list-reporting-persons";
   static const groupListUrl="${taskAndOperationBaseURL}task-manage/list-task-group";
   static const assignMeListUrl="${taskAndOperationBaseURL}task-manage/assigned-by-me-jobs-listing/";
   static const instantJobListUrl="${taskAndOperationBaseURL}task-manage/instant-list-jobs/";
@@ -44,7 +45,7 @@ class ClusterUrls{
   static const imageUploadUrl="${taskAndOperationBaseURL}file-upload";
   static const imageUploadAttachmentUrl="${taskAndOperationBaseURL}task/attachments-create";
   static const reviewCreateUrl="${taskAndOperationBaseURL}task-review/review-create";
-  static const reportingListUrl="https://api-task-and-operation.hilalcart.com/task-manage/list-reporting-persons";
+
   static const reviewListUrl="${taskAndOperationBaseURL}task-review/list-reviews/";
   static const reviewUpdateUrl="${taskAndOperationBaseURL}task-review/review-update/";
   static const createRewadsUrl="${taskAndOperationBaseURL}task-review/rewards-create";
@@ -55,11 +56,16 @@ class ClusterUrls{
   static const readPerformanceUrl="${taskAndOperationBaseURL}task-manage/read-performance-appraisal/";
   static const perfomenceListUrl="${taskAndOperationBaseURL}task-manage/list-performance/";
   static const userVerifyUrl="${taskAndOperationBaseURL}task-manage/user-verify";
-  static const readRewadsUrl="${taskAndOperationBaseURL}task-review/read-rewards";
   static const adminDataUrl="${taskAndOperationBaseURL}task-manage/reporting-person-login-api";
+  static const readRewadsUrl="${taskAndOperationBaseURL}task-review/read-rewards";
+
   static const listGroupUnderListUrl="${taskAndOperationBaseURL}task-manage/list-task-assigned-to-group";
   static const criteraReadUrl="${taskAndOperationBaseURL}task-manage/criteria-performance-appraisal/";
   static const dueNotificationUrl="${taskAndOperationBaseURL}task/notification-due-task/";
+  static const topicListUrl="${taskAndOperationBaseURL}task/list-topic";
+  static const reportTaskUrl="${taskAndOperationBaseURL}task-review/report-create";
+  static const reportedListAdminUrls="${taskAndOperationBaseURL}task-review/list-admin-report/";
+  static const reportedListUserUrls="${taskAndOperationBaseURL}task-review/list-user-report/";
 
 
 }

@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      topic: json['topic'] as String?,
       imgCount: json['image_count'] as int?,
       taskTypeName: json['task_type_name'] as String?,
       paymentMeta: json['payment_data'] == null
@@ -85,6 +86,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
     <String, dynamic>{
       'id': instance.id,
       'task_name': instance.taskName,
+      'topic': instance.topic,
       'task_type_name': instance.taskTypeName,
       'job_title': instance.jobTitle,
       'job_description': instance.jobDiscription,
@@ -417,4 +419,25 @@ Map<String, dynamic> _$PunchualityToJson(Punchuality instance) =>
     <String, dynamic>{
       'name': instance.name,
       'points': instance.points,
+    };
+
+ReportModel _$ReportModelFromJson(Map<String, dynamic> json) => ReportModel(
+      name: json['task_id'] as int?,
+      id: json['id'] as int?,
+      notes: json['notes'] as String?,
+      taskDescription: json['task_description'] as String?,
+      taskName: json['task_name'] as String?,
+      topicName: json['topic_name'] as String?,
+      userName: json['user_name'] as String?,
+    );
+
+Map<String, dynamic> _$ReportModelToJson(ReportModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'task_id': instance.name,
+      'task_name': instance.taskName,
+      'task_description': instance.taskDescription,
+      'topic_name': instance.topicName,
+      'notes': instance.notes,
+      'user_name': instance.userName,
     };

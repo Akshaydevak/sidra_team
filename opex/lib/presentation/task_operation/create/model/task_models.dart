@@ -38,6 +38,8 @@ class GetTaskList extends Equatable {
   final int? id;
   @JsonKey(name: 'task_name')
   final String? taskName;
+  @JsonKey(name: 'topic')
+  final String? topic;
   @JsonKey(name: 'task_type_name')
   final String? taskTypeName;
   @JsonKey(name: 'job_title')
@@ -133,6 +135,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.topic,
     this.imgCount,
     this.taskTypeName,
     this.paymentMeta,
@@ -651,4 +654,43 @@ class Punchuality extends Equatable {
       _$PunchualityFromJson(json);
 
   Map<String, dynamic> toJson() => _$PunchualityToJson(this);
+}
+
+//report
+@JsonSerializable()
+class ReportModel extends Equatable {
+
+  final int? id;
+  @JsonKey(name: 'task_id')
+  final int? name;
+  @JsonKey(name: 'task_name')
+  final String? taskName;
+  @JsonKey(name: 'task_description')
+  final String? taskDescription;
+  @JsonKey(name: 'topic_name')
+  final String? topicName;
+  @JsonKey(name: 'notes')
+  final String? notes;
+  @JsonKey(name: 'user_name')
+  final String? userName;
+
+
+  const ReportModel({
+    this.name,
+    this.id,
+    this.notes,
+    this.taskDescription,
+    this.taskName,
+    this.topicName,
+    this.userName,
+
+
+  });
+  @override
+  List<Object> get props => [];
+
+  factory ReportModel.fromJson(Map<String, dynamic> json) =>
+      _$ReportModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReportModelToJson(this);
 }

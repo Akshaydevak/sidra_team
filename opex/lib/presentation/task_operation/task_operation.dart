@@ -13,6 +13,8 @@ import 'package:cluster/presentation/task_operation/task_title/new_employee.dart
 import 'package:cluster/presentation/task_operation/task_title/new_job_list.dart';
 import 'package:cluster/presentation/task_operation/task_title/pending_jobs.dart';
 import 'package:cluster/presentation/task_operation/task_title/pinned_jobs.dart';
+import 'package:cluster/presentation/task_operation/task_title/repored_list_admin.dart';
+import 'package:cluster/presentation/task_operation/task_title/repoted_list_user.dart';
 import 'package:cluster/presentation/task_operation/task_title/staff_joblist.dart';
 import 'package:cluster/presentation/task_operation/task_title/two_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -457,71 +459,94 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                 : Container(),
                             HeadlineText(headText: "Quick access to :"),
                             authentication.isAdmin
-                                ? Row(
+                                ? Column(
+                                  children: [
+                                    Row(
                               mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
                               children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      PersistentNavBarNavigator
-                                          .pushNewScreen(
-                                        context,
-                                        screen:
-                                        const TaskAndOperationHomePage(),
-                                        withNavBar: false,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: FourCard(
-                                      label: "Job List",
-                                    )),
-                                GestureDetector(
-                                    onTap: () {
-                                      PersistentNavBarNavigator
-                                          .pushNewScreen(
-                                        context,
-                                        screen: EmployeesGroupScreen(
-                                            newIndex: 0),
-                                        withNavBar: false,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: FourCard()),
-                                GestureDetector(
-                                  onTap: () {
-                                    PersistentNavBarNavigator
-                                        .pushNewScreen(
-                                      context,
-                                      screen: EmployeesGroupScreen(
-                                          newIndex: 1),
-                                      withNavBar: false,
-                                      // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                      PageTransitionAnimation.fade,
-                                    );
-                                  },
-                                  child: FourCard(
-                                    label: "Groups",
-                                  ),
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen: CreatePerformance(),
-                                        withNavBar: false, // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation: PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: FourCard(
-                                      label: "Criteria",
-                                    ))
+                                    GestureDetector(
+                                        onTap: () {
+                                          PersistentNavBarNavigator
+                                              .pushNewScreen(
+                                            context,
+                                            screen:
+                                            const TaskAndOperationHomePage(),
+                                            withNavBar: false,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        child: FourCard(
+                                          label: "Job List",
+                                        )),
+                                    GestureDetector(
+                                        onTap: () {
+                                          PersistentNavBarNavigator
+                                              .pushNewScreen(
+                                            context,
+                                            screen: EmployeesGroupScreen(
+                                                newIndex: 0),
+                                            withNavBar: false,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        child: FourCard()),
+                                    GestureDetector(
+                                      onTap: () {
+                                        PersistentNavBarNavigator
+                                            .pushNewScreen(
+                                          context,
+                                          screen: EmployeesGroupScreen(
+                                              newIndex: 1),
+                                          withNavBar: false,
+                                          // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation:
+                                          PageTransitionAnimation.fade,
+                                        );
+                                      },
+                                      child: FourCard(
+                                        label: "Groups",
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                        onTap: () {
+                                          PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen: CreatePerformance(),
+                                            withNavBar: false, // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation: PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        child: FourCard(
+                                          label: "Criteria",
+                                        ))
                               ],
-                            )
+                            ),
+                                    SizedBox(height: 10,),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        GestureDetector(
+                                            onTap: () {
+                                              PersistentNavBarNavigator.pushNewScreen(
+                                                context,
+                                                screen: ReportedListAdmin(),
+                                                withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                pageTransitionAnimation: PageTransitionAnimation.fade,
+                                              );
+                                            },
+                                            child: FourCard(
+                                              label: "Reported List",
+                                            ))
+                                      ],
+                                    ),
+                                  ],
+                                )
                                 : Row(
                               mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
@@ -577,9 +602,22 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     label: "Pending Jobs",
                                   ),
                                 ),
-                                // FourCard(
-                                //   label: "Settings",
-                                // )
+                                GestureDetector(
+                                  onTap: () {
+                                    PersistentNavBarNavigator
+                                        .pushNewScreen(
+                                      context,
+                                      screen: const ReportedListUser(),
+                                      withNavBar: false,
+                                      // OPTIONAL VALUE. True by default.
+                                      pageTransitionAnimation:
+                                      PageTransitionAnimation.fade,
+                                    );
+                                  },
+                                  child: FourCard(
+                                    label: "Reported List",
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(

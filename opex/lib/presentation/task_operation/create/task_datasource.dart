@@ -185,6 +185,26 @@ class TaskDataSource {
     return taskList;
   }
 
+  //topic
+  Future<List<GetTaskList>> getTopicList() async {
+    List<GetTaskList> taskList = [];
+    print("URL Task:${ClusterUrls.topicListUrl}");
+    final response = await client.get(ClusterUrls.topicListUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    (response.data['data']['results'] as List).forEach((element) {
+      taskList.add(GetTaskList.fromJson(element));
+    });
+    return taskList;
+  }
+
+
   //taskread
   Future<GetTaskList> getTaskReadData(int id) async {
     GetTaskList selectedItemDetails;
@@ -389,6 +409,40 @@ class TaskDataSource {
     if (response.data['status'] == 'success') {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['task_id'].toString());
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
+  }
+//report task
+  Future<DataResponse> createReport({
+    required int? taskId,
+    required String? userId,
+    required int? toipicId,
+    required String? notes
+  }) async {
+
+    final response = await client.post(
+      ClusterUrls.reportTaskUrl,
+      data: {
+        "task_id":taskId,
+        "user_id":userId,
+        "topic_id":toipicId,
+        "notes":notes,
+
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+
+    print("create response$response");
+    if (response.data['status'] == 'success') {
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message'].toString());
     } else {
       return DataResponse(data: false, error: response.data['message']);
     }
@@ -1176,5 +1230,88 @@ class TaskDataSource {
    status=response.data['status'];
     return status;
   }
+
+  //report admin list
+  Future<PaginatedResponse<List<ReportModel>>> ReportListAdminList(String? next, String? prev) async {
+    List<ReportModel> nationalityModel = [];
+    String api = "";
+    // if (next != "") {
+    //   api = next ?? "";
+    // } else if (prev != "") {
+    //   api = prev ?? "";
+    // }
+    //
+    // else {
+    //   api = search!.isNotEmpty
+    //       ? Variable.isOrderId==true?
+    //   "${SellerUrls.newOrdersSellerUrl}?order_id=$search":
+    //   "${SellerUrls.newOrdersSellerUrl}?order_line_id=$search"
+    //       : SellerUrls.newOrdersSellerUrl;
+    // }
+    print("api ${ClusterUrls.reportedListAdminUrls+authentication.authenticatedUser.code.toString()}");
+    final response = await client.get(ClusterUrls.reportedListAdminUrls+authentication.authenticatedUser.code.toString(),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': authentication.authenticatedUser.token
+          },
+        ));
+
+    print("response${response.data['data']}");
+    (response.data['data']['results'] as List).forEach((element) {
+      nationalityModel.add(ReportModel.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
+    // return nationalityModel;
+  }
+
+
+  //report user list
+  Future<PaginatedResponse<List<ReportModel>>> ReportListUserList(
+       String? next, String? prev) async {
+    List<ReportModel> nationalityModel = [];
+    String api = "";
+    // if (next != "") {
+    //   api = next ?? "";
+    // } else if (prev != "") {
+    //   api = prev ?? "";
+    // }
+    //
+    // else {
+    //   api = search!.isNotEmpty
+    //       ? Variable.isOrderId==true?
+    //   "${SellerUrls.newOrdersSellerUrl}?order_id=$search":
+    //   "${SellerUrls.newOrdersSellerUrl}?order_line_id=$search"
+    //       : SellerUrls.newOrdersSellerUrl;
+    // }
+    print("api ${ClusterUrls.reportedListUserUrls+authentication.authenticatedUser.code.toString()}");
+    final response = await client.get(ClusterUrls.reportedListUserUrls+authentication.authenticatedUser.code.toString(),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': authentication.authenticatedUser.token
+          },
+        ));
+    print("api " + api);
+    print("response${response.data['data']}");
+    (response.data['data']['results'] as List).forEach((element) {
+      nationalityModel.add(ReportModel.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
+    // return nationalityModel;
+  }
+
 
 }

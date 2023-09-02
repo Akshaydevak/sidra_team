@@ -62,6 +62,18 @@ class GetPinnedTaskListSuccess extends TaskState {
 class GetPinnedTaskListFailed extends TaskState {}
 
 
+//topic
+class GetTopicListLoading extends TaskState {}
+
+class GetTopicListSuccess extends TaskState {
+  final List<GetTaskList> taskList;
+
+  const GetTopicListSuccess(this.taskList);
+}
+
+class GetTopicListFailed extends TaskState {}
+
+
 //task read
 class GetTaskReadInitial extends TaskState {}
 
@@ -162,6 +174,25 @@ class CreateTaskFailed extends TaskState {
   final String error;
 
   const CreateTaskFailed(this.error);
+  @override
+  List<Object> get props => [];
+}
+//report task
+class CreateReportLoading extends TaskState {}
+
+class CreateReportSuccess extends TaskState {
+  final String taskId;
+
+  const CreateReportSuccess(this.taskId);
+
+  @override
+  List<Object> get props => [taskId];
+}
+
+class CreateReportFailed extends TaskState {
+  final String error;
+
+  const CreateReportFailed(this.error);
   @override
   List<Object> get props => [];
 }
@@ -504,3 +535,38 @@ class NotificationDueFailed extends TaskState {
   final String error;
   NotificationDueFailed(this.error);
 }
+
+//
+//report admin list
+class ReportListAdminListLoading extends TaskState {}
+
+class ReportListAdminListSuccess extends TaskState  {
+  final List<ReportModel>? orders;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const ReportListAdminListSuccess(
+      {this.orders, this.prevPageUrl, this.nextPageUrl});
+}
+
+class ReportListAdminListFailed extends TaskState {
+  final String msg;
+  ReportListAdminListFailed(this.msg);
+}
+//report user list
+class ReportListUserListLoading extends TaskState {}
+
+class ReportListUserListSuccess extends TaskState  {
+  final List<ReportModel>? orders;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const ReportListUserListSuccess(
+      {this.orders, this.prevPageUrl, this.nextPageUrl});
+}
+
+class ReportListUserListFailed extends TaskState {
+  final String msg;
+  ReportListUserListFailed(this.msg);
+}
+
+
+

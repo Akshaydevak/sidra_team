@@ -1,8 +1,6 @@
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../presentation/order_app/order_svg.dart';
 
 class CustomCheckBox extends StatefulWidget {

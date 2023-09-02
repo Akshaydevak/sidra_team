@@ -24,6 +24,9 @@ class GetPendingTaskListEvent extends TaskEvent {
 class GetPinnedTaskListEvent extends TaskEvent {
   const GetPinnedTaskListEvent();
 }
+class GetTopicListEvent extends TaskEvent {
+  const GetTopicListEvent();
+}
 class GetPerformanceListEvent extends TaskEvent {
   final int taskid;
   final String code;
@@ -131,6 +134,28 @@ class CreateTaskEvent extends TaskEvent {
     taskName,
   ];
 }
+//createreport
+class CreateReportEvent extends TaskEvent {
+  final int? taskId;
+  final String? userId;
+  final int? toipicId;
+  final String? notes;
+
+  const CreateReportEvent(  {
+
+    this.userId,
+    required this.notes,
+    required this.taskId,
+    required this.toipicId,
+
+
+  });
+  @override
+  List<Object> get props => [
+    notes??"",
+  ];
+}
+
 //updatetask
 class UpdateTaskEvent extends TaskEvent {
   final int? parant;
@@ -523,4 +548,18 @@ class NotificationDueEvent extends TaskEvent {
   const NotificationDueEvent(this.id);
   @override
   List<Object> get props => [this.id];
+}
+
+//reporetdlist admin
+class ReportListAdminEvent extends TaskEvent {
+  final String? next;
+  final String? prev;
+  const ReportListAdminEvent(this.next, this.prev);
+}
+
+//reported list user
+class ReportListUserEvent extends TaskEvent {
+  final String? next;
+  final String? prev;
+  const ReportListUserEvent(this.next, this.prev);
 }
