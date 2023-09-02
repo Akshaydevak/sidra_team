@@ -1,5 +1,6 @@
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
+import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
@@ -32,9 +33,9 @@ class _DashBoardState extends State<DashBoard> {
     return [
       const HomeScreen(),
       const LoginDemo(),
-      // const CartScreen(),
       const TaskAndOperation(),
-      const ProfileScreen(),
+      const NewProfileScreen(),
+      // const ProfileScreen(),
       // NewGoogleMap(),
       // const Infinity(),
       // const FavouritesScreen(),
@@ -66,7 +67,7 @@ class _DashBoardState extends State<DashBoard> {
             IconConstants().taskIcon,
             color:  Color(0xff222222),
           ),
-          inactiveIcon: SvgPicture.string(IconConstants().inactivetaskIcon,
+          inactiveIcon: SvgPicture.string(IconConstants().taskIcon,
               color: ColorPalette.inactiveGrey),
           activeColorPrimary:  Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
@@ -155,6 +156,10 @@ class _DashBoardState extends State<DashBoard> {
                     newIndex = _controller.index;
                     if (newIndex == 0 || newIndex == 3) {
                       setState(() {});
+                    }
+                    else if(newIndex==2){
+   context.read<ProfileBloc>().add(GetProfileEvent());
+
                     }
                   },
                   screens: _buildScreens(),

@@ -104,6 +104,7 @@ class _AppBarState extends State<AppBarScreen> {
           ),
           titleSpacing: 16,
           centerTitle: false,
+          
           title: Text(
             "Sidrateams",
             style: GoogleFonts.roboto(
@@ -113,13 +114,13 @@ class _AppBarState extends State<AppBarScreen> {
             ),
           ),
           actions: [
-            // SvgPicture.string(
-            //   HomeSvg().msgIcon,
-            //   height: 25,
-            //   width: 25,
-            // ),
-            const SizedBox(
-              width: 30,
+            SvgPicture.string(
+              HomeSvg().notificationHomeIcon,
+              height: 25,
+              width: 25,
+            ),
+             SizedBox(
+              width:authentication.isAdmin? 30:0,
             ),
             authentication.isAdmin
                 ? GestureDetector(

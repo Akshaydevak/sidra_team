@@ -42,6 +42,7 @@ dependencies:
   double_back_to_close_app:
   internet_connection_checker:
   provider:
+  lottie:
   flutter_bloc: ^7.1.0
   flutter_sizer: ^1.0.5
   shared_preferences:
