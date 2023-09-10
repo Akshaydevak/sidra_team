@@ -12,40 +12,47 @@ class OperationsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
-    return  GestureDetector(
-      onTap:ontap,
-        child:
-      Container(
-      padding:padding,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color:color?? Color(0xff33c658),
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    return  Material(
+      child: InkWell(
+        onTap:ontap,
+          child:
+        Container(
+          width: w1,
+        padding:padding,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color:color?? Color(0xff33c658),
+                  ),
+                  child: SvgPicture.string(svg?? CreateSvg().calenderIcon),
                 ),
-                child: SvgPicture.string(svg?? CreateSvg().calenderIcon),
-              ),
-              SizedBox(width: 10,),
-              Text(
-               label?? "Basic Details ",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: w/22,
-                ),
-              )
-            ],
-          ),
-          Icon(Icons.arrow_forward_ios_sharp)
-        ],
-      ),
-    ));
+                SizedBox(width: 10,),
+                Text(
+                 label?? "Basic Details",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: w/22,
+                  ),
+                )
+              ],
+            ),
+            
+            
+          ],
+        ),
+      )),
+    );
   }
 }

@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
+import '../../profile/help_screen.dart';
 import '../home_svg.dart';
 
-class SearchBar extends StatelessWidget {
-  const SearchBar({Key? key}) : super(key: key);
+class SearchBarDashboard extends StatelessWidget {
+  const SearchBarDashboard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +17,21 @@ class SearchBar extends StatelessWidget {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.only(left: 18, right: 18),
       width: w,
-      height: 50,
+      height: 45,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(49),
         border: Border.all(
           color: Color(0x11000000),
           width: 0.30,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000).withOpacity(0.08),
-            blurRadius: 30,
-            offset: Offset(1, 1),
-          ),
-        ],
-        color: Colors.white,
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Color(0x14000000).withOpacity(0.08),
+        //     blurRadius: 30,
+        //     offset: Offset(1, 1),
+        //   ),
+        // ],
+        color: Color(0xffF7F7F7),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -37,14 +39,24 @@ class SearchBar extends StatelessWidget {
           Container(
             width: w / 1.6,
             child: TextFormField(
-              cursorColor: Colors.black,
+              onTap: (){
+                PersistentNavBarNavigator.pushNewScreen(
+                  context,
+                  screen: HelpScreen(autoFocus: true),
+                  withNavBar: false,
+                  // OPTIONAL VALUE. True by default.
+                  pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                );
+              },
+              cursorColor: Colors.black,readOnly: true,
               decoration: InputDecoration(
-                hintText: "Seach  Services and business apps..",
+                hintText: "Search..",
                 hintStyle: GoogleFonts.roboto(
                   color: Color(0xffbdbdbd),
-                  fontSize: w / 26,
+                  fontSize: w / 28,
                   fontWeight: FontWeight.w400,
                 ),
+
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),

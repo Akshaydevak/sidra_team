@@ -18,15 +18,23 @@ import 'icon_constants.dart';
 import 'internet_not_connected.dart';
 
 class DashBoard extends StatefulWidget {
-  const DashBoard({Key? key}) : super(key: key);
+  final int? index;
+
+  const DashBoard({Key? key, this.index}) : super(key: key);
 
   @override
   State<DashBoard> createState() => _DashBoardState();
 }
 
 class _DashBoardState extends State<DashBoard> {
+  @override
+  void initState() {
+   _controller=PersistentTabController(initialIndex:
+   widget.index??0);
+    super.initState();
+  }
   int newIndex = 0;
-  final PersistentTabController _controller =
+   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
   List<Widget> _buildScreens() {
@@ -109,7 +117,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
-        textScaleFactor: 1.0,
+        textScaleFactor: 1.0
       ),
       child: Scaffold(
         // appBar: PreferredSize(

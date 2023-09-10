@@ -79,4 +79,21 @@ class ProfileRepo {
         error: "error Text");
   }
 
+  //
+  Future<DataResponse> updateOrgProfilePic(File? profilePic,int? id)async {
+    final apiResponse = await _dataSource.updateOrgProfilePic(profilePic,id);
+    try {
+      if (apiResponse.data1) {
+        return DataResponse(data: apiResponse.data2,error: "error Text");
+      } else {
+        return DataResponse(data:null, error: apiResponse.data2);
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return DataResponse(
+        data: apiResponse.data2,
+        error: "error Text");
+  }
+
 }

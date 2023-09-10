@@ -139,4 +139,44 @@ print(response);
         response.data['profile_pic'],"failed");
   }
 
+  //
+  Future<DoubleResponse> updateOrgProfilePic(
+      File? profilePic,
+      int? id) async {
+    User authenticatedUser;
+    String filePath = "";
+    print(
+        "heyyyy login url  ${ProfileUrls.OrgupdateUrl+id.toString()}");
+    if (profilePic != null) filePath = profilePic.path;
+    final mime = lookupMimeType(filePath)!.split("/");
+    final fileData = await MultipartFile.fromFile(
+      filePath,
+      contentType: MediaType(mime.first, mime.last),
+    );
+    final FormData formData = FormData.fromMap({"company_logo": fileData});
+    print("////////$formData");
+    final response = await client.put(
+      ProfileUrls.OrgupdateUrl+id.toString(),
+      data: formData,
+
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': "${authentication.authenticatedUser.token}",
+        },
+      ),
+    );
+    print(response.data);
+    if (response.data['company_logo']!=null||response.data['company_logo']!="") {
+      print(response.data);
+
+
+      return DoubleResponse(
+          true, "Success");
+    }
+    return DoubleResponse(
+        false,"failed");
+  }
+
 }

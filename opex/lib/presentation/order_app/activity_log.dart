@@ -45,6 +45,7 @@ class _ActivityLogState extends State<ActivityLog> {
           preferredSize: Size.fromHeight(60),
           child: BackAppBar(
             label: "Activity Logs",
+            isAction: false,
           ),
         ),
         body: ScrollConfiguration(
@@ -106,18 +107,16 @@ class _ActivityLogState extends State<ActivityLog> {
                                       ),
                                     ),
                                     SizedBox(height: 10,),
-                                    Row(
-                                      children: [
-                                        SvgPicture.string(TaskSvg().timeIcon),SizedBox(width: 10,),
-                                        Text(
-                                          "Scheduled Activity",
-                                          style: GoogleFonts.roboto(
-                                            color: ColorPalette.subtextGrey,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        )
-                                      ],
+                                    Container(
+                                      width:w/1.5,
+                                      child: Text(
+                                        activityList[index].description??"",
+                                        style: GoogleFonts.roboto(
+                                          color: ColorPalette.subtextGrey,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     )
                                   ],
                                 ),
@@ -171,13 +170,15 @@ class _ActivityLogState extends State<ActivityLog> {
                                 SizedBox(height: 10,),
                                 Row(
                                   children: [
-                                    SvgPicture.string(TaskSvg().timeIcon),SizedBox(width: 10,),
-                                    Text(
-                                      "Scheduled Activity",
-                                      style: GoogleFonts.roboto(
-                                        color: ColorPalette.subtextGrey,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500,
+                                    Container(
+                                      width:w/1.5,
+                                      child: Text(
+                                        activityList[index].description??"",
+                                        style: GoogleFonts.roboto(
+                                          color: ColorPalette.subtextGrey,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     )
                                   ],

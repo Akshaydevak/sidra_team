@@ -36,6 +36,20 @@ class UpdateProfilePicSuccess extends ProfileState {
 }
 
 class UpdateProfilePicFailed extends ProfileState {}
+
+class UpdateOrgProfilePicLoading extends ProfileState {}
+
+class UpdateOrgProfilePicSuccess extends ProfileState {
+  // final List<ListOrdersModel> ordersList;
+
+  const UpdateOrgProfilePicSuccess(
+      // this.ordersList
+      );
+}
+
+class UpdateOrgProfilePicFailed extends ProfileState {}
+
+
 class ProfilePicLoading extends ProfileState {}
 
 class ProfilePicSuccess extends ProfileState {

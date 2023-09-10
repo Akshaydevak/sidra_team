@@ -50,7 +50,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
   void read() {
     setState(() {
       context.read<JobBloc>().add(
-          GetJobReadListEvent(Variable.jobReadId));
+          GetJobReadListEvent(widget.readTask?.jobId??0));
       context.read<TaskBloc>().add(
           GetTaskReadListEvent(widget.readTask?.id ?? 0));
       context.read<JobBloc>().add(const GetUserUderGroupEvent());

@@ -11,7 +11,7 @@ class TextFieldTab extends StatelessWidget {
   FocusNode ?focusNode;
   int maxLine;
   TextEditingController ?controller;
-  TextFieldTab({Key? key,this.label="",this.hint="",this.child,this.isMandatory=true,this.controller,this.focusNode,this.maxLine=1}) : super(key: key);
+   TextFieldTab({Key? key,this.label="",this.hint="",this.child,this.isMandatory=true,this.controller,this.focusNode,this.maxLine=1}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class TextFieldTab extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   label??"",
@@ -36,7 +36,7 @@ class TextFieldTab extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(width: 10,),
+                SizedBox(width: 30,),
                 isMandatory?SvgPicture.string(SellerSvg().validationIcon,height: 15,):Container()
               ],
             ),
@@ -45,20 +45,20 @@ class TextFieldTab extends StatelessWidget {
         ),
         SizedBox(height: 5,),
         TextFormField(
-            controller: controller,
-            focusNode:  focusNode,
-            scrollPadding: EdgeInsets.all(10),
-            cursorColor: Colors.black,
-            // obscureText: show,
-            style: TextStyle(color: Colors.black, fontSize: 17),
-            keyboardType: TextInputType.emailAddress,
-            maxLines:maxLine ,
-            decoration: loginInputDecoration(
-              hintText:hint??"",
-              ('Username'),
+          controller: controller,
+          focusNode:  focusNode,
+          scrollPadding: EdgeInsets.all(10),
+          cursorColor: Colors.black,
+          // obscureText: show,
+          style: TextStyle(color: Colors.black, fontSize: 17),
+          keyboardType: TextInputType.emailAddress,
+maxLines:maxLine ,
+          decoration: loginInputDecoration(
+            hintText:hint??"",
+            ('Username'),
 
 
-            )),
+        )),
       ],
     );
   }

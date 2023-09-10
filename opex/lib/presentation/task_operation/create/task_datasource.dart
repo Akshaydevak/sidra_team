@@ -107,6 +107,46 @@ class TaskDataSource {
     );
   }
 
+  //notification
+  Future<PaginatedResponse<List<NotificationList>>> getNotificationList(
+      String? search,String? next,String? prev) async {
+    print("URL NotificationList List:${ClusterUrls.notificationListUrl}");
+    List<NotificationList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.notificationListUrl}?name=$search"
+          : ClusterUrls.notificationListUrl;
+    }
+
+
+    final response = await client.get(api,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          },
+        ));
+    print("api " + api);
+    print("response${response.data['data']}");
+    (response.data['data']['results'] as List).forEach((element) {
+      nationalityModel.add(NotificationList.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
+  }
+
   //pendinglist
   Future<List<GetTaskList>> getPendingTaskList() async {
     List<GetTaskList> taskList = [];
@@ -1231,6 +1271,28 @@ class TaskDataSource {
     return status;
   }
 
+  //noti icon
+  Future<String> NotificationIcon() async {
+    String status="";
+
+    print("Noti Icon Read:${ClusterUrls.notificationIconUrl}");
+    final response = await client.get(
+      ClusterUrls.notificationIconUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    // selectedItemDetails = CriteriaRead.fromJson((response.data['status']));
+
+    status=response.data['status'];
+    return status;
+  }
+
   //report admin list
   Future<PaginatedResponse<List<ReportModel>>> ReportListAdminList(String? next, String? prev) async {
     List<ReportModel> nationalityModel = [];
@@ -1248,7 +1310,7 @@ class TaskDataSource {
     //   "${SellerUrls.newOrdersSellerUrl}?order_line_id=$search"
     //       : SellerUrls.newOrdersSellerUrl;
     // }
-    print("api ${ClusterUrls.reportedListAdminUrls+authentication.authenticatedUser.code.toString()}");
+    print("api admin ${ClusterUrls.reportedListAdminUrls+authentication.authenticatedUser.code.toString()}");
     final response = await client.get(ClusterUrls.reportedListAdminUrls+authentication.authenticatedUser.code.toString(),
         options: Options(
           headers: {
@@ -1311,6 +1373,38 @@ class TaskDataSource {
       previousUrl: response.data['data']['previous'],
     );
     // return nationalityModel;
+  }
+//replay report
+  Future<DataResponse> replayReport({
+    required int? id,
+    required String? reportStatus,
+    required String? replay,
+  }) async {
+
+    print("replay Url${ClusterUrls.replayReportUrl+id.toString()}");
+    final response = await client.post(
+      ClusterUrls.replayReportUrl+id.toString(),
+      data: {
+        "report_status":reportStatus,
+        "reply":replay
+
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+
+    print("replay response$response");
+    if (response.data['status'] == 'success') {
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message'].toString());
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
   }
 
 

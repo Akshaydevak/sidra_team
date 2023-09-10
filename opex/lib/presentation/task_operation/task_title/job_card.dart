@@ -28,8 +28,7 @@ class JobCard extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         print("object");
-        Variable.jobReadId=joblist?.id??0;
-        print("HHH${Variable.jobReadId}");
+
         context.read<TaskBloc>().add(
             GetTaskReadListEvent(joblist?.id??0));
         PersistentNavBarNavigator.pushNewScreen(

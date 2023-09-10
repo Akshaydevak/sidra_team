@@ -19,6 +19,12 @@ class GetNewJobListEvent extends JobEvent {
   final String? prev;
   const GetNewJobListEvent(this.search, this.next, this.prev);
 }
+class GetReorterListEvent extends JobEvent {
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetReorterListEvent(this.search, this.next, this.prev);
+}
 class GetInstantJobListEvent extends JobEvent {
   const GetInstantJobListEvent();
 }
@@ -33,8 +39,12 @@ class GetAdminDataEvent extends JobEvent {
   const GetAdminDataEvent();
 }
 class GetEmployeeListEvent extends JobEvent {
-  const GetEmployeeListEvent();
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetEmployeeListEvent(this.search, this.next, this.prev);
 }
+
 class GetReportingPersonListEvent extends JobEvent {
   const GetReportingPersonListEvent();
 }
@@ -150,6 +160,7 @@ class GetJobReadListEvent extends JobEvent {
 class UpdateJobEvent extends JobEvent {
   final String name;
   final int? jobType;
+  final int? id;
   final String reportingPerson;
   final String createdBy;
   final String assignedBy;
@@ -162,6 +173,7 @@ class UpdateJobEvent extends JobEvent {
   const UpdateJobEvent(
       {
         required this.name,
+        required this.id,
         required this.jobType,
         required this.reportingPerson,
         required this.createdBy,

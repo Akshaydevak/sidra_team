@@ -34,6 +34,13 @@ class JobBloc extends Bloc<JobEvent, JobState> {
         search: event.search
       );
     }
+    if (event is GetReorterListEvent) {
+      yield* getReporterListState(
+          prev: event.prev,
+          next: event.next,
+          search: event.search
+      );
+    }
     if (event is GetUserVerifyEvent) {
       yield* getUserVerifyState();
     }
@@ -41,7 +48,11 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       yield* getAdminDataState();
     }
     if (event is GetEmployeeListEvent) {
-      yield* getEmployeeListState();
+      yield* getEmployeeListState(
+        next: event.next,
+        prev: event.prev,
+        search: event.search
+      );
     }
     if (event is GetReportingPersonListEvent) {
       yield* getReportingPersonList();
@@ -116,6 +127,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     }
     else if (event is UpdateJobEvent) {
       yield* updateJobState(
+        id: event.id,
           startDate: event.startDate.trim(),
           endDate: event.endDate.trim(),
           reportingPerson: event.reportingPerson,
@@ -196,6 +208,25 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     }
   }
 
+
+  ///repoter
+  ///
+  Stream<JobState> getReporterListState({
+    String? search,String? next,String? prev
+  }) async* {
+    yield GetReporterListLoading();
+    final dataResponse = await _jobRepo.getRepoterList(search,next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetReporterListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          jobList:  dataResponse.data);  }
+
+    else {
+      yield GetReporterListFailed("failed");
+    }
+  }
+
   //userverify
   Stream<JobState> getUserVerifyState() async* {
     yield GetUserVerifyLoading();
@@ -222,15 +253,20 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   }
 
   //employeelist
-  Stream<JobState> getEmployeeListState() async* {
+  Stream<JobState> getEmployeeListState({
+    String? search,String? next,String? prev}) async* {
     yield GetEmployeeListLoading();
 
-    final dataResponse = await _jobRepo.getEmployeeList();
+    final dataResponse = await _jobRepo.getEmployeeList(search,next,prev);
 
     if (dataResponse.data.isNotEmpty) {
-      yield GetEmployeeListSuccess(dataResponse.data);
+      yield GetEmployeeListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          assignMeList:  dataResponse.data
+      );
     } else {
-      yield GetEmployeeListFailed();
+      yield GetEmployeeListFailed('fail');
     }
   }
 
@@ -443,6 +479,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       {
         required String name,
         required int? jobType,
+        required int? id,
         required String reportingPerson,
         required String assignedBy,
         required String createdBy,
@@ -458,6 +495,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     final dataResponse = await _jobRepo.jobUpdatePost(
         startDate: startDate,
         endDate: endDate,
+        id: id,
         assignedBy: assignedBy,
         createdBy: createdBy,
         discription: discription,

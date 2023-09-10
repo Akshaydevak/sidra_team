@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
@@ -82,7 +83,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     return WillPopScope(
       onWillPop: ()async{
 
-        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','',''));
         return true;
       },
       child: MultiBlocListener(
@@ -151,12 +152,12 @@ class _RewardsScreenState extends State<RewardsScreen> {
         listener: (context, state) {
           print('StateCreate$state');
           if (state is CreateRewardLoading) {
-            print("loading");
-            showSnackBar(context,
-                message: "Loading...",
-                color: Colors.white,
-                // icon: HomeSvg().SnackbarIcon,
-                autoDismiss: true);
+            // print("loading");
+            // showSnackBar(context,
+            //     message: "Loading...",
+            //     color: Colors.white,
+            //     // icon: HomeSvg().SnackbarIcon,
+            //     autoDismiss: true);
           }
 
           if (state is CreateRewardFailed) {
@@ -190,12 +191,12 @@ class _RewardsScreenState extends State<RewardsScreen> {
         listener: (context, state) {
           print('StateCreate$state');
           if (state is UpdateRewardLoading) {
-            print("loading");
-            showSnackBar(context,
-                message: "Loading...",
-                color: Colors.white,
-                // icon: HomeSvg().SnackbarIcon,
-                autoDismiss: true);
+            // print("loading");
+            // showSnackBar(context,
+            //     message: "Loading...",
+            //     color: Colors.white,
+            //     // icon: HomeSvg().SnackbarIcon,
+            //     autoDismiss: true);
           }
 
           if (state is UpdateRewardFailed) {
@@ -232,66 +233,58 @@ class _RewardsScreenState extends State<RewardsScreen> {
       },
       child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(0),
-            child: AppBar(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                systemNavigationBarColor: Colors.white, // Navigation bar
-                statusBarColor: Colors.white, // Status bar
-              ),
-
-              elevation: 0,
-
-            ),
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(children: [
-                TaskAndOperationAppBar(
-                  label: "Rewards",
-                  onTap: (){
-                    context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
-                    Navigator.pop(context);
-                  },
-                  EndIcon: isValid==false?
-                  GestureDetector(
-                    child: Container(
-                      // width: 110,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Color(0xffd3d3d3),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        widget.update?"Update":"Create",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child:  BackAppBar(
+            label: "Rewards",
+            onTap: (){
+              context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','',''));
+              Navigator.pop(context);
+            },
+            isBack: false,
+            isAction: false,
+            action: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isValid==false?
+                GestureDetector(
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xffd3d3d3),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.update?"Update":"Create",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: w/22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ):
-                  GestureDetector(
-                    onTap: (){
-                      widget.update?BlocProvider.of<TaskBloc>(context)
-                          .add(UpdateRewardTaskEvent(
+                  ),
+                ):
+                GestureDetector(
+                  onTap: (){
+                    widget.update?BlocProvider.of<TaskBloc>(context)
+                        .add(UpdateRewardTaskEvent(
                         isActive: true,
-                          id: rewadsRead?.id??0,
-                          typeId: rewadsRead?.typeId,
-                          type:rewadsRead?.types,
-                          img1: picModelRewards[0].data??picModelRewards[0].url,
-                          img5: picModelRewards[4].data??picModelRewards[4].url,
-                          img4: picModelRewards[3].data??picModelRewards[3].url,
-                          img3: picModelRewards[2].data??picModelRewards[2].url,
-                          img2: picModelRewards[1].data??picModelRewards[1].url,
-                          notes: notes.text??"",
-                          discription: discription.text??"",
-                          name: rewardName.text??""
-                      )):BlocProvider.of<TaskBloc>(context)
-                          .add(CreateRewardTaskEvent(
+                        id: rewadsRead?.id??0,
+                        typeId: rewadsRead?.typeId,
+                        type:rewadsRead?.types,
+                        img1: picModelRewards[0].data??picModelRewards[0].url,
+                        img5: picModelRewards[4].data??picModelRewards[4].url,
+                        img4: picModelRewards[3].data??picModelRewards[3].url,
+                        img3: picModelRewards[2].data??picModelRewards[2].url,
+                        img2: picModelRewards[1].data??picModelRewards[1].url,
+                        notes: notes.text??"",
+                        discription: discription.text??"",
+                        name: rewardName.text??""
+                    )):BlocProvider.of<TaskBloc>(context)
+                        .add(CreateRewardTaskEvent(
                         typeId: widget.typeId,
                         type: widget.type,
                         notes: notes.text??"",
@@ -302,28 +295,35 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         img4: picModelRewards[3].data??0,
                         img5: picModelRewards[4].data??0,
                         img1: picModelRewards[0].data??0
-                      ));
-                    },
-                    child: Container(
-                      // width: 110,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: ColorPalette.primary,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        widget.update?"Update":"Create",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ));                  },
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: ColorPalette.primary,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.update?"Update":"Create",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: w/22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                  children: [
+
                 Container(
                   width: w,
                   padding: EdgeInsets.all(16),
@@ -331,11 +331,98 @@ class _RewardsScreenState extends State<RewardsScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Container(
+                      //   width: w,
+                      //   height: 185,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Color(0x05000000),
+                      //         blurRadius: 8,
+                      //         offset: Offset(1, 1),
+                      //       ),
+                      //     ],
+                      //     color: Colors.white,
+                      //   ),
+                      //   child: Column(
+                      //     mainAxisAlignment: MainAxisAlignment.start,
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Container(
+                      //         // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                      //           child:TextFormField(controller: rewardName,
+                      //             onChanged: (l){
+                      //             validationCheck();
+                      //             setState(() {
+                      //
+                      //             });
+                      //             },
+                      //             decoration: InputDecoration(
+                      //                 contentPadding: EdgeInsets.only(left: 16),
+                      //                 hintText: "Reward Name",
+                      //                 hintStyle:TextStyle(
+                      //                   color: Color(0xff939393),
+                      //                   fontSize: 18,
+                      //                 ),
+                      //                 border: InputBorder.none
+                      //             ),
+                      //           )
+                      //       ),
+                      //       Divider(indent: 16,),
+                      //       Container(
+                      //         // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                      //           child:TextFormField(controller: discription,
+                      //             onChanged: (l){
+                      //               validationCheck();
+                      //               setState(() {
+                      //
+                      //               });
+                      //             },
+                      //             decoration: InputDecoration(
+                      //                 contentPadding: EdgeInsets.only(left: 16),
+                      //                 hintText: "Enter Description",
+                      //
+                      //                 hintStyle:TextStyle(
+                      //                   color: Color(0xff939393),
+                      //                   fontSize: 18,
+                      //                 ),
+                      //                 border: InputBorder.none
+                      //             ),
+                      //           )
+                      //       ),
+                      //
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Container(
+                      //   width: w,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(
+                      //       color: Color(0xffe6ecf0),
+                      //       width: 1,
+                      //     ),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Color(0x05000000),
+                      //         blurRadius: 8,
+                      //         offset: Offset(1, 1),
+                      //       ),
+                      //     ],
+                      //     color: Colors.white,
+                      //   ),
+                      //   child: AddText(label: "Add Notes",controller: notes,hint: "Enter Notes",isActive: notes.text==""?false:true,),
+                      // ),
                       Container(
                         width: w,
-                        height: 185,
+
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
                           boxShadow: [
                             BoxShadow(
@@ -351,141 +438,94 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
-                                child:TextFormField(controller: rewardName,
-                                  onChanged: (l){
-                                  validationCheck();
-                                  setState(() {
 
-                                  });
-                                  },
-                                  decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.only(left: 16),
-                                      hintText: "Reward Name",
-                                      hintStyle:TextStyle(
-                                        color: Color(0xff939393),
-                                        fontSize: 18,
-                                      ),
-                                      border: InputBorder.none
-                                  ),
-                                )
-                            ),
-                            Divider(indent: 16,),
-                            Container(
                               // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
-                                child:TextFormField(controller: discription,
+                                child:TextFormField(
+
+                                  style:GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w600
+                                  ) ,
                                   onChanged: (l){
                                     validationCheck();
                                     setState(() {
 
                                     });
                                   },
-                                  decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.only(left: 16),
-                                      hintText: "Enter Description",
+                                  decoration:  InputDecoration(
 
-                                      hintStyle:TextStyle(
-                                        color: Color(0xff939393),
-                                        fontSize: 18,
-                                      ),
-                                      border: InputBorder.none
+                                    contentPadding: EdgeInsets.only(left:16,right: 16 ),
+                                    hintText: "Reward Name",
+                                    hintStyle: TextStyle(
+                                      color: Color(0x66151522),
+                                      fontSize: w/26,
+                                    ),
+                                    border: InputBorder.none,
+                                    // suffixIcon: Text("INR"),
+                                    // suffixText: widget.currencyCode??"",
+
                                   ),
+                                  // enabled: false,
+                                  keyboardType: TextInputType.text,
+                                  // inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                                  controller: rewardName,
+
+                                )
+                            ),
+                            Divider(indent: 16,),
+                            Container(
+                              // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                                child:TextFormField(
+                                  controller: discription,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  onChanged: (l){
+                                    validationCheck();
+                                    setState(() {
+
+                                    });
+                                  },
+                                  decoration:  InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                                    hintText: "Enter Description",
+                                    hintStyle: TextStyle(
+                                      color: Color(0x66151522),
+                                      fontSize: w/26,
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+
+                                )
+                            ),
+                            Divider(indent: 16,),
+                            Container(
+                              // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                                child:TextFormField(
+                                  controller: notes,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  onChanged: (l){
+                                    validationCheck();
+                                    setState(() {
+
+                                    });
+                                  },
+                                  decoration:  InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                                    hintText: "Add Notes",
+                                    hintStyle: TextStyle(
+                                      color: Color(0x66151522),
+                                      fontSize: w/26,
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+
                                 )
                             ),
 
+
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: AddText(label: "Add Notes",controller: notes,hint: "Enter Notes",isActive: notes.text==""?false:true,),
-                      ),
-                      SizedBox(height: 16,),
-                      // Text(
-                      //   "Images",
-                      //   style: GoogleFonts.roboto(
-                      //     color: Colors.black,
-                      //     fontSize: 16,
-                      //     fontWeight: FontWeight.w500,
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
-                      // Container(
-                      //
-                      //     width: MediaQuery.of(context).size.width,
-                      //     child: GridView.builder(
-                      //         padding: const EdgeInsets.all(0),
-                      //         physics: const NeverScrollableScrollPhysics(),
-                      //         shrinkWrap: true,
-                      //         itemCount: 5,
-                      //         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      //             maxCrossAxisExtent: 100,
-                      //             childAspectRatio: 1.5 / 2,
-                      //             crossAxisSpacing: 5,
-                      //             mainAxisSpacing: 8),
-                      //         itemBuilder: (context, i) {
-                      //           // print("eeeeeeeeeeeee  ${picModel[i].url}");
-                      //           return GestureDetector(
-                      //             onTap: (){
-                      //               isValid=true;
-                      //               isCatalogue=false;
-                      //               indexImage=i;
-                      //               setState(() {
-                      //
-                      //               });
-                      //               getCoverImage(ImageSource.gallery);
-                      //             },
-                      //           child:
-                      //           picModelRewards[i].url!=""&&picModelRewards[i].url!.isNotEmpty?
-                      //             Container(
-                      //                 width: 88,
-                      //                 height: 100,
-                      //                 decoration:BoxDecoration(
-                      //                     image: DecorationImage(
-                      //                         image: NetworkImage("${picModelRewards[i].url.toString()}"),fit: BoxFit.fill
-                      //                     )
-                      //                 )
-                      //             )
-                      //                 :
-                      //             Container(
-                      //                 width: 88,
-                      //                 height: 100,
-                      //                 decoration: BoxDecoration(
-                      //                   borderRadius: BorderRadius.circular(5),
-                      //                   border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                      //                   boxShadow: const [
-                      //                     BoxShadow(
-                      //                       color: Color(0x05000000),
-                      //                       blurRadius: 8,
-                      //                       offset: Offset(1, 1),
-                      //                     ),
-                      //                   ],
-                      //                   color: Colors.white,
-                      //                 ),
-                      //                 child: const Icon(Icons.add,color:Color(0x7f666161))
-                      //             ),
-                      //           );
-                      //         })),
                       SizedBox(
                         height: 10,
                       ),
@@ -494,7 +534,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           " + Add Attachment",
                           style: GoogleFonts.roboto(
                               color: ColorPalette.primary,
-                              fontSize: w/26,
+                              fontSize: w/24,
                               fontWeight: FontWeight.w500
                           ),
                         ),
@@ -638,7 +678,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
                     ],
                   ),
-                )
+                ),
+
               ]),
             ),
           ),

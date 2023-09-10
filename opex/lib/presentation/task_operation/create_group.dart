@@ -52,7 +52,7 @@ class _CreateGroupState extends State<CreateGroup> {
   @override
   void initState() {
 
-    context.read<JobBloc>().add(const GetEmployeeListEvent());
+    context.read<JobBloc>().add(const GetEmployeeListEvent('','',''));
     super.initState();
   }
   bool isChange=false;
@@ -84,6 +84,7 @@ class _CreateGroupState extends State<CreateGroup> {
           isAction: false),
         ),
         body: SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: MultiBlocListener(
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
@@ -219,20 +220,7 @@ class _CreateGroupState extends State<CreateGroup> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      "Select from List",
-                      style: GoogleFonts.roboto(
-                        color: Color(0xff151522),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
+
 
                     BlocBuilder<JobBloc, JobState>(
                       builder: (context, state) {
@@ -245,29 +233,42 @@ class _CreateGroupState extends State<CreateGroup> {
 
                           return SingleChildScrollView(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Text(
+                                  "Select from List",
+                                  style: GoogleFonts.roboto(
+                                    color: Color(0xff151522),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 Container(
                                   width: w,
                                   // height: h / 2.5,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Color(0xffe6ecf0),
-                                      width: 1,
-                                    ),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x05000000),
-                                        blurRadius: 8,
-                                        offset: Offset(1, 1),
-                                      ),
-                                    ],
-                                    color: Colors.white,
-                                  ),
+                                  // decoration: BoxDecoration(
+                                  //   borderRadius:
+                                  //   BorderRadius.circular(10),
+                                  //   border: Border.all(
+                                  //     color: Color(0xffe6ecf0),
+                                  //     width: 1,
+                                  //   ),
+                                  //   boxShadow: const [
+                                  //     BoxShadow(
+                                  //       color: Color(0x05000000),
+                                  //       blurRadius: 8,
+                                  //       offset: Offset(1, 1),
+                                  //     ),
+                                  //   ],
+                                  //   color: Colors.white,
+                                  // ),
                                   child: ListView.separated(
                                       primary: true,
                                       shrinkWrap: true,
@@ -277,15 +278,15 @@ class _CreateGroupState extends State<CreateGroup> {
                                           GroupList(
                                             userUpdateList: userList??[],
                                             userList: userCodeList,
-                                            readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.employeeList[index].code):false,
+                                            readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.assignMeList?[index].userCode):false,
 
                                               listuser: chaneTable,
                                               employeeList: state
-                                                  .employeeList[index]),
+                                                  .assignMeList?[index]),
                                       separatorBuilder:
-                                          (context, index) => Divider(),
+                                          (context, index) => Container(),
                                       itemCount:
-                                      state.employeeList.length),
+                                      state.assignMeList!.length),
                                 ),
                               ],
                             ),
@@ -293,9 +294,6 @@ class _CreateGroupState extends State<CreateGroup> {
                         }
                         return Container();
                       },
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
 
                     SizedBox(height: h/10,)

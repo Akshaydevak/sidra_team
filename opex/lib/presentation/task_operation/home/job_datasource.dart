@@ -136,6 +136,45 @@ class JobDataSource {
       previousUrl: response.data['data']['previous'],
     );
   }
+  //repoter
+  Future<PaginatedResponse<List<GetJobList>>> getRepoterList(
+      String? search,String? next,String? prev) async {
+    print("URL Job List:${ClusterUrls.repoterlistUrl+authentication.authenticatedUser.code.toString()}");
+    List<GetJobList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.repoterlistUrl+authentication.authenticatedUser.code.toString()}?name=$search"
+          :ClusterUrls.repoterlistUrl+authentication.authenticatedUser.code.toString();
+    }
+
+
+    final response = await client.get(api,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          },
+        ));
+    print("api $api");
+    print("response${response.data['data']}");
+    (response.data['data']['results'] as List).forEach((element) {
+      nationalityModel.add(GetJobList.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
+  }
   //userverfy
   Future<DataResponse> getUserVerify() async {
 
@@ -188,25 +227,67 @@ class JobDataSource {
     }
   }
   //employeelist
-  Future<List<GetEmployeeList>> getEmployeeList() async {
-    List<GetEmployeeList> employeeList = [];
-    print("URL:${ClusterUrls.employeeListUrl}");
+  // Future<List<GetEmployeeList>> getEmployeeList() async {
+  //   List<GetEmployeeList> employeeList = [];
+  //   print("URL:${ClusterUrls.employeeListUrl}");
+  //
+  //   final response = await client.get(
+  //     "${ClusterUrls.employeeListUrl}?action=fname_acce",
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //         'Authorization': 'token ${authentication.authenticatedUser.token}',
+  //       },
+  //     ),
+  //   );
+  //   (response.data['data']['results'] as List).forEach((element) {
+  //     employeeList.add(GetEmployeeList.fromJson(element));
+  //   });
+  //   return employeeList;
+  // }
+  //
 
-    final response = await client.get(
-      "${ClusterUrls.employeeListUrl}?action=fname_acce",
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'token ${authentication.authenticatedUser.token}',
-        },
-      ),
-    );
+  //
+  Future<PaginatedResponse<List<GetEmployeeList>>> getEmployeeList(
+      String? search,String? next,String? prev) async {
+    print("URL User List:${ClusterUrls.employeeListUrl}");
+    List<GetEmployeeList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.employeeListUrl}?search_key=$search"
+          : "${ClusterUrls.employeeListUrl}";
+    }
+
+    print("api $api");
+    final response = await client.get(api,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': '${authentication.authenticatedUser.token}',
+          },
+        ));
+
+    print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
-      employeeList.add(GetEmployeeList.fromJson(element));
+      nationalityModel.add(GetEmployeeList.fromJson(element));
     });
-    return employeeList;
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
   }
+
 
   //report
   Future<List<GetEmployeeList>> getReportingPersonList() async {
@@ -564,6 +645,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
   Future<DataResponse> jobUpdatePost({
     required String name,
     required int? jobType,
+    required int? id,
     required String reportingPerson,
     required String assignedBy,
     required String createdBy,
@@ -574,7 +656,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
     required String? endDate,
     required String? priority,
   }) async {
-    print("Update JOB:${ClusterUrls.updateUrl+Variable.jobReadId.toString()}");
+    print("Update JOB:${ClusterUrls.updateUrl+id.toString()}");
     print("NAMESS${name}");
     print("NAMESS${jobType}");
     print("NAMESS${reportingPerson}");
@@ -587,7 +669,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
     print("NAMESS${endDate}");
     print("NAMESS${priority}");
     final response = await client.patch(
-      ClusterUrls.updateUrl+Variable.jobReadId.toString(),
+      ClusterUrls.updateUrl+id.toString(),
       data: {
         "name":name,
         "job_type":jobType,
@@ -664,7 +746,6 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
   //deleteJob
   Future<String> deleteJob(int jobid) async {
     String statusCode;
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     print("dele${ClusterUrls.updateUrl + jobid.toString()}");
     final response = await client.delete(
       ClusterUrls.updateUrl + jobid.toString(),
@@ -677,7 +758,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
       ),
     );
     statusCode = (response.data['status']);
-    print("statusCode");
+    print("status${response.data['status']}");
     return statusCode;
   }
 

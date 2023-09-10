@@ -10,17 +10,17 @@ class GetEmployeeList extends Equatable {
   final String? primaryMail;
   @JsonKey(name: 'email')
   final String? email;
-  @JsonKey(name: 'primary_mobile')
+  @JsonKey(name: 'contact_number')
   final String? primaryMobile;
-  @JsonKey(name: 'fname')
+  @JsonKey(name: 'first_name')
   final String? fname;
-  @JsonKey(name: 'lname')
+  @JsonKey(name: 'last_name')
   final String? lname;
   @JsonKey(name: 'gender')
   final String? gender;
   @JsonKey(name: 'is_active', defaultValue: false)
   final bool? isActive;
-  @JsonKey(name: 'country')
+  @JsonKey(name: 'nationality')
   final String? country;
   @JsonKey(name: 'date_of_birth')
   final String? dob;
@@ -38,11 +38,15 @@ class GetEmployeeList extends Equatable {
   final String? orgType;
   @JsonKey(name: 'organization_code')
   final String? orgCode;
+  @JsonKey(name: 'network_code')
+  final String? netCode;
+  @JsonKey(name: 'department_code')
+  final String? departmentCode;
   @JsonKey(name: 'alternative_mobile_no')
   final String? altMobile;
   @JsonKey(name: 'alternative_email')
   final String? altEmail;
-  @JsonKey(name: 'designation')
+  @JsonKey(name: 'designation_code')
   final String? designation;
   @JsonKey(name: 'legalentity_code')
   final String? legalentityCode;
@@ -51,14 +55,19 @@ class GetEmployeeList extends Equatable {
   @JsonKey(name: 'user_login')
   final int? userLogin;
   @JsonKey(name: 'role')
-  final int? role;
+  final String? role;
+  @JsonKey(name: 'user_meta')
+  final UserMete? userMete;
 
   const GetEmployeeList( {
       this.gender,
+      this.userMete,
       this.userCode,
+      this.departmentCode,
       this.orgCode,
       this.id,
       this.isActive,
+      this.netCode,
       this.email,
     this.primaryMail,
     this.primaryMobile,
@@ -248,4 +257,53 @@ class LogInData extends Equatable {
       _$LogInDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogInDataToJson(this);
+}
+
+//emloyeeRead
+@JsonSerializable()
+class EmployeeCreateRead extends Equatable {
+
+  @JsonKey(name: 'gender')
+  final List<String>? gender;
+  @JsonKey(name: 'user_roles')
+  final List<String>?userRole;
+  @JsonKey(name: 'user_data')
+  final List<GetEmployeeList>?userData;
+
+
+  const EmployeeCreateRead( {
+    this.userRole, this.gender,this.userData
+  });
+  @override
+  List<Object> get props => [];
+  factory EmployeeCreateRead.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeCreateReadFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EmployeeCreateReadToJson(this);
+}
+
+@JsonSerializable()
+class UserMete extends Equatable {
+
+  @JsonKey(name: 'official_role_name')
+  final String? roleName;
+  @JsonKey(name: 'official_role')
+  final int? roleId;
+  @JsonKey(name: 'additional_roles_list')
+  final List<String>?roleList;
+  @JsonKey(name: 'additional_roles')
+  final List<int>?roleListId;
+
+
+
+  const UserMete( {
+    this.roleName, this.roleList,
+    this.roleId, this.roleListId,
+  });
+  @override
+  List<Object> get props => [];
+  factory UserMete.fromJson(Map<String, dynamic> json) =>
+      _$UserMeteFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserMeteToJson(this);
 }

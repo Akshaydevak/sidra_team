@@ -5,6 +5,7 @@ import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profi
 
 import 'package:cluster/presentation/logistic_app/bloc/bloc/logistics_orders_bloc.dart';
 import 'package:cluster/presentation/order_app/bloc/order_status_bloc/order_status_bloc.dart';
+import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_admin_bloc.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
@@ -76,6 +77,9 @@ class MyApp extends StatelessWidget {
               ),
               BlocProvider(
                 create: (context) => CommunicationBloc(),
+              ),
+              BlocProvider(
+                create: (context) => SellerAdminBloc(),
               ),
               BlocProvider(
                 create: (context) => ChatBloc(),

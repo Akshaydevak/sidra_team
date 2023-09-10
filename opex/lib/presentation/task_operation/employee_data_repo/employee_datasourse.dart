@@ -22,12 +22,17 @@ class EmployeeDataSource {
     required String contact,
     required String departCode,
     required String designationCode,
-    required String? gender
+    required String? gender,
+    required String netCode,
+    required String nationality,
+    required String password,
+    required int officialRole,
+    required String userRole,
+    required List<int> additionalRole,
+    required List<String> roleNameList,
+    required String roleName
   }) async {
     GetEmployeeList employeeDetails;
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
     final response = await client.post(
       ClusterUrls.userCreateUrl,
       data: {
@@ -38,13 +43,21 @@ class EmployeeDataSource {
         "gender":gender,
         "designation_code":designationCode,
         "department_code":departCode,
-        "organisation_code":orgCode
+        "organisation_code":orgCode,
+        "password":password,
+        "nationality":nationality,
+        "official_role":officialRole,
+        "additional_roles":additionalRole,
+        "user_role":userRole,
+        "network_code":netCode,
+        "official_role_name":roleName,
+        "additional_roles_list":roleNameList,
       },
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          'Authorization': authentication.authenticatedUser.token,
         },
       ),
     );
@@ -56,7 +69,38 @@ class EmployeeDataSource {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
+    }
+  }
+
+  //chage
+  Future<DataResponse> chagePassword({
+    required String employeeCode,
+    required String newPassword,
+  }) async {
+    final response = await client.post(
+      ClusterUrls.changePawwordUserUrl,
+      data: {
+        "employee_code":employeeCode,
+        "password":newPassword,
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': "token ${authentication.authenticatedUser.token}",
+        },
+      ),
+    );
+
+    print("employee response${response}");
+    if (response.data['status'] == 'success') {
+      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
+
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
 
@@ -160,13 +204,30 @@ print(groupRead.userId);
 
   //readEmplotee
   Future<GetEmployeeList> getEmployeeRead(int id) async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
     GetEmployeeList readEmployee;
     print("Employee Read:${ClusterUrls.readEmployeeUrl + id.toString()}");
     final response = await client.get(
       ClusterUrls.readEmployeeUrl + id.toString(),
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data['data']['user_data']);
+    readEmployee = GetEmployeeList.fromJson((response.data['data']['user_data']));
+    return readEmployee;
+  }
+
+  //readType
+  Future<EmployeeCreateRead> getReadType() async {
+
+    EmployeeCreateRead readEmployee;
+    print("Type Read:${ClusterUrls.readtypeUrl}");
+    final response = await client.get(
+      ClusterUrls.readtypeUrl,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -177,39 +238,43 @@ print(groupRead.userId);
     );
     print(response.data['data']['user_data']);
     print(response.data['data']['user_data']);
-    readEmployee = GetEmployeeList.fromJson((response.data['data']['user_data']));
+    readEmployee = EmployeeCreateRead.fromJson((response.data['data']));
     return readEmployee;
   }
 
   //updateEmployee
   Future<DataResponse> updateEmployee({
     required String email,
-    required String? gender,
     required String orgCode,
     required String lastName,
     required String firstName,
     required String contact,
     required String departCode,
     required String designationCode,
-    required bool isActive
+    required String? gender,
+    required String netCode,
+    required String nationality,
+    required int officialRole,
+    required String userRole,
+    required List<int> additionalRole,
+    required List<String> roleNameList,
+    required String roleName,
+    required bool isActive,
+    required int id,
   }) async {
-    GetEmployeeList employeeList;
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
-    print("Update JOB:${ClusterUrls.updateEmployeeUrl+Variable.employeeId.toString()}");
+    print("Update JOB:${ClusterUrls.updateEmployeeUrl+id.toString()}");
     print("NAMESS${firstName}");
     print("NAMESS${lastName}");
     print("NAMESS${contact}");
     print("NAMESS${departCode}");
     print("NAMESS${designationCode}");
     print("NAMESS${isActive}");
-    print("NAMESS${gender}");
+    print("NAMESS${id}");
     print("NAMESS${email}");
-    print("NAMESS${orgCode}");
+    print("NAMESS${gender}");
 
     final response = await client.patch(
-      ClusterUrls.updateEmployeeUrl+Variable.employeeId.toString(),
+      ClusterUrls.updateEmployeeUrl+id.toString(),
       data: {
         "first_name":firstName,
         "last_name":lastName,
@@ -218,15 +283,22 @@ print(groupRead.userId);
         "gender":gender,
         "designation_code":designationCode,
         "department_code":departCode,
-        "is_active":isActive,
         "organisation_code":orgCode,
+        "nationality":nationality,
+        "official_role":officialRole,
+        "additional_roles":additionalRole,
+        "user_role":userRole,
+        "network_code":netCode,
+        "official_role_name":roleName,
+        "additional_roles_list":roleNameList,
+        "is_active":isActive,
 
       },
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          'Authorization': '${authentication.authenticatedUser.token}',
         },
       ),
     );
@@ -238,14 +310,11 @@ print(groupRead.userId);
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
   //deleteemployee
   Future<String> deleteEmployee(int empid) async {
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
     String statusCode;
     print("dele${ClusterUrls.updateEmployeeUrl + empid.toString()}");
     final response = await client.delete(
@@ -254,7 +323,7 @@ print(groupRead.userId);
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          'Authorization': '${authentication.authenticatedUser.token}',
         },
       ),
     );
@@ -343,6 +412,52 @@ print(groupRead.userId);
     print("check new response ${response.data}");
     return DoubleResponse(
         response.data['status'] == 'success', response.data['data']['id']);
+  }
+
+  //chage
+  Future<DataResponse> changePassword({
+    required String userName,
+    required String current,
+    required String newPass,
+    String? otp,
+  }) async {
+    print("tokkk${authentication.authenticatedUser.token}");
+    print("tokkk$current");
+    print("tokkk$newPass");
+    print("tokkk$userName");
+    print("tokkk$otp");
+
+    final response = await client.post(
+      "https://api-uat-user.sidrabazar.com/user-account_userchangepassword/cluster",
+      data: otp == null
+          ? {
+        "username": userName,
+        "cpwd": current,
+        "npwd": newPass,
+      }
+          : {
+        "username": userName,
+        "cpwd": current,
+        "npwd": newPass,
+        "otp": otp
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'token ${authentication.authenticatedUser.token}'
+        },
+      ),
+    );
+
+    print("change response$response");
+    if (response.data['status'] == 'success') {
+      return DataResponse(
+          data: response.data["status"] == "success",
+          error: response.data['message']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
   }
 
 }

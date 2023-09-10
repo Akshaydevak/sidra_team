@@ -18,6 +18,17 @@ class GetTaskListEvent extends TaskEvent {
   const GetTaskListEvent(this.id, this.search, this.next, this.prev);
 }
 
+class GetNotificationListEvent extends TaskEvent {
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetNotificationListEvent( this.search, this.next, this.prev);
+}
+
+class NotificationIconEvent extends TaskEvent {
+  const NotificationIconEvent();
+}
+
 class GetPendingTaskListEvent extends TaskEvent {
   const GetPendingTaskListEvent();
 }
@@ -562,4 +573,24 @@ class ReportListUserEvent extends TaskEvent {
   final String? next;
   final String? prev;
   const ReportListUserEvent(this.next, this.prev);
+}
+
+//replayReport
+class ReplayReportEvent extends TaskEvent {
+  final int? id;
+  final String? reportStatus;
+  final String? replay;
+
+  const ReplayReportEvent(  {
+
+    this.id,
+    required this.replay,
+    required this.reportStatus
+
+
+  });
+  @override
+  List<Object> get props => [
+    reportStatus??"",
+  ];
 }

@@ -19,7 +19,7 @@ class HeadlineText extends StatelessWidget {
           headText??"Quick access to :",
           style: GoogleFonts.roboto(
             color:  ColorPalette.black,
-            fontSize: w / 22,
+            fontSize: w / 24,
             fontWeight: FontWeight.w500,
           ),
         ),

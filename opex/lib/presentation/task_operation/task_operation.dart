@@ -3,6 +3,7 @@ import 'package:cluster/common_widgets/headline_text.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'package:cluster/presentation/task_operation/create/reporer_list.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/performance_appraisal/create_performance.dart';
 import 'package:cluster/presentation/task_operation/task_home_page.dart';
@@ -19,6 +20,7 @@ import 'package:cluster/presentation/task_operation/task_title/staff_joblist.dar
 import 'package:cluster/presentation/task_operation/task_title/two_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +33,7 @@ import '../../../../core/common_snackBar.dart';
 
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
+import '../dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'create/create_job.dart';
 import 'create/create_svg.dart';
 import 'create/model/task_models.dart';
@@ -141,14 +144,87 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: BackAppBar(
-            label: "Task & Operations",
-            isAction: false,
-            onTap: () {
-              print("appbar");
-              _showModalBottomSheet();
-            },
+          preferredSize: Size.fromHeight(60),
+          child: Column(
+            children: [
+              AppBar(
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  systemNavigationBarColor: Colors.white, // Navigation bar
+                  statusBarColor: Colors.white, // Status bar
+                ),
+                elevation: 0,
+                backgroundColor: Colors.white,
+                centerTitle: false,
+
+                title: Text(
+                  "Task & Operation",
+                  style:  TextStyle(color: Colors.black,fontSize: w/22),
+                ),
+                titleSpacing: 10,
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: SvgPicture.string(
+                    AppsSvg().appbarIcon,
+                  ),
+                ),
+                leadingWidth: 28,
+                // actions: [
+                //   // Padding(
+                //   //   padding: const EdgeInsets.only(top: 12,left: 16),
+                //   //   child: InkWell(
+                //   //     onTap: (){},
+                //   //     //   if(activeTextfield==true){
+                //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
+                //   //     //       mobile: mobileController.text,
+                //   //     //       lname: "",
+                //   //     //       fname: nameController.text,
+                //   //     //       dob: "",
+                //   //     //       email: emailController.text,
+                //   //     //
+                //   //     //     ));
+                //   //     //   }
+                //   //     //   else{
+                //   //     //
+                //   //     //   }
+                //   //     //   myfocus.unfocus();
+                //   //     //   myfocus1.unfocus();
+                //   //     //   myfocus2.unfocus();
+                //   //     //   activeTextfield=false;
+                //   //     // },
+                //   //     child: Text(
+                //   //       "Save",
+                //   //       style: GoogleFonts.roboto(
+                //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
+                //   //         fontSize: 18,
+                //   //         fontWeight: FontWeight.w500,
+                //   //         height: 1.56,
+                //   //       ),
+                //   //     ),
+                //   //   ),
+                //   // ),
+                //
+                //
+                //   // SvgPicture.string(HomeSvg().msgIcon),
+                //   //         const SizedBox(
+                //   //           width: 16,
+                //   //         ),
+                //   //         GestureDetector(
+                //   //           onTap: widget.onTap,
+                //   //             child: SvgPicture.string(HomeSvg().addIcon)),
+                //
+                //   const SizedBox(
+                //     width: 16,
+                //   )
+                // ],
+              ),
+              Container(
+                width: w,
+                height: 1.50,
+                decoration: const BoxDecoration(
+                  color: Color(0xb2e6e6e6),
+                ),
+              ),
+            ],
           ),
         ),
         body: BlocListener<JobBloc, JobState>(
@@ -176,6 +252,63 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
+
+                                Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 7),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      // border: Border.all(
+                                      //   color: Color(0xfffdf2f2),
+                                      //   width: 1.50,
+                                      // ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Color(0xffE7E7E7)
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      ebdDate,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorPalette.black),
+                                    )),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 7),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      // border: Border.all(
+                                      //   color: Color(0xfffdf2f2),
+                                      //   width: 1.50,
+                                      // ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0x05000000),
+                                          blurRadius: 8,
+                                          offset: Offset(1, 1),
+                                        ),
+                                      ],
+                                      color: Color(0xffE7E7E7),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      startDate,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorPalette.black),
+                                    )),
+                                SizedBox(
+                                  width: 5,
+                                ),
                                 InkWell(
                                   onTap: () {
                                     showDialog(
@@ -190,27 +323,27 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                   child: Scaffold(
                                                     body: SfDateRangePicker(
 
-                                                      backgroundColor:
-                                                      Colors.white,
-                                                      endRangeSelectionColor:
-                                                      ColorPalette.primary,
-                                                      startRangeSelectionColor:
-                                                      ColorPalette.primary,
-                                                      rangeSelectionColor:
-                                                      ColorPalette.primary
-                                                          .withOpacity(0.1),
-                                                      selectionColor:
-                                                      Colors.grey,
-                                                      todayHighlightColor:
-                                                      ColorPalette.primary,
-                                                      onSelectionChanged:
-                                                      _onSelectionChanged,
-                                                      selectionMode:
-                                                      DateRangePickerSelectionMode
-                                                          .range,
-                                                      initialSelectedRange:PickerDateRange(
-                                                          DateTime.parse(startDate2),
-                                                          DateTime.parse(ebdDate2))
+                                                        backgroundColor:
+                                                        Colors.white,
+                                                        endRangeSelectionColor:
+                                                        ColorPalette.primary,
+                                                        startRangeSelectionColor:
+                                                        ColorPalette.primary,
+                                                        rangeSelectionColor:
+                                                        ColorPalette.primary
+                                                            .withOpacity(0.1),
+                                                        selectionColor:
+                                                        Colors.grey,
+                                                        todayHighlightColor:
+                                                        ColorPalette.primary,
+                                                        onSelectionChanged:
+                                                        _onSelectionChanged,
+                                                        selectionMode:
+                                                        DateRangePickerSelectionMode
+                                                            .range,
+                                                        initialSelectedRange:PickerDateRange(
+                                                            DateTime.parse(startDate2),
+                                                            DateTime.parse(ebdDate2))
 
                                                     ),
                                                   ),
@@ -241,12 +374,12 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         });
                                   },
                                   child: Container(
-                                    width: 35,
-                                    height: 35,
+                                    width: 30,
+                                    height: 30,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(4),
 
-                                      color: Color(0xfffdf2f2),
+                                      color: ColorPalette.primary,
                                       boxShadow: [
                                         BoxShadow(
                                           color: Color(0x05000000),
@@ -259,66 +392,11 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     padding: EdgeInsets.all(4),
                                     child: SvgPicture.string(
                                       CreateSvg().calenderIcon,
-                                      color: ColorPalette.primary,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: Color(0xfffdf2f2),
-                                        width: 1.50,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Color(0x05000000),
-                                          blurRadius: 8,
-                                          offset: Offset(1, 1),
-                                        ),
-                                      ],
-                                      color: Colors.white,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      ebdDate,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorPalette.black),
-                                    )),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: Color(0xfffdf2f2),
-                                        width: 1.50,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Color(0x05000000),
-                                          blurRadius: 8,
-                                          offset: Offset(1, 1),
-                                        ),
-                                      ],
-                                      color: Colors.white,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      startDate,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorPalette.black),
-                                    )),
+
                               ],
                             ),
                             const SizedBox(
@@ -330,31 +408,35 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                 HomeCard(
                                     head:
                                     taskcount?.assignTask.toString() ?? "0",
-                                    sub: "Assigned Task"),
+                                    sub: "Assigned Task",
+                                colorContainer: Color(0xff2871AF).withOpacity(0.2),),
                                 HomeCard(
                                     head: taskcount?.taskCompleted.toString() ??
                                         "0",
-                                    sub: "Task Completed"),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                HomeCard(
-                                  head: taskcount?.taskOnProgress.toString() ??
-                                      "0",
-                                  sub: "Task on Progress",
-                                ),
+                                    sub: "Task Completed",
+                                colorContainer: Color(0xffE8FFE0)),
                                 HomeCard(
                                   head:
                                   taskcount?.taskPending.toString() ?? "0",
                                   sub: "Task Pending",
+                                  colorContainer: Color(0xffFFEAEA),
                                 )
                               ],
                             ),
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     // HomeCard(
+                            //     //   head: taskcount?.taskOnProgress.toString() ??
+                            //     //       "0",
+                            //     //   sub: "Task on Progress",
+                            //     // ),
+                            //
+                            //   ],
+                            // ),
 
                             authentication.isAdmin
                                 ? Column(
@@ -380,15 +462,15 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         horizontal: 16, vertical: 16),
                                     // height: 60,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: const Color(0xfffdf2f2),
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: const Color(0xffE7E7E7).withOpacity(0.5),
                                     ),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
-                                            SvgPicture.string(TaskSvg().newjobIcon),
+                                            SvgPicture.string(TaskSvg().newjobIcon,color: Colors.black,),
                                             const SizedBox(
                                               width: 10,
                                             ),
@@ -396,12 +478,13 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               "Create new Job",
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: w/22,
+                                                fontSize: w/24,
                                               ),
                                             )
                                           ],
                                         ),
-                                        SvgPicture.string(TaskSvg().arrowIcon)
+                                        Icon(Icons.arrow_forward_ios_outlined,size: 18,color: ColorPalette.primary),
+                                        // SvgPicture.string(TaskSvg().arrowIcon,color: ColorPalette.primary,h)
                                       ],
                                     ),
                                   ),
@@ -428,15 +511,15 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     // height: 60,
                                     decoration: BoxDecoration(
                                       borderRadius:
-                                      BorderRadius.circular(10),
-                                      color: Color(0xfffdf2f2),
+                                      BorderRadius.circular(4),
+                                      color: Color(0xffE7E7E7).withOpacity(0.5),
                                     ),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
-                                            SvgPicture.string(TaskSvg().pinIcon),
+                                            SvgPicture.string(TaskSvg().pinIcon,color: Colors.black),
                                             const SizedBox(
                                               width: 10,
                                             ),
@@ -444,12 +527,12 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               "Pinned Job List",
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: w/22,
+                                                fontSize: w/24,
                                               ),
                                             )
                                           ],
                                         ),
-                                        SvgPicture.string(TaskSvg().arrowIcon)
+                                        Icon(Icons.arrow_forward_ios_outlined,size: 18,color: ColorPalette.primary),
                                       ],
                                     ),
                                   ),
@@ -461,89 +544,157 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             authentication.isAdmin
                                 ? Column(
                                   children: [
-                                    Row(
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Row(
                               mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
                               children: [
-                                    GestureDetector(
-                                        onTap: () {
-                                          PersistentNavBarNavigator
-                                              .pushNewScreen(
-                                            context,
-                                            screen:
-                                            const TaskAndOperationHomePage(),
-                                            withNavBar: false,
-                                            // OPTIONAL VALUE. True by default.
-                                            pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                          );
-                                        },
-                                        child: FourCard(
-                                          label: "Job List",
-                                        )),
-                                    GestureDetector(
+                                      GestureDetector(
+                                          onTap: () {
+                                            PersistentNavBarNavigator
+                                                .pushNewScreen(
+                                              context,
+                                              screen:
+                                              const TaskAndOperationHomePage(),
+                                              withNavBar: false,
+                                              // OPTIONAL VALUE. True by default.
+                                              pageTransitionAnimation:
+                                              PageTransitionAnimation.fade,
+                                            );
+                                          },
+                                          child: FourCard(
+                                            label: "Job List",
+                                            svg: TaskSvg().joblistSvg,
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            PersistentNavBarNavigator
+                                                .pushNewScreen(
+                                              context,
+                                              screen: EmployeesGroupScreen(
+                                                  newIndex: 0),
+                                              withNavBar: false,
+                                              // OPTIONAL VALUE. True by default.
+                                              pageTransitionAnimation:
+                                              PageTransitionAnimation.fade,
+                                            );
+                                          },
+                                          child: FourCard(label: "Users",
+                                              svg:
+                                              TaskSvg().userSvg)),
+                                      GestureDetector(
                                         onTap: () {
                                           PersistentNavBarNavigator
                                               .pushNewScreen(
                                             context,
                                             screen: EmployeesGroupScreen(
-                                                newIndex: 0),
+                                                newIndex: 1),
                                             withNavBar: false,
                                             // OPTIONAL VALUE. True by default.
                                             pageTransitionAnimation:
                                             PageTransitionAnimation.fade,
                                           );
                                         },
-                                        child: FourCard()),
-                                    GestureDetector(
-                                      onTap: () {
-                                        PersistentNavBarNavigator
-                                            .pushNewScreen(
-                                          context,
-                                          screen: EmployeesGroupScreen(
-                                              newIndex: 1),
-                                          withNavBar: false,
-                                          // OPTIONAL VALUE. True by default.
-                                          pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                        );
-                                      },
-                                      child: FourCard(
-                                        label: "Groups",
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          PersistentNavBarNavigator.pushNewScreen(
-                                            context,
-                                            screen: CreatePerformance(),
-                                            withNavBar: false, // OPTIONAL VALUE. True by default.
-                                            pageTransitionAnimation: PageTransitionAnimation.fade,
-                                          );
-                                        },
                                         child: FourCard(
-                                          label: "Criteria",
-                                        ))
+                                          label: "Groups",
+                                            svg:
+                                            TaskSvg().groupSvg
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: () {
+                                            PersistentNavBarNavigator.pushNewScreen(
+                                              context,
+                                              screen: CreatePerformance(),
+                                              withNavBar: false, // OPTIONAL VALUE. True by default.
+                                              pageTransitionAnimation: PageTransitionAnimation.fade,
+                                            );
+                                          },
+                                          child: FourCard(
+                                            label: "Criteria",
+                                            svg: TaskSvg().criteriaIcon,
+                                          ))
                               ],
                             ),
-                                    SizedBox(height: 10,),
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                            onTap: () {
-                                              PersistentNavBarNavigator.pushNewScreen(
-                                                context,
-                                                screen: ReportedListAdmin(),
-                                                withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                pageTransitionAnimation: PageTransitionAnimation.fade,
-                                              );
-                                            },
-                                            child: FourCard(
-                                              label: "Reported List",
-                                            ))
-                                      ],
+                                    ),
+                                    SizedBox(height: 20,),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: ReporterList(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Reporter",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: ReportedListAdmin(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Reported List",
+                                                svg: TaskSvg().reportedList,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator
+                                                    .pushNewScreen(
+                                                  context,
+                                                  screen: const CreateGroup(),
+                                                  withNavBar: false,
+                                                  // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Create Group",
+                                                  svg: TaskSvg().createGroupSvg
+                                              )),
+                                          Container(
+                                            width: w1/6,
+                                            height: 60,
+                                            padding: EdgeInsets.all(10),
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                // SvgPicture.string(svg??TaskSvg().quickaccessIcon),
+                                                //
+                                                // SizedBox(height: 5,),
+                                                // Text(
+                                                //   label??"Employees",
+                                                //   textAlign: TextAlign.center,
+                                                //   style: TextStyle(
+                                                //     color: ColorPalette.black,
+                                                //     fontSize: 11,
+                                                //
+                                                //   ),
+                                                // )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 )
@@ -623,45 +774,75 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             const SizedBox(
                               height: 10,
                             ),
-                            authentication.isAdmin
-                                ? Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // GestureDetector(
-                                //     onTap: () {
-                                //       PersistentNavBarNavigator.pushNewScreen(
-                                //         context,
-                                //         screen: const NewEmployee(),
-                                //         withNavBar: true,
-                                //         // OPTIONAL VALUE. True by default.
-                                //         pageTransitionAnimation:
-                                //             PageTransitionAnimation.fade,
-                                //       );
-                                //     },
-                                //     child: TwoCard(
-                                //       label: "Create New Employee",
-                                //     )),
-                                GestureDetector(
-                                    onTap: () {
-                                      PersistentNavBarNavigator
-                                          .pushNewScreen(
-                                        context,
-                                        screen: const CreateGroup(),
-                                        withNavBar: false,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                      );
-                                      //  CreateGroup
-                                    },
-                                    child: TwoCard())
-                              ],
-                            )
-                                : Container(),
+                            // authentication.isAdmin
+                            //     ? Column(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   children: [
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           // PersistentNavBarNavigator.pushNewScreen(
+                            //           //   context,
+                            //           //   screen: const NewEmployee(),
+                            //           //   withNavBar: true,
+                            //           //   // OPTIONAL VALUE. True by default.
+                            //           //   pageTransitionAnimation:
+                            //           //       PageTransitionAnimation.fade,
+                            //           // );
+                            //           PersistentNavBarNavigator
+                            //               .pushNewScreen(
+                            //             context,
+                            //             screen: const ReportedListAdmin(),
+                            //             withNavBar: false,
+                            //             // OPTIONAL VALUE. True by default.
+                            //             pageTransitionAnimation:
+                            //             PageTransitionAnimation.fade,
+                            //           );
+                            //         },
+                            //         child: Container(
+                            //           width: w/1.1,
+                            //           padding: EdgeInsets.all(12),
+                            //           height: 90,
+                            //           decoration: BoxDecoration(
+                            //             borderRadius: BorderRadius.circular(10),
+                            //             color: Color(0x0ce30000),
+                            //           ),
+                            //           child: Column(
+                            //             children: [
+                            //               SvgPicture.string(TaskSvg().quickaccessIcon),
+                            //               SizedBox(height: 10,),
+                            //               Text(
+                            //                 "Reported List",
+                            //                 textAlign: TextAlign.center,
+                            //                 style: TextStyle(
+                            //                   color: Color(0xff121113),
+                            //                   fontSize: 13,
+                            //                 ),
+                            //               )
+                            //             ],
+                            //           ),
+                            //         )),
+                            //     SizedBox(height: 10,),
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           PersistentNavBarNavigator
+                            //               .pushNewScreen(
+                            //             context,
+                            //             screen: const CreateGroup(),
+                            //             withNavBar: false,
+                            //             // OPTIONAL VALUE. True by default.
+                            //             pageTransitionAnimation:
+                            //             PageTransitionAnimation.fade,
+                            //           );
+                            //           //  CreateGroup
+                            //         },
+                            //         child: TwoCard())
+                            //   ],
+                            // )
+                            //     : Container(),
                             const SizedBox(
                               height: 16,
                             ),
-                            joblist.isEmpty
+                            joblist.isEmpty&&authentication.isAdmin==true
                                 ? Container()
                                 : Column(
                               children: [

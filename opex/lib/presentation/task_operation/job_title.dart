@@ -21,6 +21,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../../common_widgets/loading.dart';
@@ -34,6 +35,7 @@ import 'create/reporting_person_job.dart';
 import 'create/single_row.dart';
 import 'home/bloc/job_bloc.dart';
 import 'home/model/joblist_model.dart';
+import 'lottieLoader.dart';
 
 class JobTitle extends StatefulWidget {
   bool isMyJob = false;
@@ -137,7 +139,7 @@ class _JobTitleState extends State<JobTitle> {
                               onTap: () {
                                 print("EdIT");
                                 context.read<JobBloc>().add(
-                                    GetJobReadListEvent(Variable.jobReadId));
+                                    GetJobReadListEvent(JobRead?.id??0));
                                 PersistentNavBarNavigator.pushNewScreen(
                                   context,
                                   screen: const CreateJob(
@@ -208,7 +210,7 @@ class _JobTitleState extends State<JobTitle> {
                                 onTap: () {
                                   context.read<EmployeeBloc>().add(
                                       GetActivityLogListingEvent(
-                                          Variable.jobReadId));
+                                          JobRead?.id));
                                   PersistentNavBarNavigator.pushNewScreen(
                                     context,
                                     screen: ActivityLog(),
@@ -255,14 +257,28 @@ class _JobTitleState extends State<JobTitle> {
                     BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
                         if (state is GetTaskListLoading) {
-                          return Container(
-                              height: 200,
-                              width: w,
-                              alignment: Alignment.center,
-                              child: LoadingAnimationWidget.threeRotatingDots(
-                                color: Colors.red,
-                                size: 30,
-                              ));
+                          return  Container(
+                            height: h / 4,
+                            color: Colors.white.withOpacity(0.5),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Lottie.asset(
+                                  'asset/loadingteams.json',
+                                ),
+                                Text(
+                                  "Loading...",
+                                  style: GoogleFonts.roboto(
+                                    fontSize: w / 24,
+                                  ),
+                                )
+                              ],
+                            ),
+                            // Image.asset('asset/Logo'),
+                            //child: SvgPicture.string(IconConstants().SplashIcon),
+                          );
                         }
 
                         if (state is GetTaskListSuccess) {
@@ -315,7 +331,7 @@ class _JobTitleState extends State<JobTitle> {
                                             onTap: () {
                                               context.read<TaskBloc>().add(
                                                   GetTaskListEvent(
-                                                      Variable.jobReadId,
+                                                      JobRead?.id,
                                                       '',
                                                       '',
                                                       prevUrl));
@@ -337,7 +353,7 @@ class _JobTitleState extends State<JobTitle> {
                                               setState(() {
                                                 context.read<TaskBloc>().add(
                                                     GetTaskListEvent(
-                                                        Variable.jobReadId,
+                                                        JobRead?.id,
                                                         '',
                                                         nextUrl,
                                                         ""));
@@ -371,6 +387,7 @@ class _JobTitleState extends State<JobTitle> {
                             context,
                             screen: CreateNewTask(
                               isSubTask: false,
+                              jobId: JobRead?.id,
                             ),
                             withNavBar: true,
                             // OPTIONAL VALUE. True by default.
@@ -458,7 +475,7 @@ class _JobTitleState extends State<JobTitle> {
                       width: w,
                       // padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: Color(0xffe6ecf0),
                           width: 1,
@@ -476,9 +493,7 @@ class _JobTitleState extends State<JobTitle> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              context.read<JobBloc>().add(GetJobReadListEvent(
-                                  int.tryParse(Variable.jobReadId.toString()) ??
-                                      0));
+                              context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
                               PersistentNavBarNavigator.pushNewScreen(
                                 context,
                                 screen: ReportingPersonJob(),
@@ -490,7 +505,10 @@ class _JobTitleState extends State<JobTitle> {
                             },
                             child: Container(
                               margin: EdgeInsets.only(
-                                  left: 16, right: 16, bottom: 5, top: 16),
+                                  left: 16, right: 16, bottom: 10, top: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4)
+                              ),
                               child: SingleRow(
                                 label: "Reporting Person",
                                 color: Color(0xffAD51E0),
@@ -505,13 +523,14 @@ class _JobTitleState extends State<JobTitle> {
                             ),
                           ),
                           Divider(
-                            indent: 50,
+                            indent: 10,
+                            height: 2,
                           ),
                           GestureDetector(
                             onTap: () {
                               context
                                   .read<JobBloc>()
-                                  .add(GetJobReadListEvent(Variable.jobReadId));
+                                  .add(GetJobReadListEvent(JobRead?.id??0));
                               PersistentNavBarNavigator.pushNewScreen(
                                 context,
 
@@ -525,15 +544,10 @@ class _JobTitleState extends State<JobTitle> {
                             },
                             child: Container(
                               margin: EdgeInsets.only(
-                                  left: 16, right: 16, bottom: 16, top: 5),
+                                  left: 16, right: 16, bottom: 16, top: 10),
                               child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 18,
-                                    backgroundColor: ColorPalette.inactiveGrey,
-                                    backgroundImage:
-                                        AssetImage("asset/newprofile.png"),
-                                  ),
+                                  SvgPicture.string(TaskSvg().profileReporting),
                                   SizedBox(
                                     width: 10,
                                   ),
@@ -542,7 +556,7 @@ class _JobTitleState extends State<JobTitle> {
                                     child: Text(
                                       JobRead?.reportingMail ?? "",
                                       style: TextStyle(
-                                        color: Color(0xffe70c0c),
+                                        color: ColorPalette.primary,
                                         fontSize: 16,
                                       ),
                                     ),
@@ -554,24 +568,24 @@ class _JobTitleState extends State<JobTitle> {
                         ],
                       ),
                     ),
-
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     GestureDetector(
                       onTap: () {
                         JobRead?.paymentId != null
                             ? context.read<TaskBloc>().add(
                                 GetPaymentReadListEvent(
-                                    Variable.jobReadId ?? 0, false))
+                                    JobRead?.id ?? 0, false))
                             : null;
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen: PaymentOption(
+                            currencyCode: JobRead?.currency,
                             isJob: true,
                             isTask: false,
                             update: JobRead?.paymentId == null ? false : true,
-                            jobId: Variable.jobReadId,
+                            jobId: JobRead?.id,
                             paymentId: JobRead?.paymentId ?? 0,
                             joblist: JobRead,
                           ),
@@ -581,9 +595,9 @@ class _JobTitleState extends State<JobTitle> {
                       },
                       child: Container(
                         width: w,
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: Color(0xffe6ecf0),
                             width: 1,
@@ -606,13 +620,14 @@ class _JobTitleState extends State<JobTitle> {
                           Icon(
                             Icons.arrow_forward_ios_sharp,
                             size: 18,
+                            color: ColorPalette.primary,
                           ),
                           onTap: () {},
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     GestureDetector(
                       onTap: () {
@@ -636,9 +651,9 @@ class _JobTitleState extends State<JobTitle> {
                       },
                       child: Container(
                         width: w,
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: Color(0xffe6ecf0),
                             width: 1,
@@ -659,6 +674,7 @@ class _JobTitleState extends State<JobTitle> {
                           endIcon: JobRead?.rewardId!=null?
                           SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
                             Icons.arrow_forward_ios_sharp,
+                            color: ColorPalette.primary,
                             size: 18,
                           ),
                           onTap: () {
@@ -833,7 +849,7 @@ class _JobTitleState extends State<JobTitle> {
                     //       )),
                     // ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     GestureDetector(
                       onTap: () {
@@ -901,7 +917,7 @@ class _JobTitleState extends State<JobTitle> {
                                             onTap: () {
                                               BlocProvider.of<JobBloc>(context)
                                                   .add(DeleteJobEvent(
-                                                      Variable.jobReadId));
+                                                  JobRead?.id??0));
                                               Navigator.pop(context);
                                             },
                                             child: Container(
@@ -931,9 +947,10 @@ class _JobTitleState extends State<JobTitle> {
                       },
                       child: Container(
                           width: w,
-                          height: 60,
+                          // height: 60,
+                          padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Color(0xffe6ecf0),
                               width: 1,

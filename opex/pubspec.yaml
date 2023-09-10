@@ -93,6 +93,8 @@ dependencies:
   http_parser :
   dartz: ^0.10.1
   loading_animation_widget: ^1.2.0+4
+  sms_autofill: ^2.3.0
+
 
 
 

@@ -35,10 +35,11 @@ class PaymentOption extends StatefulWidget {
   final int? jobId;
   final int paymentId;
   final GetJobList? joblist;
+  final String? currencyCode;
   final GetTaskList? taskList;
   const PaymentOption({Key? key,  this.update=false,
     this.isJob=false,  this.isTask=false,
-    this.taskId=0,  this.jobId=0, required this.paymentId, this.joblist, this.taskList}) : super(key: key);
+    this.taskId=0,  this.jobId=0, required this.paymentId, this.joblist, this.taskList, this.currencyCode}) : super(key: key);
 
   @override
   State<PaymentOption> createState() => _PaymentOptionState();
@@ -101,7 +102,7 @@ class _PaymentOptionState extends State<PaymentOption> {
     return WillPopScope(
       onWillPop: ()async{
         widget.isJob?
-        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','','')):null;
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','')):null;
         return true;
       },
       child: MultiBlocListener(
@@ -150,7 +151,7 @@ class _PaymentOptionState extends State<PaymentOption> {
             backgroundColor: Colors.black,
             textColor: Colors.white);
         context.read<JobBloc>().add(
-            GetJobReadListEvent(Variable.jobReadId));
+            GetJobReadListEvent(widget.jobId??0));
         context.read<TaskBloc>().add(
             GetTaskReadListEvent(widget.taskId));
         Navigator.pop(context);
@@ -185,7 +186,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                 backgroundColor: Colors.black,
                 textColor: Colors.white);
             context.read<JobBloc>().add(
-                GetJobReadListEvent(Variable.jobReadId));
+                GetJobReadListEvent(widget.jobId??0));
             context.read<TaskBloc>().add(
                 GetTaskReadListEvent(Variable.taskReadId));
             Navigator.pop(context);
@@ -258,8 +259,8 @@ class _PaymentOptionState extends State<PaymentOption> {
             customCupertinoLoading();
           }
           if (state is GetEmployeeListSuccess) {
-            print("EMplot${state.employeeList.length}");
-            employeeList=state.employeeList;
+            print("EMplot${state.assignMeList!.length}");
+            employeeList=state.assignMeList??[];
             setState(() {
 
             });
@@ -277,7 +278,7 @@ class _PaymentOptionState extends State<PaymentOption> {
             isBack: false,
             onTap: (){
               widget.isJob?
-              context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','','')):null;
+              context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','')):null;
               Navigator.pop(context);
             },
             action: Column(
@@ -347,7 +348,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                     // width: 110,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(4),
                       color: ColorPalette.primary,
                     ),
                     alignment: Alignment.center,
@@ -368,7 +369,8 @@ class _PaymentOptionState extends State<PaymentOption> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Column(children: [
+            child: Column(
+                children: [
 
               Container(
                 width: w,
@@ -424,7 +426,7 @@ class _PaymentOptionState extends State<PaymentOption> {
 
                                 setState(() {
                                   selectedType = value;
-                                  selectedType=="Individual"?context.read<JobBloc>().add(GetEmployeeListEvent()):
+                                  selectedType=="Individual"?context.read<JobBloc>().add(GetEmployeeListEvent('','','')):
                                   selectedType=="Task_Group"?context.read<JobBloc>().add(GetGroupListEvent()):null;
                                 });
 
@@ -529,7 +531,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                       width: w,
 
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
                         boxShadow: [
                           BoxShadow(
@@ -545,8 +547,10 @@ class _PaymentOptionState extends State<PaymentOption> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
+
                             // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
                               child:TextFormField(
+
                                 style:GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600
                                 ) ,
@@ -557,6 +561,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                   });
                                 },
                                 decoration:  InputDecoration(
+
                                   contentPadding: EdgeInsets.only(left:16,right: 16 ),
                                   hintText: "Enter Budget",
                                   hintStyle: TextStyle(
@@ -564,11 +569,15 @@ class _PaymentOptionState extends State<PaymentOption> {
                                     fontSize: w/26,
                                   ),
                                   border: InputBorder.none,
+                                  // suffixIcon: Text("INR"),
+                                  suffixText: widget.currencyCode??"",
 
                                 ),
+                                // enabled: false,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
                                 controller: budgetController,
+
                               )
                               ),
                           Divider(indent: 16,),
@@ -596,48 +605,74 @@ class _PaymentOptionState extends State<PaymentOption> {
 
                               )
                           ),
+                          Divider(indent: 16,),
+                          Container(
+                            // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                              child:TextFormField(
+                                controller: notesController,
+                                maxLines: 4,
+                                minLines: 1,
+                                onChanged: (l){
+                                  validationCheck();
+                                  setState(() {
+
+                                  });
+                                },
+                                decoration:  InputDecoration(
+                                  contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                                  hintText: "Add Notes",
+                                  hintStyle: TextStyle(
+                                    color: Color(0x66151522),
+                                    fontSize: w/26,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+
+                              )
+                          ),
+
 
                         ],
                       ),
                     ),
-                    SizedBox(height: 26),
-                    GestureDetector(
-                      onTap: (){
-                        active=!active;
-                        setState(() {
-
-                        });
-                      },
-                      child: Container(
-                        width: w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: AddText(
-                          label: "Add Notes",
-                          hint: "Add Notes",
-                          onchange: (dd){
-                            isValid=true;
-                            setState(() {
-
-                            });
-                          },
-                          controller: notesController,
-                          isActive: active==true?true:notesController.text==""?false:true,),
-                      ),
-                    ),
+                    // SizedBox(height: 26),
+                    // GestureDetector(
+                    //   onTap: (){
+                    //     active=!active;
+                    //     setState(() {
+                    //
+                    //     });
+                    //   },
+                    //   child: Container(
+                    //     width: w,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       border: Border.all(
+                    //         color: Color(0xffe6ecf0),
+                    //         width: 1,
+                    //       ),
+                    //       boxShadow: const [
+                    //         BoxShadow(
+                    //           color: Color(0x05000000),
+                    //           blurRadius: 8,
+                    //           offset: Offset(1, 1),
+                    //         ),
+                    //       ],
+                    //       color: Colors.white,
+                    //     ),
+                    //     child: AddText(
+                    //       label: "Add Notes",
+                    //       hint: "Add Notes",
+                    //       onchange: (dd){
+                    //         isValid=true;
+                    //         setState(() {
+                    //
+                    //         });
+                    //       },
+                    //       controller: notesController,
+                    //       isActive: active==true?true:notesController.text==""?false:true,),
+                    //   ),
+                    // ),
                     SizedBox(height: 26),
                     // Text(
                     //   "Images",
@@ -708,15 +743,15 @@ class _PaymentOptionState extends State<PaymentOption> {
                     //             ),
                     //           );
                     //         })),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
                     count>=5?Container():TextButton(
                       child:  Text(
                         " + Add Attachment",
                         style: GoogleFonts.roboto(
                             color: ColorPalette.primary,
-                            fontSize: w/26,
+                            fontSize: w/24,
                             fontWeight: FontWeight.w500
                         ),
                       ),

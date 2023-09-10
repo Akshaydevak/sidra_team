@@ -32,6 +32,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is UpdateProfilePicEvent) {
       yield* updateProfilePic(event.profilePic);
     }
+    if (event is UpdateOrgProfilePicEvent) {
+      yield* updateOrgProfilePic(event.profilePic,event.id);
+    }
+
     // else if (event is GetPickListEvent) {
     //   yield* getPicklist(event.isAssign);
     // }
@@ -91,6 +95,18 @@ print(dataResponse.data);
       yield UpdateProfilePicSuccess();
     } else {
       yield UpdateProfilePicFailed();
+    }
+  }
+
+  Stream<ProfileState> updateOrgProfilePic(File? profilePic,int? id) async* {
+    yield UpdateOrgProfilePicLoading();
+
+    final dataResponse = await _profileRepo.updateOrgProfilePic(profilePic,id);
+
+    if (dataResponse.data != null&&dataResponse.data.isNotEmpty) {
+      yield UpdateOrgProfilePicSuccess();
+    } else {
+      yield UpdateOrgProfilePicFailed();
     }
   }
   //Nationalities

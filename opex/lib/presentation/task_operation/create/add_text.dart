@@ -41,7 +41,7 @@ class _AddTextState extends State<AddText> {
               children: [
                 Icon(
                   Icons.add,
-                  color: Color(0xffFE5762),
+                  color: ColorPalette.primary,
                 ),
                 SizedBox(
                   width: 10,
@@ -50,7 +50,7 @@ class _AddTextState extends State<AddText> {
                   widget.label ?? "",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Color(0xffe70c0c),
+                    color: ColorPalette.primary,
                     fontSize: w/22,
                   ),
                 )

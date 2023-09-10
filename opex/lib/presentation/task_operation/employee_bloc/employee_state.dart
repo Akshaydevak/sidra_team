@@ -11,7 +11,7 @@ class EmployeeInitial extends EmployeeState {}
 class EmployeeLoading extends EmployeeState {}
 
 class EmployeeSuccess extends EmployeeState {
-  final GetEmployeeList user;
+  final String user;
 
   const EmployeeSuccess(this.user);
 
@@ -23,6 +23,26 @@ class EmployeeFailed extends EmployeeState {
   final String error;
 
   const EmployeeFailed(this.error);
+  @override
+  List<Object> get props => [];
+}
+
+///change password
+class ChagePasswordLoading extends EmployeeState {}
+
+class ChagePasswordSuccess extends EmployeeState {
+  final String user;
+
+  const ChagePasswordSuccess(this.user);
+
+  @override
+  List<Object> get props => [];
+}
+
+class ChagePasswordFailed extends EmployeeState {
+  final String error;
+
+  const ChagePasswordFailed(this.error);
   @override
   List<Object> get props => [];
 }
@@ -103,6 +123,22 @@ class GetEmployeeReadFailed extends EmployeeState {
   GetEmployeeReadFailed(this.error);
 }
 
+
+//readType
+class GetReadTypeLoading extends EmployeeState {}
+
+class GetReadTypeSuccess extends EmployeeState {
+  final EmployeeCreateRead readType;
+  GetReadTypeSuccess({required this.readType});
+  @override
+  List<Object> get props => [readType];
+}
+
+class GetReadTypeFailed extends EmployeeState {
+  final String error;
+  GetReadTypeFailed(this.error);
+}
+
 //updateEmployee
 
 class UpdateEmployeeInitial extends EmployeeState {}
@@ -110,7 +146,7 @@ class UpdateEmployeeInitial extends EmployeeState {}
 class UpdateEmployeeLoading extends EmployeeState {}
 
 class UpdateEmployeeSuccess extends EmployeeState {
-  final GetEmployeeList user;
+  final String user;
 
   const UpdateEmployeeSuccess(this.user);
 
@@ -173,3 +209,27 @@ class PicSuccess extends EmployeeState {
 }
 
 class PicFailed extends EmployeeState {}
+
+//
+class ChangePasswordLoading extends EmployeeState {}
+
+class ChangePasswordSuccess extends EmployeeState {
+  final String message;
+  const ChangePasswordSuccess({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ChangePasswordFailed extends EmployeeState {
+  final String message;
+
+  const ChangePasswordFailed({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}

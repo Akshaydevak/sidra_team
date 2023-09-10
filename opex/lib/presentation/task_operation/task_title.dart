@@ -39,7 +39,8 @@ import 'home/model/joblist_model.dart';
 class TaskTitle extends StatefulWidget {
   bool isMyJob;
 
-  TaskTitle({Key? key, this.isMyJob = false}) : super(key: key);
+
+  TaskTitle({Key? key, this.isMyJob = false,}) : super(key: key);
 
   @override
   State<TaskTitle> createState() => _TaskTitleState();
@@ -136,8 +137,10 @@ class _TaskTitleState extends State<TaskTitle> {
     setState(() {});
   }
 
-  TextEditingController reportNotes=TextEditingController();
-  int topicId=0;
+  TextEditingController reportNotes = TextEditingController();
+  TextEditingController replayApproveNotes = TextEditingController();
+  TextEditingController replayRejectNotes = TextEditingController();
+  int topicId = 0;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -351,6 +354,30 @@ class _TaskTitleState extends State<TaskTitle> {
               if (state is NotificationDueFailed) {}
             },
           ),
+          BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) {
+              if (state is ReplayReportLoading) {
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
+              }
+
+              if (state is ReplayReportSuccess) {
+                showSnackBar(
+                  context,
+                  message: state.taskId,
+                  color: Colors.red,
+                  // icon: Icons.admin_panel_settings_outlined
+                );
+                Navigator.pop(context);
+                context
+                    .read<TaskBloc>()
+                    .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+              }
+            },
+          ),
         ],
         child: Scaffold(
           backgroundColor: Colors.white,
@@ -364,7 +391,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 context.read<JobBloc>().add(GetNewJobListEvent('', '', ''));
                 context
                     .read<TaskBloc>()
-                    .add(GetTaskListEvent(Variable.jobReadId, '', '', ''));
+                    .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
 
                 Navigator.pop(context);
               },
@@ -507,7 +534,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   onTap: () {
                                     context.read<EmployeeBloc>().add(
                                         GetActivityLogListingEvent(
-                                            getTaskRead?.id));
+                                            getTaskRead?.jobId));
                                     PersistentNavBarNavigator.pushNewScreen(
                                       context,
                                       screen: ActivityLog(),
@@ -551,7 +578,10 @@ class _TaskTitleState extends State<TaskTitle> {
                 child: Column(
                   children: [
                     Container(
-                      height: h / 1.3,
+                      height: getTaskRead?.isReported == true &&
+                              authentication.isAdmin == true
+                          ? h / 1.3
+                          : null,
                       margin: const EdgeInsets.all(16),
                       child: SingleChildScrollView(
                         child: Column(
@@ -1477,6 +1507,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                               .pushNewScreen(
                                             context,
                                             screen: PaymentOption(
+                                              currencyCode: getTaskRead?.currency,
                                               isJob: false,
                                               isTask: true,
                                               update: getTaskRead?.paymentId ==
@@ -2023,7 +2054,14 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                           );
                                         })
-                                    : _showModalBottomAdditionalRole();
+                                    : getTaskRead?.isReported == true &&
+                                    authentication.isAdmin == false?
+                                Fluttertoast.showToast(
+                                    msg: "Task Already Reported",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: ColorPalette.black,
+                                    textColor: Colors.white):_showModalBottomAdditionalRole();
                               },
                               child: Container(
                                 width: w,
@@ -2044,16 +2082,42 @@ class _TaskTitleState extends State<TaskTitle> {
                                   color: Colors.white,
                                 ),
                                 alignment: Alignment.center,
-                                child: Text(
-                                  widget.isMyJob
-                                      ? "Delete this Task"
-                                      : "Report this Task",
-                                  style: GoogleFonts.roboto(
-                                    color: Color(0xfffe5762),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                child: widget.isMyJob
+                                    ? Text(
+                                        widget.isMyJob
+                                            ? "Delete this Task"
+                                            : "Report this Task",
+                                        style: GoogleFonts.roboto(
+                                          color: Color(0xfffe5762),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            widget.isMyJob
+                                                ? "Delete this Task"
+                                                : "Report this Task",
+                                            style: GoogleFonts.roboto(
+                                              color: Color(0xfffe5762),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: (){
+                                              _showModalBottomInfoData();
+                                            },
+                                            child: SvgPicture.string(
+                                              TaskSvg().infoIcon,
+                                              color: ColorPalette.primary,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                               ),
                             ),
                             SizedBox(
@@ -2063,436 +2127,503 @@ class _TaskTitleState extends State<TaskTitle> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: w,
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: w / 2.3,
-                            child: GradientButton(
-                                color: ColorPalette.green,
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text(
-                                                "Accept the Report",
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.roboto(
-                                                  color: Color(0xff151522),
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 16,
-                                              ),
-                                              Text(
-                                                "Accept the report submitted by \n Shifas",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Color(0xff6d6d6d),
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 16,
-                                              ),
-                                              Container(
-                                                height: h / 8,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                        color:
-                                                            Color(0xffD3D3D3),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: TextFormField(
-                                                  readOnly: false,
-                                                  decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintText: "Add Notes...",
-                                                    hintStyle:
-                                                        GoogleFonts.roboto(
-                                                            fontSize: w / 26,
-                                                            color: Color(
-                                                                0xffD3D3D3)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(10),
-                                                  ),
-                                                  onChanged: (ss) {},
-                                                  scrollPadding:
-                                                      EdgeInsets.all(10),
-                                                  cursorColor:
-                                                      ColorPalette.primary,
-                                                  obscureText: false,
-                                                  style: TextStyle(
-                                                      color: ColorPalette.black,
-                                                      fontSize: 17),
-                                                  // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
-                                                  // inputFormatters: [
-                                                  //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
-                                                  //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
-                                                  //   FilteringTextInputFormatter.singleLineFormatter,
-                                                  //
-                                                  // ],
-                                                  // controller: widget.controller,
-                                                  maxLines: 5,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                    getTaskRead?.isReported == true &&
+                            authentication.isAdmin == true
+                        ? Container(
+                            width: w,
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: w / 2.3,
+                                  child: GradientButton(
+                                      color: ColorPalette.green,
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: Container(
-                                                        width: w / 3.3,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Color(
-                                                                          0xffC6C6C6)
-                                                                      .withOpacity(
-                                                                          0.2),
-                                                                  width: 1,
-                                                                ),
-                                                                color: Color(
-                                                                        0xffC6C6C6)
-                                                                    .withOpacity(
-                                                                        0.2)),
-                                                        child: const Center(
-                                                            child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(Icons.close,
-                                                                color: Colors
-                                                                    .white),
-                                                            Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 18,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )),
+                                                    Text(
+                                                      "Accept the Report",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts.roboto(
+                                                        color:
+                                                            Color(0xff151522),
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Container(
-                                                          width: w / 3.1,
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 10),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            color: ColorPalette
-                                                                .green,
-                                                          ),
-                                                          child: Center(
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .task_alt_rounded,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                Text(
-                                                                  "OK",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        18,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )),
+                                                    SizedBox(
+                                                      height: 16,
                                                     ),
-                                                  ])
-                                            ],
-                                          ),
-                                        );
-                                      });
-                                },
-                                gradient: const LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      ColorPalette.green,
-                                      ColorPalette.green
-                                    ]),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.task_alt_rounded,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      "Approve",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.white,
-                                        fontSize: w / 22,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          Container(
-                            width: w / 2.3,
-                            child: GradientButton(
-                                color: ColorPalette.primary,
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text(
-                                                "Reject the Report",
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.roboto(
-                                                  color: Color(0xff151522),
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 16,
-                                              ),
-                                              Text(
-                                                "Reject the report submitted by \n Shifas",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Color(0xff6d6d6d),
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 16,
-                                              ),
-                                              Container(
-                                                height: h / 8,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
+                                                    Text(
+                                                      "Accept the report submitted by \n Shifas",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
                                                         color:
-                                                            Color(0xffD3D3D3),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: TextFormField(
-                                                  readOnly: false,
-                                                  decoration: InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintText: "Add Notes...",
-                                                    hintStyle:
-                                                        GoogleFonts.roboto(
-                                                            fontSize: w / 26,
-                                                            color: Color(
-                                                                0xffD3D3D3)),
-                                                    contentPadding:
-                                                        EdgeInsets.all(10),
-                                                  ),
-                                                  onChanged: (ss) {},
-                                                  scrollPadding:
-                                                      EdgeInsets.all(10),
-                                                  cursorColor:
-                                                      ColorPalette.primary,
-                                                  obscureText: false,
-                                                  style: TextStyle(
-                                                      color: ColorPalette.black,
-                                                      fontSize: 17),
-                                                  // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
-                                                  // inputFormatters: [
-                                                  //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
-                                                  //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
-                                                  //   FilteringTextInputFormatter.singleLineFormatter,
-                                                  //
-                                                  // ],
-                                                  // controller: widget.controller,
-                                                  maxLines: 5,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: Container(
-                                                        width: w / 3.3,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Color(
-                                                                          0xffC6C6C6)
-                                                                      .withOpacity(
-                                                                          0.2),
-                                                                  width: 1,
-                                                                ),
-                                                                color: Color(
-                                                                        0xffC6C6C6)
-                                                                    .withOpacity(
-                                                                        0.2)),
-                                                        child: const Center(
-                                                            child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(Icons.close,
-                                                                color: Colors
-                                                                    .white),
-                                                            Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 18,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )),
+                                                            Color(0xff6d6d6d),
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Container(
-                                                          width: w / 3.1,
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 10),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            color: ColorPalette
+                                                    SizedBox(
+                                                      height: 16,
+                                                    ),
+                                                    Container(
+                                                      height: h / 8,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border.all(
+                                                              color: Color(
+                                                                  0xffD3D3D3),
+                                                              width: 0.2),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5)),
+                                                      child: TextFormField(
+                                                        readOnly: false,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          border:
+                                                              InputBorder.none,
+                                                          hintText:
+                                                              "Add Notes...",
+                                                          hintStyle: GoogleFonts
+                                                              .roboto(
+                                                                  fontSize:
+                                                                      w / 26,
+                                                                  color: Color(
+                                                                      0xffD3D3D3)),
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                        ),
+                                                        onChanged: (ss) {},
+                                                        scrollPadding:
+                                                            EdgeInsets.all(10),
+                                                        cursorColor:
+                                                            ColorPalette
                                                                 .primary,
-                                                          ),
-                                                          child: Center(
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .task_alt_rounded,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                Text(
-                                                                  "Reject",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        18,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )),
+                                                        obscureText: false,
+                                                        style: TextStyle(
+                                                            color: ColorPalette
+                                                                .black,
+                                                            fontSize: 17),
+                                                        // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+                                                        // inputFormatters: [
+                                                        //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+                                                        //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+                                                        //   FilteringTextInputFormatter.singleLineFormatter,
+                                                        //
+                                                        // ],
+                                                        controller:
+                                                            replayApproveNotes,
+                                                        maxLines: 5,
+                                                      ),
                                                     ),
-                                                  ])
-                                            ],
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Container(
+                                                              width: w / 3.3,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          10),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                      border:
+                                                                          Border
+                                                                              .all(
+                                                                        color: Color(0xffC6C6C6)
+                                                                            .withOpacity(0.2),
+                                                                        width:
+                                                                            1,
+                                                                      ),
+                                                                      color: Color(
+                                                                              0xffC6C6C6)
+                                                                          .withOpacity(
+                                                                              0.2)),
+                                                              child:
+                                                                  const Center(
+                                                                      child:
+                                                                          Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .white),
+                                                                  Text(
+                                                                    "Cancel",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          18,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              )),
+                                                            ),
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              context.read<TaskBloc>().add(ReplayReportEvent(
+                                                                  reportStatus:
+                                                                      "Report_approved",
+                                                                  replay:
+                                                                      replayApproveNotes
+                                                                          .text,
+                                                                  id: getTaskRead?.reportId));
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                                width: w / 3.1,
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            10),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  color:
+                                                                      ColorPalette
+                                                                          .green,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .task_alt_rounded,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      Text(
+                                                                        "OK",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize:
+                                                                              18,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        ])
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      },
+                                      gradient: const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            ColorPalette.green,
+                                            ColorPalette.green
+                                          ]),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.task_alt_rounded,
+                                            color: Colors.white,
                                           ),
-                                        );
-                                      });
-                                },
-                                gradient: const LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      ColorPalette.primary,
-                                      ColorPalette.primary
-                                    ]),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.close, color: Colors.white),
-                                    Text(
-                                      "Reject",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.white,
-                                        fontSize: w / 22,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        ],
-                      ),
-                    )
+                                          Text(
+                                            "Approve",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.white,
+                                              fontSize: w / 22,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ),
+                                Container(
+                                  width: w / 2.3,
+                                  child: GradientButton(
+                                      color: ColorPalette.primary,
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Reject the Report",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts.roboto(
+                                                        color:
+                                                            Color(0xff151522),
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 16,
+                                                    ),
+                                                    Text(
+                                                      "Reject the report submitted by \n Shifas",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xff6d6d6d),
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 16,
+                                                    ),
+                                                    Container(
+                                                      height: h / 8,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border.all(
+                                                              color: Color(
+                                                                  0xffD3D3D3),
+                                                              width: 0.2),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5)),
+                                                      child: TextFormField(
+                                                        readOnly: false,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          border:
+                                                              InputBorder.none,
+                                                          hintText:
+                                                              "Add Notes...",
+                                                          hintStyle: GoogleFonts
+                                                              .roboto(
+                                                                  fontSize:
+                                                                      w / 26,
+                                                                  color: Color(
+                                                                      0xffD3D3D3)),
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                        ),
+                                                        onChanged: (ss) {},
+                                                        scrollPadding:
+                                                            EdgeInsets.all(10),
+                                                        cursorColor:
+                                                            ColorPalette
+                                                                .primary,
+                                                        obscureText: false,
+                                                        style: TextStyle(
+                                                            color: ColorPalette
+                                                                .black,
+                                                            fontSize: 17),
+                                                        // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+                                                        // inputFormatters: [
+                                                        //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+                                                        //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+                                                        //   FilteringTextInputFormatter.singleLineFormatter,
+                                                        //
+                                                        // ],
+                                                        controller:
+                                                            replayRejectNotes,
+                                                        maxLines: 5,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Container(
+                                                              width: w / 3.3,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          10),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                      border:
+                                                                          Border
+                                                                              .all(
+                                                                        color: Color(0xffC6C6C6)
+                                                                            .withOpacity(0.2),
+                                                                        width:
+                                                                            1,
+                                                                      ),
+                                                                      color: Color(
+                                                                              0xffC6C6C6)
+                                                                          .withOpacity(
+                                                                              0.2)),
+                                                              child:
+                                                                  const Center(
+                                                                      child:
+                                                                          Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .white),
+                                                                  Text(
+                                                                    "Cancel",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          18,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              )),
+                                                            ),
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              context.read<TaskBloc>().add(ReplayReportEvent(
+                                                                  reportStatus:
+                                                                      "Report_rejected",
+                                                                  replay:
+                                                                      replayRejectNotes
+                                                                          .text,
+                                                                  id: getTaskRead?.reportId));
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                                width: w / 3.1,
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            10),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  color: ColorPalette
+                                                                      .primary,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .task_alt_rounded,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      Text(
+                                                                        "Reject",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize:
+                                                                              18,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        ])
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      },
+                                      gradient: const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            ColorPalette.primary,
+                                            ColorPalette.primary
+                                          ]),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.close,
+                                              color: Colors.white),
+                                          Text(
+                                            "Reject",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.white,
+                                              fontSize: w / 22,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container()
                   ],
                 ),
               )),
@@ -2549,9 +2680,6 @@ class _TaskTitleState extends State<TaskTitle> {
                         return GestureDetector(
                           onTap: () async {
                             refresh();
-                            final SharedPreferences sharedPreferences =
-                                await SharedPreferences.getInstance();
-                            String? code = sharedPreferences.getString('code');
                             changeTappedTile(i);
                             BlocProvider.of<TaskBloc>(context).add(
                                 UpdateTaskEvent(
@@ -2763,52 +2891,55 @@ class _TaskTitleState extends State<TaskTitle> {
                                             child: BlocBuilder<TaskBloc,
                                                 TaskState>(
                                               builder: (context, state) {
-                                                if(state is GetTopicListLoading){
-
-                                                }
-                                                if(state is GetTopicListSuccess){
+                                                if (state
+                                                    is GetTopicListLoading) {}
+                                                if (state
+                                                    is GetTopicListSuccess) {
                                                   return ListView.separated(
                                                       primary: true,
                                                       shrinkWrap: true,
                                                       physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                      itemBuilder: (context,
-                                                          index) =>
-                                                          Row(
-                                                            children: [
-                                                              CustomRadioButton(
-                                                                onTap: () {
-                                                                  onSelect(index);
-                                                                  topicId=state.taskList[index].id??0;
-                                                                  setState(() {});
-                                                                },
-                                                                isActive:
-                                                                selected ==
-                                                                    index,
+                                                          NeverScrollableScrollPhysics(),
+                                                      itemBuilder:
+                                                          (context, index) =>
+                                                              Row(
+                                                                children: [
+                                                                  CustomRadioButton(
+                                                                    onTap: () {
+                                                                      onSelect(
+                                                                          index);
+                                                                      topicId =
+                                                                          state.taskList[index].id ??
+                                                                              0;
+                                                                      setState(
+                                                                          () {});
+                                                                    },
+                                                                    isActive:
+                                                                        selected ==
+                                                                            index,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Container(
+                                                                      width: w /
+                                                                          1.5,
+                                                                      child:
+                                                                          Text(
+                                                                        state.taskList[index].name ??
+                                                                            "",
+                                                                        style: GoogleFonts.roboto(
+                                                                            fontSize: w /
+                                                                                24,
+                                                                            fontWeight: selected == index
+                                                                                ? FontWeight.w600
+                                                                                : FontWeight.w400),
+                                                                      )),
+                                                                ],
                                                               ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Container(
-                                                                  width: w / 1.5,
-                                                                  child: Text(
-                                                                    state.taskList[index].name??"",
-                                                                    style: GoogleFonts.roboto(
-                                                                        fontSize:
-                                                                        w /
-                                                                            24,
-                                                                        fontWeight: selected ==
-                                                                            index
-                                                                            ? FontWeight
-                                                                            .w600
-                                                                            : FontWeight
-                                                                            .w400),
-                                                                  )),
-                                                            ],
-                                                          ),
                                                       separatorBuilder:
                                                           (context, index) =>
-                                                          Divider(),
+                                                              Divider(),
                                                       itemCount: 8);
                                                 }
                                                 return Container();
@@ -2870,13 +3001,12 @@ class _TaskTitleState extends State<TaskTitle> {
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
-                              context.read<TaskBloc>().add(
-                                  CreateReportEvent(
-                                      toipicId: topicId,
+                              context.read<TaskBloc>().add(CreateReportEvent(
+                                  toipicId: topicId,
                                   taskId: getTaskRead?.id,
                                   notes: reportNotes.text,
-                                  userId: authentication.authenticatedUser.code));
-
+                                  userId:
+                                      authentication.authenticatedUser.code));
                             },
                             gradient: const LinearGradient(
                                 begin: Alignment.topCenter,
@@ -2896,6 +3026,144 @@ class _TaskTitleState extends State<TaskTitle> {
                             )),
                       ),
                     )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  _showModalBottomInfoData() {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 2.7,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Report Info",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Container(
+                          height: h / 3.7,
+                          // color: Colors.yellow,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "If your admin has mistakenly assigned a task to you, please report the task. Once approved, the task will be removed from your assignment list. You can use the comment option for further clarification if needed from the admin. Please note that this is a one-time request to rectify the inadvertent assignment, and if the admin rejects the report request, the 'Report' button will automatically disable. So that text to request any concerns using text field in report option.",
+                                            style: GoogleFonts.roboto(
+                                                color: Color(0xff6D6D6D),
+                                                fontSize: w / 26,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(
+                    //         left: 15, right: 15, bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           context.read<TaskBloc>().add(CreateReportEvent(
+                    //               toipicId: topicId,
+                    //               taskId: getTaskRead?.id,
+                    //               notes: reportNotes.text,
+                    //               userId:
+                    //               authentication.authenticatedUser.code));
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Report this Task",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),
+                    // )
                   ],
                 ),
               );

@@ -35,6 +35,22 @@ class GetNewJobListFailed extends JobState {
   final String msg;
   const GetNewJobListFailed( this.msg);
 }
+//repoter
+class GetReporterListLoading extends JobState {}
+
+class GetReporterListSuccess extends JobState {
+  final List<GetJobList>? jobList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetReporterListSuccess(
+      {this.jobList, this.prevPageUrl, this.nextPageUrl});
+}
+
+class GetReporterListFailed extends JobState {
+  final String msg;
+  const GetReporterListFailed( this.msg);
+}
+
 //instant
 class GetInstantJobListInitial extends JobState {}
 
@@ -83,18 +99,23 @@ class GetAdminDataSuccess extends JobState {
 
 class GetAdminDataFailed extends JobState {}
 //employeelist
-class GetEmployeeListInitial extends JobState {}
+
 
 class GetEmployeeListLoading extends JobState {}
 
 class GetEmployeeListSuccess extends JobState {
-  final List<GetEmployeeList> employeeList;
+  final List<GetEmployeeList>? assignMeList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
 
-  const GetEmployeeListSuccess(this.employeeList);
+  const GetEmployeeListSuccess(
+      {this.assignMeList, this.prevPageUrl, this.nextPageUrl});
 }
 
-class GetEmployeeListFailed extends JobState {}
-
+class GetEmployeeListFailed extends JobState {
+  final String msg;
+  const GetEmployeeListFailed( this.msg);
+}
 //report
 class GetReportingPersonListLoading extends JobState {}
 

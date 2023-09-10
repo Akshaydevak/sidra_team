@@ -13,6 +13,10 @@ class SingleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -35,7 +39,7 @@ class SingleRow extends StatelessWidget {
               label??"Label",
               style: GoogleFonts.roboto(
                 color: Colors.black,
-                fontSize: 18,
+                fontSize: w/24,
 
                 fontWeight: FontWeight.w500,
               ),

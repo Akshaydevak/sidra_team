@@ -1,6 +1,8 @@
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../core/color_palatte.dart';
 import '../presentation/order_app/order_svg.dart';
 
 class CustomCheckBox extends StatefulWidget {
@@ -51,9 +53,12 @@ class CustomCheckBoxData extends StatefulWidget {
   final bool value;
   final String name;
   final String email;
+  final String lname;
+  final String profile;
+  final String role;
   final Function(bool)? onChange;
 
-  const CustomCheckBoxData({Key? key, this.value = false, this.onChange,  this.name="",  this.email=""})
+  const CustomCheckBoxData({Key? key, this.value = false, this.onChange,  this.name="",  this.email="", required this.lname, required this.profile, required this.role})
       : super(key: key);
 
   @override
@@ -61,11 +66,12 @@ class CustomCheckBoxData extends StatefulWidget {
 }
 
 class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
-  late bool val;
+  bool val=false;
   bool onChange = false;
 
   @override
   Widget build(BuildContext context) {
+    print("fasss$val");
     var w=MediaQuery.of(context).size.width;
     if (!onChange) val = widget.value;
     onChange = false;
@@ -74,51 +80,105 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
         val = !val;
         if (widget.onChange != null) widget.onChange!(val);
         onChange = true;
+        print("ggggg$val");
         setState(() {});
       },
       child:    Container(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x05000000),
+              blurRadius: 8,
+              offset: Offset(1, 1),
+            ),
+          ],
+          color: Colors.white,
+        ),
         child: Row(
           children: [
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(top: 0),
-              child: Center(
-                child: val
-                    ? Container(
-                    child: SvgPicture.string(
-                        OrderSvg().checkBoxActiveIcon))
-                    : SvgPicture.string(
-                    OrderSvg().checkBoxIcon),
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
+            widget?.profile==""?
             TextAvatar(
               shape: Shape.Circular,
               size: 40,
-              numberLetters: 1,
-              fontSize: w / 16,
+              numberLetters: 2,
+              fontSize: w/16,
               textColor: Colors.white,
               fontWeight: FontWeight.w500,
-              text: widget.name ??
-                  "".toUpperCase(),
+              text: widget?.name.toString().toUpperCase(),
+            ):
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(widget.profile??"",),
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Container(
-              width: w/1.8,
-              child: Text(
-                widget.email??"",
-                style:  TextStyle(overflow: TextOverflow.ellipsis,
+            SizedBox(width: 8,),
+            SizedBox(
+              width: w/1.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: w/2,
+                        // color: Colors.yellow,
+                        child: Text(
+                          "${widget?.name}"" ""${widget?.lname}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width:w/16,),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Center(
+                            child: val
+                                ? Container(
+                              // color: Colors.black,
+                              // padding: EdgeInsets.all(10),
+                              child: SvgPicture.string(
+                                  OrderSvg().checkBoxActiveIcon),
+                            )
+                                // :
+                            // Container(
+                            //   color: Colors.red,
+                            //   padding: EdgeInsets.all(10),
+                            //   child: SvgPicture.string(
+                            //       OrderSvg().checkBoxActiveIcon,height: 30,width: 30,),
+                            // )
+                          : SvgPicture.string(
+                          OrderSvg().checkBoxIcon,height: 35,width: 35),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // const SizedBox(height: 2,),
+                  Container(
+                    width: w,
+                    // color: Colors.red,
 
-                  color: Color(0xff151522),
-                  fontSize: w/24,
-                ),
+                    child: Text(
+                      widget?.email??"",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:  TextStyle(
+                        color: Colors.black,
+                        fontSize: w/26,
+                      ),
+                    ),
+                  )
+                ],
               ),
-            )
+            ),
           ],
         ),
       ),

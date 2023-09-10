@@ -2,6 +2,7 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
+import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/promotion_app/dropdown_card.dart';
 import 'package:cluster/presentation/task_operation/create/single_row.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
@@ -24,6 +25,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/utils/variables.dart';
 import '../../../common_widgets/gradient_button.dart';
+import '../../../common_widgets/no_glow.dart';
 import '../home/bloc/job_bloc.dart';
 import '../task_title.dart';
 import 'add_text.dart';
@@ -34,7 +36,8 @@ class CreateNewTask extends StatefulWidget {
   final bool isSubTask;
   final bool editTask;
   final int? subTaskId;
-  const CreateNewTask({Key? key, this.isSubTask = false, this.editTask = false, this.subTaskId})
+  final int? jobId;
+  const CreateNewTask({Key? key, this.isSubTask = false, this.editTask = false, this.subTaskId, this.jobId})
       : super(key: key);
 
   @override
@@ -181,7 +184,14 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     Variable.assignName="";
     Variable.assignCode="";
     Variable.assignType="";
+    clearIndexVal();
     super.initState();
+  }
+  clearIndexVal()async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.remove('index');
+    await pref.remove('index2');
+    Variable.isselected=false;
   }
 
   String? taskId;
@@ -194,7 +204,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     var w = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
         return true;
       },
       child: MultiBlocListener(
@@ -379,14 +389,16 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         child: Scaffold(
             backgroundColor: Colors.white,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(0),
-              child: AppBar(
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  systemNavigationBarColor: ColorPalette.white, // Navigation bar
-                  statusBarColor: ColorPalette.white, // Status bar
-                ),
-                elevation: 0,
-              ),
+              preferredSize: Size.fromHeight(60),
+              child: BackAppBar(
+                label: readTask?.taskName ?? "Create New Task",
+                isAction: false,
+                isBack: false,
+                onTap: (){
+                  context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
+                  Navigator.pop(context);
+                },
+              )
             ),
             body: SingleChildScrollView(
                 child: SafeArea(
@@ -394,16 +406,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TaskAndOperationAppBar(
-                    label: readTask?.taskName ?? "Create New Task",
-                    onTap: (){
-                      context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
-                      Navigator.pop(context);
-                    },
-
-                  ),
+                  // TaskAndOperationAppBar(
+                  //   label: readTask?.taskName ?? "Create New Task",
+                  //   onTap: (){
+                  //     context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
+                  //     Navigator.pop(context);
+                  //   },
+                  //
+                  // ),
+                  // SizedBox(height: 50,),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,9 +427,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: Color(0xffe6ecf0),
                                 width: 1,
@@ -439,13 +452,14 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       : taskYype ?? "",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Color(0xffe70c0c),
+                                    color: ColorPalette.primary,
                                     fontSize: w / 22,
                                   ),
                                 ),
                                 const Icon(
                                   Icons.arrow_forward_ios_sharp,
-                                  color: Colors.black,
+                                  size: 18,
+                                  color: ColorPalette.primary,
                                 ),
                               ],
                             ),
@@ -453,14 +467,14 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         ),
 
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Container(
                           width: w,
                           // height: 185,
                           // padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Color(0xffe6ecf0),
                               width: 1,
@@ -519,6 +533,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
                                   });
                                 },
+                                style:GoogleFonts.roboto(
+                                    fontWeight: FontWeight.w600
+                                ) ,
                                 decoration:  InputDecoration(
                                   contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
                                   hintText: "Enter Description",
@@ -532,18 +549,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
+                        SizedBox(
+                          height: 5,
                         ),
                         Container(
                           width: w,
+                          // height: 120,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Color(0xffe6ecf0),
                               width: 1,
                             ),
-                            boxShadow: const [
+                            boxShadow: [
                               BoxShadow(
                                 color: Color(0x05000000),
                                 blurRadius: 8,
@@ -555,30 +573,39 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           child: Column(
                             children: [
                               Container(
-                                margin: const EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 10, top: 20),
+                                margin: EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    bottom: 10,
+                                    top: 10),
                                 child: SingleRow(
-                                    color: const Color(0xff1ECAC0),
+                                    color: Color(0xfffc3a97),
                                     label: "Date & Time",
-                                    svg: CreateSvg().calenderIcon,
+                                    svg: CreateSvg().clockIcon,
                                     onTap: () {
                                       setState(() {
                                         // isTime = !isTime;
                                       });
                                     },
                                     endIcon: GestureDetector(
+
                                       onTap: () {
+                                        // focusNode.unfocus();
+                                        // descriptionfocusNode.unfocus();
                                         showDialog(
                                             context: context,
-                                            builder: (BuildContext context) {
+                                            builder: (BuildContext
+                                            context) {
                                               return AlertDialog(
                                                 content: Column(
                                                   mainAxisSize:
-                                                  MainAxisSize.min,
+                                                  MainAxisSize
+                                                      .min,
                                                   children: [
                                                     Container(
                                                       height: 300,
-                                                      child: Scaffold(
+                                                      child:
+                                                      Scaffold(
                                                         body:
                                                         SfDateRangePicker(
                                                           backgroundColor:
@@ -616,108 +643,166 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                         Navigator.pop(
                                                             context);
                                                       },
-                                                      child: Container(
+                                                      child:
+                                                      Container(
                                                         height: 25,
                                                         width: 75,
                                                         color: ColorPalette
                                                             .primary,
-                                                        child: const Center(
-                                                            child:
-                                                            Text("Ok")),
+                                                        child: Center(
+                                                            child: Text(
+                                                              "Ok",
+                                                              style: GoogleFonts.roboto(
+                                                                  color: Colors.white
+                                                              ),)),
                                                       ),
-                                                    ),
+                                                    )
                                                   ],
                                                 ),
                                               );
                                             });
                                       },
+
                                       child: Container(
                                           padding: EdgeInsets.all(5),
-                                          child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),
+                                          child:  Text("Choose Date",
+                                            style: GoogleFonts.roboto(
+                                                fontSize: w/24,
+                                                color: ColorPalette.primary,
+                                                fontWeight: FontWeight.w500
+                                            ),)),
                                     )),
                               ),
                               Column(
                                 children: [
                                   Divider(
-                                    indent: 50,
+                                    indent: 10,
+                                    height: 2,
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 10, top: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 10,
+                                        top: 10),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            // _restorableDatePickerRouteFuture.present();
-                                          },
-                                          child:  Text(
-                                            "Start Date :",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: w/22,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "From :",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: w/24,
+                                              ),
                                             ),
-                                          ),
+                                            SizedBox(width: w/40,),
+                                            Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(4),
+                                                // border:
+                                                // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color(0x05000000),
+                                                    blurRadius: 8,
+                                                    offset: Offset(1, 1),
+                                                  ),
+                                                ],
+                                                color: Color(0xffF4F4F4),
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                _range2.isNotEmpty? startDate2:"           ",
+                                                style: GoogleFonts.roboto(
+                                                  color: ColorPalette.black,
+                                                  fontSize: w/24,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        GestureDetector(
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "To :",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: w/24,
+                                              ),
+                                            ),
+                                            SizedBox(width: w/40,),
+                                            Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(4),
+                                                // border:
+                                                // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color(0x05000000),
+                                                    blurRadius: 8,
+                                                    offset: Offset(1, 1),
+                                                  ),
+                                                ],
+                                                color: Color(0xffF4F4F4),
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                _range2.isNotEmpty?ebdDate2:"           ",
+                                                style: GoogleFonts.roboto(
+                                                  color: ColorPalette.black,
+                                                  fontSize: w/24,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
 
-                                          child: Text(
-                                            _range2.isNotEmpty? startDate2:"Choose Date",
-                                            style: GoogleFonts.roboto(
-                                              color: ColorPalette.black,
-                                              fontSize: w/22,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: _selectTime,
-                                          child: Text(
-                                           startTime,
-                                            style: GoogleFonts.roboto(
-                                              color: Color(0xfffe5762),
-                                              fontSize: w/22,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          ],
                                         )
                                       ],
                                     ),
                                   ),
+
                                   Divider(
-                                    indent: 50,
+                                    indent: 10,
+                                    height: 2,
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 20, top: 10),
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 12,
+                                        top: 12),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .spaceBetween,
                                       children: [
-                                         Text(
-                                          "End Date :",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: w/22,
-                                          ),
-                                        ),
-                                        Text(
-                                          _range2.isNotEmpty? ebdDate2:"Choose Date",
-                                          style: GoogleFonts.roboto(
-                                            color: ColorPalette.black,
-                                            fontSize: w/22,
-                                            fontWeight: FontWeight.w500,
+                                        GestureDetector(
+                                          onTap: _selectTime,
+                                          child: Text(
+                                            startTime,
+                                            style: GoogleFonts.roboto(
+                                              color: const Color(0xff2871AF),
+                                              fontSize: w/24,
+                                              fontWeight:
+                                              FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                         GestureDetector(
                                           onTap: _endTime,
                                           child: Text(
-                                            // widget.edit?endTime:
-                                             endTime,
+                                            endTime,
                                             style: GoogleFonts.roboto(
-                                              color: Color(0xfffe5762),
-                                              fontSize: w/22,
-                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xff2871AF),
+                                              fontSize: w/24,
+                                              fontWeight:
+                                              FontWeight.w500,
                                             ),
                                           ),
                                         )
@@ -725,22 +810,216 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        // Container(
+                        //   width: w,
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(10),
+                        //     border: Border.all(
+                        //       color: Color(0xffe6ecf0),
+                        //       width: 1,
+                        //     ),
+                        //     boxShadow: const [
+                        //       BoxShadow(
+                        //         color: Color(0x05000000),
+                        //         blurRadius: 8,
+                        //         offset: Offset(1, 1),
+                        //       ),
+                        //     ],
+                        //     color: Colors.white,
+                        //   ),
+                        //   child: Column(
+                        //     children: [
+                        //       Container(
+                        //         margin: const EdgeInsets.only(
+                        //             left: 16, right: 16, bottom: 10, top: 20),
+                        //         child: SingleRow(
+                        //             color: const Color(0xff1ECAC0),
+                        //             label: "Date & Time",
+                        //             svg: CreateSvg().calenderIcon,
+                        //             onTap: () {
+                        //               setState(() {
+                        //                 // isTime = !isTime;
+                        //               });
+                        //             },
+                        //             endIcon: GestureDetector(
+                        //               onTap: () {
+                        //                 showDialog(
+                        //                     context: context,
+                        //                     builder: (BuildContext context) {
+                        //                       return AlertDialog(
+                        //                         content: Column(
+                        //                           mainAxisSize:
+                        //                           MainAxisSize.min,
+                        //                           children: [
+                        //                             Container(
+                        //                               height: 300,
+                        //                               child: Scaffold(
+                        //                                 body:
+                        //                                 SfDateRangePicker(
+                        //                                   backgroundColor:
+                        //                                   Colors.white,
+                        //                                   endRangeSelectionColor:
+                        //                                   ColorPalette.primary,
+                        //                                   startRangeSelectionColor:
+                        //                                   ColorPalette.primary,
+                        //                                   rangeSelectionColor:
+                        //                                   ColorPalette.primary
+                        //                                       .withOpacity(0.1),
+                        //                                   selectionColor:
+                        //                                   Colors.grey,
+                        //                                   todayHighlightColor:
+                        //                                   ColorPalette.primary,
+                        //                                   onSelectionChanged:
+                        //                                   _onSelectionChanged,
+                        //                                   selectionMode:
+                        //                                   DateRangePickerSelectionMode
+                        //                                       .range,
+                        //                                   initialSelectedRange: widget.editTask?PickerDateRange(
+                        //                                       DateTime.parse(startDate),
+                        //                                       DateTime.parse(ebdDate)):
+                        //                                   startDate!=""?PickerDateRange(
+                        //                                       DateTime.parse(startDate),
+                        //                                       DateTime.parse(ebdDate)):
+                        //                                   PickerDateRange(
+                        //                                       DateTime.now(),
+                        //                                       DateTime.now()),
+                        //                                 ),
+                        //                               ),
+                        //                             ),
+                        //                             GestureDetector(
+                        //                               onTap: () {
+                        //                                 Navigator.pop(
+                        //                                     context);
+                        //                               },
+                        //                               child: Container(
+                        //                                 height: 25,
+                        //                                 width: 75,
+                        //                                 color: ColorPalette
+                        //                                     .primary,
+                        //                                 child: const Center(
+                        //                                     child:
+                        //                                     Text("Ok")),
+                        //                               ),
+                        //                             ),
+                        //                           ],
+                        //                         ),
+                        //                       );
+                        //                     });
+                        //               },
+                        //               child: Container(
+                        //                   padding: EdgeInsets.all(5),
+                        //                   child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),
+                        //             )),
+                        //       ),
+                        //       Column(
+                        //         children: [
+                        //           Divider(
+                        //             indent: 50,
+                        //           ),
+                        //           Container(
+                        //             margin: EdgeInsets.only(
+                        //                 left: 16, right: 16, bottom: 10, top: 10),
+                        //             child: Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 GestureDetector(
+                        //                   onTap: () {
+                        //                     // _restorableDatePickerRouteFuture.present();
+                        //                   },
+                        //                   child:  Text(
+                        //                     "Start Date :",
+                        //                     style: TextStyle(
+                        //                       color: Colors.black,
+                        //                       fontSize: w/22,
+                        //                     ),
+                        //                   ),
+                        //                 ),
+                        //                 GestureDetector(
+                        //
+                        //                   child: Text(
+                        //                     _range2.isNotEmpty? startDate2:"Choose Date",
+                        //                     style: GoogleFonts.roboto(
+                        //                       color: ColorPalette.black,
+                        //                       fontSize: w/22,
+                        //                       fontWeight: FontWeight.w500,
+                        //                     ),
+                        //                   ),
+                        //                 ),
+                        //                 GestureDetector(
+                        //                   onTap: _selectTime,
+                        //                   child: Text(
+                        //                    startTime,
+                        //                     style: GoogleFonts.roboto(
+                        //                       color: Color(0xfffe5762),
+                        //                       fontSize: w/22,
+                        //                       fontWeight: FontWeight.w500,
+                        //                     ),
+                        //                   ),
+                        //                 )
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           Divider(
+                        //             indent: 50,
+                        //           ),
+                        //           Container(
+                        //             margin: EdgeInsets.only(
+                        //                 left: 16, right: 16, bottom: 20, top: 10),
+                        //             child: Row(
+                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                  Text(
+                        //                   "End Date :",
+                        //                   style: TextStyle(
+                        //                     color: Colors.black,
+                        //                     fontSize: w/22,
+                        //                   ),
+                        //                 ),
+                        //                 Text(
+                        //                   _range2.isNotEmpty? ebdDate2:"Choose Date",
+                        //                   style: GoogleFonts.roboto(
+                        //                     color: ColorPalette.black,
+                        //                     fontSize: w/22,
+                        //                     fontWeight: FontWeight.w500,
+                        //                   ),
+                        //                 ),
+                        //                 GestureDetector(
+                        //                   onTap: _endTime,
+                        //                   child: Text(
+                        //                     // widget.edit?endTime:
+                        //                      endTime,
+                        //                     style: GoogleFonts.roboto(
+                        //                       color: Color(0xfffe5762),
+                        //                       fontSize: w/22,
+                        //                       fontWeight: FontWeight.w500,
+                        //                     ),
+                        //                   ),
+                        //                 )
+                        //               ],
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                SizedBox(
+                  height: 5,
+                ),
                         GestureDetector(
                           onTap: () {
                             _showModalBottomSheetpriority();
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: Color(0xffe6ecf0),
                                 width: 1,
@@ -789,13 +1068,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                 ],
                                               )),
                                     PriorityLeval == ""
-                                        ? Icon(Icons.arrow_forward_ios_sharp)
+                                        ? Icon(Icons.arrow_forward_ios_sharp,
+                                    color: ColorPalette.primary,
+                                        size: 18,)
                                         : Container()
                                   ],
                                 )),
                           ),
                         ),
-                       SizedBox(height: 10,),
+                        SizedBox(
+                          height: 5,
+                        ),
                         GestureDetector(
                           onTap: () {
                             context
@@ -832,9 +1115,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: Color(0xffe6ecf0),
                                 width: 1,
@@ -855,17 +1138,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 onTap: () {
                                   //    ReportingPerson
                                 },
-                                endIcon: Icon(Icons.arrow_forward_ios_sharp)),
+                                endIcon: Icon(Icons.arrow_forward_ios_sharp,
+                                color: ColorPalette.primary,
+                                    size: 18,)),
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
 
                         Container(
                           width: w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Color(0xffe6ecf0),
                               width: 1,
@@ -887,12 +1172,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 1,
                         ),
                         Container(
                           width: w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Color(0xffe6ecf0),
                               width: 1,
@@ -914,7 +1199,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   widget.editTask == false ? false : true),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         widget.editTask == false
                             ? widget.isSubTask
@@ -922,7 +1207,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           onTap: () {
                             context
                                 .read<JobBloc>()
-                                .add(const GetEmployeeListEvent());
+                                .add(const GetEmployeeListEvent('','',''));
                             context
                                 .read<JobBloc>()
                                 .add(GetGroupListEvent());
@@ -979,7 +1264,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       "Assign To",
                                       style: GoogleFonts.roboto(
                                         color: Color(0xff151522),
-                                        fontSize: 18,
+                                        fontSize: w/24,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     )
@@ -1020,10 +1305,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 14),
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: Color(0xffe6ecf0),
                                 width: 1,
@@ -1062,7 +1346,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       "Assign To",
                                       style: GoogleFonts.roboto(
                                         color: Color(0xff151522),
-                                        fontSize: 18,
+                                        fontSize: w/24,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     )
@@ -1078,7 +1362,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     // const SizedBox(
                                     //   width: 10,
                                     // ),
-                                    Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp):Text(Variable.assignName)
+                                    Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp,color: ColorPalette.primary,size: 18,):Text(Variable.assignName)
                                   ],
                                 )
                               ],
@@ -1090,7 +1374,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         widget.editTask == true
                             ? Container()
                             : SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         widget.isSubTask
                             ? Container()
@@ -1099,9 +1383,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           children: [
                             Container(
                               width: w,
-                              padding: EdgeInsets.all(16),
+                              padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
                                   color: Color(0xffe6ecf0),
                                   width: 1,
@@ -1147,7 +1431,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       Variable.assignType,
                                       createdOn:
                                       "${_range.split(" - ")[0]} $startTime2",
-                                      jobId: Variable.jobReadId,
+                                      jobId: widget.jobId??0,
                                       notas:
                                       notesController.text ??
                                           "",
@@ -1327,7 +1611,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             color: ColorPalette.primary,
                             onPressed: () {
                               createButton=true;
-                              print("JOB IDDD${Variable.jobReadId}");
                              widget.editTask || updateval || isSubTask
                                   ? BlocProvider.of<TaskBloc>(context).add(
                                   UpdateTaskEvent(
@@ -1337,7 +1620,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       AssigningCode: Variable.assignCode,
                                       AssigningType: Variable.assignType,
                                       createdOn:  "${_range.split(" - ")[0]} ${startTime2}",
-                                      jobid: Variable.jobReadId,
+                                      jobid: readTask?.jobId,
                                       notas: notesController.text ?? "",
                                       priorityLeval: "1",
                                       remarks: remarksController.text ?? "",
@@ -1376,7 +1659,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 AssigningCode: Variable.assignCode,
                                 AssigningType: Variable.assignType,
                                 createdOn:  "${_range.split(" - ")[0]} ${startTime2}",
-                                jobId: Variable.jobReadId,
+                                jobId: widget.jobId??0,
                                 notas: notesController.text ?? "",
                                 priorityLeval: "1",
                                 remarks: remarksController.text ?? "",
@@ -1426,106 +1709,269 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     );
   }
 
-  _showModalBottomSheet(
-      BuildContext context, List<GetTaskTypeList> taskTypeList,String? type) {
+  // _showModalBottomSheet(
+  //     BuildContext context, List<GetTaskTypeList> taskTypeList,String? type) {
+  //   showModalBottomSheet(
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+  //       ),
+  //       context: context,
+  //       isScrollControlled: true,
+  //       builder: (context) {
+  //         var h = MediaQuery.of(context).size.height;
+  //         var w = MediaQuery.of(context).size.width;
+  //         return StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setState) {
+  //             return Container(
+  //               padding: EdgeInsets.only(
+  //                 top: 20,
+  //               ),
+  //               height: h/1.5,
+  //               width: double.infinity,
+  //               decoration: const BoxDecoration(
+  //                   color: ColorPalette.white,
+  //                   borderRadius: BorderRadius.only(
+  //                     topRight: Radius.circular(10),
+  //                     topLeft: Radius.circular(10),
+  //                   )),
+  //               // alignment: Alignment.center,
+  //               child: SingleChildScrollView(
+  //                 child: Column(
+  //                   mainAxisAlignment: MainAxisAlignment.start,
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Container(
+  //                       width: w,
+  //                       alignment: Alignment.center,
+  //                       child: Text(
+  //                         "Select Task Type",
+  //                         style: GoogleFonts.roboto(
+  //                           color: ColorPalette.black,
+  //                           fontSize: 20,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     ListView.separated(
+  //                       padding: const EdgeInsets.only(),
+  //                       physics: const ScrollPhysics(),
+  //                       shrinkWrap: true,
+  //                       itemCount: taskTypeList.length,
+  //                       itemBuilder: (BuildContext context, int i) {
+  //                         return GestureDetector(
+  //                           onTap: () {
+  //                             changeTappedTile(i);
+  //                             Variable.taskType = taskTypeList[i].id ?? 0;
+  //                             taskYype = taskTypeList[i].typeName ?? "";
+  //                             Navigator.pop(context);
+  //                             setState(() {});
+  //                           },
+  //                           child: Container(
+  //                             padding: EdgeInsets.all(16),
+  //                             color: type == taskTypeList[i].typeName
+  //                                 ? ColorPalette.cardBackground
+  //                                 : ColorPalette.white,
+  //                             child: Row(
+  //                               children: [
+  //                                 type == taskTypeList[i].typeName
+  //                                     ? SvgPicture.string(
+  //                                         CreateSvg().radioActiveButton)
+  //                                     : SvgPicture.string(
+  //                                         CreateSvg().radioInActiveButton),
+  //                                 const SizedBox(
+  //                                   width: 10,
+  //                                 ),
+  //                                 Text(
+  //                                   taskTypeList[i].typeName ?? "",
+  //                                   style: GoogleFonts.roboto(
+  //                                     color: Colors.black,
+  //                                     fontSize: 18,
+  //                                     fontWeight: FontWeight.w500,
+  //                                   ),
+  //                                 )
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         );
+  //                       },
+  //                       separatorBuilder: (BuildContext context, int index) {
+  //                         return Container(
+  //                           margin: EdgeInsets.only(left: 16, right: 16),
+  //                           color: Color(0xffE6ECF0),
+  //                           height: 1,
+  //                           width: w,
+  //                         );
+  //                       },
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         );
+  //       });
+  // }
+  _showModalBottomSheet(BuildContext context, List<GetTaskTypeList> taskTypeList,String? type) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
-        context: context,
+        useRootNavigator: true,
         isScrollControlled: true,
+        context: context,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           var w = MediaQuery.of(context).size.width;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                padding: EdgeInsets.only(
-                  top: 20,
-                ),
-                height: 350,
+                height: h / 1.3,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                    color: ColorPalette.white,
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(10),
                       topLeft: Radius.circular(10),
                     )),
-                // alignment: Alignment.center,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: w,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Select Task Type",
-                          style: GoogleFonts.roboto(
-                            color: ColorPalette.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      ListView.separated(
-                        padding: const EdgeInsets.only(),
-                        physics: const ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: taskTypeList.length,
-                        itemBuilder: (BuildContext context, int i) {
-                          return GestureDetector(
-                            onTap: () {
-                              changeTappedTile(i);
-                              Variable.taskType = taskTypeList[i].id ?? 0;
-                              taskYype = taskTypeList[i].typeName ?? "";
-                              Navigator.pop(context);
-                              setState(() {});
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(16),
-                              color: type == taskTypeList[i].typeName
-                                  ? ColorPalette.cardBackground
-                                  : ColorPalette.white,
-                              child: Row(
-                                children: [
-                                  type == taskTypeList[i].typeName
-                                      ? SvgPicture.string(
-                                          CreateSvg().radioActiveButton)
-                                      : SvgPicture.string(
-                                          CreateSvg().radioInActiveButton),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    taskTypeList[i].typeName ?? "",
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )
-                                ],
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Select Task Type",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        SizedBox(
+                          height: h/1.5,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListView.separated(
+                                      padding: const EdgeInsets.only(),
+                                      physics: const ScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: taskTypeList.length,
+                                      itemBuilder: (BuildContext context, int i) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            changeTappedTile(i);
+                                            Variable.taskType = taskTypeList[i].id ?? 0;
+                                            taskYype = taskTypeList[i].typeName ?? "";
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                                            color: type == taskTypeList[i].typeName
+                                                ? ColorPalette.cardBackground
+                                                : ColorPalette.white,
+                                            child: Row(
+                                              children: [
+                                                type == taskTypeList[i].typeName
+                                                    ? SvgPicture.string(
+                                                    CreateSvg().radioActiveButton,color: ColorPalette.primary,)
+                                                    : SvgPicture.string(
+                                                    CreateSvg().radioInActiveButton),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  taskTypeList[i].typeName ?? "",
+                                                  style: GoogleFonts.roboto(
+                                                    color: Colors.black,
+                                                    fontSize: w/24,
+                                                    // fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (BuildContext context, int index) {
+                                        return Container(
+                                          // margin: EdgeInsets.only(left: 16, right: 16),
+                                          color: Color(0xffE6ECF0),
+                                          height: 1,
+                                          width: w,
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Container(
-                            margin: EdgeInsets.only(left: 16, right: 16),
-                            color: Color(0xffE6ECF0),
-                            height: 1,
-                            width: w,
-                          );
-                        },
-                      )
-                    ],
-                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           // refresh();
+                    //           Navigator.pop(context);
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Select Task Type",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),
+                    // )
+                  ],
                 ),
               );
             },

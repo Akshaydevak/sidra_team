@@ -58,7 +58,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
   @override
   void initState() {
 
-    context.read<JobBloc>().add(const GetEmployeeListEvent());
+    context.read<JobBloc>().add(const GetEmployeeListEvent('','',''));
     super.initState();
   }
 
@@ -519,15 +519,15 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                                           GroupList(
                                                               userUpdateList: userList??[],
                                                               userList: userCodeList,
-                                                              readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.employeeList[index].code):false,
+                                                              readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.assignMeList?[index].code):false,
 
                                                               listuser: chaneTable,
                                                               employeeList: state
-                                                                  .employeeList[index]),
+                                                                  .assignMeList?[index]),
                                                       separatorBuilder:
                                                           (context, index) => Divider(),
                                                       itemCount:
-                                                      state.employeeList.length),
+                                                      state.assignMeList!.length),
                                                 ),
                                               ],
                                             ),

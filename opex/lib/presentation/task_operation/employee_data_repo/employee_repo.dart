@@ -16,7 +16,15 @@ class EmployeeRepo {
     required String contact,
     required String departCode,
     required String designationCode,
-    required String? gender
+    required String? gender,
+    required String netCode,
+    required String nationality,
+    required String password,
+    required int officialRole,
+    required String userRole,
+    required List<int> additionalRole,
+    required List<String> roleNameList,
+    required String roleName
   }) async {
     final restAPIresponse = await _dataSource.employeeCreate(
       email: email,
@@ -27,11 +35,35 @@ class EmployeeRepo {
       firstName: firstName,
       lastName: lastName,
       contact: contact,
+      userRole: userRole,
+      netCode: netCode,
+      password: password,
+      officialRole: officialRole,
+      nationality: nationality,
+      additionalRole: additionalRole,
+      roleName: roleName,
+      roleNameList: roleNameList
     );
-    if (restAPIresponse.hasData) {
-      return DataResponse(error: restAPIresponse.error);
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: restAPIresponse.data);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "");
+      return DataResponse(error: restAPIresponse.error ?? "",data: restAPIresponse.error);
+    }
+  }
+  //chage
+  Future<DataResponse> chagePassword({
+    required String employeeCode,
+    required String newPassword,
+  }) async {
+    final restAPIresponse = await _dataSource.chagePassword(
+        employeeCode: employeeCode,
+      newPassword: newPassword
+    );
+    print("respoces${restAPIresponse.data}");
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: restAPIresponse.data);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "",data: restAPIresponse.data);
     }
   }
 
@@ -104,7 +136,29 @@ class EmployeeRepo {
     try {
       final apiResponse = await _dataSource.getEmployeeRead(id!);
 
-      if (apiResponse.code!="") {
+      if (apiResponse.userCode!="") {
+        print("stateee employee herreeee repo");
+        return DataResponse(
+          data: apiResponse,
+        );
+      } else {
+        return DataResponse(
+          error: "implement Error conersion Text",
+        );
+      }
+    } catch (e) {
+      debugPrint("implement Error conersion Text$e");
+    }
+    return DataResponse(
+      error: "implement Error conersion Text",
+    );
+  }
+  //readType
+  Future<DataResponse> getReadType() async {
+    try {
+      final apiResponse = await _dataSource.getReadType();
+
+      if (apiResponse.gender!.isNotEmpty) {
         print("stateee employee herreeee repo");
         return DataResponse(
           data: apiResponse,
@@ -125,14 +179,22 @@ class EmployeeRepo {
   //updateEmployee
   Future<DataResponse> updateEmployee({
     required String email,
-    required String? gender,
     required String orgCode,
     required String lastName,
     required String firstName,
     required String contact,
     required String departCode,
     required String designationCode,
-    required bool isActive
+    required String? gender,
+    required String netCode,
+    required String nationality,
+    required int officialRole,
+    required String userRole,
+    required List<int> additionalRole,
+    required List<String> roleNameList,
+    required String roleName,
+    required bool isActive,
+    required int id,
   }) async {
     final restAPIresponse = await _dataSource.updateEmployee(
       email: email,
@@ -144,12 +206,20 @@ class EmployeeRepo {
       lastName: lastName,
       contact: contact,
       isActive:isActive,
+      roleNameList: roleNameList,
+      roleName: roleName,
+      netCode: netCode,
+      userRole: userRole,
+      officialRole: officialRole,
+      nationality: nationality,
+      additionalRole: additionalRole,
+      id: id
 
     );
-    if (restAPIresponse.hasData) {
-      return DataResponse(error: restAPIresponse.error);
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: restAPIresponse.data);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "");
+      return DataResponse(error: restAPIresponse.error ?? "",data: restAPIresponse.data);
     }
   }
 
@@ -167,5 +237,29 @@ class EmployeeRepo {
     }
     return DataResponse(error: "error Text");
   }
+
+
+  ///change
+
+  Future<DataResponse> changePassword({
+    required String userName,
+    required String current,
+    required String newPass,
+    String? otp,
+  }) async {
+
+    final restAPIresponse = await _dataSource.changePassword(
+        current: current,
+        newPass: newPass,
+        userName: userName,
+        otp: otp
+    );
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: true);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "",data: false);
+    }
+  }
+
 
 }

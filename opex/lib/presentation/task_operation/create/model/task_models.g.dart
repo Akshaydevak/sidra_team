@@ -35,6 +35,9 @@ GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       rewardsData: json['rewards_data'] == null
           ? null
           : CostingMeta.fromJson(json['rewards_data'] as Map<String, dynamic>),
+      reportId: json['report_id'] as int?,
+      currency: json['currency_code'] as String?,
+      isReported: json['is_reported'] as bool? ?? false,
       locayionUrl: json['location_url'] as String?,
       jobTitle: json['job_title'] as String?,
       jobDiscription: json['job_description'] as String?,
@@ -91,6 +94,8 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'job_title': instance.jobTitle,
       'job_description': instance.jobDiscription,
       'name': instance.name,
+      'report_id': instance.reportId,
+      'currency_code': instance.currency,
       'is_notify': instance.isNotify,
       'assigned_to': instance.assignToEmail,
       'assigned_to_name': instance.assignToName,
@@ -106,6 +111,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'is_active': instance.isActive,
       'is_delete': instance.isDelete,
       'is_pinned': instance.isPinned,
+      'is_reported': instance.isReported,
       'assigning_type': instance.assigningType,
       'longitude': instance.longitude,
       'latitude': instance.latitude,
@@ -422,7 +428,9 @@ Map<String, dynamic> _$PunchualityToJson(Punchuality instance) =>
     };
 
 ReportModel _$ReportModelFromJson(Map<String, dynamic> json) => ReportModel(
-      name: json['task_id'] as int?,
+      taskId: json['task_id'] as int?,
+      reportStatus: json['report_status'] as String?,
+      reply: json['reply'] as String?,
       id: json['id'] as int?,
       notes: json['notes'] as String?,
       taskDescription: json['task_description'] as String?,
@@ -434,10 +442,42 @@ ReportModel _$ReportModelFromJson(Map<String, dynamic> json) => ReportModel(
 Map<String, dynamic> _$ReportModelToJson(ReportModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'task_id': instance.name,
+      'task_id': instance.taskId,
       'task_name': instance.taskName,
       'task_description': instance.taskDescription,
       'topic_name': instance.topicName,
       'notes': instance.notes,
       'user_name': instance.userName,
+      'reply': instance.reply,
+      'report_status': instance.reportStatus,
+    };
+
+NotificationList _$NotificationListFromJson(Map<String, dynamic> json) =>
+    NotificationList(
+      description: json['description'] as String?,
+      count: json['notification_count'] as int?,
+      id: json['id'] as int?,
+      userCode: json['user_code'] as String?,
+      appNotificationCode: json['app_notification_code'] as String?,
+      createOn: json['created_on'] as String?,
+      isNew: json['is_new'] as bool? ?? false,
+      notificationType: json['notification_type'] as String?,
+      notificationTypeId: json['notification_type_id'] as String?,
+      isActive: json['is_active'] as bool? ?? false,
+      isDelete: json['is_delete'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$NotificationListToJson(NotificationList instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'notification_count': instance.count,
+      'app_notification_code': instance.appNotificationCode,
+      'notification_type': instance.notificationType,
+      'notification_type_id': instance.notificationTypeId,
+      'user_code': instance.userCode,
+      'description': instance.description,
+      'created_on': instance.createOn,
+      'is_active': instance.isActive,
+      'is_delete': instance.isDelete,
+      'is_new': instance.isNew,
     };

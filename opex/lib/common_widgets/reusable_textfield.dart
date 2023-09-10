@@ -3,7 +3,10 @@
 import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../presentation/seller_app/seller_svg.dart';
 
 class TextFormReusable extends StatefulWidget {
   String? label;
@@ -14,16 +17,20 @@ class TextFormReusable extends StatefulWidget {
   int maxLength;
   FormFieldValidator<String>? validator;
   bool password;
+  bool? isMandatory;
   bool readOnly;
   bool isError;
   bool? numField;
   bool? floatVal;
+  VoidCallback? onTap;
   TextFormReusable(
       {Key? key,
         this.label,
         this.error,
+        this.isMandatory,
         this.numField,
         this.floatVal,
+        this.onTap,
         this.controller,
         this.validator,
         this.password = false,
@@ -57,7 +64,7 @@ class _TextReusableState extends State<TextFormReusable> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Row(mainAxisAlignment: widget.isMandatory==true?MainAxisAlignment.start:MainAxisAlignment.spaceBetween,
           children: [
             Text(
               widget.label??"",
@@ -67,12 +74,19 @@ class _TextReusableState extends State<TextFormReusable> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            widget.isError?Text(
-              widget.error??"",
-              style: GoogleFonts.roboto(
-                color: ColorPalette.primary,
-                fontSize: w/28,
-                fontWeight: FontWeight.w500,
+            widget.isMandatory==true?Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(" *",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w900),),
+            ):Container(),
+            widget.isError?GestureDetector(
+              onTap: widget.onTap,
+              child: Text(
+                widget.error??"",
+                style: GoogleFonts.roboto(
+                  color: ColorPalette.primary,
+                  fontSize: w/28,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ):Text(""),
           ],
@@ -86,7 +100,7 @@ class _TextReusableState extends State<TextFormReusable> {
           scrollPadding: EdgeInsets.all(10),
           cursorColor: ColorPalette.black,
           obscureText: show,
-          style: TextStyle(color: ColorPalette.black, fontSize: 17),
+          style: TextStyle(color: ColorPalette.black, fontSize: 16),
           keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
           inputFormatters: [
             widget.numField==true?FilteringTextInputFormatter.digitsOnly:
@@ -98,6 +112,7 @@ class _TextReusableState extends State<TextFormReusable> {
           maxLines: widget.maxLength,
           decoration: loginInputDecoration(
             hintText: widget.hint,
+            readOnly: widget.readOnly,
             ('Username'),
             suffix: widget.password
                 ? InkWell(
@@ -134,6 +149,7 @@ class _TextReusableState extends State<TextFormReusable> {
 InputDecoration loginInputDecoration(
     String label, {
       String? hintText,
+      bool? readOnly,
       Widget? leading,
       Widget? suffix,
     }) =>
@@ -151,18 +167,18 @@ InputDecoration loginInputDecoration(
         fontSize: 14,
       ),
       alignLabelWithHint: true,
-      fillColor: ColorPalette.white,
+      fillColor: readOnly==true?Color(0xffEEEEEE):ColorPalette.white,
       filled: true,
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xffe6ecf0)),
+        borderSide: BorderSide(color: readOnly==true?Colors.white:Color(0xffe6ecf0)),
         borderRadius: BorderRadius.circular(10),
       ),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xffe6ecf0)),
+        borderSide: BorderSide(color: readOnly==true?Colors.white:Color(0xffe6ecf0)),
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: ColorPalette.black, width: 1.0),
+        borderSide: BorderSide(color: readOnly==true?Colors.white:ColorPalette.black, width: 1.0),
         borderRadius: BorderRadius.circular(10),
       ),
       isDense: false,

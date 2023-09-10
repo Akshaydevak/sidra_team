@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SegmantFlowCard extends StatelessWidget {
-  const SegmantFlowCard({Key? key}) : super(key: key);
+  final  String ?division,category,subCategory,group,item,uom;
+  const SegmantFlowCard({Key? key, this.division, this.category, this.subCategory, this.group, this.item,this.uom}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print(division);
     var w = MediaQuery.of(context).size.width;
     return   Container(
       // margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       width: w,
-      height: 72,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
@@ -31,10 +32,10 @@ class SegmantFlowCard extends StatelessWidget {
       child: RichText(
 
         text: TextSpan(
-          text: 'Bulk ',
+          text: "$division "??"",
           style: GoogleFonts.roboto(
             color: Colors.black,
-            fontSize: w / 25,
+            fontSize: w / 28,
             fontWeight: FontWeight.w500,
           ),
           children: [
@@ -42,34 +43,41 @@ class SegmantFlowCard extends StatelessWidget {
               child: Icon(Icons.arrow_forward, size: w/25),
             ),
             TextSpan(
-              text: ' Baby Products',
+              text: " $category "??' Baby Products',
               style: GoogleFonts.roboto(
                 color: Colors.black,
-                fontSize: w / 25,
+                fontSize: w / 28,
                 fontWeight: FontWeight.w500,
               ),),
             WidgetSpan(
               child: Icon(Icons.arrow_forward, size: w/25),
             ),
-            TextSpan(text: ' Canned And Bottled '
+            TextSpan(text: " $subCategory "??' Canned And Bottled '
               , style: GoogleFonts.roboto(
                 color: Colors.black,
-                fontSize: w / 25,
+                fontSize: w / 28,
                 fontWeight: FontWeight.w500,
               ),),
             WidgetSpan(
               child: Icon(Icons.arrow_forward, size: w/25),
             ),
-            TextSpan(text: ' Food ', style: GoogleFonts.roboto(
+            TextSpan(text: " $group "??' Food ', style: GoogleFonts.roboto(
               color: Colors.black,
-              fontSize: w / 25,
+              fontSize: w / 28,
               fontWeight: FontWeight.w500,
             ),),    WidgetSpan(
               child: Icon(Icons.arrow_forward, size: w/25),
             ),
-            TextSpan(text: ' Corn Food ', style: GoogleFonts.roboto(
+            TextSpan(text: " $item "??' Corn Food ', style: GoogleFonts.roboto(
               color: Colors.black,
-              fontSize: w / 25,
+              fontSize: w / 28,
+              fontWeight: FontWeight.w500,
+            ),),    WidgetSpan(
+              child: Icon(Icons.arrow_forward, size: w/25),
+            ),
+            TextSpan(text: " $uom"??' Corn Food ', style: GoogleFonts.roboto(
+              color: Colors.black,
+              fontSize: w / 28,
               fontWeight: FontWeight.w500,
             ),),
           ],

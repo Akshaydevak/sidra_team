@@ -28,6 +28,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       next: event.next,
       search: event.search);
     }
+    if (event is GetNotificationListEvent) {
+      yield* getNotificationList(
+      prev: event.prev,
+      next: event.next,
+      search: event.search);
+    }
+    if (event is NotificationIconEvent) {
+      yield* NotificationIcon();
+    }
     if (event is GetPendingTaskListEvent) {
       yield* getPendingTaskListState();
     }
@@ -103,6 +112,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         taskId: event.taskId,
         toipicId: event.toipicId,
         userId: event.userId
+      );
+    }
+    if (event is ReplayReportEvent) {
+      yield* replayReport(
+
+         id: event.id,
+        replay: event.replay,
+        reportStatus: event.reportStatus
       );
     }
     if (event is UpdateTaskEvent) {
@@ -344,6 +361,37 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     else {
       yield GetTaskListFailed("failed");
+    }
+  }
+
+  //notification
+  Stream<TaskState> getNotificationList({
+    String? search,String? next,String? prev
+  }) async* {
+    yield GetNotificationListLoading();
+    final dataResponse = await _taskRepo.getNotificationList(search,next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetNotificationListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          notificationList:  dataResponse.data);  }
+
+    else {
+      yield GetNotificationListFailed("failed");
+    }
+  }
+
+  //notification
+  Stream<TaskState> getNotificationDue(int id) async* {
+
+    yield NotificationDueLoading();
+
+    final dataResponse = await _taskDataSource.getNotificationDue(id);
+
+    if (dataResponse=="success") {
+      yield NotificationDueSuccess();
+    } else {
+      yield NotificationDueFailed("");
     }
   }
 
@@ -1096,16 +1144,16 @@ userId: userId,
   }
 
   //noti
-  Stream<TaskState> getNotificationDue(int id) async* {
+  Stream<TaskState> NotificationIcon() async* {
 
-    yield NotificationDueLoading();
+    yield NotificationIconLoading();
 
-    final dataResponse = await _taskDataSource.getNotificationDue(id);
+    final dataResponse = await _taskDataSource.NotificationIcon();
 
     if (dataResponse=="success") {
-      yield NotificationDueSuccess();
+      yield NotificationIconSuccess();
     } else {
-      yield NotificationDueFailed("");
+      yield NotificationIconFailed("");
     }
   }
 
@@ -1144,6 +1192,30 @@ userId: userId,
 
     else {
       yield ReportListUserListFailed("failed");
+    }
+  }
+  //
+  Stream<TaskState> replayReport(
+      {
+        required int? id,
+        required String? reportStatus,
+        required String? replay,
+      }) async* {
+    yield ReplayReportLoading();
+
+    final dataResponse = await _taskRepo.replayReport(
+       reportStatus: reportStatus,
+      replay: replay,
+      id: id
+    );
+
+    if (dataResponse.data==true) {
+      print("sucsess ");
+      yield ReplayReportSuccess(dataResponse.error??"");
+    } else {
+      print("failed ${dataResponse.error}");
+      yield ReplayReportFailed(
+        dataResponse.error ?? "",);
     }
   }
 

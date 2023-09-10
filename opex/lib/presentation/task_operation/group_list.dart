@@ -31,25 +31,28 @@ class _GroupListState extends State<GroupList> {
 
       },
       child: Container(
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(3),
         child: CustomCheckBoxData(
+          role: widget.employeeList?.role??"",
+          profile: widget.employeeList?.profile??"",
+          lname: widget.employeeList?.lname??"",
           key: UniqueKey(),
           value: widget.readUser,
           onChange: (p0) {
 
             if (p0) {
-              widget.userList.add(widget.employeeList?.code ?? "");
+              widget.userList.add(widget.employeeList?.userCode ?? "");
               widget.userUpdateList.add(GetUserList(
-                  userCode: widget.employeeList?.code,
+                  userCode: widget.employeeList?.userCode,
                   isActive: true));
             }
             else {
-              widget.userList.remove(widget.employeeList?.code ?? "");
+              widget.userList.remove(widget.employeeList?.userCode ?? "");
               widget.userUpdateList.remove(GetUserList(
-                  userCode: widget.employeeList?.code,
+                  userCode: widget.employeeList?.userCode,
                   isActive: false));
               widget.userUpdateList.add(GetUserList(
-                  userCode: widget.employeeList?.code,
+                  userCode: widget.employeeList?.userCode,
                   isActive: false));
             }
             widget.listuser(widget.userList,widget.userUpdateList,true);
@@ -57,7 +60,7 @@ class _GroupListState extends State<GroupList> {
             print("usr-list${widget.userUpdateList}");
 
           },
-          email: widget.employeeList?.primaryMail??"",
+          email: widget.employeeList?.email??"",
           name: widget.employeeList?.fname ??
               "",
         ),

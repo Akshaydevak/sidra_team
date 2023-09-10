@@ -85,6 +85,29 @@ class JobRepo {
 
     );
   }
+  //repoter
+  Future<PaginatedResponse> getRepoterList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getRepoterList(search,next,prev);
+    try {
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
+      } else {
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
+  }
   //userverify
   Future<DataResponse> getUserVerify() async {
     final apiResponse = await _dataSource.getUserVerify();
@@ -104,18 +127,42 @@ class JobRepo {
     }
   }
   //employeelist
-  Future<DataResponse> getEmployeeList() async {
-    final apiResponse = await _dataSource.getEmployeeList();
+  // Future<DataResponse> getEmployeeList() async {
+  //   final apiResponse = await _dataSource.getEmployeeList();
+  //   try {
+  //     if (apiResponse.isNotEmpty) {
+  //       return DataResponse(data: apiResponse);
+  //     } else {
+  //       return DataResponse(error: "error Text");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("error Text$e");
+  //   }
+  //   return DataResponse(error: "error Text");
+  // }
+
+
+  Future<PaginatedResponse> getEmployeeList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getEmployeeList(search,next,prev);
     try {
-      if (apiResponse.isNotEmpty) {
-        return DataResponse(data: apiResponse);
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
       } else {
-        return DataResponse(error: "error Text");
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
       }
     } catch (e) {
       debugPrint("error Text$e");
     }
-    return DataResponse(error: "error Text");
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
   }
 
   //
@@ -319,6 +366,7 @@ class JobRepo {
   Future<DataResponse> jobUpdatePost({
     required String name,
     required int? jobType,
+    required int? id,
     required String reportingPerson,
     required String assignedBy,
     required String createdBy,
@@ -331,6 +379,7 @@ class JobRepo {
   }) async {
     final restAPIresponse = await _dataSource.jobUpdatePost(
         name: name,
+        id: id,
         jobType: jobType,
         reportingPerson: reportingPerson,
         assignedBy: assignedBy,

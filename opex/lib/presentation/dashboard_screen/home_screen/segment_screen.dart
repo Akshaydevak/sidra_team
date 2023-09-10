@@ -33,7 +33,6 @@ import '../../seller_app/seller_homepage.dart';
 import '../../setting_and_config/setting_home.dart';
 import '../../stock_app/stock_home.dart';
 import '../../taxes/tax_home.dart';
-import '../../vendor_app/vendor_home.dart';
 import 'home_svg.dart';
 import 'homescreen_widget/application_model.dart';
 import 'homescreen_widget/search_bar.dart';
@@ -261,26 +260,26 @@ class _SegmentScreenState extends State<SegmentScreen> {
         break;
       case 6:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: SellerHomePage(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: SellerHomePage(),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
           //SellerHomePage
         };
         break;
 
       case 7:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: SellerHomePage(isAdmin: true),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: SellerHomePage(isAdmin: true),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         };
         break;
 
@@ -410,13 +409,13 @@ class _SegmentScreenState extends State<SegmentScreen> {
         };
         break;case 20:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: VendorHome(),
-            withNavBar: false,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: VendorHome(),
+          //   withNavBar: false,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         };
         break;case 21:
         onTap = () {

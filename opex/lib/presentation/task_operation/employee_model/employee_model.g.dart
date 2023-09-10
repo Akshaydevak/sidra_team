@@ -9,16 +9,21 @@ part of 'employee_model.dart';
 GetEmployeeList _$GetEmployeeListFromJson(Map<String, dynamic> json) =>
     GetEmployeeList(
       gender: json['gender'] as String?,
+      userMete: json['user_meta'] == null
+          ? null
+          : UserMete.fromJson(json['user_meta'] as Map<String, dynamic>),
       userCode: json['user_code'] as String?,
+      departmentCode: json['department_code'] as String?,
       orgCode: json['organization_code'] as String?,
       id: json['id'] as int?,
       isActive: json['is_active'] as bool? ?? false,
+      netCode: json['network_code'] as String?,
       email: json['email'] as String?,
       primaryMail: json['primary_mail'] as String?,
-      primaryMobile: json['primary_mobile'] as String?,
-      fname: json['fname'] as String?,
-      lname: json['lname'] as String?,
-      country: json['country'] as String?,
+      primaryMobile: json['contact_number'] as String?,
+      fname: json['first_name'] as String?,
+      lname: json['last_name'] as String?,
+      country: json['nationality'] as String?,
       dob: json['date_of_birth'] as String?,
       profile: json['profile_pic'] as String?,
       dateJoined: json['date_joined'] as String?,
@@ -27,11 +32,11 @@ GetEmployeeList _$GetEmployeeListFromJson(Map<String, dynamic> json) =>
       orgType: json['organization_type'] as String?,
       altMobile: json['alternative_mobile_no'] as String?,
       altEmail: json['alternative_email'] as String?,
-      designation: json['designation'] as String?,
+      designation: json['designation_code'] as String?,
       legalentityCode: json['legalentity_code'] as String?,
       accessSite: json['acess_site'] as String?,
       userLogin: json['user_login'] as int?,
-      role: json['role'] as int?,
+      role: json['role'] as String?,
     );
 
 Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
@@ -39,12 +44,12 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
       'id': instance.id,
       'primary_mail': instance.primaryMail,
       'email': instance.email,
-      'primary_mobile': instance.primaryMobile,
-      'fname': instance.fname,
-      'lname': instance.lname,
+      'contact_number': instance.primaryMobile,
+      'first_name': instance.fname,
+      'last_name': instance.lname,
       'gender': instance.gender,
       'is_active': instance.isActive,
-      'country': instance.country,
+      'nationality': instance.country,
       'date_of_birth': instance.dob,
       'profile_pic': instance.profile,
       'date_joined': instance.dateJoined,
@@ -53,13 +58,16 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
       'user_code': instance.userCode,
       'organization_type': instance.orgType,
       'organization_code': instance.orgCode,
+      'network_code': instance.netCode,
+      'department_code': instance.departmentCode,
       'alternative_mobile_no': instance.altMobile,
       'alternative_email': instance.altEmail,
-      'designation': instance.designation,
+      'designation_code': instance.designation,
       'legalentity_code': instance.legalentityCode,
       'acess_site': instance.accessSite,
       'user_login': instance.userLogin,
       'role': instance.role,
+      'user_meta': instance.userMete,
     };
 
 GetTaskGroupList _$GetTaskGroupListFromJson(Map<String, dynamic> json) =>
@@ -169,4 +177,41 @@ Map<String, dynamic> _$LogInDataToJson(LogInData instance) => <String, dynamic>{
       'legal_entiry': instance.legalEntry,
       'organization_type': instance.orgType,
       'organization_code': instance.orgCode,
+    };
+
+EmployeeCreateRead _$EmployeeCreateReadFromJson(Map<String, dynamic> json) =>
+    EmployeeCreateRead(
+      userRole: (json['user_roles'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      gender:
+          (json['gender'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      userData: (json['user_data'] as List<dynamic>?)
+          ?.map((e) => GetEmployeeList.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$EmployeeCreateReadToJson(EmployeeCreateRead instance) =>
+    <String, dynamic>{
+      'gender': instance.gender,
+      'user_roles': instance.userRole,
+      'user_data': instance.userData,
+    };
+
+UserMete _$UserMeteFromJson(Map<String, dynamic> json) => UserMete(
+      roleName: json['official_role_name'] as String?,
+      roleList: (json['additional_roles_list'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      roleId: json['official_role'] as int?,
+      roleListId: (json['additional_roles'] as List<dynamic>?)
+          ?.map((e) => e as int)
+          .toList(),
+    );
+
+Map<String, dynamic> _$UserMeteToJson(UserMete instance) => <String, dynamic>{
+      'official_role_name': instance.roleName,
+      'official_role': instance.roleId,
+      'additional_roles_list': instance.roleList,
+      'additional_roles': instance.roleListId,
     };

@@ -1,3 +1,7 @@
+import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/task_operation/badge_icon.dart';
+import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
+import 'package:cluster/presentation/task_operation/notification_sidra_teams.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +11,8 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../authentication/authentication.dart';
 import '../../../task_operation/create/create_job.dart';
+import '../../../task_operation/create/model/task_models.dart';
+import '../../../task_operation/create_group.dart';
 import '../../profile/profile_bloc/profile_bloc.dart';
 import '../home_svg.dart';
 
@@ -23,18 +29,35 @@ class _AppBarState extends State<AppBarScreen> {
   @override
   void initState() {
     super.initState();
-
+    context.read<TaskBloc>().add(const GetNotificationListEvent("", "", ""));
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     // Transparent status bar
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
     ));
   }
+  List<NotificationList>? notification=[];
+  int countNoti=0;
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    return Column(
+    return BlocListener<TaskBloc, TaskState>(
+  listener: (context, state) {
+    if(state is GetNotificationListLoading){
+
+    }
+    if(state is GetNotificationListSuccess){
+      notification=state.notificationList;
+      countNoti=notification?[0].count??0;
+      print("SDFG${notification?[0].count}");
+      setState(() {
+
+      });
+    }
+    // TODO: implement listener
+  },
+  child: Column(
       children: [
         AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
@@ -114,10 +137,38 @@ class _AppBarState extends State<AppBarScreen> {
             ),
           ),
           actions: [
-            SvgPicture.string(
-              HomeSvg().notificationHomeIcon,
-              height: 25,
-              width: 25,
+            Center(
+              child: GestureDetector(
+                onTap: (){
+                  context.read<TaskBloc>().add(const NotificationIconEvent());
+                  PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen:  NotificationInSidraTeams(notification: notification??[]),
+                    withNavBar: false, // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+                },
+                child:SizedBox(
+                  // color: Colors.yellow,
+                  width: 25,
+                  child: BadgeIcon(
+                    badgeCount:countNoti??0,
+                    // int.tryParse(snapshot.data.toString()) ?? 0,
+                    icon: SvgPicture.string(
+                      HomeSvg().notificationHomeIcon,
+                      // color: Colors.black,
+                      // width: 17,
+                    ),
+                  ),
+                ),
+                // BadgeIcon(
+                //   child: SvgPicture.string(
+                //     HomeSvg().notificationHomeIcon,
+                //     height: 22,
+                //     width: 22,
+                //   ),
+                // ),
+              ),
             ),
              SizedBox(
               width:authentication.isAdmin? 30:0,
@@ -128,9 +179,10 @@ class _AppBarState extends State<AppBarScreen> {
                       _showModalBottomSheet();
                     },
                     child: SvgPicture.string(
+
                       HomeSvg().addIcon,
                       height: 19,
-                      width: 19,
+                      width: 19,color: ColorPalette.primary,
                     ))
                 : Container(),
             const SizedBox(
@@ -172,7 +224,8 @@ class _AppBarState extends State<AppBarScreen> {
           ),
         ),
       ],
-    );
+    ),
+);
   }
 
   _showModalBottomSheet() {
@@ -182,6 +235,7 @@ class _AppBarState extends State<AppBarScreen> {
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
+        useRootNavigator: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           var w = MediaQuery.of(context).size.width;
@@ -211,10 +265,12 @@ class _AppBarState extends State<AppBarScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      SizedBox(height: 20,),
                       const Divider(
                         thickness: 1,
                         color: Color(0xfff8f7f5),
                       ),
+                      SizedBox(height: 5,),
                       GestureDetector(
                         onTap: () {
                           PersistentNavBarNavigator.pushNewScreen(
@@ -226,38 +282,88 @@ class _AppBarState extends State<AppBarScreen> {
                                 PageTransitionAnimation.fade,
                           );
                         },
-                        child: Row(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(left: 16),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color(0xfffd5762),
+                        child: Container(
+                          color: Colors.white,
+                          child: Row(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(left: 16),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:  ColorPalette.black,
+                                ),
+                                child: SvgPicture.string(HomeSvg().jobIcon,
+                                  height: 15,width: 15,),
                               ),
-                              child: SvgPicture.string(HomeSvg().jobIcon),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: w / 1.5,
-                              child: Text(
-                                "Job ",
-                                style: GoogleFonts.roboto(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: w / 1.5,
+                                child: Text(
+                                  "New Job",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/24,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
+                      SizedBox(height: 5,),
                       const Divider(
                         indent: 70,
                         color: Color(0xffE6ECF0),
                       ),
+                      SizedBox(height: 5,),
+                      InkWell(
+                        onTap: () {
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen:  CreateGroup(),
+                            withNavBar: false,
+                            // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation:
+                            PageTransitionAnimation.fade,
+                          );
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          child: Row(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(left: 16),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:  ColorPalette.black,
+                                ),
+                                child: SvgPicture.string(HomeSvg().groupIcon,
+                                height: 12,width: 12,),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: w / 1.5,
+                                child: Text(
+                                  "New Group",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/24,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 50,)
                       // Row(
                       //   children: [
                       //     Container(
@@ -384,9 +490,10 @@ class _BackAppBarState extends State<BackAppBar> {
           elevation: 0,
           backgroundColor: Colors.white,
           centerTitle: false,
+
           title: Text(
             widget.label,
-            style: const TextStyle(color: Colors.black),
+            style:  TextStyle(color: Colors.black,fontSize: w/22),
           ),
           titleSpacing: 0,
           leading: GestureDetector(

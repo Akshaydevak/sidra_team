@@ -34,10 +34,9 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: (){
-        Variable.jobReadId=widget.assignedMe?.id??0;
-        print("HHH${Variable.jobReadId}");
-        context.read<TaskBloc>().add(GetTaskListEvent(Variable.jobReadId,'','',''));
-        context.read<JobBloc>().add(GetJobReadListEvent(Variable.jobReadId??0));
+
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.assignedMe?.id,'','',''));
+        context.read<JobBloc>().add(GetJobReadListEvent(widget.assignedMe?.id??0));
         PersistentNavBarNavigator.pushNewScreen(
           context,
           screen: JobTitle(isMyJob: true),

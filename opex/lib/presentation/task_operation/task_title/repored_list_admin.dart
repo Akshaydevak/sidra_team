@@ -2,10 +2,14 @@ import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.d
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../core/color_palatte.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import '../task_svg.dart';
+import '../task_title.dart';
 
 class ReportedListAdmin extends StatefulWidget {
   const ReportedListAdmin({super.key});
@@ -52,33 +56,8 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          "Total ${10} Jobs",
-                          style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: w / 26,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                    ],
-                  ),
-                  // joblist.isEmpty?
-                  // Container(
-                  //   padding: EdgeInsets.only(top: 10),
-                  //   alignment: Alignment.center,
-                  //   height: h / 3.5,
-                  //   child: SvgPicture.string(TaskSvg().nolistSvg),
-                  // ):
+
+
                   Container(
                     // height: h/1.3,
                     padding:
@@ -102,95 +81,134 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
                             if (state is ReportListAdminListLoading) {}
 
                             if (state is ReportListAdminListSuccess) {
-                              return Container(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: ListView.separated(
-                                    shrinkWrap: true,
-                                    physics: const ScrollPhysics(),
-                                    separatorBuilder:
-                                        (BuildContext cxt, int i) {
-                                      return const SizedBox(
-                                        height: 10,
-                                      );
-                                    },
-                                    itemBuilder: (BuildContext context, int i) {
-                                      return InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                  width: 0.3,
-                                                  color: Color(0xffD3D3D3),
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
+                              return state.orders!.isNotEmpty?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Total ${state.orders!.length} Jobs",
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.black,
+                                        fontSize: w / 26,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(height: 15,),
+                                  Container(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: const ScrollPhysics(),
+                                        separatorBuilder:
+                                            (BuildContext cxt, int i) {
+                                          return const SizedBox(
+                                            height: 10,
+                                          );
+                                        },
+                                        itemBuilder: (BuildContext context, int i) {
+                                          return InkWell(
+                                            onTap: () {},
+                                            child: Container(
+                                                padding: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      width: 0.3,
+                                                      color: Color(0xffD3D3D3),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(5)),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    TextAvatar(
-                                                      shape: Shape.Circular,
-                                                      size: 5,
-                                                      numberLetters: 1,
-                                                      fontSize: w / 16,
-                                                      textColor: Colors.white,
-                                                      fontWeight: FontWeight.w500,
-                                                      text: state.orders?[i].userName ??
-                                                          "".toUpperCase(),
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          height: 25,
+                                                          width: 25,
+                                                          child: TextAvatar(
+                                                            shape: Shape.Circular,
+                                                            size: 5,
+                                                            numberLetters: 1,
+                                                            fontSize: w / 22,
+                                                            textColor: Colors.white,
+                                                            fontWeight: FontWeight.w500,
+                                                            text: state.orders?[i].userName ??
+                                                                "".toUpperCase(),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Text(
+                                                          state.orders?[i].topicName??"",
+                                                          style: GoogleFonts.roboto(
+                                                              fontSize: w / 26,
+                                                              fontWeight:
+                                                                  FontWeight.w500),
+                                                        ),
+                                                      ],
                                                     ),
                                                     SizedBox(
-                                                      width: 10,
+                                                      height: 10,
                                                     ),
                                                     Text(
-                                                      state.orders?[i].topicName??"",
+                                                      state.orders?[i].notes??"",
                                                       style: GoogleFonts.roboto(
-                                                          fontSize: w / 26,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  state.orders?[i].notes??"",
-                                                  style: GoogleFonts.roboto(
-                                                    color: Color(0xff6D6D6D),
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                Text(state.orders?[i].taskName??""),
-                                                Text(state.orders?[i].taskDescription??""),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "View Details",
-                                                      style: GoogleFonts.roboto(
-                                                        color: ColorPalette
-                                                            .primary,
+                                                        color: Color(0xff6D6D6D),
                                                       ),
                                                     ),
-                                                    Icon(
-                                                      Icons.arrow_forward,
-                                                      size: 20,
-                                                      color:
-                                                          ColorPalette.primary,
-                                                    )
+                                                    Divider(),
+                                                    Text(state.orders?[i].taskName??""),
+                                                    Text(state.orders?[i].taskDescription??""),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: (){
+                                                        context.read<TaskBloc>().add(GetTaskReadListEvent(state.orders?[i].taskId ?? 0));
+                                                        PersistentNavBarNavigator.pushNewScreen(
+                                                          context,
+                                                          screen: TaskTitle(
+                                                            isMyJob: true,
+                                                            // reportId: state.orders?[i].id,
+                                                          ),
+                                                          withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                        );
+                                                      },
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            "View Details",
+                                                            style: GoogleFonts.roboto(
+                                                              color: ColorPalette
+                                                                  .primary,
+                                                            ),
+                                                          ),
+                                                          Icon(
+                                                            Icons.arrow_forward,
+                                                            size: 20,
+                                                            color:
+                                                                ColorPalette.primary,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ],
-                                                ),
-                                              ],
-                                            )),
-                                      );
-                                    },
-                                    itemCount: state.orders!.length),
+                                                )),
+                                          );
+                                        },
+                                        itemCount: state.orders!.length),
+                                  ),
+                                ],
+                              ):
+
+                              Container(
+                                padding: EdgeInsets.only(top: 10),
+                                alignment: Alignment.center,
+                                height: h / 3.5,
+                                child: SvgPicture.string(TaskSvg().nolistSvg),
                               );
                             }
                             return Container();

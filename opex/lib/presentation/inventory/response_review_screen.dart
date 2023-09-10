@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
-import '../seller_app/operations/review_feedback.dart';
 
 class ResponseAndReviewScreen extends StatelessWidget {
   List<String> responseList = [
@@ -77,13 +76,13 @@ class ResponseAndReviewScreen extends StatelessWidget {
 
       case 1:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: ReviewAndFeedBack(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: ReviewAndFeedBack(),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         //ReviewAndFeedBack
         };
         break;

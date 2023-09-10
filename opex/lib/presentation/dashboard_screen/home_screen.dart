@@ -1,25 +1,21 @@
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dymmy_login_page.dart';
 import 'package:cluster/presentation/dashboard_screen/drawer/appdrawer.dart';
-import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/app_list.dart';
+import 'package:cluster/presentation/dashboard_screen/profile/help_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/widgets/app_card.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-
-import '../../common_widgets/cluster_card.dart';
 import '../../common_widgets/headline_text.dart';
 import '../../common_widgets/no_glow.dart';
-import '../base/bottom_card.dart';
-import '../inventory/inventory_dashboard.dart';
 import '../mpos/mpos_homepage.dart';
 import '../order_app/screens/order_home_page.dart';
 import '../promotion_app/promotion_dashboard.dart';
@@ -27,13 +23,9 @@ import '../sales_app/sales_dashboard.dart';
 import '../seller_app/seller_homepage.dart';
 import '../task_operation/home/bloc/job_bloc.dart';
 import 'home_screen/homescreen_widget/appbar.dart';
-
 import 'home_screen/homescreen_widget/apps_svg.dart';
 
-import 'home_screen/homescreen_widget/application_model.dart';
-
 import 'home_screen/homescreen_widget/search_bar.dart';
-import 'home_screen/segment_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -91,23 +83,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                // const SearchBar(),
+                GestureDetector(
+                  onTap: (){
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: HelpScreen(autoFocus: true),
+                      withNavBar: false,
+                      // OPTIONAL VALUE. True by default.
+                      pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                    );
+                  },
+                    child: SearchBarDashboard()),
                 Container(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
                     width: w,
                     child: HeadlineText(headText: "Quick Access to : ")),
                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     child: AppHomeCard(
                       onTap: () {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: CommunicationModule(
-                            token: authentication.authenticatedUser.token ?? "",
+                          screen: DashBoard(
+                            index: 1,
                           ),
-                          withNavBar: true, // OPTIONAL VALUE. True by default.
+                          withNavBar: false,
                           pageTransitionAnimation: PageTransitionAnimation.fade,
                         );
+                        //   CommunicationModule(
+                        //     token: authentication.authenticatedUser.token ?? "",
+                        //   ),
+                        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                        // );
                       },
                       appTitle: "Communication App",
                       appDescription:
@@ -115,16 +123,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       svgIcon: AppsSvg().communicationSvgIcon,
                     )),
                 SizedBox(
-                  height: 25,
+                  height: 40,
                 ),
                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     child: AppHomeCard(
                       onTap: () {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: const TaskAndOperation(),
-                          withNavBar: true,
+                          screen: const DashBoard(index: 2),
+                          withNavBar: false,
                           // OPTIONAL VALUE. True by default.
                           pageTransitionAnimation: PageTransitionAnimation.fade,
                         );
@@ -133,7 +141,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       appDescription:
                           "Amet minim mollit not ulla lorem ipsum dolar sit amet",
                       svgIcon: AppsSvg().taskOpSvgIcon,
-                    ))
+                    )),
+
+                SizedBox(
+                  height: h / 3.5,
+                ),
+                Center(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.string(
+                      AppsSvg().careIcon,
+                      height: 10,width: 10,
+                    ),
+                    SizedBox(width: 5,),
+                    Text("all rights reserved to sidrateams",
+                    style: GoogleFonts.roboto(
+                      fontSize: w/32,
+                      color: Color(0xff555555),
+                    ),),
+                  ],
+                ))
                 // GridView.builder(
                 //     padding:
                 //         const EdgeInsets.only(left: 10, right: 10, top: 14),
@@ -498,26 +527,26 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 6:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: SellerHomePage(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: SellerHomePage(),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
           //SellerHomePage
         };
         break;
 
       case 7:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: SellerHomePage(isAdmin: true),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: SellerHomePage(isAdmin: true),
+          //   withNavBar: true,
+          //   // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         };
         break;
 

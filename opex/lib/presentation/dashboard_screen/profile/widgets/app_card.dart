@@ -29,7 +29,8 @@ class AppHomeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.string(svgIcon ?? ""),
+            SvgPicture.string(svgIcon ?? "",
+            height: 50,width: 50,),
             SizedBox(
               width: 15,
             ),
@@ -41,7 +42,7 @@ class AppHomeCard extends StatelessWidget {
                   appTitle ?? "",
                   style: GoogleFonts.roboto(
                     color: Colors.black,
-                    fontSize: 18,
+                    fontSize: w/24,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -49,12 +50,12 @@ class AppHomeCard extends StatelessWidget {
                   height: 4,
                 ),
                 Container(
-                  width: w/1.4,
+                  width: w/1.5,
                   child: Text(
                     appDescription ?? "",
                     style: GoogleFonts.roboto(
                         color: Color(0xFF555555),
-                        fontSize: 14,
+                        fontSize: w/28,
                         fontWeight: FontWeight.w400),
                   ),
                 ),

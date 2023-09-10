@@ -78,7 +78,7 @@ class _NewEmployeeState extends State<NewEmployee> {
           );
         }
         if (state is EmployeeSuccess) {
-          employeeCreate = state.user;
+          // employeeCreate = state.user;
 
           Fluttertoast.showToast(
               msg: 'Successfully Created',
@@ -110,7 +110,7 @@ class _NewEmployeeState extends State<NewEmployee> {
           );
         }
         if (state is UpdateEmployeeSuccess) {
-          employeeCreate = state.user;
+          // employeeCreate = state.user;
 
           Fluttertoast.showToast(
               msg: 'Successfully Created',
@@ -418,29 +418,29 @@ class _NewEmployeeState extends State<NewEmployee> {
                           String? legalentry=sharedPreferences.getString('legalEntry');
                           String? organizationCode=sharedPreferences.getString('organizationCode');
                           print("NUM${contact.text}");
-                          widget.editEmployee?BlocProvider.of<EmployeeBloc>(context).add(
-                              UpdateEmployeeEvent(
-                                isActive: true,
-                                  contact: contactNumber==""?contact.text:contactNumber,
-                                  depatCode: legalentry??"",
-                                  designationCode: "DSGN001",
-                                  emailID: email.text,
-                                  gender: selectedGender,
-                                  orgCode: organizationCode??"",
-                                  firstName: firstName.text,
-                                  lastName: lastName.text
-                              )):BlocProvider.of<EmployeeBloc>(context).add(
-                              RegisterEmployeeEvent(
-                                  contact: contactNumber,
-                                  depatCode: legalentry??"",
-                                  designationCode: "DSGN001",
-                                  emailID: email.text,
-                                  gender: selectedGender,
-                                  orgCode: organizationCode??"",
-                                  firstName: firstName.text,
-                                  lastName: lastName.text
-                              ));
-                          context.read<JobBloc>().add( GetEmployeeListEvent());
+                          // widget.editEmployee?BlocProvider.of<EmployeeBloc>(context).add(
+                          //     UpdateEmployeeEvent(
+                          //       isActive: true,
+                          //         contact: contactNumber==""?contact.text:contactNumber,
+                          //         depatCode: legalentry??"",
+                          //         designationCode: "DSGN001",
+                          //         emailID: email.text,
+                          //         gender: selectedGender,
+                          //         orgCode: organizationCode??"",
+                          //         firstName: firstName.text,
+                          //         lastName: lastName.text
+                          //     )):BlocProvider.of<EmployeeBloc>(context).add(
+                          //     RegisterEmployeeEvent(
+                          //         contact: contactNumber,
+                          //         depatCode: legalentry??"",
+                          //         designationCode: "DSGN001",
+                          //         emailID: email.text,
+                          //         gender: selectedGender,
+                          //         orgCode: organizationCode??"",
+                          //         firstName: firstName.text,
+                          //         lastName: lastName.text
+                          //     ));
+                          context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
 
                         },
                         gradient: const LinearGradient(

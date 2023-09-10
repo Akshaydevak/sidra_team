@@ -6,26 +6,38 @@ class ProfileTextFormField extends StatelessWidget {
   String? label;
   String? hint;
   bool? readOnly;
+  bool? focus;
+  Widget? suffixIcon;
+
+  FocusNode? myfocus;
   VoidCallback? onTap;
+  void Function(String)? onChanege;
   TextEditingController? controller;
   int maxLength;
   FormFieldValidator<String>? validator;
 
-   ProfileTextFormField({Key? key,this.label,this.onTap,this.hint,this.controller,this.maxLength=1,this.validator,this.readOnly}) : super(key: key);
+   ProfileTextFormField({Key? key,this.label,this.onTap,this.hint,this.controller,this.maxLength=1,this.myfocus,this.validator,this.readOnly,this.onChanege,this.focus,this.suffixIcon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var w=MediaQuery.of(context).size.width;
     return Container(
       // color:Colors.yellow,
+      height: 35,
+      width: w,
       child: TextFormField(
+        autofocus: focus??false,
         controller: controller,
         showCursor: readOnly==false,
         textAlign: TextAlign.center,
         readOnly: readOnly??false,
+        onChanged: onChanege,
+        focusNode: myfocus,
         
         decoration: loginInputDecoration(
           onTap: onTap,
+          suffixIcon: suffixIcon,
+
           readOnly: readOnly,
               // hintText: hint,
               ('Username'),
@@ -43,12 +55,17 @@ InputDecoration loginInputDecoration(
       VoidCallback? onTap,
       Widget? leading,
       Widget? suffix,
+      Widget? suffixIcon,
     }) =>
     InputDecoration(isDense: true,
     //  contentPadding: EdgeInsets.zero,
-      suffixIcon: InkWell(
-        onTap: onTap,
-        child: Icon(Icons.edit,size: 22,color: Color(0xff555555),)),
+      suffixIcon: suffixIcon,
+      // InkWell(
+      //   onTap: onTap,
+      //   child: Padding(
+      //     padding: const EdgeInsets.only(left: 25),
+      //     child: Icon(Icons.edit,size: 15,color: Color(0xff555555),),
+      //   )),
       // suffixIcon: suffix,
       suffix: suffix,
       errorMaxLines: 2,
@@ -57,7 +74,7 @@ InputDecoration loginInputDecoration(
       // labelText: "  " + label,
       hintText: hintText,
       
-      contentPadding: EdgeInsets.only(left: 15, top: 17, bottom: 0, right: 10),
+      // contentPadding: EdgeInsets.only(left: 15, top: 25, bottom: 0, right: 10),
       hintStyle:   GoogleFonts.roboto(
             color: Colors.black,
             fontSize: 16,
@@ -66,38 +83,35 @@ InputDecoration loginInputDecoration(
           ),
       alignLabelWithHint: true,
       fillColor: ColorPalette.white,
-      filled: true,
-
-      focusedErrorBorder: UnderlineInputBorder(      
+      // filled: true,
+      focusedErrorBorder: UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
-                      borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
+                      borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),
                       ),
-      disabledBorder: UnderlineInputBorder(      
+      disabledBorder: UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
 
-                      borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
+        borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),
                       ),
-      errorBorder:UnderlineInputBorder(      
+      errorBorder:UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
 
-                      borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
+borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),
                       ),
-       border: UnderlineInputBorder(      
+       border: UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
-
-                      borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
+borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),
                       ),
-      enabledBorder: UnderlineInputBorder(      
+      enabledBorder: UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
-
-                      borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
-                      ),  
+borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),
+                      ),
               focusedBorder: UnderlineInputBorder(
 borderRadius: BorderRadius.zero,
 
-                                           borderSide:readOnly==false?  BorderSide(color:Colors.black,width: 3):  BorderSide(color: Color(0x7FE6ECF0),width: 3),   
-
-                   ),
+borderSide:   BorderSide(color: Colors.grey.shade200,width: 1),),
+//
+//                    ),
       // isDense: false,
       helperStyle: TextStyle(fontSize: 8),
       helperMaxLines: 15,

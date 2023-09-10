@@ -61,6 +61,31 @@ class TaskRepo {
 
     );
   }
+
+  //notificatu
+
+  Future<PaginatedResponse> getNotificationList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getNotificationList(search,next,prev);
+    try {
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
+      } else {
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
+  }
   //pendinglist
   Future<DataResponse> getPendingTaskList() async {
     final apiResponse = await _dataSource.getPendingTaskList();
@@ -755,6 +780,26 @@ class TaskRepo {
       previousUrl: "",
 
     );
+  }
+
+  //replayreport
+  Future<DataResponse> replayReport({
+    required int? id,
+    required String? reportStatus,
+    required String? replay,
+  }) async {
+    final restAPIresponse = await _dataSource.replayReport(
+
+      id: id,
+      replay: replay,
+      reportStatus: reportStatus
+
+    );
+    if (restAPIresponse.data) {
+      return DataResponse(data:restAPIresponse.data, error: restAPIresponse.error);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "");
+    }
   }
 
 

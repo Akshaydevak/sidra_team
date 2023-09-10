@@ -48,6 +48,10 @@ class GetTaskList extends Equatable {
   final String? jobDiscription;
   @JsonKey(name: 'name')
   final String? name;
+  @JsonKey(name: 'report_id')
+  final int? reportId;
+  @JsonKey(name: 'currency_code')
+  final String? currency;
   @JsonKey(name: 'is_notify',defaultValue: false)
   final bool? isNotify;
   @JsonKey(name: 'assigned_to')
@@ -78,6 +82,8 @@ class GetTaskList extends Equatable {
   final bool? isDelete;
   @JsonKey(name: 'is_pinned', defaultValue: false)
   final bool? isPinned;
+  @JsonKey(name: 'is_reported', defaultValue: false)
+  final bool? isReported;
   @JsonKey(name: "assigning_type")
   final String? assigningType;
   @JsonKey(name: "longitude")
@@ -140,6 +146,9 @@ class GetTaskList extends Equatable {
     this.taskTypeName,
     this.paymentMeta,
     this.rewardsData,
+    this.reportId,
+    this.currency,
+    this.isReported,
     this.locayionUrl,
     this.jobTitle,this.jobDiscription,
     this.assignToEmail,
@@ -662,7 +671,7 @@ class ReportModel extends Equatable {
 
   final int? id;
   @JsonKey(name: 'task_id')
-  final int? name;
+  final int? taskId;
   @JsonKey(name: 'task_name')
   final String? taskName;
   @JsonKey(name: 'task_description')
@@ -673,10 +682,17 @@ class ReportModel extends Equatable {
   final String? notes;
   @JsonKey(name: 'user_name')
   final String? userName;
+  @JsonKey(name: 'reply')
+  final String? reply;
+  @JsonKey(name: 'report_status')
+  final String? reportStatus;
+
 
 
   const ReportModel({
-    this.name,
+    this.taskId,
+    this.reportStatus,
+    this.reply,
     this.id,
     this.notes,
     this.taskDescription,
@@ -693,4 +709,53 @@ class ReportModel extends Equatable {
       _$ReportModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReportModelToJson(this);
+}
+
+//notification
+@JsonSerializable()
+class NotificationList extends Equatable {
+  final int? id;
+  @JsonKey(name: 'notification_count')
+  final int? count;
+  @JsonKey(name: 'app_notification_code')
+  final String? appNotificationCode;
+  @JsonKey(name: 'notification_type')
+  final String? notificationType;
+  @JsonKey(name: 'notification_type_id')
+  final String? notificationTypeId;
+  @JsonKey(name: 'user_code')
+  final String? userCode;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'created_on')
+  final String? createOn;
+  @JsonKey(name: 'is_active', defaultValue: false)
+  final bool? isActive;
+  @JsonKey(name: 'is_delete', defaultValue: false)
+  final bool? isDelete;
+  @JsonKey(name: 'is_new', defaultValue: false)
+  final bool? isNew;
+
+
+  const NotificationList({
+    this.description,
+    this.count,
+    this.id,
+    this.userCode,
+    this.appNotificationCode,
+    this.createOn,
+    this.isNew,
+    this.notificationType,
+    this.notificationTypeId,
+    this.isActive,
+    this.isDelete,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory NotificationList.fromJson(Map<String, dynamic> json) =>
+      _$NotificationListFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NotificationListToJson(this);
 }

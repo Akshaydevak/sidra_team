@@ -30,7 +30,7 @@ class GradientButton extends StatelessWidget {
           border: Border.all(
             color: color
           ),
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(4.0),
         ),
         child:
         Container(

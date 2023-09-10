@@ -9,13 +9,14 @@ class ClusterUrls{
 
   static const myjobsListUrl = "${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
   static const newJoblistUrl="${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
+  static const repoterlistUrl="${taskAndOperationBaseURL}task-manage/my-jobs-listing-as-reporting-person/";
   static const taskLisTypetUrl = "${taskAndOperationBaseURL}task-manage/list-task-types";
   static const taskListUrl="${taskAndOperationBaseURL}task-manage/task-under-job/";
   static const pendingtaskUrl="${taskAndOperationBaseURL}task-manage/list-task-by-filtering-status/";
   static const pinnedListUrl="${taskAndOperationBaseURL}task-manage/list-pinned-jobs/";
   static const pinnJobCreationUrl="${taskAndOperationBaseURL}task-manage/create-pinned-jobs";
   static const taskread="${taskAndOperationBaseURL}task-manage/read-task/";
-  static const employeeListUrl="https://api-uat-user.sidrabazar.com/user-employee_employeeuser";
+  static const employeeListUrl="${taskAndOperationBaseURL}task-manage/list-user";
   static const reportingListUrl="https://api-task-and-operation.hilalcart.com/task-manage/list-reporting-persons";
   static const groupListUrl="${taskAndOperationBaseURL}task-manage/list-task-group";
   static const assignMeListUrl="${taskAndOperationBaseURL}task-manage/assigned-by-me-jobs-listing/";
@@ -33,6 +34,7 @@ class ClusterUrls{
   static const subtaskListUrl="${taskAndOperationBaseURL}task-manage/list-sub-task/";
   static const groupReadUrl="${taskAndOperationBaseURL}task-manage/read-users-under-group/";
   static const readEmployeeUrl="${taskAndOperationBaseURL}task-manage/user-update/";
+  static const readtypeUrl="${taskAndOperationBaseURL}task-manage/user-create";
   static const updateEmployeeUrl="${taskAndOperationBaseURL}task-manage/user-update/";
   static const payymentCreateUrl="${taskAndOperationBaseURL}task-manage/cost-create";
   static const paymentReadUrl="${taskAndOperationBaseURL}task-manage/cost-read";
@@ -66,6 +68,11 @@ class ClusterUrls{
   static const reportTaskUrl="${taskAndOperationBaseURL}task-review/report-create";
   static const reportedListAdminUrls="${taskAndOperationBaseURL}task-review/list-admin-report/";
   static const reportedListUserUrls="${taskAndOperationBaseURL}task-review/list-user-report/";
+  static const replayReportUrl="${taskAndOperationBaseURL}task-review/report-reply-create/";
+  static const notificationListUrl="${taskAndOperationBaseURL}task/list-app-notification";
+  static const notificationIconUrl="${taskAndOperationBaseURL}task/new-app-notification";
+
+  static const changePawwordUserUrl="https://api-uat-user.sidrabazar.com/user-employee/password-set/admin";
 
 
 }

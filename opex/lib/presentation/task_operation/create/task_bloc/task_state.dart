@@ -35,6 +35,21 @@ class GetTaskListFailed extends TaskState {
   const GetTaskListFailed( this.msg);
 }
 
+//notification
+class GetNotificationListLoading extends TaskState {}
+
+class GetNotificationListSuccess extends TaskState {
+  final List<NotificationList>? notificationList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetNotificationListSuccess({this.notificationList, this.prevPageUrl, this.nextPageUrl});
+}
+
+class GetNotificationListFailed extends TaskState {
+  final String msg;
+  const GetNotificationListFailed( this.msg);
+}
+
 //pendinglist
 class GetPendingTaskListInitial extends TaskState {}
 
@@ -536,7 +551,20 @@ class NotificationDueFailed extends TaskState {
   NotificationDueFailed(this.error);
 }
 
-//
+//noti
+class NotificationIconLoading extends TaskState {}
+
+class NotificationIconSuccess extends TaskState {
+
+  NotificationIconSuccess();
+  @override
+  List<Object> get props => [];
+}
+
+class NotificationIconFailed extends TaskState {
+  final String error;
+  NotificationIconFailed(this.error);
+}
 //report admin list
 class ReportListAdminListLoading extends TaskState {}
 
@@ -570,3 +598,22 @@ class ReportListUserListFailed extends TaskState {
 
 
 
+//replay report
+class ReplayReportLoading extends TaskState {}
+
+class ReplayReportSuccess extends TaskState {
+  final String taskId;
+
+  const ReplayReportSuccess(this.taskId);
+
+  @override
+  List<Object> get props => [taskId];
+}
+
+class ReplayReportFailed extends TaskState {
+  final String error;
+
+  const ReplayReportFailed(this.error);
+  @override
+  List<Object> get props => [];
+}

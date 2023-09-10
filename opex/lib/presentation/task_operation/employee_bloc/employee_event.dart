@@ -10,27 +10,68 @@ abstract class EmployeeEvent extends Equatable {
 class RegisterEmployeeEvent extends EmployeeEvent {
   final String emailID;
   final String orgCode;
+  final String netCode;
   final String designationCode;
   final String depatCode;
   final String firstName;
   final String lastName;
   final String contact;
+  final String nationality;
+  final String password;
+  final int officialRole;
+  final String userRole;
+  final List<int> additionalRole;
   final String? gender;
+  final List<String> roleNameList;
+  final String roleName;
   RegisterEmployeeEvent({
     required this.emailID,
     required this.designationCode,
     required this.gender,
     required this.orgCode,
     required this.depatCode,
-    this.firstName = "",
-    this.lastName = "",
+    required this.firstName,
+    required this.lastName,
     required this.contact,
+    required this.password,
+    required this.additionalRole,
+    required this.officialRole,
+    required this.nationality,
+    required this.netCode,
+    required this.userRole,
+    required this.roleName,
+    required this.roleNameList,
   });
   @override
   List<Object> get props => [
     emailID,
   ];
 }
+
+
+class ChangeUserPasswordEvent extends EmployeeEvent {
+  final String employeeCode;
+  final String newPassword;
+
+  ChangeUserPasswordEvent({
+
+    required this.employeeCode,
+    required this.newPassword,
+  });
+  @override
+  List<Object> get props => [
+    employeeCode,
+  ];
+}
+
+class GetReadTypeEvent extends EmployeeEvent {
+
+  const GetReadTypeEvent();
+
+}
+
+
+
 
 class CreateGroupEvent extends EmployeeEvent {
   final String groupName;
@@ -99,22 +140,33 @@ class GetEmployeeReadEvent extends EmployeeEvent {
 class UpdateEmployeeEvent extends EmployeeEvent {
   final String emailID;
   final String orgCode;
+  final String netCode;
   final String designationCode;
   final String depatCode;
   final String firstName;
   final String lastName;
   final String contact;
+  final String nationality;
+  final int officialRole;
+  final String userRole;
+  final List<int> additionalRole;
   final String? gender;
+  final List<String> roleNameList;
+  final String roleName;
   final bool isActive;
+  final int id;
   const UpdateEmployeeEvent(
       {
         required this.emailID,
+        required this.netCode, required this.nationality,
+  required this.officialRole, required this.userRole, required this.additionalRole,
         required this.designationCode,
+        required this.roleNameList, required this.roleName, required this.id,
         required this.gender,
         required this.orgCode,
         required this.depatCode,
-        this.firstName = "",
-        this.lastName = "",
+        required this.firstName,
+        required this.lastName,
         required this.contact,
         required this.isActive,
 
@@ -129,4 +181,26 @@ class DeleteEmployeeEvent extends EmployeeEvent {
 class GetActivityLogListingEvent extends EmployeeEvent {
   final int? id;
   const GetActivityLogListingEvent(this.id);
+}
+
+
+//chage pass
+class ChangePasswordEvent extends EmployeeEvent {
+  final String userName;
+  final String current;
+  final String newPass;
+  final String? otp;
+
+
+  const ChangePasswordEvent( {
+    required this.current,
+    this.otp,
+    required this.newPass,
+    required this.userName,
+
+  });
+  @override
+  List<Object> get props => [
+    newPass,
+  ];
 }

@@ -35,6 +35,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
   }
   bool isExpanded=false;
   int ?select;
+  int ?alreadySelect;
 
   void onselect(index){
     setState(() {
@@ -42,6 +43,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
     });
 
   }
+  List<bool> open=[];
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   GlobalKey<RefreshIndicatorState>();
   @override
@@ -49,188 +51,195 @@ class _AssignedByMeState extends State<AssignedByMe> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return RefreshIndicator(
-      onRefresh: ()async{
-        context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
-        // context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
-        return Future<void>.delayed(const Duration(seconds: 3));
-      },
-      key: _refreshIndicatorKey,
-      color: ColorPalette.primary,
-      // backgroundColor: Colors.transparent,
+        onRefresh: ()async{
+          context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+          // context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+          return Future<void>.delayed(const Duration(seconds: 3));
+        },
+        key: _refreshIndicatorKey,
+        color: ColorPalette.primary,
+        // backgroundColor: Colors.transparent,
 
-      strokeWidth: 2.0,
-      child: ScrollConfiguration(
-        behavior: NoGlow(),
-        child: SingleChildScrollView(child:
-            // jobList.isEmpty? Container(
-            //   padding: EdgeInsets.only(top: 10),
-            //   alignment: Alignment.center,
-            //   height: h/2,
-            //   child: SvgPicture.string(TaskSvg().nolistSvg,height: h/4.5,),
-            // ):
-            BlocBuilder<JobBloc, JobState>(
-          builder: (context, state) {
-            if (state is GetAssignedMeListLoading) {
-              return Container(
-                  height: 300,
-                  width: w,
-                  alignment: Alignment.center,
-                  child: LoadingAnimationWidget.threeRotatingDots(
-                    color: Colors.red,
-                    size: 30,
-                  ));
-            }
-            if (state is GetAssignedMeListSuccess) {
-              jobList = state.assignMeList ?? [];
-              nextUrl = state.nextPageUrl ?? "";
-              prevUrl = state.prevPageUrl ?? "";
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Total ${jobList.length} Jobs",
-                            style: GoogleFonts.roboto(
-                              color: ColorPalette.black,
-                              fontSize: w / 22,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          // Row(
-                          //   children: [
-                          //
-                          //     Container(
-                          //         width: 37,
-                          //         height: 37,
-                          //         padding: EdgeInsets.all(8),
-                          //         decoration: BoxDecoration(
-                          //           borderRadius: BorderRadius.circular(5),
-                          //           border: Border.all(
-                          //             color: Color(0xffe6ecf0), width: 1,),
-                          //           boxShadow: const [
-                          //             BoxShadow(
-                          //               color: Color(0x05000000),
-                          //               blurRadius: 8,
-                          //               offset: Offset(1, 1),
-                          //             ),
-                          //           ],
-                          //           color: Colors.white,
-                          //         ),
-                          //         child: SvgPicture.string(TaskSvg().moreTaskIcon))
-                          //   ],
-                          // ),
-                        ]),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Container(
-                      //color: Colors.yellow,
-                      padding: const EdgeInsets.only(
-                        bottom: 20,
-                      ),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          separatorBuilder: (BuildContext cxt, int i) {
-                            return const SizedBox(
-                              height: 10,
-                            );
-                          },
-                          itemBuilder: (BuildContext context, int i) {
-                            return InkWell(
-                              onTap: () {
-                                // Variable.jobReadId=jobList[i].id??0;
-                                // print("HHH${Variable.jobReadId}");
-                                context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','',''));
-                                context.read<JobBloc>().add(GetJobReadListEvent(jobList[i].id??0));
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: JobTitle(isMyJob: true),
-                                  withNavBar: false,
-                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                );
-                              },
-                              child:
-                              CardExpaned(
-                                assignedMe: jobList[i],
-                                isExpanded: select==i,
-                                onTap: (){
-                                  onselect(i);
-                                  setState(() {
+        strokeWidth: 2.0,
+        child: ScrollConfiguration(
+          behavior: NoGlow(),
+          child: SingleChildScrollView(child:
+              // jobList.isEmpty? Container(
+              //   padding: EdgeInsets.only(top: 10),
+              //   alignment: Alignment.center,
+              //   height: h/2,
+              //   child: SvgPicture.string(TaskSvg().nolistSvg,height: h/4.5,),
+              // ):
+              BlocBuilder<JobBloc, JobState>(
+            builder: (context, state) {
+              if (state is GetAssignedMeListLoading) {
+                return Container(
+                    height: 300,
+                    width: w,
+                    alignment: Alignment.center,
+                    child: LoadingAnimationWidget.threeRotatingDots(
+                      color: Colors.red,
+                      size: 30,
+                    ));
+              }
+              if (state is GetAssignedMeListSuccess) {
+                jobList = state.assignMeList ?? [];
 
-                                  });
-                                },
+                print("hereeee open $open");
+                nextUrl = state.nextPageUrl ?? "";
+                prevUrl = state.prevPageUrl ?? "";
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total ${jobList.length} Jobs",
+                              style: GoogleFonts.roboto(
+                                color: ColorPalette.black,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w500,
                               ),
+                            ),
+                            // Row(
+                            //   children: [
+                            //
+                            //     Container(
+                            //         width: 37,
+                            //         height: 37,
+                            //         padding: EdgeInsets.all(8),
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.circular(5),
+                            //           border: Border.all(
+                            //             color: Color(0xffe6ecf0), width: 1,),
+                            //           boxShadow: const [
+                            //             BoxShadow(
+                            //               color: Color(0x05000000),
+                            //               blurRadius: 8,
+                            //               offset: Offset(1, 1),
+                            //             ),
+                            //           ],
+                            //           color: Colors.white,
+                            //         ),
+                            //         child: SvgPicture.string(TaskSvg().moreTaskIcon))
+                            //   ],
+                            // ),
+                          ]),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Container(
+                        //color: Colors.yellow,
+                        padding: const EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const ScrollPhysics(),
+                            separatorBuilder: (BuildContext cxt, int i) {
+                              return const SizedBox(
+                                height: 10,
+                              );
+                            },
+                            itemBuilder: (BuildContext context, int i) {
+                              return InkWell(
+                                onTap: () {
+                                  // Variable.jobReadId=jobList[i].id??0;
+                                  // print("HHH${Variable.jobReadId}");
+                                  context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','',''));
+                                  context.read<JobBloc>().add(GetJobReadListEvent(jobList[i].id??0));
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: JobTitle(isMyJob: true),
+                                    withNavBar: false,
+                                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                                  );
+                                },
+                                child:
+                                CardExpaned(
+                                  assignedMe: jobList[i],
+                                  isExpanded: select==i,
+                                  onTap: (){
 
-                            );
-                          },
-                          itemCount: jobList.length),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 15,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          prevUrl != ""
-                              ? GestureDetector(
-                                  onTap: () {
-                                    context.read<JobBloc>().add(
-                                        GetAssignedMeListEvent('', '', prevUrl));
-                                    // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
-                                  },
-                                  child: Text(
-                                    "Previous",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorPalette.primary,
-                                        fontSize: w / 24),
-                                  ),
-                                )
-                              : Container(),
-                          nextUrl != ""
-                              ? GestureDetector(
-                                  onTap: () {
-                                    // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+
+
+                                    onselect(i);
+
                                     setState(() {
-                                      context.read<JobBloc>().add(
-                                          GetAssignedMeListEvent(
-                                              '', nextUrl, ""));
+
                                     });
+// open[i]=false;
                                   },
-                                  child: Text(
-                                    "Next",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorPalette.primary,
-                                        fontSize: w / 24),
-                                  ),
-                                )
-                              : Text("")
-                        ],
+                                ),
+
+                              );
+                            },
+                            itemCount: jobList.length),
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 15,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            prevUrl != ""
+                                ? GestureDetector(
+                                    onTap: () {
+                                      context.read<JobBloc>().add(
+                                          GetAssignedMeListEvent('', '', prevUrl));
+                                      // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
+                                    },
+                                    child: Text(
+                                      "Previous",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorPalette.primary,
+                                          fontSize: w / 24),
+                                    ),
+                                  )
+                                : Container(),
+                            nextUrl != ""
+                                ? GestureDetector(
+                                    onTap: () {
+                                      // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                      setState(() {
+                                        context.read<JobBloc>().add(
+                                            GetAssignedMeListEvent(
+                                                '', nextUrl, ""));
+                                      });
+                                    },
+                                    child: Text(
+                                      "Next",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorPalette.primary,
+                                          fontSize: w / 24),
+                                    ),
+                                  )
+                                : Text("")
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }
+              return Container(
+                padding: EdgeInsets.only(top: 10),
+                alignment: Alignment.center,
+                height: h / 2,
+                child: SvgPicture.string(
+                  TaskSvg().nolistSvg,
+                  height: h / 4.5,
                 ),
               );
-            }
-            return Container(
-              padding: EdgeInsets.only(top: 10),
-              alignment: Alignment.center,
-              height: h / 2,
-              child: SvgPicture.string(
-                TaskSvg().nolistSvg,
-                height: h / 4.5,
-              ),
-            );
-          },
-        )),
-      ),
-    );
+            },
+          )),
+        ),
+      );
   }
 }
 
@@ -256,7 +265,7 @@ class _CardExpanedState extends State<CardExpaned> {
   @override
   Widget build(BuildContext context) {
     // print("sta${widget.assignedMe?.startDate}");
-    // print("sta${widget.assignedMe?.endDate}");
+    print("sta${widget.isExpanded}");
 
 
     var date = widget.assignedMe?.endDate;
@@ -305,12 +314,17 @@ class _CardExpanedState extends State<CardExpaned> {
                   children: [
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          widget.assignedMe?.name??"",
-                          style: GoogleFonts.roboto(
-                            color: ColorPalette.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                        SizedBox(
+                          width: w/1.8,
+                          child: Text(
+                            widget.assignedMe?.name??"",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: GoogleFonts.roboto(
+                              color: ColorPalette.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
 

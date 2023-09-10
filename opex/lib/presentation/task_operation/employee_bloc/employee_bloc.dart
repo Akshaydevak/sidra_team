@@ -27,10 +27,36 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         designationCode: event.designationCode.trim(),
         gender: event.gender,
         contact: event.contact.trim(),
+        additionalRole: event.additionalRole,
+        nationality: event.nationality,
+        officialRole: event.officialRole,
+        password: event.password,
+        netCode: event.netCode,
+        userRole: event.userRole,
+        roleName: event.roleName,
+        roleNameList: event.roleNameList
       );
+    }
+    if (event is ChangeUserPasswordEvent) {
+      yield* chagePasswordState(
+        employeeCode: event.employeeCode,
+        newPassword: event.newPassword
+
+      );
+    }
+    if (event is GetReadTypeEvent) {
+      yield* getReadType();
     }
      if (event is UpdateEmployeeEvent) {
       yield* updateEmployeeState(
+        roleName: event.roleName,
+        roleNameList: event.roleNameList,
+        id: event.id,
+        additionalRole: event.additionalRole,
+        nationality: event.nationality,
+        netCode: event.netCode,
+        officialRole: event.officialRole,
+        userRole: event.userRole,
         isActive: event.isActive,
         email: event.emailID.trim(),
         orgCode: event.orgCode.trim(),
@@ -76,6 +102,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     if (event is GetActivityLogListingEvent) {
       yield* getActivityLogsList(event.id);
     }
+    if (event is ChangePasswordEvent) {
+      yield* _mapChangePasswordToState(
+          current: event.current.trim(),
+          newPass: event.newPass.trim(),
+          userName: event.userName.trim(),
+          otp: event.otp
+      );
+    }
   }
   Stream<EmployeeState> _mapEmployeeStateToState(
       {
@@ -86,7 +120,16 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         required String contact,
         required String departCode,
         required String designationCode,
-        required String? gender}) async* {
+        required String? gender,
+        required String netCode,
+        required String nationality,
+        required String password,
+        required int officialRole,
+        required String userRole,
+        required List<int> additionalRole,
+        required List<String> roleNameList,
+        required String roleName
+      }) async* {
     yield EmployeeLoading();
 
     final dataResponse = await _employeeRepo.employeeCreate(
@@ -98,13 +141,58 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       firstName: firstName,
       lastName: lastName,
       contact: contact,
+      additionalRole: additionalRole,
+      nationality: nationality,
+      officialRole: officialRole,
+      password: password,
+      netCode: netCode,
+      userRole: userRole,
+      roleNameList: roleNameList,
+      roleName: roleName
     );
 
-    if (dataResponse.hasData) {
-      yield EmployeeSuccess(dataResponse.data);
+    if (dataResponse.data) {
+      yield EmployeeSuccess(dataResponse.error??"");
     } else {
       yield EmployeeFailed(
         dataResponse.error ?? "",);
+    }
+  }
+
+  //chage.
+  Stream<EmployeeState> chagePasswordState(
+      {
+        required String employeeCode,
+        required String newPassword,
+
+      }) async* {
+    yield ChagePasswordLoading();
+
+    final dataResponse = await _employeeRepo.chagePassword(
+      newPassword: newPassword,
+      employeeCode: employeeCode
+    );
+
+    print("respoces bloc${dataResponse.data}");
+    if (dataResponse.data) {
+      yield ChagePasswordSuccess(dataResponse.error??"");
+    } else {
+      yield ChagePasswordFailed(
+        dataResponse.error ?? "");
+    }
+  }
+  //readType
+  Stream<EmployeeState> getReadType() async* {
+
+    yield GetReadTypeLoading();
+
+    final dataResponse = await _employeeRepo.getReadType();
+
+    if (dataResponse.hasData) {
+      yield GetReadTypeSuccess(readType: dataResponse.data);
+    } else {
+      yield GetReadTypeFailed(dataResponse.error.toString(),
+      );
     }
   }
 
@@ -190,13 +278,21 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       {
         required String email,
         required String orgCode,
-        required String? gender,
         required String lastName,
         required String firstName,
         required String contact,
         required String departCode,
         required String designationCode,
+        required String? gender,
+        required String netCode,
+        required String nationality,
+        required int officialRole,
+        required String userRole,
+        required List<int> additionalRole,
+        required List<String> roleNameList,
+        required String roleName,
         required bool isActive,
+        required int id,
       }) async* {
     yield UpdateEmployeeLoading();
 
@@ -210,11 +306,19 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       firstName: firstName,
       lastName: lastName,
       contact: contact,
+      id: id,
+      additionalRole: additionalRole,
+      nationality: nationality,
+      officialRole: officialRole,
+      userRole: userRole,
+      netCode: netCode,
+      roleName: roleName,
+      roleNameList: roleNameList
 
     );
 
-    if (dataResponse.hasData) {
-      yield UpdateEmployeeSuccess(dataResponse.data,);
+    if (dataResponse.data) {
+      yield UpdateEmployeeSuccess(dataResponse.error??"",);
     } else {
       yield UpdateEmployeeFailed(
         dataResponse.error ?? "",);
@@ -264,4 +368,33 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield PicFailed();
     }
   }
+
+  //chane
+  Stream<EmployeeState> _mapChangePasswordToState({
+    required String newPass,
+    required String current,
+    required String userName,
+    String? otp,
+  }) async* {
+    yield ChangePasswordLoading();
+
+    final dataResponse = await _employeeRepo.changePassword(userName: userName,
+        newPass: newPass,
+        otp: otp,
+        current: current
+    );
+
+    print("BLOC${dataResponse.data}");
+    print("BLOC${dataResponse.hasData}");
+    if (dataResponse.data) {
+      yield ChangePasswordSuccess(
+          message: dataResponse.error??""
+      );
+    } else {
+      yield ChangePasswordFailed(
+        message: dataResponse.error ?? "",
+      );
+    }
+  }
+
 }

@@ -92,7 +92,7 @@ class OnBoarding extends StatelessWidget {
                         height: 54,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xfffe5762),
+                          color: const Color(0xff2871AF),
                         ),
                         alignment: Alignment.center,
                         child:ButtonText(label: "Login",
