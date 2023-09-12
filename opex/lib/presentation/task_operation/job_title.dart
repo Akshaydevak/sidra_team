@@ -155,15 +155,15 @@ class _JobTitleState extends State<JobTitle> {
                                 padding: EdgeInsets.only(left: 10),
                                 child: Row(
                                   children: [
-                                    SvgPicture.string(TaskSvg().editorIcon),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
+                                    // SvgPicture.string(TaskSvg().editorIcon),
+                                    // SizedBox(
+                                    //   width: 10,
+                                    // ),
                                     Text(
                                       'Edit this Job',
                                       style: GoogleFonts.poppins(
                                           color: ColorPalette.black,
-                                          fontSize: 13,
+                                          fontSize: w/26,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ],
@@ -224,15 +224,15 @@ class _JobTitleState extends State<JobTitle> {
                                   padding: EdgeInsets.only(left: 10),
                                   child: Row(
                                     children: [
-                                      SvgPicture.string(TaskSvg().activityIcon),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+                                      // SvgPicture.string(TaskSvg().activityIcon),
+                                      // SizedBox(
+                                      //   width: 10,
+                                      // ),
                                       Text(
                                         'View Activity Logs',
                                         style: GoogleFonts.poppins(
                                             color: Colors.black54,
-                                            fontSize: 13,
+                                            fontSize: w/26,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ],

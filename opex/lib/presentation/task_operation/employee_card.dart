@@ -14,11 +14,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../core/common_snackBar.dart';
+import '../../core/utils/variables.dart';
 
 
 class EmployeeCard extends StatelessWidget {
   final GetEmployeeList? employeeList;
-  const EmployeeCard({Key? key, this.employeeList}) : super(key: key);
+  final bool? isSelect;
+  const EmployeeCard({Key? key, this.employeeList,this.isSelect=false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class EmployeeCard extends StatelessWidget {
         // height: h/7,
         padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
           boxShadow: [
             BoxShadow(
@@ -38,7 +40,7 @@ class EmployeeCard extends StatelessWidget {
               offset: Offset(1, 1),
             ),
           ],
-          color: Colors.white,
+          color:  Variable.assignName == employeeList?.fname ?ColorPalette.cardBackground:Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -78,7 +80,7 @@ class EmployeeCard extends StatelessWidget {
                            overflow: TextOverflow.ellipsis,
                            style: GoogleFonts.roboto(
                              color: Colors.black,
-                             fontSize: 16,
+                             fontSize: w/24,
                              fontWeight: FontWeight.w500,
                            ),
                          ),

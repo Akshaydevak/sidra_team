@@ -77,6 +77,7 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
 
   // this also checks for location permission.
   Future<void> _initCurrentLocation() async {
+    print("hoi bro");
     await _checkGeolocationPermission();
     Position? currentPosition;
     try {
@@ -117,11 +118,12 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
 
   Future moveToCurrentLocation(LatLng currentLocation) async {
     print("new mappp posssiittook old loca");
-
+print("new mapp location got ${currentLocation}");
     final controller = await mapController.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: currentLocation, zoom: 16),
     ));
+    print("hi hello");
     // getAddressFromLatLong(LatLng(currentLocation.latitude,currentLocation.longitude),);
   }
 
@@ -142,7 +144,8 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
 
   @override
   void initState() {
-    if(widget.taskRead?.latitude!=null||widget.taskRead?.latitude!=""&&widget.taskRead?.longitude!=null||widget.taskRead?.latitude!=""){
+    if(widget.taskRead?.latitude!=null&&widget.taskRead?.latitude!=""&&widget.taskRead?.longitude!=null&&widget.taskRead?.latitude!=""){
+      print("if case run");
       getAddressFromLatLong( LatLng(
         double.tryParse(widget.taskRead?.latitude??'')??0.0,
         double.tryParse(widget.taskRead?.longitude??'')??0.0,
@@ -160,6 +163,7 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
         icon: customIcon ?? BitmapDescriptor.defaultMarker,
       ));
     }else{
+      print("else case run");
       getAddressFromLatLong(const LatLng(
         11.265573014752482,
         75.81402953714132,
@@ -654,7 +658,7 @@ class _AddressPickFromMapState extends State<AddressPickFromMap> {
                                           begin: Alignment.topCenter,
                                           end: Alignment.bottomCenter,
                                         ),
-                                        color: Colors.red,
+                                        color: ColorPalette.primary,
                                         child: const Text(
                                           "CONFIRM LOCATION",
                                           style: TextStyle(

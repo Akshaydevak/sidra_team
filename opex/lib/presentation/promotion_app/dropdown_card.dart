@@ -40,7 +40,7 @@ class DropDownCard extends StatelessWidget {
               width: w1 ,
               padding: const EdgeInsets.all(14.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xffe6ecf0), width: 1, ),
                 boxShadow: const [
                   BoxShadow(
@@ -107,8 +107,10 @@ class ReadDropDownCard extends StatelessWidget {
               //height: 20.0,
               padding: const EdgeInsets.all(14.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xffe6ecf0), width: 1, ),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xffe6ecf0),
+                    width: 1
+                ),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x05000000),

@@ -5,6 +5,7 @@ import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,7 @@ import '../../inventory/inventory_new_list.dart';
 import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../employee_bloc/employee_bloc.dart';
+import '../lottieLoader.dart';
 import '../task_operation_appbar.dart';
 
 class CommentsScreen extends StatefulWidget {
@@ -34,6 +36,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   bool _cropped = false;
   dynamic? imageId;
   dynamic? imageUrl;
+  FocusNode focusNode=FocusNode();
   bool reviewUpdate=false;
   int reviewid=0;
   List<ReviewModel> reviewList=[];
@@ -59,6 +62,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   GlobalKey<RefreshIndicatorState>();
+  bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -109,7 +113,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
               gravity: ToastGravity.BOTTOM,
               backgroundColor: Colors.white,
               textColor: Colors.black);
+          imageId=null;
           review.clear();
+          focusNode.unfocus();
 
 
         }
@@ -142,6 +148,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               backgroundColor: Colors.white,
               textColor: Colors.black);
           review.clear();
+          focusNode.unfocus();
 
 
         }
@@ -192,6 +199,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         }
         if (state is GetReviewListSuccess) {
           reviewList=state.reviewList;
+          _isLoading=false;
           for(var i=0;i<reviewList.length;i++){
 
             final timeOfDay = TimeOfDay(hour: int.tryParse(reviewList[i].reviewOn?.split("T")[1].split(".")[0]??"".split(":")[0])??0, minute: int.tryParse(reviewList[i].reviewOn?.split("T")[1].split(".")[0]??"".split(":")[0])??0); // Example time of day (3:30 PM)
@@ -214,10 +222,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
   child: Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
+        preferredSize: Size.fromHeight(60),
         child: BackAppBar(
           label: "Comments",
           isAction: false,
+          isBack: false,
+          onTap: (){
+            Navigator.pop(context);
+          },
         ),
       ),
       body: RefreshIndicator(
@@ -230,463 +242,458 @@ class _CommentsScreenState extends State<CommentsScreen> {
         // backgroundColor: Colors.transparent,
 
         strokeWidth: 2.0,
-        child: ScrollConfiguration(
-          behavior: NoGlow(),
-          child: SingleChildScrollView(
-            child: SafeArea(
-                child: SizedBox(
-              height: h/1.03,
-              child: Stack(
-                children: [
-                  ScrollConfiguration(
-                    behavior: NoGlow(),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              if(_isLoading)...[
+            LottieLoader()
+          ]
+          else...[
+              ScrollConfiguration(
+                behavior: NoGlow(),
+                child: SafeArea(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: h/1.28,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
 
-                          Container(
-                            padding: EdgeInsets.all(16),
-                            child: Column(
-                              children: [
+                                  reviewList.isEmpty?
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 100),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      child: SvgPicture.string(TaskSvg().noComment,height: 170,width: 170,),
+                                    ),
+                                  ):
+                                  Container(
 
-                                ListView.separated(
-                                  padding: EdgeInsets.only(bottom: 100),
-                                  primary: true,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: reviewList.length,
-                                  separatorBuilder: (context, index) => const SizedBox(
-                                    height: 5,
-                                  ),
-                                  itemBuilder: (context, index) => Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
                                       children: [
-                                    const CircleAvatar(
-                                              backgroundImage:AssetImage("asset/newprofile.png"),
-                                            ),
-                                        // BlocBuilder<ProfileBloc, ProfileState>(
-                                        //     builder: (context, state) {
-                                        //       print("..................$state");
-                                        //       if(state is ProfilePicSuccess){
-                                        //         print(state.profilePic);
-                                        //         return CircleAvatar(
-                                        //           backgroundImage:NetworkImage(state.profilePic),
-                                        //         );
-                                        //       }
-                                        //     return Image.asset("asset/newprofile.png");
-                                        //   }
-                                        // ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SizedBox(
-                                          width: w / 1.3,
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+
+                                        ListView.separated(
+                                          padding: EdgeInsets.only(bottom: 100),
+                                          primary: true,
+                                          shrinkWrap: true,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemCount: reviewList.length,
+                                          separatorBuilder: (context, index) => const SizedBox(
+                                            height: 15,
+                                          ),
+                                          itemBuilder: (context, index) =>
+                                              Container(
+                                                // color: Colors.blue,
+                                                child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            reviewList[index].reviewedPersonName??"",
-                                                            style: GoogleFonts.roboto(
-                                                              color: Colors.black,
-                                                              fontSize: w/22,
-                                                              fontWeight: FontWeight.w500,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            reviewList[index].reviewOn?.split("T")[1].split(".")[0]??"",
-                                                            style: GoogleFonts.roboto(
-                                                              color: ColorPalette.subtextGrey,
-                                                              fontSize: w/27,
-                                                              fontWeight: FontWeight.w500,
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ],
+                                            // SvgPicture.string(TaskSvg().profileReporting),
+                                                  TextAvatar(
+                                                    shape: Shape.Circular,
+                                                    size: 40,
+                                                    numberLetters: 2,
+                                                    fontSize: w/22,
+                                                    textColor: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    text:reviewList[index].reviewedPersonName?.toUpperCase() ,
                                                   ),
-                                                  PopupMenuButton(
-                                                    icon: Icon(Icons.more_horiz,color: Colors.black,),
-                                                    color: Colors.white,
-                                                    elevation: 2,
-                                                    padding: EdgeInsets.zero,
-                                                    shape:
-                                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                                    itemBuilder: (context) =>
-                                                    [
-                                                      PopupMenuItem(
-                                                          padding: const EdgeInsets.all(0),
-                                                          value: 'a',
-                                                          enabled: true,
-                                                          child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: (){
-                                                                  review.text=reviewList[index].review??"";
-                                                                  imageId=reviewList[index].reviewMeta?.image1??"";
-                                                                  reviewid=reviewList[index].id??0;
-                                                                  reviewUpdate=true;
-                                                                  Navigator.pop(context);
-                                                                  setState(() {
-
-                                                                  });
-                                                                },
-                                                                child: Container(
-                                                                  padding: const EdgeInsets.only(left: 10),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SvgPicture.string(TaskSvg().editorIcon),
-                                                                      const SizedBox(width: 10,),
-                                                                      Text(
-                                                                        'Edit Review',
-                                                                        style: GoogleFonts.poppins(
-                                                                            color: Colors.black54,
-                                                                            fontSize: 13,
-                                                                            fontWeight: FontWeight.w500),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const Divider(indent: 30,),
-                                                              GestureDetector(
-                                                                onTap: (){
-                                                                  Navigator.pop(context);
-                                                                  showDialog(
-                                                                      context: context,
-                                                                      builder: (BuildContext context) {
-                                                                        return AlertDialog(
-                                                                          content: Column(
-                                                                            mainAxisSize: MainAxisSize.min,
-                                                                            children: <Widget>[
-                                                                              Text(
-                                                                                "Are you Sure ?",
-                                                                                textAlign: TextAlign.center,
-                                                                                style: GoogleFonts.roboto(
-                                                                                  color: Color(0xff151522),
-                                                                                  fontSize: 22,
-
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(height: 16,),
-                                                                              Text(
-                                                                                "Did you wants to Job.This process cannot be undone",
-                                                                                textAlign: TextAlign.center,
-                                                                                style: TextStyle(
-                                                                                  color: ColorPalette.subtextGrey,
-                                                                                  fontSize: w/27,
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(height: 16,),
-                                                                              Row(
-                                                                                  mainAxisAlignment:
-                                                                                  MainAxisAlignment.spaceBetween,
-                                                                                  children: <Widget>[
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        Navigator.of(context).pop();
-                                                                                      },
-                                                                                      child: Container(
-                                                                                        width: w / 3.3,
-                                                                                        padding:
-                                                                                        EdgeInsets.symmetric(vertical: 10),
-
-                                                                                        decoration: BoxDecoration(
-                                                                                          borderRadius: BorderRadius.circular(5),
-                                                                                          border: Border.all(color: Color(0xffed4e4e), width: 1, ),
-                                                                                        ),
-                                                                                        child:  Center(
-                                                                                            child: Text(
-                                                                                              "Cancel",
-                                                                                              style: TextStyle(
-                                                                                                color: ColorPalette.primary,
-                                                                                                fontSize: w/22,
-                                                                                              ),
-                                                                                            )
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        BlocProvider.of<TaskBloc>(context)
-                                                                                            .add(DeleteReviewEvent(reviewList[index].id??0));
-                                                                                        Navigator.pop(context);
-                                                                                        context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
-                                                                                      },
-                                                                                      child: Container(
-                                                                                          width: w / 3.1,
-                                                                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                                                                          decoration: BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(5),
-                                                                                            color: Color(0xffed4e4e),
-                                                                                          ),
-
-                                                                                          child: Center(
-                                                                                            child: Text(
-                                                                                              "Delete",
-                                                                                              style: TextStyle(
-                                                                                                color: Colors.white,
-                                                                                                fontSize: w/22,
-                                                                                              ),
-                                                                                            ),
-                                                                                          )
-                                                                                      ),
-                                                                                    ),
-                                                                                  ])
-                                                                            ],
-                                                                          ),
-                                                                        );
-                                                                      });
-                                                                },
-                                                                child: Container(
-                                                                  padding: const EdgeInsets.only(left: 10),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SvgPicture.string(TaskSvg().msgSendIcon),
-                                                                      const SizedBox(width: 10,),
-                                                                      Text(
-                                                                        'Delete Review',
-                                                                        style: GoogleFonts.poppins(
-                                                                            color: Colors.black54,
-                                                                            fontSize: w/30,
-                                                                            fontWeight: FontWeight.w500),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-
-                                                            ],
-                                                          ))
-
-                                                    ],
-                                                    onSelected: (value) {
-
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                reviewList[index].review??"",
-                                                style: TextStyle(
-                                                  color: ColorPalette.black,
-                                                  fontSize: w/24,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: h/10,
-                                                    width: w/3,
-                                                    decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                            image: NetworkImage(
-                                                                reviewList[index].reviewMeta?.image1 ?? ""),
-                                                            fit: BoxFit.fill)),
-                                                  ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 10,
                                                   ),
-                                                  // GestureDetector(
-                                                  //   onTap: ()async{
-                                                  //
-                                                  //     try {
-                                                  //       // Saved with this method.
-                                                  //       var imageId = await ImageDownloader.downloadImage(reviewList[index].image??"");
-                                                  //       if (imageId == null) {
-                                                  //         return;
-                                                  //       }
-                                                  //
-                                                  //       // Below is a method of obtaining saved image information.
-                                                  //       var fileName = await ImageDownloader.findName(imageId);
-                                                  //       var path = await ImageDownloader.findPath(imageId);
-                                                  //       var size = await ImageDownloader.findByteSize(imageId);
-                                                  //       var mimeType = await ImageDownloader.findMimeType(imageId);
-                                                  //     } on PlatformException catch (error) {
-                                                  //       print("Shifas$error");
-                                                  //     }
-                                                  //   },
-                                                  //   child: SvgPicture.string(
-                                                  //       TaskSvg().downloadIcon),
-                                                  // )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ]),
-                                )
+                                                  SizedBox(
+                                                    width: w / 1.3,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.start,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment.start,
+                                                                  children: [
+                                                                    Text(
+                                                                      reviewList[index].reviewedPersonName??"",
+                                                                      style: GoogleFonts.roboto(
+                                                                        color: Colors.black,
+                                                                        fontSize: w/24,
+                                                                        fontWeight: FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      reviewList[index].reviewOn?.split("T")[1].split(".")[0]??"",
+                                                                      style: GoogleFonts.roboto(
+                                                                        color: ColorPalette.subtextGrey,
+                                                                        fontSize: w/27,
+                                                                        fontWeight: FontWeight.w500,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            PopupMenuButton(
+                                                              icon: Icon(Icons.more_horiz,color: Colors.black,),
+                                                              color: Colors.white,
+                                                              elevation: 2,
+                                                              padding: EdgeInsets.zero,
+                                                              shape:
+                                                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                                              itemBuilder: (context) =>
+                                                              [
+                                                                PopupMenuItem(
+                                                                    padding: const EdgeInsets.all(0),
+                                                                    value: 'a',
+                                                                    enabled: true,
+                                                                    child: Column(
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: [
+                                                                        GestureDetector(
+                                                                          onTap: (){
+                                                                            review.text=reviewList[index].review??"";
+                                                                            imageId=reviewList[index].reviewMeta?.image1??"";
+                                                                            reviewid=reviewList[index].id??0;
+                                                                            reviewUpdate=true;
+                                                                            Navigator.pop(context);
+                                                                            setState(() {
 
-                              ],
+                                                                            });
+                                                                          },
+                                                                          child: Container(
+                                                                            padding: const EdgeInsets.only(left: 10),
+                                                                            child: Row(
+                                                                              children: [
+                                                                                // SvgPicture.string(TaskSvg().editorIcon),
+
+                                                                                // const SizedBox(width: 10,),
+                                                                                Text(
+                                                                                  'Edit Comment',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                      color: Colors.black54,
+                                                                                      fontSize: 13,
+                                                                                      fontWeight: FontWeight.w500),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const Divider(indent: 20,height: 15,),
+                                                                        GestureDetector(
+                                                                          onTap: (){
+                                                                            Navigator.pop(context);
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) {
+                                                                                  return AlertDialog(
+                                                                                    content: Column(
+                                                                                      mainAxisSize: MainAxisSize.min,
+                                                                                      children: <Widget>[
+                                                                                        Text(
+                                                                                          "Are you Sure ?",
+                                                                                          textAlign: TextAlign.center,
+                                                                                          style: GoogleFonts.roboto(
+                                                                                            color: Color(0xff151522),
+                                                                                            fontSize: 22,
+
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                          ),
+                                                                                        ),
+                                                                                        SizedBox(height: 16,),
+                                                                                        Text(
+                                                                                          "Did you wants to Job.This process cannot be undone",
+                                                                                          textAlign: TextAlign.center,
+                                                                                          style: TextStyle(
+                                                                                            color: ColorPalette.subtextGrey,
+                                                                                            fontSize: w/27,
+                                                                                          ),
+                                                                                        ),
+                                                                                        SizedBox(height: 16,),
+                                                                                        Row(
+                                                                                            mainAxisAlignment:
+                                                                                            MainAxisAlignment.spaceBetween,
+                                                                                            children: <Widget>[
+                                                                                              GestureDetector(
+                                                                                                onTap: () {
+                                                                                                  Navigator.of(context).pop();
+                                                                                                },
+                                                                                                child: Container(
+                                                                                                  width: w / 3.3,
+                                                                                                  padding:
+                                                                                                  EdgeInsets.symmetric(vertical: 10),
+
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                                    border: Border.all(color: Color(0xffed4e4e), width: 1, ),
+                                                                                                  ),
+                                                                                                  child:  Center(
+                                                                                                      child: Text(
+                                                                                                        "Cancel",
+                                                                                                        style: TextStyle(
+                                                                                                          color: ColorPalette.primary,
+                                                                                                          fontSize: w/22,
+                                                                                                        ),
+                                                                                                      )
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              GestureDetector(
+                                                                                                onTap: () {
+                                                                                                  BlocProvider.of<TaskBloc>(context)
+                                                                                                      .add(DeleteReviewEvent(reviewList[index].id??0));
+                                                                                                  Navigator.pop(context);
+                                                                                                  context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                                                                                                },
+                                                                                                child: Container(
+                                                                                                    width: w / 3.1,
+                                                                                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      borderRadius: BorderRadius.circular(5),
+                                                                                                      color: ColorPalette.primary,
+                                                                                                    ),
+
+                                                                                                    child: Center(
+                                                                                                      child: Text(
+                                                                                                        "Delete",
+                                                                                                        style: TextStyle(
+                                                                                                          color: Colors.white,
+                                                                                                          fontSize: w/22,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    )
+                                                                                                ),
+                                                                                              ),
+                                                                                            ])
+                                                                                      ],
+                                                                                    ),
+                                                                                  );
+                                                                                });
+                                                                          },
+                                                                          child: Container(
+                                                                            padding: const EdgeInsets.only(left: 10),
+                                                                            child: Row(
+                                                                              children: [
+                                                                                // SvgPicture.string(TaskSvg().msgSendIcon),
+                                                                                // const SizedBox(width: 10,),
+                                                                                Text(
+                                                                                  'Delete Comment',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                      color: Colors.black54,
+                                                                                      fontSize: w/30,
+                                                                                      fontWeight: FontWeight.w500),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+
+                                                                      ],
+                                                                    ))
+
+                                                              ],
+                                                              onSelected: (value) {
+
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          reviewList[index].review??"",
+                                                          style: TextStyle(
+                                                            color: ColorPalette.black,
+                                                            fontSize: w/24,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        reviewList[index].reviewMeta?.image1==null?Container():Container(
+                                                          height: h/10,
+                                                          width: w/3,
+                                                          decoration: BoxDecoration(
+                                                              image: DecorationImage(
+                                                                  image: NetworkImage(
+                                                                      reviewList[index].reviewMeta?.image1 ?? ""),
+                                                                  fit: BoxFit.fill)),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ]),
+                                              ),
+                                        )
+
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      width: w,
-                      // height: 144,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                          bottomLeft: Radius.circular(0),
-                          bottomRight: Radius.circular(0),
+                          ),
                         ),
-                        color: Color(0xfff6f6f6),
-                      ),
-                      padding: EdgeInsets.only(left: 16,top: 16,bottom: 16),
-                      child:
-                          Row(
-                            children: [
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                              width: w,
+                              // height: 144,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(0),
+                                  bottomRight: Radius.circular(0),
+                                ),
+                                color: Color(0xfff6f6f6),
+                              ),
+                              padding: EdgeInsets.only(left: 16,top: 16,bottom: 16,right: 5),
+                              child:
+                              Row(
+                                children: [
 
-                              Container(
-                                width: w/1.3,
+                                  Container(
+                                    width: w/1.3,
 
-                                padding: EdgeInsets.only(left: 16, right: 0),
-                                child: TextFormField(
-                                  controller: review,
-                                  onChanged: (da){
-                                    if(da.isNotEmpty){
-                                      onChanged=true;
-                                    }
-                                    else{
-                                      onChanged=false;
-                                    }
-                                    setState(() {
+                                    padding: EdgeInsets.only(left: 0, right: 0),
+                                    child: TextFormField(
+                                      controller: review,
+                                      focusNode: focusNode,
+                                      onChanged: (da){
+                                        if(da!=""){
+                                          onChanged=true;
+                                        }
+                                        else{
+                                          onChanged=false;
+                                        }
+                                        setState(() {
 
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 16,right: 16),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: Color(0xffe6ecf0),
-                                          )
-                                      ), focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.only(left: 16,right: 16),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                            borderSide: BorderSide(
+                                              color: Color(0xffe6ecf0),
+                                            )
+                                        ), focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Color(0xffe6ecf0),
                                           )
                                       ),enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Color(0xffe6ecf0),
                                           )
                                       ),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    hintText: "Message",
-                                    hintStyle: TextStyle(
-                                      color: Color(0xffd7d7d7),
-                                      fontSize: w/22,
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        hintText: "Type Comment",
+                                        hintStyle: TextStyle(
+                                          color: Color(0xffd7d7d7),
+                                          fontSize: w/24,
+                                        ),
+                                        suffixIcon:  Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                                onTap: (){
+                                                  getCoverImage(
+                                                      ImageSource.gallery);
+                                                },
+                                                child: SvgPicture.string(TaskSvg().shareIcon,height: 20,color: ColorPalette.primary,)),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    suffixIcon:  Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                            onTap: (){
-                                              getCoverImage(
-                                                  ImageSource.gallery);
-                                            },
-                                            child: SvgPicture.string(TaskSvg().shareIcon,height: 25,)),
-                                      ],
-                                    ),
+
                                   ),
-                                ),
+                                  SizedBox(width: 5,),
+                                  onChanged==true?GestureDetector(
+                                      onTap: ()async{
+                                        if(reviewUpdate==true){
+                                          BlocProvider.of<TaskBloc>(context)
+                                              .add(UpdateReviewTaskEvent(
+                                            taskId: widget.taskId??0,
+                                            image: imageId,
+                                            id: reviewid,
+                                            notes: review.text??"",
+                                            review: review.text??"",
+                                            reviewdBy: authentication.authenticatedUser.code??"",
+                                            parant: null,
+                                            isActive: true,
 
-                              ),
-                              SizedBox(width: 5,),
-                              onChanged==true?GestureDetector(
-                                  onTap: ()async{
-                                    if(reviewUpdate==true){
-                                      BlocProvider.of<TaskBloc>(context)
-                                          .add(UpdateReviewTaskEvent(
-                                        taskId: widget.taskId??0,
-                                        image: imageId,
-                                        id: reviewid,
-                                        notes: review.text??"",
-                                        review: review.text??"",
-                                        reviewdBy: authentication.authenticatedUser.code??"",
-                                        parant: null,
-                                        isActive: true,
+                                          ));
+                                          context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                                        }
+                                        else{
+                                          BlocProvider.of<TaskBloc>(context)
+                                              .add(CreateReviewTaskEvent(
+                                            image: imageId??0,
+                                            taskId:widget.taskId??0,
+                                            notes: review.text??"",
+                                            review: review.text??"",
+                                            reviewdBy: authentication.authenticatedUser.code??"",
+                                            parant: null,
 
-                                      ));
-                                      context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
-                                    }
-                                    else{
-                                      BlocProvider.of<TaskBloc>(context)
-                                          .add(CreateReviewTaskEvent(
-                                        image: imageId??0,
-                                        taskId:widget.taskId??0,
-                                        notes: review.text??"",
-                                        review: review.text??"",
-                                        reviewdBy: authentication.authenticatedUser.code??"",
-                                        parant: null,
-
-                                      ));
-                                      context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
-                                    }
+                                          ));
+                                          context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+                                        }
 
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    padding: EdgeInsets.all(12),
-                                    child: SvgPicture.string(TaskSvg().sendIcon,
-                                    ),
-                                  )):GestureDetector(
-                                  onTap: ()async{
+
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(4)
+                                        ),
+                                        padding: EdgeInsets.all(12),
+                                        child: SvgPicture.string(TaskSvg().sendIcon,
+                                          color: ColorPalette.primary,
+                                        ),
+                                      )):GestureDetector(
+                                      onTap: ()async{
 
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    padding: EdgeInsets.all(12),
-                                    child: SvgPicture.string(TaskSvg().sendIcon,color: Color(0xffD7D7D7),
-                                    ),
-                                  )),
-                            ],
-                          )
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(4)
+                                        ),
+                                        padding: EdgeInsets.all(12),
+                                        child: SvgPicture.string(TaskSvg().sendIcon,color: Color(0xffD7D7D7),
+                                        ),
+                                      )),
+                                ],
+                              )
 
 
-                    ),
-                  )
-                ],
+                          ),
+                        )
+                      ],
+                    )),
               ),
-            )),
+      ]
+            ],
           ),
         ),
       ),

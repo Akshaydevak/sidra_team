@@ -37,7 +37,12 @@ class CreateNewTask extends StatefulWidget {
   final bool editTask;
   final int? subTaskId;
   final int? jobId;
-  const CreateNewTask({Key? key, this.isSubTask = false, this.editTask = false, this.subTaskId, this.jobId})
+  const CreateNewTask(
+      {Key? key,
+      this.isSubTask = false,
+      this.editTask = false,
+      this.subTaskId,
+      this.jobId})
       : super(key: key);
 
   @override
@@ -93,10 +98,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
   TextEditingController jobtitle = TextEditingController();
   TextEditingController jobdiscription = TextEditingController();
-  String startTime="Select Time";
-  String startTime2="00:00";
-  String endTime="Select Time";
-  String endTime2="00:00";
+  String startTime = "Select Time";
+  String startTime2 = "00:00";
+  String endTime = "Select Time";
+  String endTime2 = "00:00";
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -105,10 +110,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     if (newTime != null) {
       setState(() {
         _time = newTime;
-        startTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
+        startTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
       });
     }
-    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30);
+    final timeOfDay =
+        TimeOfDay(hour: newTime?.hour ?? 3, minute: newTime?.minute ?? 30);
 
     final twentyFourHourFormat = DateFormat('HH:mm:00');
     final twelveHourFormat = DateFormat('h:mm a');
@@ -119,6 +125,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
     print(startTime);
   }
+
   void _endTime() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -127,11 +134,13 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     if (newTime != null) {
       setState(() {
         _time2 = newTime;
-        endTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
+        endTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
       });
     }
-    print("TYM${_time2.hour}"":""${_time2.minute}");
-    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30); // Example time of day (3:30 PM)
+    print("TYM${_time2.hour}" ":" "${_time2.minute}");
+    final timeOfDay = TimeOfDay(
+        hour: newTime?.hour ?? 3,
+        minute: newTime?.minute ?? 30); // Example time of day (3:30 PM)
 
     final twentyFourHourFormat = DateFormat('HH:mm:00');
     final twelveHourFormat = DateFormat('h:mm a');
@@ -181,30 +190,33 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   @override
   void initState() {
     context.read<TaskBloc>().add(const GetTaskTypeListEvent());
-    Variable.assignName="";
-    Variable.assignCode="";
-    Variable.assignType="";
+    Variable.assignName = "";
+    Variable.assignCode = "";
+    Variable.assignType = "";
     clearIndexVal();
     super.initState();
   }
-  clearIndexVal()async{
+
+  clearIndexVal() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove('index');
     await pref.remove('index2');
-    Variable.isselected=false;
+    Variable.isselected=true;
   }
 
   String? taskId;
   List<GetTaskTypeList>? typelist;
   List<GetTaskList> taskListNew = [];
 
-  bool createButton=false;
+  bool createButton = false;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
+        context
+            .read<TaskBloc>()
+            .add(GetTaskListEvent(widget.jobId, '', '', ''));
         return true;
       },
       child: MultiBlocListener(
@@ -240,12 +252,13 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                       backgroundColor: Colors.black,
                       textColor: Colors.white);
 
-                  context.read<TaskBloc>().add( GetSubTaskListEvent(int.tryParse(taskId.toString()??'')??0));
-                  context.read<TaskBloc>().add(
-                      GetTaskReadListEvent(int.tryParse(taskId.toString()) ?? 0));
+                  context.read<TaskBloc>().add(GetSubTaskListEvent(
+                      int.tryParse(taskId.toString() ?? '') ?? 0));
+                  context.read<TaskBloc>().add(GetTaskReadListEvent(
+                      int.tryParse(taskId.toString()) ?? 0));
                   // Navigator.pop(context);
                 } else {
-                  if(widget.isSubTask==true){
+                  if (widget.isSubTask == true) {
                     Fluttertoast.showToast(
                         msg: 'Successfully Created',
                         toastLength: Toast.LENGTH_SHORT,
@@ -253,21 +266,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white);
                     Navigator.pop(context);
-
-                  }
-                  else{
+                  } else {
                     Navigator.pop(context);
                     context.read<TaskBloc>().add(
-                        GetTaskReadListEvent(int.tryParse(state.taskId)??0));
+                        GetTaskReadListEvent(int.tryParse(state.taskId) ?? 0));
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
-                      screen: TaskTitle(isMyJob: true,),
+                      screen: TaskTitle(
+                        isMyJob: true,
+                      ),
                       withNavBar: true, // OPTIONAL VALUE. True by default.
                       pageTransitionAnimation: PageTransitionAnimation.fade,
                     );
                   }
-
-
                 }
               }
             },
@@ -329,24 +340,33 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 readTask = state.getTaskRead;
                 taskTitle.text = readTask?.taskName ?? "";
                 discription.text = readTask?.description ?? "";
-                taskYype=readTask?.taskTypeName??"";
+                taskYype = readTask?.taskTypeName ?? "";
                 startDate = readTask?.startDate?.split("T")[0] ?? "";
                 ebdDate = readTask?.endDate?.split("T")[0] ?? "";
-                startTime = readTask?.startDate?.split("T")[1].split("+")[0] ?? "";
+                startTime =
+                    readTask?.startDate?.split("T")[1].split("+")[0] ?? "";
                 endTime = readTask?.endDate?.split("T")[1].split("+")[0] ?? "";
 
-                final timeOfDay = TimeOfDay(hour: int.tryParse(startTime.split(":")[0])??0, minute: int.tryParse(startTime.split(":")[1])??0); // Example time of day (3:30 PM)
-                final timeOfDayEnd = TimeOfDay(hour: int.tryParse(endTime.split(":")[0])??0, minute: int.tryParse(endTime.split(":")[1])??0); // Example time of day (3:30 PM)
+                final timeOfDay = TimeOfDay(
+                    hour: int.tryParse(startTime.split(":")[0]) ?? 0,
+                    minute: int.tryParse(startTime.split(":")[1]) ??
+                        0); // Example time of day (3:30 PM)
+                final timeOfDayEnd = TimeOfDay(
+                    hour: int.tryParse(endTime.split(":")[0]) ?? 0,
+                    minute: int.tryParse(endTime.split(":")[1]) ??
+                        0); // Example time of day (3:30 PM)
 
                 final twentyFourHourFormat = DateFormat('HH:mm:00');
                 final twelveHourFormat = DateFormat('h:mm a');
 
-                final dateTimet = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
-                final dateTimett = DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
+                final dateTimet =
+                    DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+                final dateTimett =
+                    DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
                 startTime = twelveHourFormat.format(dateTimet);
                 startTime2 = twentyFourHourFormat.format(dateTimet);
-                endTime=twelveHourFormat.format(dateTimett);
-                endTime2=twentyFourHourFormat.format(dateTimett);
+                endTime = twelveHourFormat.format(dateTimett);
+                endTime2 = twentyFourHourFormat.format(dateTimett);
 
                 PriorityLeval = readTask?.priority ?? "";
                 Variable.assignCode = readTask?.assigningCode ?? "";
@@ -361,9 +381,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 ebdDate2 = DateFormat('dd-MM-yyyy').format(dateTime).toString();
                 startDate2 =
                     DateFormat('dd-MM-yyyy').format(dateTime2).toString();
-                _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date"))} -'
+                _range2 =
+                    '${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date"))} -'
                     ' ${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date2"))}';
-                _range = '${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date"))} -'
+                _range =
+                    '${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date"))} -'
                     ' ${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date2"))}';
                 setState(() {});
               }
@@ -371,7 +393,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              print("subtaskkk state $state");
               if (state is GetSubTaskListLoading) {
                 print("task loading");
               }
@@ -389,17 +410,18 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         child: Scaffold(
             backgroundColor: Colors.white,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(60),
-              child: BackAppBar(
-                label: readTask?.taskName ?? "Create New Task",
-                isAction: false,
-                isBack: false,
-                onTap: (){
-                  context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
-                  Navigator.pop(context);
-                },
-              )
-            ),
+                preferredSize: Size.fromHeight(60),
+                child: BackAppBar(
+                  label: readTask?.taskName ?? "Create New Task",
+                  isAction: false,
+                  isBack: false,
+                  onTap: () {
+                    context
+                        .read<TaskBloc>()
+                        .add(GetTaskListEvent(widget.jobId, '', '', ''));
+                    Navigator.pop(context);
+                  },
+                )),
             body: SingleChildScrollView(
                 child: SafeArea(
               child: Column(
@@ -416,18 +438,20 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                   // ),
                   // SizedBox(height: 50,),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: (){
-                            _showModalBottomSheet(context, typelist ?? [],taskYype);
+                          onTap: () {
+                            _showModalBottomSheet(
+                                context, typelist ?? [], taskYype);
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -441,7 +465,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   offset: Offset(1, 1),
                                 ),
                               ],
-                              color: Colors.white,
+                              color: Color(0xffF4F4F4),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -453,7 +477,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: ColorPalette.primary,
-                                    fontSize: w / 22,
+                                    fontSize: w / 24,
+                                    fontWeight: FontWeight.w500
                                   ),
                                 ),
                                 const Icon(
@@ -490,58 +515,49 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
-                                style:GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w600
-                                ) ,
-                                onChanged: (n){
-                                  setState(() {
-
-                                  });
+                                style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.w600),
+                                onChanged: (n) {
+                                  setState(() {});
                                 },
-                                decoration:  InputDecoration(
-                                  contentPadding: EdgeInsets.only(left:16,right: 16 ),
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.only(left: 16, right: 16),
                                   hintText: "Task Title",
                                   hintStyle: TextStyle(
                                     color: Color(0x66151522),
-                                    fontSize: w/26,
+                                    fontSize: w / 26,
                                   ),
                                   border: InputBorder.none,
-
                                 ),
                                 controller: taskTitle,
-
                                 maxLines: 1,
                               ),
-
                               Container(
-                                margin: EdgeInsets.only(left:16),
+                                margin: EdgeInsets.only(left: 16),
                                 width: w,
                                 height: 1.50,
                                 color: ColorPalette.divider,
                               ),
-
                               TextFormField(
                                 controller: discription,
                                 maxLines: 4,
                                 minLines: 1,
-                                onChanged: (n){
-                                  setState(() {
-
-                                  });
+                                onChanged: (n) {
+                                  setState(() {});
                                 },
-                                style:GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w600
-                                ) ,
-                                decoration:  InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                                style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.w600),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.only(
+                                      left: 16, top: 10, right: 16, bottom: 16),
                                   hintText: "Enter Description",
                                   hintStyle: TextStyle(
                                     color: Color(0x66151522),
-                                    fontSize: w/26,
+                                    fontSize: w / 26,
                                   ),
                                   border: InputBorder.none,
                                 ),
@@ -550,7 +566,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           ),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 15,
                         ),
                         Container(
                           width: w,
@@ -574,10 +590,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             children: [
                               Container(
                                 margin: EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                    bottom: 10,
-                                    top: 10),
+                                    left: 16, right: 16, bottom: 10, top: 10),
                                 child: SingleRow(
                                     color: Color(0xfffc3a97),
                                     label: "Date & Time",
@@ -588,73 +601,82 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       });
                                     },
                                     endIcon: GestureDetector(
-
                                       onTap: () {
                                         // focusNode.unfocus();
                                         // descriptionfocusNode.unfocus();
                                         showDialog(
                                             context: context,
-                                            builder: (BuildContext
-                                            context) {
+                                            builder: (BuildContext context) {
                                               return AlertDialog(
                                                 content: Column(
                                                   mainAxisSize:
-                                                  MainAxisSize
-                                                      .min,
+                                                      MainAxisSize.min,
                                                   children: [
                                                     Container(
                                                       height: 300,
-                                                      child:
-                                                      Scaffold(
-                                                        body:
-                                                        SfDateRangePicker(
+                                                      child: Scaffold(
+                                                        body: SfDateRangePicker(
                                                           backgroundColor:
-                                                          Colors.white,
+                                                              Colors.white,
                                                           endRangeSelectionColor:
-                                                          ColorPalette.primary,
+                                                              ColorPalette
+                                                                  .primary,
                                                           startRangeSelectionColor:
-                                                          ColorPalette.primary,
+                                                              ColorPalette
+                                                                  .primary,
                                                           rangeSelectionColor:
-                                                          ColorPalette.primary
-                                                              .withOpacity(0.1),
+                                                              ColorPalette
+                                                                  .primary
+                                                                  .withOpacity(
+                                                                      0.1),
                                                           selectionColor:
-                                                          Colors.grey,
+                                                              Colors.grey,
                                                           todayHighlightColor:
-                                                          ColorPalette.primary,
+                                                              ColorPalette
+                                                                  .primary,
                                                           onSelectionChanged:
-                                                          _onSelectionChanged,
+                                                              _onSelectionChanged,
                                                           selectionMode:
-                                                          DateRangePickerSelectionMode
-                                                              .range,
-                                                          initialSelectedRange: widget.editTask?PickerDateRange(
-                                                              DateTime.parse(startDate),
-                                                              DateTime.parse(ebdDate)):
-                                                          startDate!=""?PickerDateRange(
-                                                              DateTime.parse(startDate),
-                                                              DateTime.parse(ebdDate)):
-                                                          PickerDateRange(
-                                                              DateTime.now(),
-                                                              DateTime.now()),
+                                                              DateRangePickerSelectionMode
+                                                                  .range,
+                                                          initialSelectedRange: widget
+                                                                  .editTask
+                                                              ? PickerDateRange(
+                                                                  DateTime.parse(
+                                                                      startDate),
+                                                                  DateTime.parse(
+                                                                      ebdDate))
+                                                              : startDate != ""
+                                                                  ? PickerDateRange(
+                                                                      DateTime.parse(
+                                                                          startDate),
+                                                                      DateTime.parse(
+                                                                          ebdDate))
+                                                                  : PickerDateRange(
+                                                                      DateTime
+                                                                          .now(),
+                                                                      DateTime
+                                                                          .now()),
                                                         ),
                                                       ),
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        Navigator.pop(
-                                                            context);
+                                                        Navigator.pop(context);
                                                       },
-                                                      child:
-                                                      Container(
+                                                      child: Container(
                                                         height: 25,
                                                         width: 75,
                                                         color: ColorPalette
                                                             .primary,
                                                         child: Center(
                                                             child: Text(
-                                                              "Ok",
-                                                              style: GoogleFonts.roboto(
-                                                                  color: Colors.white
-                                                              ),)),
+                                                          "Ok",
+                                                          style: GoogleFonts
+                                                              .roboto(
+                                                                  color: Colors
+                                                                      .white),
+                                                        )),
                                                       ),
                                                     )
                                                   ],
@@ -662,15 +684,15 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               );
                                             });
                                       },
-
                                       child: Container(
                                           padding: EdgeInsets.all(5),
-                                          child:  Text("Choose Date",
+                                          child: Text(
+                                            "Choose Date",
                                             style: GoogleFonts.roboto(
-                                                fontSize: w/24,
+                                                fontSize: w / 24,
                                                 color: ColorPalette.primary,
-                                                fontWeight: FontWeight.w500
-                                            ),)),
+                                                fontWeight: FontWeight.w500),
+                                          )),
                                     )),
                               ),
                               Column(
@@ -685,7 +707,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                         right: 16,
                                         bottom: 10,
                                         top: 10),
-                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
@@ -693,14 +717,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               "From :",
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: w/24,
+                                                fontSize: w / 24,
                                               ),
                                             ),
-                                            SizedBox(width: w/40,),
+                                            SizedBox(
+                                              width: w / 40,
+                                            ),
                                             Container(
                                               padding: EdgeInsets.all(5),
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(4),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
                                                 // border:
                                                 // Border.all(color: Color(0xffe6ecf0), width: 1, ),
                                                 boxShadow: [
@@ -714,12 +741,13 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               ),
                                               alignment: Alignment.center,
                                               child: Text(
-                                                _range2.isNotEmpty? startDate2:"           ",
+                                                _range2.isNotEmpty
+                                                    ? startDate2
+                                                    : "           ",
                                                 style: GoogleFonts.roboto(
                                                   color: ColorPalette.black,
-                                                  fontSize: w/24,
-                                                  fontWeight:
-                                                  FontWeight.w500,
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ),
@@ -731,14 +759,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               "To :",
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: w/24,
+                                                fontSize: w / 24,
                                               ),
                                             ),
-                                            SizedBox(width: w/40,),
+                                            SizedBox(
+                                              width: w / 40,
+                                            ),
                                             Container(
                                               padding: EdgeInsets.all(5),
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(4),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
                                                 // border:
                                                 // Border.all(color: Color(0xffe6ecf0), width: 1, ),
                                                 boxShadow: [
@@ -752,21 +783,21 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               ),
                                               alignment: Alignment.center,
                                               child: Text(
-                                                _range2.isNotEmpty?ebdDate2:"           ",
+                                                _range2.isNotEmpty
+                                                    ? ebdDate2
+                                                    : "           ",
                                                 style: GoogleFonts.roboto(
                                                   color: ColorPalette.black,
-                                                  fontSize: w/24,
+                                                  fontSize: w / 24,
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ),
-
                                           ],
                                         )
                                       ],
                                     ),
                                   ),
-
                                   Divider(
                                     indent: 10,
                                     height: 2,
@@ -779,8 +810,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                         top: 12),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         GestureDetector(
                                           onTap: _selectTime,
@@ -788,9 +818,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                             startTime,
                                             style: GoogleFonts.roboto(
                                               color: const Color(0xff2871AF),
-                                              fontSize: w/24,
-                                              fontWeight:
-                                              FontWeight.w500,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
@@ -800,9 +829,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                             endTime,
                                             style: GoogleFonts.roboto(
                                               color: Color(0xff2871AF),
-                                              fontSize: w/24,
-                                              fontWeight:
-                                              FontWeight.w500,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         )
@@ -1008,16 +1036,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         //     ],
                         //   ),
                         // ),
-                SizedBox(
-                  height: 5,
-                ),
+                        SizedBox(
+                          height: 5,
+                        ),
                         GestureDetector(
                           onTap: () {
-                            _showModalBottomSheetpriority();
+                            _showModalBottomSheetPriority(PriorityLeval);
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -1047,11 +1076,13 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                             ? Container()
                                             : Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.spaceEvenly,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   SvgPicture.string(
                                                     TaskSvg().priorityIcon,
-                                                    color: PriorityLeval == "Low"
+                                                    color: PriorityLeval ==
+                                                            "Low"
                                                         ? Color(0xff50D166)
                                                         : PriorityLeval ==
                                                                 "Medium"
@@ -1068,9 +1099,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                 ],
                                               )),
                                     PriorityLeval == ""
-                                        ? Icon(Icons.arrow_forward_ios_sharp,
-                                    color: ColorPalette.primary,
-                                        size: 18,)
+                                        ? Icon(
+                                            Icons.arrow_forward_ios_sharp,
+                                            color: ColorPalette.primary,
+                                            size: 18,
+                                          )
                                         : Container()
                                   ],
                                 )),
@@ -1115,7 +1148,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           },
                           child: Container(
                             width: w,
-                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -1138,17 +1172,72 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 onTap: () {
                                   //    ReportingPerson
                                 },
-                                endIcon: Icon(Icons.arrow_forward_ios_sharp,
-                                color: ColorPalette.primary,
-                                    size: 18,)),
+                                endIcon: Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  color: ColorPalette.primary,
+                                  size: 18,
+                                )),
                           ),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 15,
                         ),
 
+                        // Container(
+                        //   width: w,
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(4),
+                        //     border: Border.all(
+                        //       color: Color(0xffe6ecf0),
+                        //       width: 1,
+                        //     ),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Color(0x05000000),
+                        //         blurRadius: 8,
+                        //         offset: Offset(1, 1),
+                        //       ),
+                        //     ],
+                        //     color: Colors.white,
+                        //   ),
+                        //   child: AddText(
+                        //     label: "Add Notes",
+                        //     controller: notesController,
+                        //     isActive:  widget.editTask == false ? false : true,
+                        //     hint: "Enter Notes",
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 1,
+                        // ),
+                        // Container(
+                        //   width: w,
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(4),
+                        //     border: Border.all(
+                        //       color: Color(0xffe6ecf0),
+                        //       width: 1,
+                        //     ),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Color(0x05000000),
+                        //         blurRadius: 8,
+                        //         offset: Offset(1, 1),
+                        //       ),
+                        //     ],
+                        //     color: Colors.white,
+                        //   ),
+                        //   child: AddText(
+                        //       label: "Add Remarks",
+                        //       controller: remarksController,
+                        //       hint: "Enter Remarks",
+                        //       isActive:
+                        //           widget.editTask == false ? false : true),
+                        // ),
                         Container(
                           width: w,
+                          // height: 185,
+                          // padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -1164,442 +1253,493 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ],
                             color: Colors.white,
                           ),
-                          child: AddText(
-                            label: "Add Notes",
-                            controller: notesController,
-                            isActive:  widget.editTask == false ? false : true,
-                            hint: "Enter Notes",
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1,
-                        ),
-                        Container(
-                          width: w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormField(
+                                style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.w400),
+                                onChanged: (n) {
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.only(left: 16, right: 16),
+                                  hintText: "Add Notes",
+                                  hintStyle: TextStyle(
+                                    color: Color(0x66151522),
+                                    fontSize: w / 26,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                                controller: notesController,
+                                maxLines: 1,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 16),
+                                width: w,
+                                height: 1.50,
+                                color: ColorPalette.divider,
+                              ),
+                              TextFormField(
+                                controller: remarksController,
+                                maxLines: 4,
+                                minLines: 1,
+                                onChanged: (n) {
+                                  setState(() {});
+                                },
+                                style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.w400),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.only(
+                                      left: 16, top: 10, right: 16, bottom: 16),
+                                  hintText: "Add Remarks",
+                                  hintStyle: TextStyle(
+                                    color: Color(0x66151522),
+                                    fontSize: w / 26,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
                               ),
                             ],
-                            color: Colors.white,
                           ),
-                          child: AddText(
-                              label: "Add Remarks",
-                              controller: remarksController,
-                              hint: "Enter Remarks",
-                              isActive:
-                                  widget.editTask == false ? false : true),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 15,
                         ),
                         widget.editTask == false
                             ? widget.isSubTask
-                            ? GestureDetector(
-                          onTap: () {
-                            context
-                                .read<JobBloc>()
-                                .add(const GetEmployeeListEvent('','',''));
-                            context
-                                .read<JobBloc>()
-                                .add(GetGroupListEvent());
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: AssignesUnderGroup(),
-                              withNavBar: true,
-                              // OPTIONAL VALUE. True by default.
-                              pageTransitionAnimation:
-                              PageTransitionAnimation.fade,
-                            );
-                          },
-                          child: Container(
-                            width: w,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 32,
-                                      height: 32,
-                                      padding: EdgeInsets.all(8),
+                                ? GestureDetector(
+                                    onTap: () {
+                                      context.read<JobBloc>().add(
+                                          const GetEmployeeListEvent(
+                                              '', '', ''));
+                                      context
+                                          .read<JobBloc>()
+                                          .add(GetGroupListEvent());
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: AssignesUnderGroup(),
+                                        withNavBar: true,
+                                        // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                      );
+                                    },
+                                    child: Container(
+                                      width: w,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 14),
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(5),
-                                        color: Color(0xff33c658),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: Color(0xffe6ecf0),
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0x05000000),
+                                            blurRadius: 8,
+                                            offset: Offset(1, 1),
+                                          ),
+                                        ],
+                                        color: Colors.white,
                                       ),
-                                      child: SvgPicture.string(
-                                          CreateSvg().assignIcon),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Assign To",
-                                      style: GoogleFonts.roboto(
-                                        color: Color(0xff151522),
-                                        fontSize: w/24,
-                                        fontWeight: FontWeight.w500,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 32,
+                                                height: 32,
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: Color(0xff33c658),
+                                                ),
+                                                child: SvgPicture.string(
+                                                    CreateSvg().assignIcon),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                "Assign To",
+                                                style: GoogleFonts.roboto(
+                                                  color: Color(0xff151522),
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              // Image.asset(
+                                              //   "asset/img_6.png",
+                                              //   height: 30,
+                                              //   width: 30,
+                                              // ),
+                                              // const SizedBox(
+                                              //   width: 10,
+                                              // ),
+                                              // Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp):Text(Variable.assignName)
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    // Image.asset(
-                                    //   "asset/img_6.png",
-                                    //   height: 30,
-                                    //   width: 30,
-                                    // ),
-                                    // const SizedBox(
-                                    //   width: 10,
-                                    // ),
-                                    // Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp):Text(Variable.assignName)
-
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                            : GestureDetector(
-                          onTap: () {
-                            // context.read<JobBloc>().add( const GetEmployeeListEvent());
-                            context
-                                .read<JobBloc>()
-                                .add(GetGroupListEvent());
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: SelectAssignees(groupVal: grpVal),
-                              withNavBar: true,
-                              // OPTIONAL VALUE. True by default.
-                              pageTransitionAnimation:
-                              PageTransitionAnimation.fade,
-                            );
-                          },
-                          child: Container(
-                            width: w,
-                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 32,
-                                      height: 32,
-                                      padding: EdgeInsets.all(8),
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      // context.read<JobBloc>().add( const GetEmployeeListEvent());
+                                      context
+                                          .read<JobBloc>()
+                                          .add(GetGroupListEvent());
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen:
+                                            SelectAssignees(groupVal: grpVal),
+                                        withNavBar: true,
+                                        // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                      );
+                                    },
+                                    child: Container(
+                                      width: w,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(5),
-                                        color: Color(0xff33c658),
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: Color(0xffe6ecf0),
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0x05000000),
+                                            blurRadius: 8,
+                                            offset: Offset(1, 1),
+                                          ),
+                                        ],
+                                        color: Colors.white,
                                       ),
-                                      child: SvgPicture.string(
-                                          CreateSvg().assignIcon),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Assign To",
-                                      style: GoogleFonts.roboto(
-                                        color: Color(0xff151522),
-                                        fontSize: w/24,
-                                        fontWeight: FontWeight.w500,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 32,
+                                                height: 32,
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: Color(0xff33c658),
+                                                ),
+                                                child: SvgPicture.string(
+                                                    CreateSvg().assignIcon),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                "Assign To",
+                                                style: GoogleFonts.roboto(
+                                                  color: Color(0xff151522),
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              // Image.asset(
+                                              //   "asset/img_6.png",
+                                              //   height: 30,
+                                              //   width: 30,
+                                              // ),
+                                              // const SizedBox(
+                                              //   width: 10,
+                                              // ),
+                                              Variable.assignName == ""
+                                                  ? Icon(
+                                                      Icons
+                                                          .arrow_forward_ios_sharp,
+                                                      color:
+                                                          ColorPalette.primary,
+                                                      size: 18,
+                                                    )
+                                                  : Text(Variable.assignName)
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    // Image.asset(
-                                    //   "asset/img_6.png",
-                                    //   height: 30,
-                                    //   width: 30,
-                                    // ),
-                                    // const SizedBox(
-                                    //   width: 10,
-                                    // ),
-                                    Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp,color: ColorPalette.primary,size: 18,):Text(Variable.assignName)
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        )
+                                    ),
+                                  )
                             : Container(),
 
                         widget.editTask == true
                             ? Container()
                             : SizedBox(
-                          height: 5,
-                        ),
+                                height: 5,
+                              ),
                         widget.isSubTask
                             ? Container()
                             : grpval == true
-                            ? Column(
-                          children: [
-                            Container(
-                              width: w,
-                              padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Colors.white,
-                              ),
-                              child: SingleRow(
-                                label: "Subtasks",
-                                color: Color(0xffFFC800),
-                                svg: CreateSvg().taskIcon,
-                                endIcon: isSubTask
-                                    ? SvgPicture.string(
-                                    HomeSvg().toggleActive)
-                                    : SvgPicture.string(
-                                    HomeSvg().toggleInActive),
-                                onTap: () {
-                                  setState(() {
-                                    Variable.taskType == 0||taskTitle.text==""||discription.text==""||_range==""||Variable.assignType==""||Variable.assignCode==""
-                                        ? Fluttertoast.showToast(
-                                        msg:
-                                        'Please fill the fields',
-                                        toastLength:
-                                        Toast.LENGTH_SHORT,
-                                        gravity:
-                                        ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.black,
-                                        textColor: Colors.white)
-                                        : BlocProvider.of<TaskBloc>(
-                                        context)
-                                        .add(CreateTaskEvent(
-                                      latitude: null,
-                                      longitude: null,
-                                      AssigningCode:
-                                      Variable.assignCode,
-                                      AssigningType:
-                                      Variable.assignType,
-                                      createdOn:
-                                      "${_range.split(" - ")[0]} $startTime2",
-                                      jobId: widget.jobId??0,
-                                      notas:
-                                      notesController.text ??
-                                          "",
-                                      priorityLeval: "1",
-                                      remarks:
-                                      remarksController.text,
-                                      taskName:
-                                      taskTitle.text ?? "",
-                                      taskType: Variable.taskType,
-                                      lastmodified: null,
-                                      parant: null,
-                                      statusStagesId: null,
-                                      discription:
-                                      discription.text ?? "",
-                                      createdBy: authentication
-                                          .authenticatedUser
-                                          .code ??
-                                          "",
-                                      isActive: true,
-                                      priority:
-                                      Variable.prioritys,
-                                      reportingPerson: Variable
-                                          .reportingCode ==
-                                          ""
-                                          ? authentication
-                                          .authenticatedUser
-                                          .code
-                                          .toString()
-                                          : Variable.reportingCode
-                                          .toString(),
-                                      endDate:
-                                      "${_range.split(" - ")[1]} $endTime2",
-                                      startDate:
-                                      "${_range.split(" - ")[0]} $startTime2",
-                                    ));
-                                    isSubTask = !isSubTask;
-                                    // createButton=false;
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            isSubTask==true?Container(
-                              width: w,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: w,
-                                    child: taskListNew.isEmpty
-                                        ? Container()
-                                        : Container(
-                                      child: ListView.separated(
-                                          shrinkWrap: true,
-                                          physics:
-                                          NeverScrollableScrollPhysics(),
-                                          itemBuilder:
-                                              (context, index) =>
-                                              Card(
-                                                child:
-                                                Padding(
-                                                  padding:
-                                                  const EdgeInsets.all(
-                                                      10),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                    children: [
-                                                      Text("${index+1}: ${taskListNew[index].taskName ??""}",
-                                                        style:
-                                                        GoogleFonts.roboto(
-                                                          color:
-                                                          Color(0xff151522),
-                                                          fontSize:
-                                                          18,
-                                                          fontWeight:
-                                                          FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                      // Row(
-                                                      //   children: [
-                                                      //     Text(taskListNew[index].assigningCode??""),
-                                                      //     SizedBox(
-                                                      //       width: 10,
-                                                      //     ),
-                                                      //     // Icon(
-                                                      //     //     Icons
-                                                      //     //         .arrow_forward_ios_sharp)
-                                                      //   ],
-                                                      // )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                          separatorBuilder:
-                                              (context, index) {
-                                            return SizedBox(
-                                              height: 5,
-                                            );
-                                          },
-                                          itemCount:
-                                          taskListNew.length),
-                                    ),
-                                  ),
-                                  Divider(
-                                    color: Color(0xffE6ECF0)
-                                        .withOpacity(0.5),
-                                    thickness: 1,
-                                  ),
-                                  isSubTask==true?GestureDetector(
-                                    onTap: () {
-                                      print("SUbtask$taskId");
-                                      // Variable.taskIdForSubtask =
-                                      //     int.tryParse(taskId!) ?? 0;
-                                      PersistentNavBarNavigator
-                                          .pushNewScreen(
-                                        context,
-                                        screen: CreateNewTask(
-                                          isSubTask: true,
-                                          subTaskId: int.tryParse(taskId!) ?? 0,
-
-                                        ),
-                                        withNavBar: true,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                        PageTransitionAnimation
-                                            .fade,
-                                      );
-                                    },
-                                    child: Container(
+                                ? Column(
+                                    children: [
+                                      Container(
                                         width: w,
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            bottom: 20,
-                                            top: 8),
-                                        child: Text(
-                                          "Add Subtask",
-                                          style: TextStyle(
-                                            color: Color(0xffe70c0c),
-                                            fontSize: 18,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: Color(0xffe6ecf0),
+                                            width: 1,
                                           ),
-                                        )),
-                                  ):Container(),
-                                ],
-                              ),
-                            ):Container()
-                          ],
-                        )
-                            : Container(),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0x05000000),
+                                              blurRadius: 8,
+                                              offset: Offset(1, 1),
+                                            ),
+                                          ],
+                                          color: Colors.white,
+                                        ),
+                                        child: SingleRow(
+                                          label: "Subtasks",
+                                          color: Color(0xffFFC800),
+                                          svg: CreateSvg().taskIcon,
+                                          endIcon: isSubTask
+                                              ? SvgPicture.string(
+                                                  HomeSvg().toggleActive)
+                                              : SvgPicture.string(
+                                                  HomeSvg().toggleInActive),
+                                          onTap: () {
+                                            setState(() {
+                                              Variable.taskType == 0 ||
+                                                      taskTitle.text == "" ||
+                                                      discription.text == "" ||
+                                                      _range == "" ||
+                                                      Variable.assignType ==
+                                                          "" ||
+                                                      Variable.assignCode == ""
+                                                  ? Fluttertoast.showToast(
+                                                      msg:
+                                                          'Please fill the fields',
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      textColor: Colors.white)
+                                                  : BlocProvider.of<TaskBloc>(
+                                                          context)
+                                                      .add(CreateTaskEvent(
+                                                      latitude: null,
+                                                      longitude: null,
+                                                      AssigningCode:
+                                                          Variable.assignCode,
+                                                      AssigningType:
+                                                          Variable.assignType,
+                                                      createdOn:
+                                                          "${_range.split(" - ")[0]} $startTime2",
+                                                      jobId: widget.jobId ?? 0,
+                                                      notas: notesController
+                                                              .text ??
+                                                          "",
+                                                      priorityLeval: "1",
+                                                      remarks: remarksController
+                                                          .text,
+                                                      taskName:
+                                                          taskTitle.text ?? "",
+                                                      taskType:
+                                                          Variable.taskType,
+                                                      lastmodified: null,
+                                                      parant: null,
+                                                      statusStagesId: null,
+                                                      discription:
+                                                          discription.text ??
+                                                              "",
+                                                      createdBy: authentication
+                                                              .authenticatedUser
+                                                              .code ??
+                                                          "",
+                                                      isActive: true,
+                                                      priority:
+                                                          Variable.prioritys,
+                                                      reportingPerson: Variable
+                                                                  .reportingCode ==
+                                                              ""
+                                                          ? authentication
+                                                              .authenticatedUser
+                                                              .code
+                                                              .toString()
+                                                          : Variable
+                                                              .reportingCode
+                                                              .toString(),
+                                                      endDate:
+                                                          "${_range.split(" - ")[1]} $endTime2",
+                                                      startDate:
+                                                          "${_range.split(" - ")[0]} $startTime2",
+                                                    ));
+                                              isSubTask = !isSubTask;
+                                              // createButton=false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      isSubTask == true
+                                          ? Container(
+                                              width: w,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                border: Border.all(
+                                                  color: Color(0xffe6ecf0),
+                                                  width: 1,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color(0x05000000),
+                                                    blurRadius: 8,
+                                                    offset: Offset(1, 1),
+                                                  ),
+                                                ],
+                                                color: Colors.white,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    width: w,
+                                                    child: taskListNew.isEmpty
+                                                        ? Container()
+                                                        : Container(
+                                                            child: ListView
+                                                                .separated(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    physics:
+                                                                        NeverScrollableScrollPhysics(),
+                                                                    itemBuilder:
+                                                                        (context,
+                                                                                index) =>
+                                                                            Card(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(10),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      "${index + 1}: ${taskListNew[index].taskName ?? ""}",
+                                                                                      style: GoogleFonts.roboto(
+                                                                                        color: Color(0xff151522),
+                                                                                        fontSize: 18,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                      ),
+                                                                                    ),
+                                                                                    // Row(
+                                                                                    //   children: [
+                                                                                    //     Text(taskListNew[index].assigningCode??""),
+                                                                                    //     SizedBox(
+                                                                                    //       width: 10,
+                                                                                    //     ),
+                                                                                    //     // Icon(
+                                                                                    //     //     Icons
+                                                                                    //     //         .arrow_forward_ios_sharp)
+                                                                                    //   ],
+                                                                                    // )
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                    separatorBuilder:
+                                                                        (context,
+                                                                            index) {
+                                                                      return SizedBox(
+                                                                        height:
+                                                                            5,
+                                                                      );
+                                                                    },
+                                                                    itemCount:
+                                                                        taskListNew
+                                                                            .length),
+                                                          ),
+                                                  ),
+                                                  // Divider(
+                                                  //   color: Color(0xffE6ECF0)
+                                                  //       .withOpacity(0.5),
+                                                  //   thickness: 1,
+                                                  // ),
+                                                  isSubTask == true
+                                                      ? GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                "SUbtask$taskId");
+                                                            // Variable.taskIdForSubtask =
+                                                            //     int.tryParse(taskId!) ?? 0;
+                                                            PersistentNavBarNavigator
+                                                                .pushNewScreen(
+                                                              context,
+                                                              screen:
+                                                                  CreateNewTask(
+                                                                isSubTask: true,
+                                                                subTaskId:
+                                                                    int.tryParse(
+                                                                            taskId!) ??
+                                                                        0,
+                                                              ),
+                                                              withNavBar: true,
+                                                              // OPTIONAL VALUE. True by default.
+                                                              pageTransitionAnimation:
+                                                                  PageTransitionAnimation
+                                                                      .fade,
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                              width: w,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                             decoration: BoxDecoration(
+                                                               borderRadius: BorderRadius.circular(4),
+                                                               color: Color(0xffF4F4F4),
+                                                             ),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(horizontal: 16,vertical: 10),
+                                                              child: Text(
+                                                                "Add Subtask",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: ColorPalette.primary,
+                                                                  fontSize: w/24,
+                                                                      fontWeight: FontWeight.w500
+                                                                ),
+                                                              )),
+                                                        )
+                                                      : Container(),
+                                                ],
+                                              ),
+                                            )
+                                          : Container()
+                                    ],
+                                  )
+                                : Container(),
 
                         SizedBox(
                           height: 10,
@@ -1607,98 +1747,110 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         SizedBox(
                           height: 10,
                         ),
-                        isSubTask==true?Container():GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              createButton=true;
-                             widget.editTask || updateval || isSubTask
-                                  ? BlocProvider.of<TaskBloc>(context).add(
-                                  UpdateTaskEvent(
-                                      latitude: readTask?.latitude,
-                                      longitude: readTask?.longitude,
-                                      id: readTask?.id ?? 0,
-                                      AssigningCode: Variable.assignCode,
-                                      AssigningType: Variable.assignType,
-                                      createdOn:  "${_range.split(" - ")[0]} ${startTime2}",
-                                      jobid: readTask?.jobId,
-                                      notas: notesController.text ?? "",
-                                      priorityLeval: "1",
-                                      remarks: remarksController.text ?? "",
-                                      taskName: taskTitle.text ?? "",
-                                      taskType: Variable.taskType,
-                                      lastmodified: null,
-                                      parant: readTask?.parent,
-                                      statusStagesId: null,
-                                      discription: discription.text ?? "",
-                                      createdBy:
-                                      authentication
-                                          .authenticatedUser.code ??
-                                          "",
-                                      isActive: true,
-                                      priority: Variable.prioritys,
-                                      reportingPerson:
-                                      authentication
-                                          .authenticatedUser.code ??
-                                          "",
-                                      endDate: "$ebdDate" " " "$endTime2",
-                                      startDate:
-                                      "$startDate" " " "$startTime2",
-                                      img5: readTask?.metaData?.image5,
-                                      img1: readTask?.metaData?.image1,
-                                      img4: readTask?.metaData?.image4,
-                                      img2: readTask?.metaData?.image2,
-                                      img3: readTask?.metaData?.image3,
-                                      attachmentDescription:
-                                      readTask?.metaData?.description,
-                                      attachmentNote:
-                                      readTask?.metaData?.note))
-                                  : BlocProvider.of<TaskBloc>(context)
-                                  .add(CreateTaskEvent(
-                                latitude: null,
-                                longitude: null,
-                                AssigningCode: Variable.assignCode,
-                                AssigningType: Variable.assignType,
-                                createdOn:  "${_range.split(" - ")[0]} ${startTime2}",
-                                jobId: widget.jobId??0,
-                                notas: notesController.text ?? "",
-                                priorityLeval: "1",
-                                remarks: remarksController.text ?? "",
-                                taskName: taskTitle.text ?? "",
-                                taskType: Variable.taskType,
-                                lastmodified: null,
-                                parant: widget.subTaskId,
-                                statusStagesId: null,
-                                discription: discription.text ?? "",
-                                createdBy: authentication
-                                    .authenticatedUser.code ??
-                                    "",
-                                isActive: true,
-                                priority: Variable.prioritys,
-                                reportingPerson: Variable.reportingCode ==
-                                    ""
-                                    ? authentication
-                                    .authenticatedUser.code
-                                    .toString()
-                                    : Variable.reportingCode.toString(),
-                                endDate:
-                                "${_range.split(" - ")[1]} ${endTime2}",
-                                startDate:
-                                "${_range.split(" - ")[0]} ${startTime2}",
-                              ));
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [ColorPalette.primary, ColorPalette.primary]),
-                            child: Text(
-                              widget.editTask?"Update":"Create",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
+                        isSubTask == true
+                            ? Container()
+                            : GradientButton(
+                                color: ColorPalette.primary,
+                                onPressed: () {
+                                  createButton = true;
+                                  widget.editTask || updateval || isSubTask
+                                      ? BlocProvider.of<TaskBloc>(context).add(
+                                          UpdateTaskEvent(
+                                              latitude: readTask?.latitude,
+                                              longitude: readTask?.longitude,
+                                              id: readTask?.id ?? 0,
+                                              AssigningCode:
+                                                  Variable.assignCode,
+                                              AssigningType:
+                                                  Variable.assignType,
+                                              createdOn:
+                                                  "${_range.split(" - ")[0]} ${startTime2}",
+                                              jobid: readTask?.jobId,
+                                              notas: notesController.text ?? "",
+                                              priorityLeval: "1",
+                                              remarks:
+                                                  remarksController.text ?? "",
+                                              taskName: taskTitle.text ?? "",
+                                              taskType: Variable.taskType,
+                                              lastmodified: null,
+                                              parant: readTask?.parent,
+                                              statusStagesId: null,
+                                              discription:
+                                                  discription.text ?? "",
+                                              createdBy: authentication
+                                                      .authenticatedUser.code ??
+                                                  "",
+                                              isActive: true,
+                                              priority: Variable.prioritys,
+                                              reportingPerson: authentication
+                                                      .authenticatedUser.code ??
+                                                  "",
+                                              endDate:
+                                                  "$ebdDate" " " "$endTime2",
+                                              startDate: "$startDate"
+                                                  " "
+                                                  "$startTime2",
+                                              img5: readTask?.metaData?.image5,
+                                              img1: readTask?.metaData?.image1,
+                                              img4: readTask?.metaData?.image4,
+                                              img2: readTask?.metaData?.image2,
+                                              img3: readTask?.metaData?.image3,
+                                              attachmentDescription: readTask
+                                                  ?.metaData?.description,
+                                              attachmentNote:
+                                                  readTask?.metaData?.note))
+                                      : BlocProvider.of<TaskBloc>(context)
+                                          .add(CreateTaskEvent(
+                                          latitude: null,
+                                          longitude: null,
+                                          AssigningCode: Variable.assignCode,
+                                          AssigningType: Variable.assignType,
+                                          createdOn:
+                                              "${_range.split(" - ")[0]} ${startTime2}",
+                                          jobId: widget.jobId ?? 0,
+                                          notas: notesController.text ?? "",
+                                          priorityLeval: "1",
+                                          remarks: remarksController.text ?? "",
+                                          taskName: taskTitle.text ?? "",
+                                          taskType: Variable.taskType,
+                                          lastmodified: null,
+                                          parant: widget.subTaskId,
+                                          statusStagesId: null,
+                                          discription: discription.text ?? "",
+                                          createdBy: authentication
+                                                  .authenticatedUser.code ??
+                                              "",
+                                          isActive: true,
+                                          priority: Variable.prioritys,
+                                          reportingPerson:
+                                              Variable.reportingCode == ""
+                                                  ? authentication
+                                                      .authenticatedUser.code
+                                                      .toString()
+                                                  : Variable.reportingCode
+                                                      .toString(),
+                                          endDate:
+                                              "${_range.split(" - ")[1]} ${endTime2}",
+                                          startDate:
+                                              "${_range.split(" - ")[0]} ${startTime2}",
+                                        ));
+                                },
+                                gradient: const LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      ColorPalette.primary,
+                                      ColorPalette.primary
+                                    ]),
+                                child: Text(
+                                  widget.editTask ? "Update" : "Create",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.white,
+                                    fontSize: w / 22,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )),
                       ],
                     ),
                   ),
@@ -1815,7 +1967,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   //         );
   //       });
   // }
-  _showModalBottomSheet(BuildContext context, List<GetTaskTypeList> taskTypeList,String? type) {
+  _showModalBottomSheet(
+      BuildContext context, List<GetTaskTypeList> taskTypeList, String? type) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -1871,13 +2024,14 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           height: h / 40,
                         ),
                         SizedBox(
-                          height: h/1.5,
+                          height: h / 1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1887,35 +2041,46 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       physics: const ScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: taskTypeList.length,
-                                      itemBuilder: (BuildContext context, int i) {
+                                      itemBuilder:
+                                          (BuildContext context, int i) {
                                         return GestureDetector(
                                           onTap: () {
                                             changeTappedTile(i);
-                                            Variable.taskType = taskTypeList[i].id ?? 0;
-                                            taskYype = taskTypeList[i].typeName ?? "";
+                                            Variable.taskType =
+                                                taskTypeList[i].id ?? 0;
+                                            taskYype =
+                                                taskTypeList[i].typeName ?? "";
                                             Navigator.pop(context);
                                             setState(() {});
                                           },
                                           child: Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                                            color: type == taskTypeList[i].typeName
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 10),
+                                            color: type ==
+                                                    taskTypeList[i].typeName
                                                 ? ColorPalette.cardBackground
                                                 : ColorPalette.white,
                                             child: Row(
                                               children: [
                                                 type == taskTypeList[i].typeName
                                                     ? SvgPicture.string(
-                                                    CreateSvg().radioActiveButton,color: ColorPalette.primary,)
+                                                        HomeSvg()
+                                                            .radioButtonActive,
+                                                        // color: ColorPalette
+                                                        //     .primary,
+                                                      )
                                                     : SvgPicture.string(
-                                                    CreateSvg().radioInActiveButton),
+                                                        CreateSvg()
+                                                            .radioInActiveButton),
                                                 const SizedBox(
                                                   width: 10,
                                                 ),
                                                 Text(
-                                                  taskTypeList[i].typeName ?? "",
+                                                  taskTypeList[i].typeName ??
+                                                      "",
                                                   style: GoogleFonts.roboto(
                                                     color: Colors.black,
-                                                    fontSize: w/24,
+                                                    fontSize: w / 24,
                                                     // fontWeight: FontWeight.w500,
                                                   ),
                                                 )
@@ -1924,7 +2089,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           ),
                                         );
                                       },
-                                      separatorBuilder: (BuildContext context, int index) {
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
                                         return Container(
                                           // margin: EdgeInsets.only(left: 16, right: 16),
                                           color: Color(0xffE6ECF0),
@@ -1979,21 +2145,24 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         });
   }
 
-  _showModalBottomSheetpriority() {
+  _showModalBottomSheetPriority(String priorityread) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
+        useRootNavigator: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           var w = MediaQuery.of(context).size.width;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                padding: EdgeInsets.all(16),
-                height: 350,
+                padding: const EdgeInsets.only(
+                  top: 20,
+                ),
+                // height: 350,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -2001,180 +2170,273 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                       topRight: Radius.circular(10),
                       topLeft: Radius.circular(10),
                     )),
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: w,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Priority",
-                        style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                // alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+
+                        Text(
+                          "Set Priority ",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w/22,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Divider(
-                      color: Color(0xffA9A8A8).withOpacity(0.3),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Variable.prioritys = "High";
-                        PriorityLeval = "High";
-                        setState(() {});
-                        refreah();
-                        print("TASK PRIORITY$PriorityLeval");
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: SvgPicture.string(TaskSvg().priorityIcon),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Text(
-                            "High Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Divider(
-                      indent: 50,
-                      color: Color(0xffA9A8A8).withOpacity(0.3),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Variable.prioritys = "Medium";
-                        PriorityLeval = "Medium";
-                        setState(() {});
-                        refreah();
-                        print("TASK PRIORITY${Variable.prioritys}");
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: SvgPicture.string(
-                              TaskSvg().priorityIcon,
-                              color: Color(0xffF18F1C),
+                        SizedBox(height: 20,),
+                        Container(
+                          // thickness: 1,
+                          // indent: 10,
+                          height: 1,
+                          width: w,
+                          color: Color(0xfff8f7f5),
+                        ),
+                        SizedBox(height: 10,),
+                        InkWell(
+                          onTap: (){
+                            Variable.prioritys="High";
+                            PriorityLeval="High";
+                            setState((){});
+                            refreah();
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: priorityread=="High"?EdgeInsets.all(10):null,
+                            color: priorityread=="High"?Color(0xffF4F4F4):Colors.white,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: SvgPicture.string(TaskSvg().priorityIcon),
+                                ),
+                                SizedBox(
+                                  width: 16,
+                                ),
+                                Text(
+                                  "High Priority",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/22,
+                                    fontWeight: priorityread=="High"?FontWeight.w500:FontWeight.w400,
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 16,
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          // thickness: 1,
+                          // indent: 10,
+                          height: 1,
+                          width: w,
+                          color: Color(0xfff8f7f5),
+                        ),
+                        SizedBox(height: 10,),
+                        InkWell(onTap: (){
+                          Variable.prioritys="Medium";
+                          PriorityLeval="Medium";
+                          setState((){});
+                          refreah();
+                          print("TASK PRIORITY${Variable.prioritys}");
+                          Navigator.pop(context);
+
+                        },
+                          child: Container(
+                            padding: priorityread=="Medium"?EdgeInsets.all(10):null,
+                            color: priorityread=="Medium"?Color(0xffF4F4F4):Colors.white,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: SvgPicture.string(
+                                    TaskSvg().priorityIcon,
+                                    color: Color(0xffF18F1C),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                Text(
+                                  "Medium Priority",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/22,
+                                    fontWeight: priorityread=="Medium"?FontWeight.w500:FontWeight.w400,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                          Text(
-                            "Medium Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Divider(
-                      indent: 50,
-                      color: const Color(0xffA9A8A8).withOpacity(0.3),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Variable.prioritys = "Low";
-                        PriorityLeval = "Low";
-                        setState(() {});
-                        refreah();
-                        print("TASK PRIORITY${Variable.prioritys}");
-                        Navigator.pop(context);
-                        setState(() {});
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              color: Colors.white,
-                            ),
-                            child: SvgPicture.string(
-                              TaskSvg().priorityIcon,
-                              color: Color(0xff50D166),
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          // thickness: 1,
+                          // indent: 10,
+                          height: 1,
+                          width: w,
+                          color: Color(0xfff8f7f5),
+                        ),
+                        SizedBox(height: 10,),
+                        InkWell(
+                          onTap: (){
+                            Variable.prioritys="Low";
+                            PriorityLeval="Low";
+                            setState((){});
+                            refreah();
+                            print("TASK PRIORITY${Variable.prioritys}");
+                            Navigator.pop(context);
+                            setState((){});
+
+
+                          },
+                          child: Container(
+                            padding: priorityread=="Low"?EdgeInsets.all(10):null,
+                            color: priorityread=="Low"?Color(0xffF4F4F4):Colors.white,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: SvgPicture.string(
+                                    TaskSvg().priorityIcon,
+                                    color: Color(0xff50D166),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 16,
+                                ),
+                                Text(
+                                  "Low Priority",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/22,
+                                    fontWeight: priorityread=="Low"?FontWeight.w500:FontWeight.w400,
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Text(
-                            "Low Priority",
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 25,)
+
+                        // Row(
+                        //   children: [
+                        //     Container(
+                        //       margin: const EdgeInsets.only(left: 16),
+                        //       padding: const EdgeInsets.all(10),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         color: const Color(0xfffd5762),
+                        //       ),
+                        //       child: SvgPicture.string(HomeSvg().imgFeedIcon),
+                        //     ),
+                        //     const SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     Text(
+                        //       "Video / Image Feed ",
+                        //       style: GoogleFonts.roboto(
+                        //         color: Colors.black,
+                        //         fontSize: 18,
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const Divider(
+                        //   indent: 70,
+                        //   color: Color(0xffE6ECF0),
+                        // ),
+                        // Row(
+                        //   children: [
+                        //     Container(
+                        //       margin: const EdgeInsets.only(left: 16),
+                        //       padding: const EdgeInsets.all(10),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         color: const Color(0xfffd5762),
+                        //       ),
+                        //       child: SvgPicture.string(HomeSvg().analyticIcon),
+                        //     ),
+                        //     const SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     Text(
+                        //       "Updation / Analytics",
+                        //       style: GoogleFonts.roboto(
+                        //         color: Colors.black,
+                        //         fontSize: 18,
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const Divider(
+                        //   indent: 70,
+                        //   color: Color(0xffE6ECF0),
+                        // ),
+                        // Row(
+                        //   children: [
+                        //     Container(
+                        //       margin: const EdgeInsets.only(left: 16),
+                        //       padding: const EdgeInsets.all(10),
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         color: const Color(0xfffd5762),
+                        //       ),
+                        //       child: SvgPicture.string(HomeSvg().chatGroupIcon),
+                        //     ),
+                        //     const SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     Text(
+                        //       "Chat or Group",
+                        //       style: GoogleFonts.roboto(
+                        //         color: Colors.black,
+                        //         fontSize: 18,
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 50,
+                        // )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               );
             },

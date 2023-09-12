@@ -1,3 +1,4 @@
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -86,14 +87,7 @@ class _ReporterListState extends State<ReporterList> {
           body: BlocBuilder<JobBloc, JobState>(
             builder: (context, state) {
               if (state is GetReporterListLoading) {
-                return Container(
-                    height: 200,
-                    width: w,
-                    alignment: Alignment.center,
-                    child: LoadingAnimationWidget.threeRotatingDots(
-                      color: Colors.red,
-                      size: 30,
-                    ));
+                return LottieLoader();
               }
               if (state is GetReporterListSuccess) {
                 nextUrl=state.nextPageUrl??"";

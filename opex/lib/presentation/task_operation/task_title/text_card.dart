@@ -21,10 +21,10 @@ class TextCard extends StatelessWidget {
             title??"",
             style:isTask? TextStyle(
               color: ColorPalette.black,
-              fontSize: w/22,
+              fontSize: w/24,
             ):GoogleFonts.roboto(
               color: Color(0xff151522),
-              fontSize: w/22,
+              fontSize: w/24,
 
               fontWeight: FontWeight.w500,
             ),
@@ -39,7 +39,7 @@ class TextCard extends StatelessWidget {
             subText?? "",
             style: TextStyle(
               color: ColorPalette.black,
-              fontSize: w/22,
+              fontSize: w/24,
             ),
             textAlign: TextAlign.justify,
           ),

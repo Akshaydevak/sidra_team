@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
+import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../inventory/inventory_new_list.dart';
 import '../inventory/new_list_tab/profiling_tab.dart';
 import 'create/add_text.dart';
@@ -92,13 +93,114 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: AppBar(
-            systemOverlayStyle: SystemUiOverlayStyle(
-              systemNavigationBarColor: Colors.white, // Navigation bar
-              statusBarColor: Colors.white, // Status bar
+          preferredSize: Size.fromHeight(60),
+          child:  BackAppBar(
+            label: "Attachment",
+            isAction: false,
+            isBack: false,
+            onTap: (){
+              // widget.isJob?
+              // context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','')):null;
+              Navigator.pop(context);
+            },
+            action: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isValid == false
+                    ? GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xffd3d3d3),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Add",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                )
+                    : GestureDetector(
+                  onTap: () {
+                    BlocProvider.of<TaskBloc>(context)
+                        .add(UpdateReportingTaskEvent(
+                      latitude: widget.readData?.latitude ?? "",
+                      longitude: widget.readData?.longitude ?? "",
+                      img5: picModelAttachment[4].url,
+                      img1: picModelAttachment[0].url,
+                      img4: picModelAttachment[3].url,
+                      img2: picModelAttachment[1].url,
+                      img3: picModelAttachment[2].url,
+                      attachmentDescription: discription.text,
+                      attachmentNote: notes.text,
+                      id: widget.readData?.id ?? 0,
+                      AssigningCode:
+                      widget.readData?.assigningCode ?? "",
+                      AssigningType:
+                      widget.readData?.assigningType ?? "",
+                      createdOn:
+                      "${widget.readData?.createdOn?.split("T")[0]}"
+                          " "
+                          "${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
+                      jobid: widget.readData?.jobId,
+                      notas: widget.readData?.notes ?? "",
+                      priorityLeval: "1",
+                      remarks: widget.readData?.remarks ?? "",
+                      taskName: widget.readData?.taskName ?? "",
+                      taskType: widget.readData?.taskType ?? 0,
+                      lastmodified: null,
+                      parant: widget.readData?.parent ?? null,
+                      statusStagesId: null,
+                      discription: widget.readData?.description ?? "",
+                      createdBy:
+                      widget.readData?.createdPersonCode ?? "",
+                      isActive: true,
+                      priority: widget.readData?.priority ?? "",
+                      reportingPerson:
+                      widget.readData?.reportingPersonCode ?? "",
+                      endDate: "${widget.readData?.endDate?.split("T")[0]}"
+                          " "
+                          "${widget.readData?.endDate?.split("T")[1].split("+")[0]}" ??
+                          "",
+                      startDate:
+                      "${widget.readData?.startDate?.split("T")[0]}"
+                          " "
+                          "${widget.readData?.startDate?.split("T")[1].split("+")[0]}" ??
+                          "",
+                    ));
+                    // Navigator.pop(context);
+                  },
+                  child: Container(
+                    // width: 110,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: ColorPalette.primary,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Add",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            elevation: 0,
           ),
         ),
         body: MultiBlocListener(
@@ -162,101 +264,184 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             child: SafeArea(
                 child: Column(
               children: [
-                TaskAndOperationAppBar(
-                  label: "Attachment",
-                  EndIcon: isValid == false
-                      ? GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            // width: 110,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xffd3d3d3),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Add",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
+                // TaskAndOperationAppBar(
+                //   label: "Attachment",
+                //   EndIcon: isValid == false
+                //       ? GestureDetector(
+                //           onTap: () {},
+                //           child: Container(
+                //             // width: 110,
+                //             padding: EdgeInsets.symmetric(
+                //                 horizontal: 16, vertical: 8),
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(5),
+                //               color: Color(0xffd3d3d3),
+                //             ),
+                //             alignment: Alignment.center,
+                //             child: Text(
+                //               "Add",
+                //               textAlign: TextAlign.center,
+                //               style: GoogleFonts.roboto(
+                //                 color: Colors.white,
+                //                 fontSize: 20,
+                //                 fontWeight: FontWeight.w500,
+                //               ),
+                //             ),
+                //           ),
+                //         )
+                //       : GestureDetector(
+                //           onTap: () {
+                //             BlocProvider.of<TaskBloc>(context)
+                //                 .add(UpdateReportingTaskEvent(
+                //               latitude: widget.readData?.latitude ?? "",
+                //               longitude: widget.readData?.longitude ?? "",
+                //               img5: picModelAttachment[4].url,
+                //               img1: picModelAttachment[0].url,
+                //               img4: picModelAttachment[3].url,
+                //               img2: picModelAttachment[1].url,
+                //               img3: picModelAttachment[2].url,
+                //               attachmentDescription: discription.text,
+                //               attachmentNote: notes.text,
+                //               id: widget.readData?.id ?? 0,
+                //               AssigningCode:
+                //                   widget.readData?.assigningCode ?? "",
+                //               AssigningType:
+                //                   widget.readData?.assigningType ?? "",
+                //               createdOn:
+                //                   "${widget.readData?.createdOn?.split("T")[0]}"
+                //                   " "
+                //                   "${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
+                //               jobid: widget.readData?.jobId,
+                //               notas: widget.readData?.notes ?? "",
+                //               priorityLeval: "1",
+                //               remarks: widget.readData?.remarks ?? "",
+                //               taskName: widget.readData?.taskName ?? "",
+                //               taskType: widget.readData?.taskType ?? 0,
+                //               lastmodified: null,
+                //               parant: widget.readData?.parent ?? null,
+                //               statusStagesId: null,
+                //               discription: widget.readData?.description ?? "",
+                //               createdBy:
+                //                   widget.readData?.createdPersonCode ?? "",
+                //               isActive: true,
+                //               priority: widget.readData?.priority ?? "",
+                //               reportingPerson:
+                //                   widget.readData?.reportingPersonCode ?? "",
+                //               endDate: "${widget.readData?.endDate?.split("T")[0]}"
+                //                       " "
+                //                       "${widget.readData?.endDate?.split("T")[1].split("+")[0]}" ??
+                //                   "",
+                //               startDate:
+                //                   "${widget.readData?.startDate?.split("T")[0]}"
+                //                           " "
+                //                           "${widget.readData?.startDate?.split("T")[1].split("+")[0]}" ??
+                //                       "",
+                //             ));
+                //             // Navigator.pop(context);
+                //           },
+                //           child: Container(
+                //             // width: 110,
+                //             padding: EdgeInsets.symmetric(
+                //                 horizontal: 16, vertical: 8),
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(5),
+                //               color: ColorPalette.primary,
+                //             ),
+                //             alignment: Alignment.center,
+                //             child: Text(
+                //               "Add",
+                //               textAlign: TextAlign.center,
+                //               style: GoogleFonts.roboto(
+                //                 color: Colors.white,
+                //                 fontSize: 20,
+                //                 fontWeight: FontWeight.w500,
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                // ),
+                Container(
+                  width: w,
+                  margin: EdgeInsets.all(15),
+
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x05000000),
+                        blurRadius: 8,
+                        offset: Offset(1, 1),
+                      ),
+                    ],
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+
+                        // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                          child:TextFormField(
+
+                            style:GoogleFonts.roboto(
+                                fontWeight: FontWeight.w600
+                            ) ,
+                            onChanged: (l){
+                              validationCheck();
+                              setState(() {
+
+                              });
+                            },
+                            decoration:  InputDecoration(
+
+                              contentPadding: EdgeInsets.only(left:16,right: 16 ),
+                              hintText: "Enter description",
+                              hintStyle: TextStyle(
+                                color: Color(0x66151522),
+                                fontSize: w/26,
                               ),
+                              border: InputBorder.none,
+                              // suffixIcon: Text("INR"),
+
                             ),
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            BlocProvider.of<TaskBloc>(context)
-                                .add(UpdateReportingTaskEvent(
-                              latitude: widget.readData?.latitude ?? "",
-                              longitude: widget.readData?.longitude ?? "",
-                              img5: picModelAttachment[4].url,
-                              img1: picModelAttachment[0].url,
-                              img4: picModelAttachment[3].url,
-                              img2: picModelAttachment[1].url,
-                              img3: picModelAttachment[2].url,
-                              attachmentDescription: discription.text,
-                              attachmentNote: notes.text,
-                              id: widget.readData?.id ?? 0,
-                              AssigningCode:
-                                  widget.readData?.assigningCode ?? "",
-                              AssigningType:
-                                  widget.readData?.assigningType ?? "",
-                              createdOn:
-                                  "${widget.readData?.createdOn?.split("T")[0]}"
-                                  " "
-                                  "${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
-                              jobid: widget.readData?.jobId,
-                              notas: widget.readData?.notes ?? "",
-                              priorityLeval: "1",
-                              remarks: widget.readData?.remarks ?? "",
-                              taskName: widget.readData?.taskName ?? "",
-                              taskType: widget.readData?.taskType ?? 0,
-                              lastmodified: null,
-                              parant: widget.readData?.parent ?? null,
-                              statusStagesId: null,
-                              discription: widget.readData?.description ?? "",
-                              createdBy:
-                                  widget.readData?.createdPersonCode ?? "",
-                              isActive: true,
-                              priority: widget.readData?.priority ?? "",
-                              reportingPerson:
-                                  widget.readData?.reportingPersonCode ?? "",
-                              endDate: "${widget.readData?.endDate?.split("T")[0]}"
-                                      " "
-                                      "${widget.readData?.endDate?.split("T")[1].split("+")[0]}" ??
-                                  "",
-                              startDate:
-                                  "${widget.readData?.startDate?.split("T")[0]}"
-                                          " "
-                                          "${widget.readData?.startDate?.split("T")[1].split("+")[0]}" ??
-                                      "",
-                            ));
-                            // Navigator.pop(context);
-                          },
-                          child: Container(
-                            // width: 110,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: ColorPalette.primary,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Add",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
+                            // enabled: false,
+                            // keyboardType: TextInputType.number,
+                            // inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                            controller: discription,
+
+                          )
+                      ),
+                      Divider(indent: 16,),
+                      Container(
+                        // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                          child:TextFormField(
+                            controller: notes,
+                            maxLines: 4,
+                            minLines: 1,
+                            onChanged: (l){
+                              validationCheck();
+                              setState(() {
+
+                              });
+                            },
+                            decoration:  InputDecoration(
+                              contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                              hintText: "Add Notes",
+                              hintStyle: TextStyle(
+                                color: Color(0x66151522),
+                                fontSize: w/26,
                               ),
+                              border: InputBorder.none,
                             ),
-                          ),
-                        ),
+
+                          )
+                      ),
+
+
+                    ],
+                  ),
                 ),
                 Container(
                   width: w,
@@ -265,75 +450,75 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: w,
-                        height: 145,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: discription,
-                          onChanged: (l) {
-                            validationCheck();
-                            setState(() {});
-                          },
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none,
-                            hintText: "Description",
-                            hintStyle: TextStyle(
-                              color: Color(0xff939393),
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: AddText(
-                          label: "Add Notes",
-                          controller: notes,
-                          isActive: true,
-                          onchange: (l) {
-                            validationCheck();
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
+                      // Container(
+                      //   width: w,
+                      //   height: 145,
+                      //   padding: EdgeInsets.symmetric(horizontal: 16),
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(
+                      //       color: Color(0xffe6ecf0),
+                      //       width: 1,
+                      //     ),
+                      //     boxShadow: const [
+                      //       BoxShadow(
+                      //         color: Color(0x05000000),
+                      //         blurRadius: 8,
+                      //         offset: Offset(1, 1),
+                      //       ),
+                      //     ],
+                      //     color: Colors.white,
+                      //   ),
+                      //   child: TextFormField(
+                      //     controller: discription,
+                      //     onChanged: (l) {
+                      //       validationCheck();
+                      //       setState(() {});
+                      //     },
+                      //     decoration: const InputDecoration(
+                      //       contentPadding: EdgeInsets.zero,
+                      //       border: InputBorder.none,
+                      //       hintText: "Description",
+                      //       hintStyle: TextStyle(
+                      //         color: Color(0xff939393),
+                      //         fontSize: 18,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Container(
+                      //   width: w,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(
+                      //       color: Color(0xffe6ecf0),
+                      //       width: 1,
+                      //     ),
+                      //     boxShadow: const [
+                      //       BoxShadow(
+                      //         color: Color(0x05000000),
+                      //         blurRadius: 8,
+                      //         offset: Offset(1, 1),
+                      //       ),
+                      //     ],
+                      //     color: Colors.white,
+                      //   ),
+                      //   child: AddText(
+                      //     label: "Add Notes",
+                      //     controller: notes,
+                      //     isActive: true,
+                      //     onchange: (l) {
+                      //       validationCheck();
+                      //       setState(() {});
+                      //     },
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 15,
+                      // ),
                       // Text(
                       //   "Images",
                       //   style: GoogleFonts.roboto(
@@ -441,9 +626,9 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                       //                         color: Color(0x7f666161))),
                       //           );
                       //         })),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
                       count>=5?Container():TextButton(
                         child:  Text(
                             " + Add Attachment",

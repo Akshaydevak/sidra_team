@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
+import 'package:cluster/presentation/task_operation/employee_card.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +18,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../common_widgets/loading.dart';
 import '../../../../core/color_palatte.dart';
 import '../../../../core/common_snackBar.dart';
+import '../../common_widgets/gradient_button.dart';
+import '../../common_widgets/no_glow.dart';
 import '../../core/utils/variables.dart';
 import '../inventory/inventory_new_list.dart';
 import '../inventory/new_list_tab/profiling_tab.dart';
@@ -25,6 +29,7 @@ import 'create/add_text.dart';
 import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_model/employee_model.dart';
+import 'group_list.dart';
 import 'home/model/joblist_model.dart';
 
 class PaymentOption extends StatefulWidget {
@@ -48,6 +53,7 @@ class PaymentOption extends StatefulWidget {
 class _PaymentOptionState extends State<PaymentOption> {
   List<String> assignTypeList = ["Individual", "Task_Group",];
   String? selCode;
+  String? selName;
   bool active=false;
   String? selectedType;
   String? selectedCode;
@@ -78,6 +84,11 @@ class _PaymentOptionState extends State<PaymentOption> {
       picModelPayment.add(PicModel(data: null,url: null));
     }
     super.initState();
+  }
+  refresh(){
+    setState(() {
+
+    });
   }
   bool? isValid=false;
   validationCheck(){
@@ -374,7 +385,7 @@ class _PaymentOptionState extends State<PaymentOption> {
 
               Container(
                 width: w,
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +397,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                           "Assigning Type",
                           style: GoogleFonts.roboto(
                             color: Colors.black,
-                            fontSize: 16,
+                            fontSize: w/24,
 
                             fontWeight: FontWeight.w500,
                           ),
@@ -403,7 +414,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 12.0),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                                 color: Colors.grey.withOpacity(0.2), width: 1),
                           ),
@@ -443,85 +454,105 @@ class _PaymentOptionState extends State<PaymentOption> {
                           label: "Assigning Code",
                           selValue: paymentRead?.assigningName??"",
                         ):selectedType=="Task_Group"?
-                        Flex(direction: Axis.vertical,
-                            children:[
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Assigning Name",
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w/24,
-                                      fontWeight: FontWeight.w500,
-                                    ),),
-                                  Container(
-                                    width: w,
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    decoration: BoxDecoration(color: Colors.white,
-                                        border: Border.all(color: Color(0xffe6ecf0)),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    child: DropdownButton<String>(
-                                      underline:Container(),
-                                      isExpanded: true,
-                                      icon: Icon(Icons.keyboard_arrow_down_outlined),
-                                      hint: const Text("Assigning Name"),
-                                      value: selCode,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selCode = value;
-                                        });
-                                      },
-
-                                      items: grouplist
-                                          .map<DropdownMenuItem<String>>((GetTaskGroupList _value) =>
-                                          DropdownMenuItem<String>(
-                                              value: _value.groupCode,
-                                              child: Text(_value.gName??"",)
-                                          )).toList(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ])
+                        DropDownCard(
+                          label: "Assigning Name",
+                          selValue: selName,
+                          onTap: (){
+                            _showModalBottomGroupList(grouplist);
+                          },
+                        )
+                        // Flex(direction: Axis.vertical,
+                        //     children:[
+                        //       Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Text("Assigning Name",
+                        //             style: GoogleFonts.roboto(
+                        //               color: ColorPalette.black,
+                        //               fontSize: w/24,
+                        //               fontWeight: FontWeight.w500,
+                        //             ),),
+                        //           Container(
+                        //             width: w,
+                        //             padding: EdgeInsets.symmetric(horizontal: 12),
+                        //             decoration: BoxDecoration(color: Colors.white,
+                        //                 border: Border.all(color: Color(0xffe6ecf0)),
+                        //                 borderRadius: BorderRadius.circular(10)),
+                        //             child: DropdownButton<String>(
+                        //               underline:Container(),
+                        //               isExpanded: true,
+                        //               icon: Icon(Icons.keyboard_arrow_down_outlined),
+                        //               hint: const Text("Assigning Name"),
+                        //               value: selCode,
+                        //               onChanged: (value) {
+                        //                 setState(() {
+                        //                   selCode = value;
+                        //                 });
+                        //               },
+                        //
+                        //               items: grouplist
+                        //                   .map<DropdownMenuItem<String>>((GetTaskGroupList _value) =>
+                        //                   DropdownMenuItem<String>(
+                        //                       value: _value.groupCode,
+                        //                       child: Text(_value.gName??"",)
+                        //                   )).toList(),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ])
                             :
-                        selectedType=="Individual"?Flex(direction: Axis.vertical,
-                            children:[
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Assigning Code",
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w/24,
-                                      fontWeight: FontWeight.w500,
-                                    ),),
-                                  Container(
-                                    width: w,
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    decoration: BoxDecoration(color: Colors.white,
-                                        border: Border.all(color: Color(0xffe6ecf0)),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    child: DropdownButton<String>(
-                                      underline:Container(),
-                                      isExpanded: true,
-                                      icon: Icon(Icons.keyboard_arrow_down_outlined),
-                                      hint: const Text("Assigning Code"),
-                                      value: selCode,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selCode = value;
-                                        });
-                                      },
-
-                                      items: employeeList
-                                          .map<DropdownMenuItem<String>>((GetEmployeeList _value) =>
-                                          DropdownMenuItem<String>(
-                                              value: _value.code,
-                                              child: Text(_value.fname??"",)
-                                          )).toList(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ]):
+                        selectedType=="Individual"?
+                            DropDownCard(
+                              label: "Assigning Name",
+                              selValue: selName,
+                              onTap: (){
+                                _showModalBottomAdditionalRole(employeeList);
+                              },
+                            ):
+                        // Flex(direction: Axis.vertical,
+                        //     children:[
+                        //       Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           GestureDetector(
+                        //             onTap: (){
+                        //               _showModalBottomAdditionalRole();
+                        //             },
+                        //             child: Text("Assigning Code",
+                        //               style: GoogleFonts.roboto(
+                        //                 color: ColorPalette.black,
+                        //                 fontSize: w/24,
+                        //                 fontWeight: FontWeight.w500,
+                        //               ),),
+                        //           ),
+                        //           Container(
+                        //             width: w,
+                        //             padding: EdgeInsets.symmetric(horizontal: 12),
+                        //             decoration: BoxDecoration(color: Colors.white,
+                        //                 border: Border.all(color: Color(0xffe6ecf0)),
+                        //                 borderRadius: BorderRadius.circular(10)),
+                        //             child: DropdownButton<String>(
+                        //               underline:Container(),
+                        //               isExpanded: true,
+                        //               icon: Icon(Icons.keyboard_arrow_down_outlined),
+                        //               hint: const Text("Assigning Code"),
+                        //               value: selCode,
+                        //               onChanged: (value) {
+                        //                 setState(() {
+                        //                   selCode = value;
+                        //                 });
+                        //               },
+                        //
+                        //               items: employeeList
+                        //                   .map<DropdownMenuItem<String>>((GetEmployeeList _value) =>
+                        //                   DropdownMenuItem<String>(
+                        //                       value: _value.userCode,
+                        //                       child: Text(_value.fname??"",)
+                        //                   )).toList(),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ]):
                         Container(),
                       ],
                     ):Container(),
@@ -620,7 +651,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 },
                                 decoration:  InputDecoration(
                                   contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
-                                  hintText: "Add Notes",
+                                  hintText: "Add Notes(Optional)",
                                   hintStyle: TextStyle(
                                     color: Color(0x66151522),
                                     fontSize: w/26,
@@ -922,5 +953,382 @@ class _PaymentOptionState extends State<PaymentOption> {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  _showModalBottomAdditionalRole(List<GetEmployeeList>? employeeList) {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 1.3,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Select From List",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        SizedBox(
+                          height: h/1.5,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                           SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Container(
+                                                  width: w,
+                                                  // height: h / 2.5,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    // border: Border.all(
+                                                    //   color: Color(0xffe6ecf0),
+                                                    //   width: 1,
+                                                    // ),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: ListView.separated(
+                                                      primary: true,
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                      itemBuilder: (context, index) =>
+                                                          GestureDetector(
+                                                            onTap: (){
+                                                              selCode=employeeList?[index].userCode??"";
+                                                              selName=employeeList?[index].fname??"";
+                                                              refresh();
+                                                              Navigator.pop(context);
+                                                            },
+
+                                                              child: EmployeeCard(employeeList: employeeList?[index])),
+                                                      separatorBuilder:
+                                                          (context, index) => SizedBox(height: 5,),
+                                                      itemCount: employeeList!.length),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           // refresh();
+                    //           Navigator.pop(context);
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Update List",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),
+                    // )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  _showModalBottomGroupList(List<GetTaskGroupList>? grouplist) {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 1.3,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Select From List",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        SizedBox(
+                          height: h/1.5,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Container(
+                                            width: w,
+                                            // height: h / 2.5,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                              // border: Border.all(
+                                              //   color: Color(0xffe6ecf0),
+                                              //   width: 1,
+                                              // ),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0x05000000),
+                                                  blurRadius: 8,
+                                                  offset: Offset(1, 1),
+                                                ),
+                                              ],
+                                              color: Colors.white,
+                                            ),
+                                            child: ListView.separated(
+                                                primary: true,
+                                                shrinkWrap: true,
+                                                physics:
+                                                NeverScrollableScrollPhysics(),
+                                                itemBuilder: (context, index) =>
+                                                    GestureDetector(
+                                                        onTap: (){
+                                                          selCode=grouplist?[index].groupCode??"";
+                                                          selName=grouplist?[index].gName??"";
+                                                          refresh();
+                                                          Navigator.pop(context);
+                                                        },
+
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius:
+                                                            BorderRadius.circular(4),
+                                                            border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Color(0x05000000),
+                                                                blurRadius: 8,
+                                                                offset: Offset(1, 1),
+                                                              ),
+                                                            ],
+                                                            color: Colors.white,
+                                                          ),
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(
+                                                                left: 16,
+                                                                right: 16,
+                                                                top: 10,
+                                                                bottom: 10),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    TextAvatar(
+                                                                      textColor: Colors.white,size: 40,
+                                                                      fontSize: w/22,
+                                                                      shape: Shape.Circular,
+
+                                                                      text:
+                                                                      "${grouplist?[index].gName![0].toUpperCase()} ",
+                                                                      numberLetters: 2,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 14,
+                                                                    ),
+                                                                    Text(
+                                                                      grouplist?[index].gName ??
+                                                                          "",
+                                                                      style: TextStyle(
+                                                                        color: ColorPalette.black,
+                                                                        fontSize: w / 24,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                //
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ),
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(height: 5,),
+                                                itemCount: grouplist!.length),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           // refresh();
+                    //           Navigator.pop(context);
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Update List",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),
+                    // )
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 }

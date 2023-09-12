@@ -1,4 +1,5 @@
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,7 +79,9 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
 
                         BlocBuilder<TaskBloc, TaskState>(
                           builder: (context, state) {
-                            if (state is ReportListAdminListLoading) {}
+                            if (state is ReportListAdminListLoading) {
+                              return LottieLoader();
+                            }
 
                             if (state is ReportListAdminListSuccess) {
                               return state.orders!.isNotEmpty?

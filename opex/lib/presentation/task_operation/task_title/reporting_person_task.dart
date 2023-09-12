@@ -6,6 +6,8 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_wid
 import 'package:cluster/presentation/task_operation/create/model/task_models.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,6 +61,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
 
   GetJobList? JobRead;
   List<RoleList> roleList = [];
+  bool _isLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +138,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
               }
               if (state is GetReportingPersonListSuccess) {
                 employee = state.employeeList;
+                _isLoading=false;
                 setState(() {
 
                 });
@@ -190,291 +194,408 @@ class _ReportingPersonState extends State<ReportingPerson> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
 
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                              if(_isLoading)...[
+                                LottieLoader()
+                              ]
+                              else...[
+                                Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
 
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: Color(
-                                            0xffe6ecf0), width: 1,),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color(0x05000000),
-                                            blurRadius: 8,
-                                            offset: Offset(1, 1),
+                                      Variable.reportingEmail==""?Container():
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                            color: Color(0xffe6ecf0),
+                                            width: 1,
                                           ),
-                                        ],
-                                        color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0x05000000),
+                                              blurRadius: 8,
+                                              offset: Offset(1, 1),
+                                            ),
+                                          ],
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 16, right: 16, bottom: 10, top: 10),
+                                              child: SingleRow(
+                                                label: "Reporting Person",
+                                                color: Color(0xffAD51E0),
+                                                svg: TaskSvg().personIcon,
+                                                endIcon: Container(),
+                                                onTap: () {
+                                                  setState(() {
+                                                    // isReporting = !isReporting;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            Divider(
+                                              indent: 10,
+                                              height: 2,
+                                            ),
+                                            widget.editTask?
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 16, right: 16, bottom: 16, top: 10),
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.string(TaskSvg().profileReporting),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.centerLeft,
+                                                    child: Text(
+                                                      widget.readTask
+                                                          ?.reportingPerson ?? "",
+                                                      style: TextStyle(
+                                                        color: ColorPalette.black,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ):
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 16, right: 16, bottom: 16, top: 10),
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.string(TaskSvg().profileReporting),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.centerLeft,
+                                                    child: Text(
+                                                      Variable.reportingEmail ?? "",
+                                                      style: TextStyle(
+                                                        color: ColorPalette.black,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      child: Column(
+                                      // Container(
+                                      //   decoration: BoxDecoration(
+                                      //     borderRadius: BorderRadius.circular(4),
+                                      //     border: Border.all(color: Color(
+                                      //         0xffe6ecf0), width: 1,),
+                                      //     boxShadow: [
+                                      //       BoxShadow(
+                                      //         color: Color(0x05000000),
+                                      //         blurRadius: 8,
+                                      //         offset: Offset(1, 1),
+                                      //       ),
+                                      //     ],
+                                      //     color: Colors.white,
+                                      //   ),
+                                      //   child: Column(
+                                      //     children: [
+                                      //       Container(
+                                      //         margin: EdgeInsets.only(
+                                      //             left: 16,
+                                      //             right: 16,
+                                      //             bottom:  16,
+                                      //             top:  16),
+                                      //         child: SingleRow(
+                                      //           label: "Reporting Person",
+                                      //           color: Color(0xffAD51E0),
+                                      //           svg: TaskSvg().personIcon,
+                                      //           endIcon: Container()
+                                      //
+                                      //           ,
+                                      //           onTap: () {
+                                      //             setState(() {
+                                      //               // isReporting = !isReporting;
+                                      //             });
+                                      //           },
+                                      //         ),
+                                      //       ),
+                                      //       widget.editTask ? Container(
+                                      //           padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                                      //           child: Row(
+                                      //             children: [
+                                      //               TextAvatar(
+                                      //                 shape: Shape.Circular,
+                                      //                 size: 40,
+                                      //                 numberLetters: 2,
+                                      //                 fontSize: w/22,
+                                      //                 textColor: Colors.white,
+                                      //                 fontWeight: FontWeight.w500,
+                                      //                 text:widget.readTask
+                                      //                     ?.reportingPerson.toString().toUpperCase() ,
+                                      //               ),
+                                      //               SizedBox(width: 20,),
+                                      //               Text(widget.readTask
+                                      //                   ?.reportingPerson ?? ""),
+                                      //             ],
+                                      //           )) :
+                                      //       Container(
+                                      //           padding: EdgeInsets.only(
+                                      //               left: 16, bottom: 16),
+                                      //           child: Row(
+                                      //             children: [
+                                      //               TextAvatar(
+                                      //                 shape: Shape.Circular,
+                                      //                 size: 40,
+                                      //                 numberLetters: 2,
+                                      //                 fontSize: w/22,
+                                      //                 textColor: Colors.white,
+                                      //                 fontWeight: FontWeight.w500,
+                                      //                 text:Variable.reportingEmail.toString().toUpperCase() ,
+                                      //               ),
+                                      //               SizedBox(width: 10,),
+                                      //               Text(
+                                      //                   Variable.reportingEmail ??
+                                      //                       ""),
+                                      //             ],
+                                      //           ))
+                                      //     ],
+                                      //   ),
+                                      // ),
+
+                                      Variable.reportingEmail==""?Container():SizedBox(height: 20,),
+
+                                      Text(
+                                        "Total ${employee.length} Users",
+                                        style: GoogleFonts.roboto(
+                                          color: ColorPalette.black,
+                                          fontSize: w / 22,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .start,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
                                         children: [
                                           Container(
-                                            margin: EdgeInsets.only(
-                                                left: 16,
-                                                right: 16,
-                                                bottom:  16,
-                                                top:  16),
-                                            child: SingleRow(
-                                              label: "Reporting Person",
-                                              color: Color(0xffAD51E0),
-                                              svg: TaskSvg().personIcon,
-                                              endIcon: Container()
-
-                                              ,
-                                              onTap: () {
-                                                setState(() {
-                                                  // isReporting = !isReporting;
-                                                });
-                                              },
+                                            //color: Colors.yellow,
+                                            padding: const EdgeInsets.only(
+                                              bottom: 20,
                                             ),
-                                          ),
-                                          widget.editTask ? Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 16, bottom: 16),
-                                              child: Row(
-                                                children: [
-                                                  CircleAvatar(backgroundImage: AssetImage("asset/newprofile.png"),),
-                                                  SizedBox(width: 20,),
-                                                  Text(widget.readTask
-                                                      ?.reportingPerson ?? ""),
-                                                ],
-                                              )) :
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 16, bottom: 16),
-                                              child: Row(
-                                                children: [
-                                                  CircleAvatar(),
-                                                  SizedBox(width: 10,),
-                                                  Text(
-                                                      Variable.reportingEmail ??
-                                                          ""),
-                                                ],
-                                              ))
-                                        ],
-                                      ),
-                                    ),
+                                            child: ListView.separated(
+                                                shrinkWrap: true,
+                                                physics: const ScrollPhysics(),
+                                                separatorBuilder: (
+                                                    BuildContext cxt, int i) {
+                                                  return const SizedBox(
+                                                    height: 5,
+                                                  );
+                                                },
+                                                itemBuilder: (
+                                                    BuildContext context, int i) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      Variable.reportingEmail =
+                                                          employee[i]
+                                                              .email ?? "";
+                                                      widget.editTask
+                                                          ? BlocProvider.of<
+                                                          TaskBloc>(context).add(
+                                                          UpdateReportingTaskEvent(
+                                                            img5: widget.readTask?.metaData?.image5,
+                                                            img1: widget.readTask?.metaData?.image1,
+                                                            img4: widget.readTask?.metaData?.image4,
+                                                            img2: widget.readTask?.metaData?.image2,
+                                                            img3: widget.readTask?.metaData?.image3,
+                                                            attachmentDescription: widget.readTask?.metaData?.description,
+                                                            attachmentNote: widget.readTask?.metaData?.note,
+                                                            latitude: widget.readTask?.latitude??"",
+                                                            longitude: widget.readTask?.longitude??"",
+                                                            id: widget.readTask
+                                                                ?.id ?? 0,
+                                                            AssigningCode: widget
+                                                                .readTask
+                                                                ?.assigningCode ??
+                                                                "",
+                                                            AssigningType: widget
+                                                                .readTask
+                                                                ?.assigningType ??
+                                                                "",
+                                                            createdOn: "${widget
+                                                                .readTask
+                                                                ?.startDate
+                                                                ?.split(
+                                                                "T")[0]}"" ""${widget
+                                                                .readTask
+                                                                ?.startDate
+                                                                ?.split("T")[1]
+                                                                .split(
+                                                                "+")[0]}",
+                                                            jobid: widget.readTask
+                                                                ?.jobId,
+                                                            notas: widget.readTask
+                                                                ?.notes ?? "",
+                                                            priorityLeval: widget
+                                                                .readTask
+                                                                ?.priorityLevel
+                                                                .toString() ?? "",
+                                                            remarks: widget
+                                                                .readTask
+                                                                ?.remarks ?? "",
+                                                            taskName: widget
+                                                                .readTask
+                                                                ?.taskName ?? "",
+                                                            taskType: widget
+                                                                .readTask
+                                                                ?.taskType ?? 0,
+                                                            lastmodified: widget
+                                                                .readTask
+                                                                ?.lastModified ??
+                                                                "",
+                                                            parant: widget
+                                                                .readTask?.parent,
+                                                            statusStagesId: widget
+                                                                .readTask
+                                                                ?.statusStagesId,
+                                                            discription: widget
+                                                                .readTask
+                                                                ?.description ??
+                                                                "",
+                                                            createdBy: widget
+                                                                .readTask
+                                                                ?.createdBy
+                                                                .toString() ?? "",
+                                                            isActive: true,
+                                                            priority: widget
+                                                                .readTask
+                                                                ?.priority ?? "",
+                                                            reportingPerson: employee[i]
+                                                                .userCode ?? "",
+                                                            endDate: "${widget
+                                                                .readTask?.endDate
+                                                                ?.split(
+                                                                "T")[0]}"" ""${widget
+                                                                .readTask?.endDate
+                                                                ?.split("T")[1]
+                                                                .split(
+                                                                "+")[0]}" ?? "",
+                                                            startDate: "${widget
+                                                                .readTask
+                                                                ?.startDate
+                                                                ?.split(
+                                                                "T")[0]}"" ""${widget
+                                                                .readTask
+                                                                ?.startDate
+                                                                ?.split("T")[1]
+                                                                .split(
+                                                                "+")[0]}" ?? "",
+                                                          ))
+                                                          : Variable
+                                                          .reportingCode =
+                                                          employee[i].userCode ?? "";
 
-                                    SizedBox(height: 20,),
-
-                                    Text(
-                                      "Total ${employee.length} Assignee",
-                                      style: GoogleFonts.roboto(
-                                        color: ColorPalette.black,
-                                        fontSize: w / 22,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .start,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Container(
-                                          //color: Colors.yellow,
-                                          padding: const EdgeInsets.only(
-                                            bottom: 20,
-                                          ),
-                                          child: ListView.separated(
-                                              shrinkWrap: true,
-                                              physics: const ScrollPhysics(),
-                                              separatorBuilder: (
-                                                  BuildContext cxt, int i) {
-                                                return const SizedBox(
-                                                  height: 5,
-                                                );
-                                              },
-                                              itemBuilder: (
-                                                  BuildContext context, int i) {
-                                                return InkWell(
-                                                  onTap: () {
-                                                    Variable.reportingEmail =
-                                                        employee[i]
-                                                            .email ?? "";
-                                                    widget.editTask
-                                                        ? BlocProvider.of<
-                                                        TaskBloc>(context).add(
-                                                        UpdateReportingTaskEvent(
-                                                          img5: widget.readTask?.metaData?.image5,
-                                                          img1: widget.readTask?.metaData?.image1,
-                                                          img4: widget.readTask?.metaData?.image4,
-                                                          img2: widget.readTask?.metaData?.image2,
-                                                          img3: widget.readTask?.metaData?.image3,
-                                                          attachmentDescription: widget.readTask?.metaData?.description,
-                                                          attachmentNote: widget.readTask?.metaData?.note,
-                                                          latitude: widget.readTask?.latitude??"",
-                                                          longitude: widget.readTask?.longitude??"",
-                                                          id: widget.readTask
-                                                              ?.id ?? 0,
-                                                          AssigningCode: widget
-                                                              .readTask
-                                                              ?.assigningCode ??
-                                                              "",
-                                                          AssigningType: widget
-                                                              .readTask
-                                                              ?.assigningType ??
-                                                              "",
-                                                          createdOn: "${widget
-                                                              .readTask
-                                                              ?.startDate
-                                                              ?.split(
-                                                              "T")[0]}"" ""${widget
-                                                              .readTask
-                                                              ?.startDate
-                                                              ?.split("T")[1]
-                                                              .split(
-                                                              "+")[0]}",
-                                                          jobid: widget.readTask
-                                                              ?.jobId,
-                                                          notas: widget.readTask
-                                                              ?.notes ?? "",
-                                                          priorityLeval: widget
-                                                              .readTask
-                                                              ?.priorityLevel
-                                                              .toString() ?? "",
-                                                          remarks: widget
-                                                              .readTask
-                                                              ?.remarks ?? "",
-                                                          taskName: widget
-                                                              .readTask
-                                                              ?.taskName ?? "",
-                                                          taskType: widget
-                                                              .readTask
-                                                              ?.taskType ?? 0,
-                                                          lastmodified: widget
-                                                              .readTask
-                                                              ?.lastModified ??
-                                                              "",
-                                                          parant: widget
-                                                              .readTask?.parent,
-                                                          statusStagesId: widget
-                                                              .readTask
-                                                              ?.statusStagesId,
-                                                          discription: widget
-                                                              .readTask
-                                                              ?.description ??
-                                                              "",
-                                                          createdBy: widget
-                                                              .readTask
-                                                              ?.createdBy
-                                                              .toString() ?? "",
-                                                          isActive: true,
-                                                          priority: widget
-                                                              .readTask
-                                                              ?.priority ?? "",
-                                                          reportingPerson: employee[i]
-                                                              .userCode ?? "",
-                                                          endDate: "${widget
-                                                              .readTask?.endDate
-                                                              ?.split(
-                                                              "T")[0]}"" ""${widget
-                                                              .readTask?.endDate
-                                                              ?.split("T")[1]
-                                                              .split(
-                                                              "+")[0]}" ?? "",
-                                                          startDate: "${widget
-                                                              .readTask
-                                                              ?.startDate
-                                                              ?.split(
-                                                              "T")[0]}"" ""${widget
-                                                              .readTask
-                                                              ?.startDate
-                                                              ?.split("T")[1]
-                                                              .split(
-                                                              "+")[0]}" ?? "",
-                                                        ))
-                                                        : Variable
-                                                        .reportingCode =
-                                                        employee[i].userCode ?? "";
-
-                                                    context.read<TaskBloc>()
-                                                        .add(
-                                                        GetTaskReadListEvent(
-                                                            widget.readTask
-                                                                ?.id ?? 0));
-                                                    read();
-                                                  },
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius
-                                                          .circular(10),
-                                                      border: Border.all(
-                                                        color: Variable.reportingEmail ==
-                                                        employee[i].email?ColorPalette.primary: Color(0xffe6ecf0),
-                                                        width: 1,),
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                          color: Color(
-                                                              0x05000000),
-                                                          blurRadius: 8,
-                                                          offset: Offset(1, 1),
-                                                        ),
-                                                      ],
-                                                      color: Colors.white,
-                                                    ),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 10,
-                                                        horizontal: 16),
-                                                    width: w,
-
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment
-                                                            .spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              CircleAvatar(
-                                                                backgroundColor: ColorPalette
-                                                                    .inactiveGrey,),
-                                                              SizedBox(
-                                                                width: 10,),
-                                                              Container(
-                                                                width: w / 1.5,
-                                                                child: Text(
-                                                                  employee[i]
-                                                                      .email ??
-                                                                      "",
-                                                                  style: TextStyle(
-                                                                    color: ColorPalette
-                                                                        .black,
-                                                                    fontSize: w /
-                                                                        22,
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
+                                                      context.read<TaskBloc>()
+                                                          .add(
+                                                          GetTaskReadListEvent(
+                                                              widget.readTask
+                                                                  ?.id ?? 0));
+                                                      read();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius
+                                                            .circular(4),
+                                                        border: Border.all(
+                                                          color: Variable.reportingEmail ==
+                                                              employee[i].email?ColorPalette.primary: Color(0xffe6ecf0),
+                                                          width: 1,),
+                                                        boxShadow: const [
+                                                          BoxShadow(
+                                                            color: Color(
+                                                                0x05000000),
+                                                            blurRadius: 8,
+                                                            offset: Offset(1, 1),
                                                           ),
-                                                          // PopupMenuButton(
-                                                          //   icon: SvgPicture.string(TaskSvg().moreIcon),
-                                                          //   //don't specify icon if you want 3 dot menu
-                                                          //   color: Colors.white,
-                                                          //   elevation: 2,
-                                                          //   padding: EdgeInsets.zero,
-                                                          //   shape:
-                                                          //   RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                                          //   itemBuilder: (context) {
-                                                          //     return List.generate(roleList.length, (index) {
-                                                          //       return PopupMenuItem(
-                                                          //         child: Text(roleList[index].roleName??""),
-                                                          //       );
-                                                          //     });
-                                                          //   },
-                                                          //  )
-                                                        ]),
-                                                  ),
-                                                );
-                                              },
-                                              itemCount: employee.length),
-                                        ),
-                                      ],
-                                    )
+                                                        ],
+                                                        color: Variable.reportingEmail ==
+                                                            employee[i].email?Color(0xffEAF1F7):Colors.white,
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(vertical: 10,
+                                                          horizontal: 16),
+                                                      width: w,
 
-                                  ])
+                                                      child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment
+                                                              .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                TextAvatar(
+                                                                  shape: Shape.Circular,
+                                                                  size: 40,
+                                                                  numberLetters: 2,
+                                                                  fontSize: w/22,
+                                                                  textColor: Colors.white,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  text:employee[i].email.toString().toUpperCase() ,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,),
+                                                                Container(
+                                                                  width: w / 1.5,
+                                                                  child: Text(
+                                                                    employee[i]
+                                                                        .email ??
+                                                                        "",
+                                                                    style: TextStyle(
+                                                                      color: ColorPalette
+                                                                          .black,
+                                                                      fontSize: w /
+                                                                          22,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            // PopupMenuButton(
+                                                            //   icon: SvgPicture.string(TaskSvg().moreIcon),
+                                                            //   //don't specify icon if you want 3 dot menu
+                                                            //   color: Colors.white,
+                                                            //   elevation: 2,
+                                                            //   padding: EdgeInsets.zero,
+                                                            //   shape:
+                                                            //   RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                                            //   itemBuilder: (context) {
+                                                            //     return List.generate(roleList.length, (index) {
+                                                            //       return PopupMenuItem(
+                                                            //         child: Text(roleList[index].roleName??""),
+                                                            //       );
+                                                            //     });
+                                                            //   },
+                                                            //  )
+                                                          ]),
+                                                    ),
+                                                  );
+                                                },
+                                                itemCount: employee.length),
+                                          ),
+                                        ],
+                                      )
+
+                                    ])
+                              ]
+
                             ]))))));
   }
 }

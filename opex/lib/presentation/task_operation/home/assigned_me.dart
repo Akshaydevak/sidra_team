@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,14 +74,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
               BlocBuilder<JobBloc, JobState>(
             builder: (context, state) {
               if (state is GetAssignedMeListLoading) {
-                return Container(
-                    height: 300,
-                    width: w,
-                    alignment: Alignment.center,
-                    child: LoadingAnimationWidget.threeRotatingDots(
-                      color: Colors.red,
-                      size: 30,
-                    ));
+                return LottieLoader();
               }
               if (state is GetAssignedMeListSuccess) {
                 jobList = state.assignMeList ?? [];
@@ -128,7 +122,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
                             // ),
                           ]),
                       const SizedBox(
-                        height: 16,
+                        height: 10,
                       ),
                       Container(
                         //color: Colors.yellow,
@@ -140,7 +134,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
                             physics: const ScrollPhysics(),
                             separatorBuilder: (BuildContext cxt, int i) {
                               return const SizedBox(
-                                height: 10,
+                                height: 5,
                               );
                             },
                             itemBuilder: (BuildContext context, int i) {
@@ -295,7 +289,7 @@ class _CardExpanedState extends State<CardExpaned> {
     return Container(
       width: w,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: const Color(0x4ca9a8a8),
           width: 1,
@@ -315,22 +309,22 @@ class _CardExpanedState extends State<CardExpaned> {
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          width: w/1.8,
+                          width: w/1.4,
                           child: Text(
                             widget.assignedMe?.name??"",
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: GoogleFonts.roboto(
                               color: ColorPalette.black,
-                              fontSize: 18,
+                              fontSize: w/22,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
 
-                        GestureDetector(
-                          onTap: widget.onTap,
-                            child: Icon(Icons.arrow_drop_down))
+                        // GestureDetector(
+                        //   onTap: widget.onTap,
+                        //     child: Icon(Icons.arrow_drop_down))
                       ],
                     ),
                     const SizedBox(
@@ -338,9 +332,9 @@ class _CardExpanedState extends State<CardExpaned> {
                     ),
                     Text(
                       widget.assignedMe?.description??"",
-                      style: const TextStyle(
+                      style:  TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
+                        fontSize: w/26,
                       ),
                       textAlign: TextAlign.justify,
                     ),
@@ -348,9 +342,73 @@ class _CardExpanedState extends State<CardExpaned> {
             ),
             Divider(
               color: const Color(0xffA9A8A8).withOpacity(0.3),
+              height: 2,
             ),
+
+            Container(
+                padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // SvgPicture.string(TaskSvg().attachmIcon),
+                        // const SizedBox(
+                        //   width: 5,
+                        // ),
+                        // Text(
+                        //   "1",
+                        //   style: GoogleFonts.roboto(
+                        //     color: const Color(0xff939393),
+                        //     fontSize: 15,
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   width: 15,
+                        // ),
+                        SvgPicture.string(
+                          TaskSvg().priorityIcon,
+                          // height: 20,width: 20,
+                          color: widget.assignedMe?.priority=="Low"?Color(0xff50D166):
+                          widget.assignedMe?.priority=="Medium"?Color(0xffF18F1C):
+                          null,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text("${widget.assignedMe?.priority} Priority"??"",style: TextStyle(fontSize: w/24,fontWeight: FontWeight.w500),),
+                         SizedBox(
+                          width: w/3.5,
+                        ),
+                        GestureDetector(
+                          onTap: widget.onTap,
+                            child: Text("View Details"??"",style: TextStyle(fontSize: w/26,
+                            color: widget.isExpanded==true?
+                            Color(0xffC6C6C6):ColorPalette.primary),)),
+
+                        // SvgPicture.string(TaskSvg().priorityIcon,
+                        //     color: widget.tasksList?.priority=="Low"?const Color(0xff50D166):
+                        //     widget.tasksList?.priority=="Medium"?const Color(0xffF18F1C):null)
+                      ],
+                    ),
+                    // GestureDetector(
+                    //     onTap: (){
+                    //       setState((){
+                    //         onselect(i);
+                    //         isExpanded=!isExpanded;
+                    //       });
+                    //     },
+                    //     child: isExpanded?const Icon(Icons.keyboard_arrow_up):const Icon(Icons.keyboard_arrow_down_sharp))
+                  ],
+                )),
             widget.isExpanded==true?Column(
               children: [
+                Divider(
+                  height: 2,
+                  color: const Color(0xffA9A8A8).withOpacity(0.3),
+                ),
                 Container(
                   padding:
                   const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
@@ -422,63 +480,9 @@ class _CardExpanedState extends State<CardExpaned> {
                     ],
                   ),
                 ),
-                Divider(
-                  color: const Color(0xffA9A8A8).withOpacity(0.3),
-                ),
+
               ],
             ):Container(),
-            Container(
-                padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // SvgPicture.string(TaskSvg().attachmIcon),
-                        // const SizedBox(
-                        //   width: 5,
-                        // ),
-                        // Text(
-                        //   "1",
-                        //   style: GoogleFonts.roboto(
-                        //     color: const Color(0xff939393),
-                        //     fontSize: 15,
-                        //     fontWeight: FontWeight.w500,
-                        //   ),
-                        // ),
-                        // const SizedBox(
-                        //   width: 15,
-                        // ),
-                        SvgPicture.string(
-                          TaskSvg().priorityIcon,
-                          color: widget.assignedMe?.priority=="Low"?Color(0xff50D166):
-                          widget.assignedMe?.priority=="Medium"?Color(0xffF18F1C):
-                          null,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(widget.assignedMe?.priority??"",style: TextStyle(fontSize: w/24,fontWeight: FontWeight.w500),),
-
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        // SvgPicture.string(TaskSvg().priorityIcon,
-                        //     color: widget.tasksList?.priority=="Low"?const Color(0xff50D166):
-                        //     widget.tasksList?.priority=="Medium"?const Color(0xffF18F1C):null)
-                      ],
-                    ),
-                    // GestureDetector(
-                    //     onTap: (){
-                    //       setState((){
-                    //         onselect(i);
-                    //         isExpanded=!isExpanded;
-                    //       });
-                    //     },
-                    //     child: isExpanded?const Icon(Icons.keyboard_arrow_up):const Icon(Icons.keyboard_arrow_down_sharp))
-                  ],
-                ))
           ]),
     );
   }

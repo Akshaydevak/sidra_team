@@ -12,7 +12,7 @@ class TaskTitleCard extends StatelessWidget {
       width: w,
    padding:paddingg,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
         color: Color(0xfff8f7f5),
       ),

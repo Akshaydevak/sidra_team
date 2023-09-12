@@ -6,7 +6,9 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart'
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/mpos/search_card.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
+import 'package:cluster/presentation/task_operation/employee_card.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
@@ -85,250 +87,481 @@ class _SelectAssigneesState extends State<SelectAssignees> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Task Assign To",
-                  style: GoogleFonts.roboto(
-                    color: Color(0xff151522),
-                    fontSize: w / 22,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          Variable.isselected = !Variable.isselected;
-                          context.read<JobBloc>().add(GetEmployeeListEvent('','',''));
-                        });
-                      },
-                      child: Container(
-                        width: w / 2.5,
-                        height: 50,
-                        padding: EdgeInsets.all(10),
-                        decoration: Variable.isselected == true
-                            ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: ColorPalette.cardBackground,
-                              )
-                            : BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Variable.isselected = !Variable.isselected;
+                              context.read<JobBloc>().add(GetEmployeeListEvent('','',''));
+                            });
+                          },
+                          child: Container(
+                            width: w / 2.3,
+                            height: 40,
+                            padding: EdgeInsets.all(10),
+                            decoration: Variable.isselected == true
+                                ? BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x05000000),
-                                    blurRadius: 8,
-                                    offset: Offset(1, 1),
-                                  ),
-                                ],
-                                color: Colors.white,
-                              ),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {},
-                              child: Variable.isselected == true
-                                  ? SvgPicture.string(
-                                      HomeSvg().radioButtonActive)
-                                  : SvgPicture.string(
-                                      HomeSvg().radioButtonInActive),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "To Individual",
-                              style: Variable.isselected == true
-                                  ? GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 25,
-                                      fontWeight: FontWeight.w500,
-                                    )
-                                  : GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 25,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                              ],
+                              color: ColorPalette.cardBackground,
                             )
-                          ],
+                                : BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Color(0xffe6ecf0),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
+                                ),
+                              ],
+                              color: Colors.white,
+                            ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Variable.isselected == true
+                                      ? SvgPicture.string(
+                                      HomeSvg().radioButtonActive)
+                                      : SvgPicture.string(
+                                      CreateSvg()
+                                          .radioInActiveButton),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "To Individual",
+                                  style: Variable.isselected == true
+                                      ? GoogleFonts.roboto(
+                                    color: ColorPalette.black,
+                                    fontSize: w / 25,
+                                    fontWeight: FontWeight.w500,
+                                  )
+                                      : GoogleFonts.roboto(
+                                    color: ColorPalette.black,
+                                    fontSize: w / 25,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Variable.isselected = !Variable.isselected;
+                              context.read<JobBloc>().add(GetGroupListEvent());
+
+                              groupActived = true;
+                            });
+                          },
+                          child: Container(
+                            width: w / 2.3,
+                            height: 40,
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Variable.isselected == false
+                                  ? Border.all(color: Colors.white)
+                                  : Border.all(
+                                color: Color(0xffe6ecf0),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
+                                ),
+                              ],
+                              color: Variable.isselected == false
+                                  ? ColorPalette.cardBackground
+                                  : Colors.white,
+                            ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Variable.isselected == false
+                                      ? SvgPicture.string(
+                                      HomeSvg().radioButtonActive)
+                                      : SvgPicture.string(
+                                      CreateSvg()
+                                          .radioInActiveButton),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "To Group",
+                                  style: Variable.isselected == false
+                                      ? GoogleFonts.roboto(
+                                    color: ColorPalette.black,
+                                    fontSize: w / 25,
+                                    fontWeight: FontWeight.w500,
+                                  )
+                                      : GoogleFonts.roboto(
+                                    color: ColorPalette.black,
+                                    fontSize: w / 25,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      width: 20,
+                      height: 25,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          Variable.isselected = !Variable.isselected;
-                          context.read<JobBloc>().add(GetGroupListEvent());
 
-                          groupActived = true;
-                        });
-                      },
-                      child: Container(
-                        width: w / 2.5,
-                        height: 50,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Variable.isselected == false
-                              ? Border.all(color: Colors.white)
-                              : Border.all(
-                                  color: Color(0xffe6ecf0),
-                                  width: 1,
-                                ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
+                    Variable.isselected
+                        ? Container(
+                      width: w,
+                      // // height: 577,
+                      // decoration: BoxDecoration(
+                      //   borderRadius: BorderRadius.circular(10),
+                      //   border: Border.all(
+                      //     color: Color(0xffe6ecf0), width: 1,),
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       color: Color(0x05000000),
+                      //       blurRadius: 8,
+                      //       offset: Offset(1, 1),
+                      //     ),
+                      //   ],
+                      //   color: Colors.white,
+                      // ),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Select from List",
+                            style: GoogleFonts.roboto(
+                              color: ColorPalette.black,
+                              fontSize: w / 24,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
-                          color: Variable.isselected == false
-                              ? ColorPalette.cardBackground
-                              : Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {},
-                              child: Variable.isselected == false
-                                  ? SvgPicture.string(
-                                      HomeSvg().radioButtonActive)
-                                  : SvgPicture.string(
-                                      HomeSvg().radioButtonInActive),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "To Group",
-                              style: Variable.isselected == false
-                                  ? GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 25,
-                                      fontWeight: FontWeight.w500,
-                                    )
-                                  : GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 25,
-                                      fontWeight: FontWeight.w400,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          // SearchCard(
+                          //   hint: "Search Users...",
+                          //   onchange: (dd){
+                          //     context.read<JobBloc>().add( GetEmployeeListEvent(dd,'',''));
+                          //   },
+                          // ),
+                          SizedBox(height: 10,),
+                          BlocBuilder<JobBloc, JobState>(
+                            builder: (context, state) {
+                              if (state is GetEmployeeListLoading) {
+                                return LottieLoader();
+                              }
+                              if (state is GetEmployeeListSuccess) {
+                                employeeList = state.assignMeList??[];
+                                return ListView.separated(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(bottom: 30),
+                                    itemBuilder: (context, index) =>
+                                        // GestureDetector(
+                                        //   onTap: () async {
+                                        //     final SharedPreferences prefs =
+                                        //     await SharedPreferences
+                                        //         .getInstance();
+                                        //     prefs.setInt('index', index!);
+                                        //     setState(() {
+                                        //       groupActived = false;
+                                        //       indValue = index;
+                                        //       grpValue;
+                                        //
+                                        //       Variable.assignType =
+                                        //       "Individual";
+                                        //       Variable.assignName =
+                                        //           employeeList[index].fname ??
+                                        //               "";
+                                        //       Variable.assignCode =
+                                        //           employeeList[index].userCode ??
+                                        //               "";
+                                        //     });
+                                        //     widget.groupVal!(groupActived);
+                                        //     Navigator.pop(context);
+                                        //   },
+                                        //   child: Container(
+                                        //     decoration: BoxDecoration(
+                                        //       borderRadius:
+                                        //       BorderRadius.circular(10),
+                                        //       border: Border.all(
+                                        //         color: index == indValue
+                                        //             ? ColorPalette.primary
+                                        //             : Color(0xffe6ecf0),
+                                        //         width: 1,
+                                        //       ),
+                                        //       boxShadow: [
+                                        //         BoxShadow(
+                                        //           color: Color(0x05000000),
+                                        //           blurRadius: 8,
+                                        //           offset: Offset(1, 1),
+                                        //         ),
+                                        //       ],
+                                        //       color: Colors.white,
+                                        //     ),
+                                        //     child: Padding(
+                                        //       padding: const EdgeInsets.only(
+                                        //           left: 0,
+                                        //           right: 10,
+                                        //           top: 10,
+                                        //           bottom: 10),
+                                        //       child: Row(
+                                        //         mainAxisAlignment:
+                                        //         MainAxisAlignment.start,
+                                        //         crossAxisAlignment:
+                                        //         CrossAxisAlignment.start,
+                                        //         children: [
+                                        //           Radio(
+                                        //             value: index,
+                                        //             groupValue: indValue,
+                                        //             activeColor:
+                                        //             ColorPalette.primary,
+                                        //             onChanged:
+                                        //                 (int? value) async {
+                                        //               final SharedPreferences
+                                        //               prefs =
+                                        //               await SharedPreferences
+                                        //                   .getInstance();
+                                        //               prefs.setInt(
+                                        //                   'index', value!);
+                                        //               setState(() {
+                                        //                 groupActived = false;
+                                        //                 indValue = value;
+                                        //                 grpValue;
+                                        //
+                                        //                 Variable.assignType =
+                                        //                 "Individual";
+                                        //                 Variable.assignCode =
+                                        //                     employeeList[index]
+                                        //                         .code ??
+                                        //                         "";
+                                        //               });
+                                        //             },
+                                        //           ),
+                                        //           Row(
+                                        //             mainAxisAlignment:
+                                        //             MainAxisAlignment.start,
+                                        //             crossAxisAlignment:
+                                        //             CrossAxisAlignment
+                                        //                 .start,
+                                        //             children: [
+                                        //               employeeList[index]
+                                        //                   .profile !=
+                                        //                   ""
+                                        //                   ? CircleAvatar(
+                                        //                 backgroundColor:
+                                        //                 ColorPalette
+                                        //                     .inactiveGrey,
+                                        //                 backgroundImage:
+                                        //                 NetworkImage(
+                                        //                     employeeList[index]
+                                        //                         .profile ??
+                                        //                         ""),
+                                        //               )
+                                        //                   : TextAvatar(
+                                        //                 textColor:
+                                        //                 Colors.white,
+                                        //                 shape: Shape
+                                        //                     .Circular,
+                                        //                 text:
+                                        //                 "${employeeList[index].fname![0].toUpperCase()} ",
+                                        //                 numberLetters: 2,
+                                        //               ),
+                                        //               SizedBox(
+                                        //                 width: 14,
+                                        //               ),
+                                        //               Column(
+                                        //                 crossAxisAlignment:
+                                        //                 CrossAxisAlignment
+                                        //                     .start,
+                                        //                 children: [
+                                        //                   Text(
+                                        //                     employeeList[index]
+                                        //                         .fname ??
+                                        //                         "",
+                                        //                     style: TextStyle(
+                                        //                       color:
+                                        //                       ColorPalette
+                                        //                           .black,
+                                        //                       fontSize: w / 22,
+                                        //                     ),
+                                        //                   ),
+                                        //                   SizedBox(
+                                        //                     height: 5,
+                                        //                   ),
+                                        //                   Container(
+                                        //                     width: w / 1.8,
+                                        //                     child: Text(
+                                        //                       employeeList[
+                                        //                       index]
+                                        //                           .primaryMail ??
+                                        //                           "",
+                                        //                       style: TextStyle(
+                                        //                         color:
+                                        //                         ColorPalette
+                                        //                             .black,
+                                        //                         fontSize:
+                                        //                         w / 24,
+                                        //                       ),
+                                        //                     ),
+                                        //                   ),
+                                        //                 ],
+                                        //               )
+                                        //             ],
+                                        //           ),
+                                        //         ],
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                    GestureDetector(
+                                      onTap: ()async{
+                                        final SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                            prefs.setInt('index', index!);
+                                            setState(() {
+                                              groupActived = false;
+                                              indValue = index;
+                                              grpValue;
+
+                                              Variable.assignType =
+                                              "Individual";
+                                              Variable.assignName =
+                                                  employeeList[index].fname ??
+                                                      "";
+                                              Variable.assignCode =
+                                                  employeeList[index].userCode ??
+                                                      "";
+                                            });
+                                            widget.groupVal!(groupActived);
+                                            Navigator.pop(context);
+                                      },
+                                      child: EmployeeCard(
+                                        isSelect: Variable.isselected == index,
+                                        employeeList: employeeList[index],
+                                      ),
                                     ),
-                            )
-                          ],
-                        ),
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(
+                                        height: 5,
+                                      );
+                                    },
+                                    itemCount: employeeList.length);
+                              }
+                              return Container();
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  "Select from List",
-                  style: GoogleFonts.roboto(
-                    color: ColorPalette.black,
-                    fontSize: w / 22,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Variable.isselected
-                    ? Container(
-                        width: w,
-                        // // height: 577,
-                        // decoration: BoxDecoration(
-                        //   borderRadius: BorderRadius.circular(10),
-                        //   border: Border.all(
-                        //     color: Color(0xffe6ecf0), width: 1,),
-                        //   boxShadow: [
-                        //     BoxShadow(
-                        //       color: Color(0x05000000),
-                        //       blurRadius: 8,
-                        //       offset: Offset(1, 1),
-                        //     ),
-                        //   ],
-                        //   color: Colors.white,
-                        // ),
-                        child: Column(
-                          children: [
-                            SearchCard(
-                              hint: "Search Users...",
-                              onchange: (dd){
-                                context.read<JobBloc>().add( GetEmployeeListEvent(dd,'',''));
-                              },
-                            ),
-                            SizedBox(height: 10,),
-                            BlocBuilder<JobBloc, JobState>(
-                              builder: (context, state) {
-                                if (state is GetEmployeeListLoading) {
-                                  return Container(
-                                      height: 100,
-                                      width: w,
-                                      alignment: Alignment.center,
-                                      child: LoadingAnimationWidget.threeRotatingDots(
-                                        color: Colors.red,
-                                        size: 30,
-                                      ));
-                                }
-                                if (state is GetEmployeeListSuccess) {
-                                  employeeList = state.assignMeList??[];
-                                  return ListView.separated(
+                    )
+                        : Container(
+                      width: w,
+                      // height: 577,
+                      // decoration: BoxDecoration(
+                      //   borderRadius: BorderRadius.circular(10),
+                      //   border: Border.all(
+                      //     color: Color(0xffe6ecf0),
+                      //     width: 1,
+                      //   ),
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       color: Color(0x05000000),
+                      //       blurRadius: 8,
+                      //       offset: Offset(1, 1),
+                      //     ),
+                      //   ],
+                      //   color: Colors.white,
+                      // ),
+                      child: Container(
+                        child: BlocBuilder<JobBloc, JobState>(
+                          builder: (context, state) {
+                            if(state is GetGroupListLoading){
+                              return LottieLoader();
+                            }
+                            if(state is GetGroupListSuccess){
+                              grouplist = state.groupList;
+                              return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Select from List",
+                                    style: GoogleFonts.roboto(
+                                      color: ColorPalette.black,
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  ListView.separated(
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.only(bottom: 30),
                                       itemBuilder: (context, index) =>
                                           GestureDetector(
                                             onTap: () async {
-                                              final SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              prefs.setInt('index', index!);
                                               setState(() {
-                                                groupActived = false;
-                                                indValue = index;
-                                                grpValue;
-
-                                                Variable.assignType =
-                                                    "Individual";
+                                                grpValue = index!;
+                                                Variable.assignType = "Task_Group";
                                                 Variable.assignName =
-                                                    employeeList[index].fname ??
-                                                        "";
+                                                    grouplist[index].gName ?? "";
                                                 Variable.assignCode =
-                                                    employeeList[index].userCode ??
-                                                        "";
+                                                    grouplist[index].groupCode ?? "";
+                                                Variable.groupId =
+                                                    grouplist[index].id ?? 0;
+                                                groupActived = true;
+                                                indValue = 0;
+                                                print("GRRR${Variable.assignType}");
                                               });
+                                              final SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                              prefs.setInt('groupId',
+                                                  grouplist[index].id ?? 0);
+                                              prefs.setInt('index2', index);
                                               widget.groupVal!(groupActived);
+                                              print("grpVal$groupActived");
+                                              print("grpVal${Variable.assignType}");
+                                              print("grpVal${Variable.assignCode}");
                                               Navigator.pop(context);
+                                              setState(() {});
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  color: index == indValue
-                                                      ? ColorPalette.primary
-                                                      : Color(0xffe6ecf0),
-                                                  width: 1,
-                                                ),
+                                                BorderRadius.circular(4),
+                                                border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Color(0x05000000),
@@ -336,118 +569,88 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                                     offset: Offset(1, 1),
                                                   ),
                                                 ],
-                                                color: Colors.white,
+                                                color: index == grpValue?
+                                                ColorPalette.cardBackground:Colors.white,
                                               ),
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
-                                                    left: 0,
-                                                    right: 10,
+                                                    left: 16,
+                                                    right: 16,
                                                     top: 10,
                                                     bottom: 10),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                                   children: [
-                                                    Radio(
-                                                      value: index,
-                                                      groupValue: indValue,
-                                                      activeColor:
-                                                          ColorPalette.primary,
-                                                      onChanged:
-                                                          (int? value) async {
-                                                        final SharedPreferences
-                                                            prefs =
-                                                            await SharedPreferences
-                                                                .getInstance();
-                                                        prefs.setInt(
-                                                            'index', value!);
-                                                        setState(() {
-                                                          groupActived = false;
-                                                          indValue = value;
-                                                          grpValue;
-
-                                                          Variable.assignType =
-                                                              "Individual";
-                                                          Variable.assignCode =
-                                                              employeeList[index]
-                                                                      .code ??
-                                                                  "";
-                                                        });
-                                                      },
-                                                    ),
+                                                    // Radio(
+                                                    //   value: index,
+                                                    //   activeColor:
+                                                    //   ColorPalette.primary,
+                                                    //   groupValue: grpValue,
+                                                    //   onChanged: (int? value) async {
+                                                    //     setState(() {
+                                                    //       grpValue = value!;
+                                                    //       Variable.assignType =
+                                                    //       "Task_Group";
+                                                    //       Variable.assignCode =
+                                                    //           grouplist[index]
+                                                    //               .groupCode ??
+                                                    //               "";
+                                                    //       Variable.groupId =
+                                                    //           grouplist[index].id ??
+                                                    //               0;
+                                                    //       groupActived = true;
+                                                    //       indValue = 0;
+                                                    //       print(
+                                                    //           "GRRR${Variable.assignType}");
+                                                    //     });
+                                                    //     final SharedPreferences
+                                                    //     prefs =
+                                                    //     await SharedPreferences
+                                                    //         .getInstance();
+                                                    //     prefs.setInt('groupId',
+                                                    //         grouplist[index].id ?? 0);
+                                                    //     prefs.setInt(
+                                                    //         'index2', value!);
+                                                    //     setState(() {});
+                                                    //   },
+                                                    // ),
                                                     Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
                                                       children: [
-                                                        employeeList[index]
-                                                                    .profile !=
-                                                                ""
-                                                            ? CircleAvatar(
-                                                                backgroundColor:
-                                                                    ColorPalette
-                                                                        .inactiveGrey,
-                                                                backgroundImage:
-                                                                    NetworkImage(
-                                                                        employeeList[index]
-                                                                                .profile ??
-                                                                            ""),
-                                                              )
-                                                            : TextAvatar(
-                                                                textColor:
-                                                                    Colors.white,
-                                                                shape: Shape
-                                                                    .Circular,
-                                                                text:
-                                                                    "${employeeList[index].fname![0].toUpperCase()} ",
-                                                                numberLetters: 2,
-                                                              ),
+                                                        TextAvatar(
+                                                          textColor: Colors.white,size: 40,
+                                                          fontSize: w/22,
+                                                          shape: Shape.Circular,
+
+                                                          text:
+                                                          "${grouplist[index].gName![0].toUpperCase()} ",
+                                                          numberLetters: 2,
+                                                        ),
+                                                        // CircleAvatar(
+                                                        //   child: Text(
+                                                        //     grouplist[index].gName![0],
+                                                        //     style: GoogleFonts.roboto(
+                                                        //       color: Colors.white,
+                                                        //       fontSize: 26,
+                                                        //       fontWeight:
+                                                        //           FontWeight.w500,
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         SizedBox(
                                                           width: 14,
                                                         ),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              employeeList[index]
-                                                                      .fname ??
-                                                                  "",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    ColorPalette
-                                                                        .black,
-                                                                fontSize: w / 22,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Container(
-                                                              width: w / 1.8,
-                                                              child: Text(
-                                                                employeeList[
-                                                                            index]
-                                                                        .primaryMail ??
-                                                                    "",
-                                                                style: TextStyle(
-                                                                  color:
-                                                                      ColorPalette
-                                                                          .black,
-                                                                  fontSize:
-                                                                      w / 24,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
+                                                        Text(
+                                                          grouplist[index].gName ??
+                                                              "",
+                                                          style: TextStyle(
+                                                            color: ColorPalette.black,
+                                                            fontSize: w / 24,
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
+                                                    //
                                                   ],
                                                 ),
                                               ),
@@ -458,195 +661,20 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                           height: 5,
                                         );
                                       },
-                                      itemCount: employeeList.length);
-                                }
-                                return Container();
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        width: w,
-                        // height: 577,
-                        // decoration: BoxDecoration(
-                        //   borderRadius: BorderRadius.circular(10),
-                        //   border: Border.all(
-                        //     color: Color(0xffe6ecf0),
-                        //     width: 1,
-                        //   ),
-                        //   boxShadow: [
-                        //     BoxShadow(
-                        //       color: Color(0x05000000),
-                        //       blurRadius: 8,
-                        //       offset: Offset(1, 1),
-                        //     ),
-                        //   ],
-                        //   color: Colors.white,
-                        // ),
-                        child: Container(
-                          child: BlocBuilder<JobBloc, JobState>(
-  builder: (context, state) {
-    if(state is GetGroupListLoading){
-    return Container(
-        height: 100,
-        width: w,
-        alignment: Alignment.center,
-        child: LoadingAnimationWidget.threeRotatingDots(
-          color: Colors.red,
-          size: 30,
-        ));
-    }
-    if(state is GetGroupListSuccess){
-    grouplist = state.groupList;
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) =>
-            GestureDetector(
-              onTap: () async {
-                setState(() {
-                  grpValue = index!;
-                  Variable.assignType = "Task_Group";
-                  Variable.assignName =
-                      grouplist[index].gName ?? "";
-                  Variable.assignCode =
-                      grouplist[index].groupCode ?? "";
-                  Variable.groupId =
-                      grouplist[index].id ?? 0;
-                  groupActived = true;
-                  indValue = 0;
-                  print("GRRR${Variable.assignType}");
-                });
-                final SharedPreferences prefs =
-                await SharedPreferences
-                    .getInstance();
-                prefs.setInt('groupId',
-                    grouplist[index].id ?? 0);
-                prefs.setInt('index2', index);
-                widget.groupVal!(groupActived);
-                print("grpVal$groupActived");
-                print("grpVal${Variable.assignType}");
-                print("grpVal${Variable.assignCode}");
-                Navigator.pop(context);
-                setState(() {});
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius:
-                  BorderRadius.circular(10),
-                  border: Border.all(
-                    color: index == grpValue
-                        ? ColorPalette.primary
-                        : Color(0xffe6ecf0),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x05000000),
-                      blurRadius: 8,
-                      offset: Offset(1, 1),
-                    ),
-                  ],
-                  color: Colors.white,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 0,
-                      right: 10,
-                      top: 10,
-                      bottom: 10),
-                  child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.start,
-                    children: [
-                      Radio(
-                        value: index,
-                        activeColor:
-                        ColorPalette.primary,
-                        groupValue: grpValue,
-                        onChanged: (int? value) async {
-                          setState(() {
-                            grpValue = value!;
-                            Variable.assignType =
-                            "Task_Group";
-                            Variable.assignCode =
-                                grouplist[index]
-                                    .groupCode ??
-                                    "";
-                            Variable.groupId =
-                                grouplist[index].id ??
-                                    0;
-                            groupActived = true;
-                            indValue = 0;
-                            print(
-                                "GRRR${Variable.assignType}");
-                          });
-                          final SharedPreferences
-                          prefs =
-                          await SharedPreferences
-                              .getInstance();
-                          prefs.setInt('groupId',
-                              grouplist[index].id ?? 0);
-                          prefs.setInt(
-                              'index2', value!);
-                          setState(() {});
-                        },
-                      ),
-                      Row(
-                        children: [
-                          TextAvatar(
-                            textColor: Colors.white,
-                            shape: Shape.Circular,
-                            text:
-                            "${grouplist[index].gName![0].toUpperCase()} ",
-                            numberLetters: 2,
-                          ),
-                          // CircleAvatar(
-                          //   child: Text(
-                          //     grouplist[index].gName![0],
-                          //     style: GoogleFonts.roboto(
-                          //       color: Colors.white,
-                          //       fontSize: 26,
-                          //       fontWeight:
-                          //           FontWeight.w500,
-                          //     ),
-                          //   ),
-                          // ),
-                          SizedBox(
-                            width: 14,
-                          ),
-                          Text(
-                            grouplist[index].gName ??
-                                "",
-                            style: TextStyle(
-                              color: ColorPalette.black,
-                              fontSize: w / 22,
-                            ),
-                          ),
-                        ],
-                      ),
-                      //
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        separatorBuilder: (context, index) {
-          return SizedBox(
-            height: 5,
-          );
-        },
-        itemCount: grouplist.length);
-    }
-    return Container();
+                                      itemCount: grouplist.length),
+                                ],
+                              );
+                            }
+                            return Container();
 
-  },
-),
+                          },
                         ),
                       ),
-                SizedBox(
-                  height: 30,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    )
+                  ],
                 )
               ],
             ),
