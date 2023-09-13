@@ -35,7 +35,7 @@ class JobCard extends StatelessWidget {
           context,
           screen: TaskTitle(),
           withNavBar: false, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
+          pageTransitionAnimation: PageTransitionAnimation.slideUp,
         );
       },
       child: Stack(
@@ -45,7 +45,7 @@ class JobCard extends StatelessWidget {
 
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: Color(0xffe6ecf0),
                 width: 1,
@@ -57,18 +57,19 @@ class JobCard extends StatelessWidget {
                   offset: Offset(1, 1),
                 ),
               ],
-              color: Colors.white,
+              color: Color(0xfff8f7f5),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: w/3.5,
+                  width: joblist?.statusName=="STARTED"||joblist?.statusName=="PENDING"?
+                  w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/4.6,
                   // height: 25,
                   padding: EdgeInsets.symmetric(horizontal: 5,vertical: 4),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Color(0x05000000),
@@ -76,13 +77,23 @@ class JobCard extends StatelessWidget {
                         offset: Offset(1, 1),
                       ),
                     ],
-                    color: Color(0x19ff9900),
+                    // color: Color(0x19ff9900),
+                    color: joblist?.statusName=="STARTED"?
+                    Color(0xffFF9900):joblist?.statusName=="ON PROGRESS"?
+                    Color(0xff2871AF):joblist?.statusName=="COMPLETED"?
+                    Color(0xff079B16):joblist?.statusName=="PENDING"?
+                    Color(0xffFF0000):Color(0xffFFE5BE)
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     joblist?.statusName??"STARTED",
                     style: GoogleFonts.roboto(
-                      color: Color(0xffff9900),
+                      color: Colors.white,
+                      // joblist?.statusName=="STARTED"?
+                      // Color(0xffFFE1B3):joblist?.statusName=="ON PROGRESS"?
+                      // Color(0xffBFD5E7):joblist?.statusName=="COMPLETED"?
+                      // Color(0xffB5E2BA):joblist?.statusName=="PENDING"?
+                      // Color(0xffFFB3B3):Color(0xffFFE1B3),
                       fontSize: w/28,
                       fontWeight: FontWeight.w500,
                     ),
@@ -95,28 +106,28 @@ class JobCard extends StatelessWidget {
                     joblist?.taskName??"",
                     style: GoogleFonts.roboto(
                       color: Colors.black,
-                      fontSize: 18,
+                      fontSize: w/22,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                SizedBox(height: 16,),
+                SizedBox(height: 25,),
                 Row(
                   children: [
-                    SvgPicture.string(TaskSvg().attachmIcon,height: 14,),
+                    SvgPicture.string(TaskSvg().attachmIcon,height: 18,width: 18,),
                     SizedBox(
                       width: 5,
                     ),
                     Text(
                       joblist?.imgCount?.toString()??"",
                       style: GoogleFonts.roboto(
-                        color: Color(0xff939393),
+                        color: Colors.black,
                         fontSize: w/25,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     SizedBox(
-                      width: 15,
+                      width: 25,
                     ),
 
                     GestureDetector(
@@ -125,8 +136,8 @@ class JobCard extends StatelessWidget {
                       },
                       child: SvgPicture.string(
                         TaskSvg().msgIcon,
-                        height: 12,
-                        color: Color(0xff939393).withOpacity(0.5),
+                          height: 18,width: 18,
+                        // color: Color(0xff939393).withOpacity(0.5),
                       ),
                     ),
                     SizedBox(
@@ -135,11 +146,24 @@ class JobCard extends StatelessWidget {
                     Text(
                       joblist?.rewCount?.toString()??"",
                       style: GoogleFonts.roboto(
-                        color: Color(0xff939393),
+                        color: Colors.black,
                         fontSize: w/25,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    SvgPicture.string(TaskSvg().startDateIcon,height: 20,width: 20,),
+                    SizedBox(width: 5,),
+                    Text(
+                      endstdDate,
+                      style: GoogleFonts.roboto(
+                        color:  Colors.black,
+                        fontSize: w/27,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
                   ],
                 ),
                 SizedBox(height: 5,),
@@ -147,16 +171,7 @@ class JobCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(children: [
-                      SvgPicture.string(TaskSvg().startDateIcon,height: 14,),
-                      SizedBox(width: 8,),
-                      Text(
-                        endstdDate,
-                        style: GoogleFonts.roboto(
-                          color:  Color(0xff939393),
-                          fontSize: w/27,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
+
                     ],),
 
 

@@ -313,8 +313,8 @@ class TaskDataSource {
     return selectedItemDetails;
   }
   //totalPerfomane
-  Future<int> getTotalPerformance(String? employeeCode,int? id) async {
-    int Total;
+  Future<ReadMarkRead> getTotalPerformance(String? employeeCode,int? id) async {
+    ReadMarkRead? total;
     print("Perfomance Total:${"${ClusterUrls.totalPerfomanceUrl}$id/$employeeCode"}");
     final response = await client.get(
       "${ClusterUrls.totalPerfomanceUrl}$id/$employeeCode",
@@ -327,8 +327,9 @@ class TaskDataSource {
       ),
     );
     print(response.data);
-    Total = response.data['data'];
-    return Total;
+    total =ReadMarkRead.fromJson(response.data['data']);
+    print("total mark is hrer$total");
+    return total;
   }
 
   //assigntask
@@ -1233,6 +1234,25 @@ class TaskDataSource {
     CriteriaRead selectedItemDetails;
 
     print("Criteria Read:${ClusterUrls.criteraReadUrl + taskCode.toString()}");
+    try{
+      final response = await client.get(
+      ClusterUrls.criteraReadUrl + taskCode.toString(),
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    
+    selectedItemDetails = CriteriaRead.fromJson((response.data['data']));
+print(selectedItemDetails.attittude);
+    return selectedItemDetails;
+    }
+    catch(g){
+      print("the model data$g");
+    }
     final response = await client.get(
       ClusterUrls.criteraReadUrl + taskCode.toString(),
       options: Options(
@@ -1243,9 +1263,9 @@ class TaskDataSource {
         },
       ),
     );
-    print(response.data);
+    
     selectedItemDetails = CriteriaRead.fromJson((response.data['data']));
-
+print(selectedItemDetails.attittude);
     return selectedItemDetails;
   }
 

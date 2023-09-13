@@ -233,6 +233,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     final dataResponse = await _jobRepo.getUserVerify();
 
+
     if (dataResponse.data.isNotEmpty) {
       yield GetUserVerifySuccess(dataResponse.data);
     } else {

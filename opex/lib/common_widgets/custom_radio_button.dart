@@ -1,4 +1,6 @@
+import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/task_operation/create/create_svg.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -18,6 +20,6 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
-        child: SvgPicture.string(widget.isActive==true?CreateSvg().radioActiveButton:CreateSvg().radioInActiveButton));
+        child: SvgPicture.string(widget.isActive==true?HomeSvg().radioButtonActive:CreateSvg().radioInActiveButton));
   }
 }

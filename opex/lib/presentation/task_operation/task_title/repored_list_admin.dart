@@ -174,6 +174,7 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
                                                           context,
                                                           screen: TaskTitle(
                                                             isMyJob: true,
+                                                            isReporter: true,
                                                             // reportId: state.orders?[i].id,
                                                           ),
                                                           withNavBar: false, // OPTIONAL VALUE. True by default.

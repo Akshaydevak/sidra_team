@@ -50,7 +50,7 @@ class AppHomeCard extends StatelessWidget {
                   height: 4,
                 ),
                 Container(
-                  width: w/1.5,
+                  width: w/1.45,
                   child: Text(
                     appDescription ?? "",
                     style: GoogleFonts.roboto(

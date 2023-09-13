@@ -79,7 +79,7 @@ class _ReporterListState extends State<ReporterList> {
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: BackAppBar(
-              label: "Job List",
+              label: "Reporter",
               isAction: false,
               onTap: () {},
             ),
@@ -98,7 +98,7 @@ class _ReporterListState extends State<ReporterList> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 10,
+                          height: 20,
                         ),
                         Row(
                           children: [
@@ -183,7 +183,7 @@ class _ReporterListState extends State<ReporterList> {
                         Container(
                           // height: h/1.3,
                           padding:
-                          const EdgeInsets.only(left: 16, right: 16, top: 16),
+                          const EdgeInsets.only(left: 16, right: 16, top: 10),
                           width: w,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -205,7 +205,7 @@ class _ReporterListState extends State<ReporterList> {
                                     physics: const ScrollPhysics(),
                                     separatorBuilder: (BuildContext cxt, int i) {
                                       return const SizedBox(
-                                        height: 10,
+                                        height: 5,
                                       );
                                     },
                                     itemBuilder: (BuildContext context, int i) {

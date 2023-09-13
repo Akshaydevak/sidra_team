@@ -717,7 +717,7 @@ class TaskRepo {
     try {
       final apiResponse = await _dataSource.getCriteriaRead(taskCode!);
 
-      if (apiResponse.punctuality!.isNotEmpty) {
+      if (apiResponse!=null) {
         return DataResponse(
           data: apiResponse,
         );

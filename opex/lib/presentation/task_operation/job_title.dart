@@ -865,7 +865,7 @@ class _JobTitleState extends State<JobTitle> {
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.roboto(
                                         color: Color(0xff151522),
-                                        fontSize: 22,
+                                        fontSize: w/22,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -873,11 +873,11 @@ class _JobTitleState extends State<JobTitle> {
                                       height: 16,
                                     ),
                                     Text(
-                                      "Did you wants to Job.This process cannot be undone",
+                                      "Did you wants to delete this job",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Color(0xff6d6d6d),
-                                        fontSize: 14,
+                                        fontSize: w/26,
                                       ),
                                     ),
                                     SizedBox(
@@ -899,7 +899,7 @@ class _JobTitleState extends State<JobTitle> {
                                                 borderRadius:
                                                     BorderRadius.circular(5),
                                                 border: Border.all(
-                                                  color: Color(0xffed4e4e),
+                                                  color: ColorPalette.primary,
                                                   width: 1,
                                                 ),
                                               ),
@@ -907,7 +907,7 @@ class _JobTitleState extends State<JobTitle> {
                                                   child: Text(
                                                 "Cancel",
                                                 style: TextStyle(
-                                                  color: Color(0xffed4e4e),
+                                                  color: ColorPalette.primary,
                                                   fontSize: 18,
                                                 ),
                                               )),
@@ -927,7 +927,7 @@ class _JobTitleState extends State<JobTitle> {
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(5),
-                                                  color: Color(0xffed4e4e),
+                                                  color: ColorPalette.primary,
                                                 ),
                                                 child: Center(
                                                   child: Text(

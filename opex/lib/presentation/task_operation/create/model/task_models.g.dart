@@ -390,30 +390,31 @@ Map<String, dynamic> _$PointIdToJson(PointId instance) => <String, dynamic>{
     };
 
 CriteriaRead _$CriteriaReadFromJson(Map<String, dynamic> json) => CriteriaRead(
-      attittude: (json['Attittude'] as List<dynamic>?)
+      attittude: (json['Technical Skills and Innovation'] as List<dynamic>?)
           ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
           .toList(),
-      projectCompletion: (json['Project Completion'] as List<dynamic>?)
+      projectCompletion:
+          (json['Team Collaboration and Leadership'] as List<dynamic>?)
+              ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      punctuality: (json['Task Quality'] as List<dynamic>?)
           ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
           .toList(),
-      punctuality: (json['Punctuality'] as List<dynamic>?)
+      teamManagement: (json['Business Requirements'] as List<dynamic>?)
           ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
           .toList(),
-      teamManagement: (json['Team Management & Leadership'] as List<dynamic>?)
-          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      timeMange: (json['Time Management'] as List<dynamic>?)
+      timeMange: (json['Efficient Time Management'] as List<dynamic>?)
           ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$CriteriaReadToJson(CriteriaRead instance) =>
     <String, dynamic>{
-      'Punctuality': instance.punctuality,
-      'Attittude': instance.attittude,
-      'Project Completion': instance.projectCompletion,
-      'Team Management & Leadership': instance.teamManagement,
-      'Time Management': instance.timeMange,
+      'Task Quality': instance.punctuality,
+      'Technical Skills and Innovation': instance.attittude,
+      'Team Collaboration and Leadership': instance.projectCompletion,
+      'Business Requirements': instance.teamManagement,
+      'Efficient Time Management': instance.timeMange,
     };
 
 Punchuality _$PunchualityFromJson(Map<String, dynamic> json) => Punchuality(
@@ -481,3 +482,18 @@ Map<String, dynamic> _$NotificationListToJson(NotificationList instance) =>
       'is_delete': instance.isDelete,
       'is_new': instance.isNew,
     };
+
+    ReadMarkRead _$ReadMarkReadFromJson(Map<String, dynamic> json) =>
+    ReadMarkRead(
+      key: json['key'] as String?,
+      value: json['value'] as String?,
+     
+    );
+
+Map<String, dynamic> _$ReadMarkReadToJson(ReadMarkRead instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'value': instance.value,
+  
+    };
+

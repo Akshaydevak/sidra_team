@@ -19,9 +19,9 @@ class _CritiriaCardState extends State<CritiriaCard> {
     var w=MediaQuery.of(context).size.width;
     return Container(
       width: w,
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: Color(0xffe6ecf0),
           width: 1,
@@ -43,8 +43,8 @@ class _CritiriaCardState extends State<CritiriaCard> {
             widget.label,
             style: GoogleFonts.roboto(
               color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+              fontSize: w/24,
+              // fontWeight: FontWeight.w500,
             ),
           ),
           Column(
@@ -60,7 +60,7 @@ class _CritiriaCardState extends State<CritiriaCard> {
                     width: w,
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                       color: Color(0xff198a17),
                     ),
                     child: Row(

@@ -611,15 +611,15 @@ class PointId extends Equatable {
 @JsonSerializable()
 class CriteriaRead extends Equatable {
 
-  @JsonKey(name: 'Punctuality')
+  @JsonKey(name: 'Task Quality')
   final List<Punchuality>? punctuality;
-  @JsonKey(name: 'Attittude')
+  @JsonKey(name: 'Technical Skills and Innovation')
   final List<Punchuality>? attittude;
-  @JsonKey(name: 'Project Completion')
+  @JsonKey(name: 'Team Collaboration and Leadership')
   final List<Punchuality>? projectCompletion;
-  @JsonKey(name: 'Team Management & Leadership')
+  @JsonKey(name: 'Business Requirements')
   final List<Punchuality>? teamManagement;
-  @JsonKey(name: 'Time Management')
+  @JsonKey(name: 'Efficient Time Management')
   final List<Punchuality>? timeMange;
 
   const CriteriaRead({
@@ -711,6 +711,7 @@ class ReportModel extends Equatable {
   Map<String, dynamic> toJson() => _$ReportModelToJson(this);
 }
 
+
 //notification
 @JsonSerializable()
 class NotificationList extends Equatable {
@@ -758,4 +759,29 @@ class NotificationList extends Equatable {
       _$NotificationListFromJson(json);
 
   Map<String, dynamic> toJson() => _$NotificationListToJson(this);
+}
+
+//
+@JsonSerializable()
+class ReadMarkRead extends Equatable {
+ 
+  @JsonKey(name: 'key')
+  final String? key;
+  @JsonKey(name: 'value')
+  final String? value;
+
+  const ReadMarkRead({
+    this.key,
+    this.value,
+  
+   
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory ReadMarkRead.fromJson(Map<String, dynamic> json) =>
+      _$ReadMarkReadFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReadMarkReadToJson(this);
 }

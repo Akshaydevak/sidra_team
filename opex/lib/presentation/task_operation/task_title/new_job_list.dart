@@ -1,8 +1,8 @@
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../../common_widgets/loading.dart';
 import '../../../core/color_palatte.dart';
@@ -37,6 +37,7 @@ class _NewJobListState extends State<NewJobList> {
   }
   String nextUrl = "";
   String prevUrl = "";
+  bool filtering=false;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   GlobalKey<RefreshIndicatorState>();
   @override
@@ -64,6 +65,7 @@ class _NewJobListState extends State<NewJobList> {
               }
               if (state is GetFilterJobListSuccess) {
                 joblist = state.jobList;
+                filtering=false;
                 setState(() {});
               }
               if (state is GetFilterJobListFailed) {
@@ -106,9 +108,10 @@ class _NewJobListState extends State<NewJobList> {
                       Spacer(),
                       Container(
                         width: w/2.5,
-                        // height: 37,
+                        height: 35,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: Color(0xffe6ecf0),
                             width: 1,
@@ -126,6 +129,7 @@ class _NewJobListState extends State<NewJobList> {
                             isExpanded: true,
                             icon: Icon(Icons.keyboard_arrow_down_outlined),
                             underline: Container(),
+                            padding: EdgeInsets.symmetric(horizontal: 5),
                             items: assignTypeList.map((String items) {
                               return DropdownMenuItem(
                                 enabled: true,
@@ -158,12 +162,16 @@ class _NewJobListState extends State<NewJobList> {
                                 else{
                                   isFilter=false;
                                 }
+                                filtering=true;
                               });
                             },
-                            hint: Text(
-                              "All Jobs",
-                              style: GoogleFonts.poppins(
-                                  color: Colors.grey, fontSize: 14),
+                            hint: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(
+                                "  All Jobs",
+                                style: GoogleFonts.poppins(
+                                    color: Colors.grey, fontSize: 14),
+                              ),
                             )),
                       ),
                       // SizedBox(
@@ -218,7 +226,8 @@ class _NewJobListState extends State<NewJobList> {
                         //     fontWeight: FontWeight.w500,
                         //   ),
                         // ),
-
+                        filtering==true?
+                        LottieLoader():
                         Container(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: ListView.separated(
@@ -226,7 +235,7 @@ class _NewJobListState extends State<NewJobList> {
                               physics: const ScrollPhysics(),
                               separatorBuilder: (BuildContext cxt, int i) {
                                 return const SizedBox(
-                                  height: 10,
+                                  height: 5,
                                 );
                               },
                               itemBuilder: (BuildContext context, int i) {
@@ -246,14 +255,7 @@ class _NewJobListState extends State<NewJobList> {
           ):BlocBuilder<JobBloc, JobState>(
             builder: (context, state) {
               if (state is GetNewJobListLoading) {
-                return Container(
-                    height: 200,
-                    width: w,
-                    alignment: Alignment.center,
-                    child: LoadingAnimationWidget.threeRotatingDots(
-                      color: Colors.red,
-                      size: 30,
-                    ));
+                return LottieLoader();
               }
               if (state is GetNewJobListSuccess) {
                 nextUrl=state.nextPageUrl??"";
@@ -281,7 +283,8 @@ class _NewJobListState extends State<NewJobList> {
                             Spacer(),
                             Container(
                               width: 120,
-                              height: 37,
+                             height: 35,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
@@ -394,7 +397,7 @@ class _NewJobListState extends State<NewJobList> {
                                     physics: const ScrollPhysics(),
                                     separatorBuilder: (BuildContext cxt, int i) {
                                       return const SizedBox(
-                                        height: 10,
+                                        height: 5,
                                       );
                                     },
                                     itemBuilder: (BuildContext context, int i) {

@@ -82,7 +82,15 @@ class _AssignedByMeState extends State<AssignedByMe> {
                 print("hereeee open $open");
                 nextUrl = state.nextPageUrl ?? "";
                 prevUrl = state.prevPageUrl ?? "";
-                return Container(
+                return jobList.isEmpty?Container(
+                  padding: EdgeInsets.only(top: 10),
+                  alignment: Alignment.center,
+                  height: h / 2,
+                  child: SvgPicture.string(
+                    TaskSvg().nolistSvg,
+                    height: h / 4.5,
+                  ),
+                ):Container(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
@@ -148,7 +156,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
                                     context,
                                     screen: JobTitle(isMyJob: true),
                                     withNavBar: false,
-                                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    pageTransitionAnimation: PageTransitionAnimation.slideUp,
                                   );
                                 },
                                 child:
@@ -221,15 +229,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
                   ),
                 );
               }
-              return Container(
-                padding: EdgeInsets.only(top: 10),
-                alignment: Alignment.center,
-                height: h / 2,
-                child: SvgPicture.string(
-                  TaskSvg().nolistSvg,
-                  height: h / 4.5,
-                ),
-              );
+              return Container();
             },
           )),
         ),
@@ -353,21 +353,6 @@ class _CardExpanedState extends State<CardExpaned> {
                   children: [
                     Row(
                       children: [
-                        // SvgPicture.string(TaskSvg().attachmIcon),
-                        // const SizedBox(
-                        //   width: 5,
-                        // ),
-                        // Text(
-                        //   "1",
-                        //   style: GoogleFonts.roboto(
-                        //     color: const Color(0xff939393),
-                        //     fontSize: 15,
-                        //     fontWeight: FontWeight.w500,
-                        //   ),
-                        // ),
-                        // const SizedBox(
-                        //   width: 15,
-                        // ),
                         SvgPicture.string(
                           TaskSvg().priorityIcon,
                           // height: 20,width: 20,
@@ -375,24 +360,16 @@ class _CardExpanedState extends State<CardExpaned> {
                           widget.assignedMe?.priority=="Medium"?Color(0xffF18F1C):
                           null,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 5,),
                         Text("${widget.assignedMe?.priority} Priority"??"",style: TextStyle(fontSize: w/24,fontWeight: FontWeight.w500),),
-                         SizedBox(
-                          width: w/3.5,
-                        ),
-                        GestureDetector(
-                          onTap: widget.onTap,
-                            child: Text("View Details"??"",style: TextStyle(fontSize: w/26,
-                            color: widget.isExpanded==true?
-                            Color(0xffC6C6C6):ColorPalette.primary),)),
 
-                        // SvgPicture.string(TaskSvg().priorityIcon,
-                        //     color: widget.tasksList?.priority=="Low"?const Color(0xff50D166):
-                        //     widget.tasksList?.priority=="Medium"?const Color(0xffF18F1C):null)
                       ],
                     ),
+                    GestureDetector(
+                      onTap: widget.onTap,
+                        child: Text("View Details"??"",style: TextStyle(fontSize: w/26,
+                        color: widget.isExpanded==true?
+                        Color(0xffC6C6C6):ColorPalette.primary),)),
                     // GestureDetector(
                     //     onTap: (){
                     //       setState((){

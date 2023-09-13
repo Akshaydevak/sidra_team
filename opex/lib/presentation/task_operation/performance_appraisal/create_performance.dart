@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../task_operation_appbar.dart';
@@ -18,7 +19,7 @@ class _CreatePerformanceState extends State<CreatePerformance> {
   bool isIndividual= false;
   bool isCritiria= true;
   List<PointsList> pointList=[];
-  int totalMark=0;
+  // ReadMarkRead? totalMark;
   @override
   void initState() {
     context.read<TaskBloc>().add(GetPointsListEvent());
@@ -44,43 +45,40 @@ class _CreatePerformanceState extends State<CreatePerformance> {
     }
   },
 ),
-    BlocListener<TaskBloc, TaskState>(
-      listener: (context, state) {
-        if(state is GetTotalPerformanceLoading){
 
-        }
-        if(state is GetTotalPerformanceSuccess){
-          totalMark=state.totalMark;
-          setState(() {
-            print(("TOTA$totalMark"));
-          });
-        }
-      },
-    ),
+    // BlocListener<TaskBloc, TaskState>(
+    //   listener: (context, state) {
+    //     if(state is GetTotalPerformanceLoading){
+
+    //     }
+    //     if(state is GetTotalPerformanceSuccess){
+    //       totalMark=state.totalMark;
+    //       setState(() {
+    //         print(("TOTA$totalMark"));
+    //       });
+    //     }
+    //   },
+    // ),
   ],
   child: Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
-        child: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.white, // Navigation bar
-            statusBarColor: Colors.white, // Status bar
-          ),
-
-          elevation: 0,
-
-        ),
+  preferredSize: const Size.fromHeight(60),
+      child: BackAppBar(
+        label: "Criteria",
+        isAction: false,
+        onTap: () {},
       ),
+    ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-            TaskAndOperationAppBar(
-              label: "Criteria",
-            ),
+            // TaskAndOperationAppBar(
+            //   label: "Criteria",
+            // ),
             Container(
               padding: EdgeInsets.all(16),
               child: Column(

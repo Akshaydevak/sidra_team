@@ -4,6 +4,7 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart'
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,14 +128,14 @@ class _CreateGroupState extends State<CreateGroup> {
             },
 ),
   ],
-  child:  Column(
+  child:  Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: w,
               // height: 185,
-              margin: EdgeInsets.all(16),
+              margin: EdgeInsets.symmetric(horizontal: 16,vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: Color(0xffe6ecf0),
                   width: 1,
@@ -187,6 +188,9 @@ class _CreateGroupState extends State<CreateGroup> {
                   ),
 
                   TextFormField(
+                    style:GoogleFonts.roboto(
+                        fontWeight: FontWeight.w600
+                    ) ,
                     controller: discription,
                     maxLines: 4,
                     minLines: 1,
@@ -210,6 +214,12 @@ class _CreateGroupState extends State<CreateGroup> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Group name & description are mandatory",
+              style: GoogleFonts.roboto(fontSize: w/30),),
+            ),
+            SizedBox(height: 10,),
           SizedBox(
             height: h / 1.6,
             child: SingleChildScrollView(
@@ -225,7 +235,7 @@ class _CreateGroupState extends State<CreateGroup> {
                     BlocBuilder<JobBloc, JobState>(
                       builder: (context, state) {
                         if (state is GetEmployeeListLoading) {
-                          return customCupertinoLoading();
+                          return  LottieLoader();
                         }
                         if (state is GetEmployeeListSuccess) {
 
@@ -236,14 +246,12 @@ class _CreateGroupState extends State<CreateGroup> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: 16,
-                                ),
+                                
                                 Text(
-                                  "Select from List",
+                                  "Select from List (${userCodeList.length})",
                                   style: GoogleFonts.roboto(
                                     color: Color(0xff151522),
-                                    fontSize: 18,
+                                    fontSize: w/24,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -322,13 +330,13 @@ class _CreateGroupState extends State<CreateGroup> {
                   },
                   gradient: const LinearGradient(
                     colors: [
-                      Color(0xfffe5762),
-                      Color(0xfffe5762),
+                      ColorPalette.primary,
+                      ColorPalette.primary,
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
-                  color: const Color(0xfffe5762),
+                  color:  ColorPalette.primary,
                   child: Text(
                     "Continue",
                     textAlign: TextAlign.center,

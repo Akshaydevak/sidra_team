@@ -1,6 +1,7 @@
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
+import 'package:cluster/presentation/empty_page_communication.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
    _controller=PersistentTabController(initialIndex:
    widget.index??0);
+    context.read<ProfileBloc>().add(const GetProfilePicEvent());
     super.initState();
   }
   int newIndex = 0;
@@ -40,7 +42,7 @@ class _DashBoardState extends State<DashBoard> {
   List<Widget> _buildScreens() {
     return [
       const HomeScreen(),
-      const LoginDemo(),
+      const EmptyPageCommunication(),
       const TaskAndOperation(),
       const NewProfileScreen(),
       // const ProfileScreen(),

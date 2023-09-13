@@ -18,7 +18,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../common_widgets/custom_radio_button.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/loading.dart';
@@ -40,9 +39,10 @@ import 'lottieLoader.dart';
 
 class TaskTitle extends StatefulWidget {
   bool isMyJob;
+   bool isReporter;
 
 
-  TaskTitle({Key? key, this.isMyJob = false,}) : super(key: key);
+  TaskTitle({Key? key, this.isMyJob = false,this.isReporter=false}) : super(key: key);
 
   @override
   State<TaskTitle> createState() => _TaskTitleState();
@@ -151,13 +151,28 @@ class _TaskTitleState extends State<TaskTitle> {
     return WillPopScope(
       onWillPop: () async {
         print("popScope");
+        if(widget.isReporter==true){
+          context
+            .read<TaskBloc>()
+            .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
         context
+            .read<JobBloc>()
+            .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
+context.read<JobBloc>().add(GetReorterListEvent('','',''));
+        }
+        else if(widget.isReporter==false){
+ context
             .read<TaskBloc>()
             .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
         context
             .read<JobBloc>()
             .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
         context.read<JobBloc>().add(GetNewJobListEvent('', '', ''));
+        }
+        else{
+
+        }
+       
         return true;
       },
       child: MultiBlocListener(
@@ -235,7 +250,8 @@ class _TaskTitleState extends State<TaskTitle> {
               print("Status Of$state");
 
               if (state is CreateReportSuccess) {
-                showSnackBar(context, message: "success", color: Colors.black);
+                showSnackBar(context, message: "Task Successfully Reported", color: Colors.black);
+                  context.read<TaskBloc>().add(GetTaskReadListEvent(getTaskRead?.id??0));
                 Navigator.pop(context);
               }
             },
@@ -402,7 +418,6 @@ class _TaskTitleState extends State<TaskTitle> {
               label: " ${getTaskRead?.taskName ?? ""}",
               action: PopupMenuButton(
                 icon: SvgPicture.string(TaskSvg().moreIcon),
-                //don't specify icon if you want 3 dot menu
                 color: Colors.white,
                 elevation: 2,
                 padding: EdgeInsets.zero,
@@ -411,6 +426,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 itemBuilder: (context) => [
                   PopupMenuItem(
                       padding: const EdgeInsets.all(0),
+                      height: 10,
                       value: 'a',
                       enabled: true,
                       child: Column(
@@ -471,17 +487,14 @@ class _TaskTitleState extends State<TaskTitle> {
                                     padding: const EdgeInsets.only(left: 10),
                                     child: Row(
                                       children: [
-                                        SvgPicture.string(TaskSvg().editorIcon),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
+                                        
                                         Text(
                                           getTaskRead?.isPinned == true
                                               ? 'Unpin this Task'
                                               : 'Pin this Task',
                                           style: GoogleFonts.poppins(
                                               color: Colors.black54,
-                                              fontSize: 13,
+                                              fontSize: w/26,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ],
@@ -530,9 +543,9 @@ class _TaskTitleState extends State<TaskTitle> {
                           //     ],
                           //   ),
                           // ),
-                          const Divider(
+                          widget.isMyJob? Divider(
                             indent: 30,
-                          ),
+                          ):Container(),
                           widget.isMyJob
                               ? GestureDetector(
                                   onTap: () {
@@ -847,6 +860,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                           context,
                                                           screen: TaskTitle(
                                                             isMyJob: true,
+                                                            
                                                           ),
                                                           withNavBar:
                                                           true, // OPTIONAL VALUE. True by default.
@@ -920,6 +934,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ],
                                 )
                                     : Container(),
+                                    SizedBox(height: 5,),
                                 TaskTitleCard(
                                   widget: Column(
                                     children: [
@@ -1069,8 +1084,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                               ? const EdgeInsets.only(
                                               left: 16,
                                               right: 16,
-                                              bottom: 5,
-                                              top: 15)
+                                              bottom: 10,
+                                              top: 10)
                                               : EdgeInsets.all(16),
                                           child: SingleRow(
                                               color: Color(0xff3B9FFC),
@@ -1086,13 +1101,16 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 })
                                                     : print("");
                                               },
-                                              endIcon: Container()),
+                                              endIcon: Icon(Icons.arrow_forward_ios_sharp,
+                                            size: 18,
+                                            color: ColorPalette.primary,),),
                                         ),
                                       ],
                                     ),
                                   ),
                                 )
                                     : Container(),
+                                    SizedBox(height: 5,),
 
                                 TaskTitleCard(
                                   widget: Column(
@@ -1676,7 +1694,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           children: [
                                             Container(
                                               // color:Colors.red,
-                                                width: w / 4,
+                                                // width: w / 4,
                                                 child: getTaskRead?.statusStagesId ==
                                                     1
                                                     ? const Text(
@@ -1684,7 +1702,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   style: TextStyle(
                                                       fontWeight:
                                                       FontWeight
-                                                          .w500,
+                                                          .w600,
                                                       color:
                                                       ColorPalette
                                                           .primary),
@@ -1695,7 +1713,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                         FontWeight
-                                                            .w500,
+                                                            .w600,
                                                         color: ColorPalette
                                                             .primary))
                                                     : getTaskRead?.statusStagesId ==
@@ -1704,7 +1722,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     "COMPLETED",
                                                     style: TextStyle(
                                                         fontWeight: FontWeight
-                                                            .w500,
+                                                            .w600,
                                                         color: ColorPalette
                                                             .primary))
                                                     : getTaskRead?.statusStagesId ==
@@ -1716,7 +1734,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   "STARTED",
                                                   style: TextStyle(
                                                       fontWeight: FontWeight
-                                                          .w500,
+                                                          .w600,
                                                       color:
                                                       ColorPalette.primary),
                                                 )),
@@ -1761,7 +1779,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     child: SingleRow(
                                       label: "Add Comments",
                                       color: Color(0xff0094FF),
-                                      svg: TaskSvg().msgIcon,
+                                      svg: TaskSvg().commentIcon,
                                       endIcon: Row(
                                         children: [
                                           // Text(
@@ -1976,7 +1994,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   height: 16,
                                                 ),
                                                 Text(
-                                                  "Did you wants this Task.This process cannot be undone",
+                                                  "Did you wants delete this task",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     color: Color(0xff6d6d6d),
@@ -2109,7 +2127,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     )
                                         : Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                      MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           widget.isMyJob
@@ -2117,10 +2135,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                               : "Report this Task",
                                           style: GoogleFonts.roboto(
                                             color: Color(0xfffe5762),
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
+                                            fontSize: w/24,
+                                            // fontWeight: FontWeight.w500,
                                           ),
                                         ),
+                                        Spacer(),
                                         GestureDetector(
                                           onTap: (){
                                             _showModalBottomInfoData();
@@ -2649,7 +2668,7 @@ class _TaskTitleState extends State<TaskTitle> {
     );
   }
 
-  _showModalBottomSheet() {
+  _showModalBottomSheetstatus() {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -2799,6 +2818,240 @@ class _TaskTitleState extends State<TaskTitle> {
         });
   }
 
+ _showModalBottomSheet() {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 2.6,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                      "Change Status To:",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w/24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                        Container(
+                          height: h / 3.5,
+                          // color: Colors.yellow,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                        
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          ListView.separated(
+                      padding: const EdgeInsets.only(),
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: statusList!.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        return GestureDetector(
+                          onTap: () async {
+                            refresh();
+                            changeTappedTile(i);
+                            BlocProvider.of<TaskBloc>(context).add(
+                                UpdateTaskEvent(
+                                    longitude: getTaskRead?.longitude ?? "",
+                                    latitude: getTaskRead?.latitude ?? "",
+                                    taskType: getTaskRead?.taskType ?? 0,
+                                    discription: getTaskRead?.description ?? "",
+                                    createdBy:
+                                        getTaskRead?.createdPersonCode ?? "",
+                                    isActive: true,
+                                    priority: getTaskRead?.priority ?? "",
+                                    reportingPerson:
+                                        getTaskRead?.reportingPersonCode ?? "",
+                                    endDate:
+                                        "${getTaskRead?.endDate?.split("T")[0]}"
+                                                " "
+                                                "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
+                                            "",
+                                    startDate:
+                                        "${getTaskRead?.startDate?.split("T")[0]}"
+                                                " "
+                                                "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
+                                            "",
+                                    AssigningCode:
+                                        getTaskRead?.assigningCode ?? "",
+                                    notas: getTaskRead?.notes ?? "",
+                                    taskName: getTaskRead?.taskName ?? "",
+                                    remarks: getTaskRead?.remarks ?? "",
+                                    priorityLeval:
+                                        getTaskRead?.priorityLevel.toString() ??
+                                            "",
+                                    createdOn:
+                                        "${getTaskRead?.createdOn?.split("T")[0]}"
+                                                " "
+                                                "${getTaskRead?.createdOn?.split("T")[1].split(".")[0]}" ??
+                                            "",
+                                    AssigningType:
+                                        getTaskRead?.assigningType ?? "",
+                                    statusStagesId: statusList?[i].id,
+                                    parant: getTaskRead?.parent,
+                                    lastmodified: getTaskRead?.lastModified,
+                                    jobid: getTaskRead?.jobId ?? 0,
+                                    id: getTaskRead?.id ?? 0,
+                                    img5: getTaskRead?.metaData?.image5,
+                                    img1: getTaskRead?.metaData?.image1,
+                                    img4: getTaskRead?.metaData?.image4,
+                                    img2: getTaskRead?.metaData?.image2,
+                                    img3: getTaskRead?.metaData?.image3,
+                                    attachmentDescription:
+                                        getTaskRead?.metaData?.description,
+                                    attachmentNote:
+                                        getTaskRead?.metaData?.note));
+                            context.read<TaskBloc>().add(
+                                GetTaskReadListEvent(getTaskRead?.id ?? 0));
+                            Navigator.pop(context);
+                            setState(() {});
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            color: tappedTile == i
+                                ? ColorPalette.cardBackground
+                                : ColorPalette.white,
+                            child: Row(
+                              children: [
+                                // tappedTile == i
+                                //     ? SvgPicture.string(
+                                //         TaskSvg().checkActiveIcon)
+                                //     : SvgPicture.string(
+                                //         TaskSvg().checkInActiveIcon),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  statusList?[i].name ?? "",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize: w/24,
+                                    // fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Container(
+                          margin: EdgeInsets.only(left: 16, right: 16),
+                          color: Color(0xffE6ECF0),
+                          height: 1,
+                          width: w,
+                        );
+                      },
+                    )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    
+                      ],
+                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(
+                    //         left: 15, right: 15, bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           context.read<TaskBloc>().add(CreateReportEvent(
+                    //               toipicId: topicId,
+                    //               taskId: getTaskRead?.id,
+                    //               notes: reportNotes.text,
+                    //               userId:
+                    //                   authentication.authenticatedUser.code));
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Report this Task",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),
+                    // )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+
   _showModalBottomAdditionalRole() {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
@@ -2909,7 +3162,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 TaskState>(
                                               builder: (context, state) {
                                                 if (state
-                                                    is GetTopicListLoading) {}
+                                                    is GetTopicListLoading) {
+                                                      return LottieLoader();
+                                                    }
                                                 if (state
                                                     is GetTopicListSuccess) {
                                                   return ListView.separated(
@@ -3066,7 +3321,7 @@ class _TaskTitleState extends State<TaskTitle> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 2.7,
+                height: h / 2.1,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -3107,7 +3362,7 @@ class _TaskTitleState extends State<TaskTitle> {
                           height: h / 40,
                         ),
                         Container(
-                          height: h / 3.7,
+                          height: h / 3,
                           // color: Colors.yellow,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
@@ -3129,11 +3384,23 @@ class _TaskTitleState extends State<TaskTitle> {
                                             height: 10,
                                           ),
                                           Text(
-                                            "If your admin has mistakenly assigned a task to you, please report the task. Once approved, the task will be removed from your assignment list. You can use the comment option for further clarification if needed from the admin. Please note that this is a one-time request to rectify the inadvertent assignment, and if the admin rejects the report request, the 'Report' button will automatically disable. So that text to request any concerns using text field in report option.",
+                                            "If your admin has mistakenly assigned a task to you, please report the task. Once approved, the task will be removed from your assignment list. You can use the comment option for further clarification if needed from the admin.",
                                             style: GoogleFonts.roboto(
                                                 color: Color(0xff6D6D6D),
-                                                fontSize: w / 26,
+                                                fontSize: w / 24,
+                                                height: 1.4,
                                                 fontWeight: FontWeight.w400),
+                                                textAlign: TextAlign.justify,
+                                          ),
+                                          SizedBox(height: 10,),
+                                           Text(
+                                            "Please note that this is a one-time request to rectify the inadvertent assignment, and if the admin rejects the report request, the 'Report' button will automatically disable. So that text to request any concerns using text field in report option.",
+                                            style: GoogleFonts.roboto(
+                                                color: Color(0xff6D6D6D),
+                                                fontSize: w / 24,
+                                                height: 1.4,
+                                                fontWeight: FontWeight.w400),
+                                                textAlign: TextAlign.justify,
                                           ),
                                         ],
                                       ),

@@ -716,6 +716,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   },
                                   child: FourCard(
                                     label: "Job List",
+                                    svg: TaskSvg().joblistSvg,
                                   ),
                                 ),
                                 GestureDetector(
@@ -732,6 +733,8 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   },
                                   child: FourCard(
                                     label: "Pinned Job",
+                                    svg: TaskSvg().pinIcon,
+                                    
                                   ),
                                 ),
                                 GestureDetector(
@@ -751,6 +754,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   },
                                   child: FourCard(
                                     label: "Pending Jobs",
+                                    svg: TaskSvg().reportedList,
                                   ),
                                 ),
                                 GestureDetector(
@@ -767,6 +771,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   },
                                   child: FourCard(
                                     label: "Reported List",
+                                    svg: TaskSvg().reporterSvg,
                                   ),
                                 ),
                               ],
@@ -840,9 +845,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             // )
                             //     : Container(),
                             const SizedBox(
-                              height: 16,
+                              height: 25,
                             ),
-                            joblist.isEmpty&&authentication.isAdmin==true
+                            joblist.isEmpty
                                 ? Container()
                                 : Column(
                               children: [
@@ -854,7 +859,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       "New Tasks",
                                       style: GoogleFonts.roboto(
                                         color: ColorPalette.black,
-                                        fontSize: w / 22,
+                                        fontSize: w / 24,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

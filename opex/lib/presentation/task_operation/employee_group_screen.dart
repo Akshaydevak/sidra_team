@@ -5,6 +5,7 @@ import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/task_operation/create_group.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
@@ -139,7 +140,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                 screen: CreateUser(edit: false),
                 withNavBar: true,
                 // OPTIONAL VALUE. True by default.
-                pageTransitionAnimation: PageTransitionAnimation.fade,
+                pageTransitionAnimation: PageTransitionAnimation.slideUp,
               );
             },
             child: Row(
@@ -235,14 +236,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                 BlocBuilder<JobBloc, JobState>(
                  builder: (context, state) {
                  if (state is GetEmployeeListLoading) {
-                   return Container(
-                       height: 300,
-                       width: w,
-                       alignment: Alignment.center,
-                       child: LoadingAnimationWidget.threeRotatingDots(
-                         color: Colors.red,
-                         size: 30,
-                       ));
+                   return LottieLoader();
                 }
                 if (state is GetEmployeeListSuccess) {
                   print("Sucsess shifu");
@@ -292,14 +286,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                 BlocBuilder<JobBloc, JobState>(
                 builder: (context, state) {
                 if (state is GetGroupListLoading) {
-                  return Container(
-                      height: 300,
-                      width: w,
-                      alignment: Alignment.center,
-                      child: LoadingAnimationWidget.threeRotatingDots(
-                        color: Colors.red,
-                        size: 30,
-                      ));
+                  return  LottieLoader();
                 }
                 if (state is GetGroupListSuccess) {
                   print("Sucsess shifu");

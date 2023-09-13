@@ -38,7 +38,8 @@ class DropDownCard extends StatelessWidget {
           onTap: onTap ,
           child: Container(
               width: w1 ,
-              padding: const EdgeInsets.all(14.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xffe6ecf0), width: 1, ),
@@ -49,7 +50,7 @@ class DropDownCard extends StatelessWidget {
                     offset: Offset(1, 1),
                   ),
                 ],
-                color: Colors.white,
+                color: Color(0xffF4F4F4),
               ),
               child:  Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

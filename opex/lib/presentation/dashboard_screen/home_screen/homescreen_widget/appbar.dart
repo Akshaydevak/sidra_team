@@ -1,4 +1,5 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/task_operation/badge_icon.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/notification_sidra_teams.dart';
@@ -42,190 +43,189 @@ class _AppBarState extends State<AppBarScreen> {
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
-    return BlocListener<TaskBloc, TaskState>(
+    return MultiBlocListener(
+      listeners:[ 
+        BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+      if(state is GetNotificationListLoading){
+    
+      }
+      if(state is GetNotificationListSuccess){
+        notification=state.notificationList;
+        countNoti=notification?[0].count??0;
+        print("SDFG${notification?[0].count}");
+        setState(() {
+    
+        });
+      }
+      // TODO: implement listener
+      },),
+      BlocListener<ProfileBloc, ProfileState>(
   listener: (context, state) {
-    if(state is GetNotificationListLoading){
-
-    }
-    if(state is GetNotificationListSuccess){
-      notification=state.notificationList;
-      countNoti=notification?[0].count??0;
-      print("SDFG${notification?[0].count}");
+     if (state is ProfilePicSuccess) {
+      Variable.profilePic=state.profilePic;
       setState(() {
-
+        
       });
-    }
-    // TODO: implement listener
-  },
-  child: Column(
-      children: [
-        AppBar(
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.white, // Navigation bar
-            statusBarColor: Colors.white, // Status bar
-          ),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          leading: Container(
-            padding: const EdgeInsets.only(left: 16),
-            alignment: Alignment.center,
-            child: GestureDetector(
-              onTap: () {
-                widget.scaffoldKey.currentState.openDrawer();
-              },
-              child: CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.transparent,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      child: BlocBuilder<ProfileBloc, ProfileState>(
-                          builder: (context, state) {
-                        print("..................$state");
-                        if (state is ProfilePicSuccess) {
-                          print(state.profilePic);
-                          return CircleAvatar(
-                            radius: 16,
-                            backgroundImage: NetworkImage(state.profilePic),
-                          );
-                        }
-                        return CircleAvatar(
-                            radius: 16,
-                            child: Image.asset("asset/newprofile.png"));
-                      }),
-
-                      // const CircleAvatar(
-                      //     radius: 16,
-                      //     backgroundColor: Colors.grey,
-                      //     backgroundImage: NetworkImage(
-                      //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU4g8xUnnDU4kVOp8_-3f3aPDusw_D2AlyXw&usqp=CAU")),
-                    ),
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                            width: 24,
-                            height: 24,
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x3f000000),
-                                  blurRadius: 1,
-                                  offset: Offset(0, 0),
-                                ),
-                              ],
-                              color: Color(0xfff9f9f9),
-                            ),
-                            child: SvgPicture.string(HomeSvg().drawerIcon)))
-                  ],
-                ),
-              ),
+                       
+     }
+  },)
+      ],
+      child: Column(
+        children: [
+          AppBar(
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.white, // Navigation bar
+              statusBarColor: Colors.white, // Status bar
             ),
-          ),
-          titleSpacing: 16,
-          centerTitle: false,
-          
-          title: Text(
-            "Sidrateams",
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontSize: w / 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          actions: [
-            Center(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            leading: Container(
+              padding: const EdgeInsets.only(left: 16),
+              alignment: Alignment.center,
               child: GestureDetector(
-                onTap: (){
-                  context.read<TaskBloc>().add(const NotificationIconEvent());
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen:  NotificationInSidraTeams(notification: notification??[]),
-                    withNavBar: false, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+                onTap: () {
+                  widget.scaffoldKey.currentState.openDrawer();
                 },
-                child:SizedBox(
-                  // color: Colors.yellow,
-                  width: 25,
-                  child: BadgeIcon(
-                    badgeCount:countNoti??0,
-                    // int.tryParse(snapshot.data.toString()) ?? 0,
-                    icon: SvgPicture.string(
-                      HomeSvg().notificationHomeIcon,
-                      // color: Colors.black,
-                      // width: 17,
-                    ),
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.transparent,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 5,
+                        child: 
+                     CircleAvatar(
+                              radius: 16,
+                              backgroundImage: NetworkImage(Variable.profilePic),
+                            ),
+                         
+                      ),
+                      // Positioned(
+                      //     bottom: 0,
+                      //     right: 0,
+                      //     child: Container(
+                      //         width: 24,
+                      //         height: 24,
+                      //         padding: const EdgeInsets.all(8),
+                      //         decoration: const BoxDecoration(
+                      //           shape: BoxShape.circle,
+                      //           boxShadow: [
+                      //             BoxShadow(
+                      //               color: Color(0x3f000000),
+                      //               blurRadius: 1,
+                      //               offset: Offset(0, 0),
+                      //             ),
+                      //           ],
+                      //           color: Color(0xfff9f9f9),
+                      //         ),
+                      //         child: SvgPicture.string(HomeSvg().drawerIcon)))
+                    ],
                   ),
                 ),
-                // BadgeIcon(
-                //   child: SvgPicture.string(
-                //     HomeSvg().notificationHomeIcon,
-                //     height: 22,
-                //     width: 22,
-                //   ),
-                // ),
               ),
             ),
-             SizedBox(
-              width:authentication.isAdmin? 30:0,
+            titleSpacing: 10,
+            centerTitle: false,
+            
+            title: Text(
+              "Sidra Teams",
+              style: GoogleFonts.roboto(
+                color: Colors.black,
+                fontSize: w / 18,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            authentication.isAdmin
-                ? GestureDetector(
-                    onTap: () {
-                      _showModalBottomSheet();
-                    },
-                    child: SvgPicture.string(
-
-                      HomeSvg().addIcon,
-                      height: 19,
-                      width: 19,color: ColorPalette.primary,
-                    ))
-                : Container(),
-            const SizedBox(
-              width: 16,
-            )
-          ],
-        ),
-        // Container(
-        //   // color: Colors.green,
-        //   padding: const EdgeInsets.only(right: 16,left: 16,bottom: 8),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Row(
-        //         children: [
-        //
-        //           const SizedBox(
-        //             width: 16,
-        //           ),
-        //
-        //         ],
-        //       ),
-        //       Row(
-        //         children: [
-        //
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        Container(
-          width: w,
-          height: 1.50,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: const Color(0xb2e6e6e6),
-              width: 0.50,
+            actions: [
+              Center(
+                child: GestureDetector(
+                  onTap: (){
+                    context.read<TaskBloc>().add(const NotificationIconEvent());
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen:  NotificationInSidraTeams(notification: notification??[]),
+                      withNavBar: false, // OPTIONAL VALUE. True by default.
+                      pageTransitionAnimation: PageTransitionAnimation.fade,
+                    );
+                  },
+                  child:SizedBox(
+                    // color: Colors.yellow,
+                    width: 25,
+                    child: BadgeIcon(
+                      badgeCount:countNoti??0,
+                      // int.tryParse(snapshot.data.toString()) ?? 0,
+                      icon: SvgPicture.string(
+                        HomeSvg().notificationHomeIcon,
+                        // color: Colors.black,
+                        // width: 17,
+                      ),
+                    ),
+                  ),
+                  // BadgeIcon(
+                  //   child: SvgPicture.string(
+                  //     HomeSvg().notificationHomeIcon,
+                  //     height: 22,
+                  //     width: 22,
+                  //   ),
+                  // ),
+                ),
+              ),
+               SizedBox(
+                width:authentication.isAdmin? 30:0,
+              ),
+              authentication.isAdmin
+                  ? GestureDetector(
+                      onTap: () {
+                        _showModalBottomSheet();
+                      },
+                      child: SvgPicture.string(
+    
+                        HomeSvg().addIcon,
+                        height: 19,
+                        width: 19,color: ColorPalette.primary,
+                      ))
+                  : Container(),
+              const SizedBox(
+                width: 16,
+              )
+            ],
+          ),
+          // Container(
+          //   // color: Colors.green,
+          //   padding: const EdgeInsets.only(right: 16,left: 16,bottom: 8),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Row(
+          //         children: [
+          //
+          //           const SizedBox(
+          //             width: 16,
+          //           ),
+          //
+          //         ],
+          //       ),
+          //       Row(
+          //         children: [
+          //
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Container(
+            width: w,
+            height: 1.50,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color(0xb2e6e6e6),
+                width: 0.50,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-);
+        ],
+      ),
+    );
   }
 
   _showModalBottomSheet() {

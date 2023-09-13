@@ -38,7 +38,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
           child: val
               ? Container(
               child: SvgPicture.string(
-                  OrderSvg().checkBoxActiveIcon))
+                  OrderSvg().checkBoxActiveIcon,color: ColorPalette.primary,))
               : SvgPicture.string(
               OrderSvg().checkBoxIcon),
         ),
@@ -87,7 +87,7 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
         padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+          border: Border.all(color: val==true?ColorPalette.primary:Color(0xffe6ecf0), width: 1, ),
           boxShadow: [
             BoxShadow(
               color: Color(0x05000000),
@@ -95,7 +95,7 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
               offset: Offset(1, 1),
             ),
           ],
-          color: Colors.white,
+          color: val==true?ColorPalette.cardBackground:ColorPalette.white,
         ),
         child: Row(
           children: [
@@ -127,7 +127,7 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
                         width: w/2,
                         // color: Colors.yellow,
                         child: Text(
-                          "${widget?.name}"" ""${widget?.lname}",
+                          "${widget.name}"" ""${widget.lname}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.roboto(
@@ -138,27 +138,27 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
                         ),
                       ),
                       SizedBox(width:w/16,),
-                      Container(
-                        alignment: Alignment.center,
-                        child: Center(
-                            child: val
-                                ? Container(
-                              // color: Colors.black,
-                              // padding: EdgeInsets.all(10),
-                              child: SvgPicture.string(
-                                  OrderSvg().checkBoxActiveIcon),
-                            )
-                                // :
-                            // Container(
-                            //   color: Colors.red,
-                            //   padding: EdgeInsets.all(10),
-                            //   child: SvgPicture.string(
-                            //       OrderSvg().checkBoxActiveIcon,height: 30,width: 30,),
-                            // )
-                          : SvgPicture.string(
-                          OrderSvg().checkBoxIcon,height: 35,width: 35),
-                        ),
-                      ),
+                      // Container(
+                      //   alignment: Alignment.center,
+                      //   child: Center(
+                      //       child: val
+                      //           ? Container(
+                      //         // color: Colors.black,
+                      //         // padding: EdgeInsets.all(10),
+                      //         child: SvgPicture.string(
+                      //             OrderSvg().checkBoxActiveIcon),
+                      //       )
+                      //           // :
+                      //       // Container(
+                      //       //   color: Colors.red,
+                      //       //   padding: EdgeInsets.all(10),
+                      //       //   child: SvgPicture.string(
+                      //       //       OrderSvg().checkBoxActiveIcon,height: 30,width: 30,),
+                      //       // )
+                      //     : SvgPicture.string(
+                      //     OrderSvg().checkBoxIcon,height: 35,width: 35),
+                      //   ),
+                      // ),
                     ],
                   ),
                   // const SizedBox(height: 2,),

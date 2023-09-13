@@ -4,8 +4,6 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_wid
 import 'package:cluster/presentation/order_app/order_svg.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
-import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
-import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -77,7 +75,7 @@ class _ActivityLogState extends State<ActivityLog> {
                                       radius: 18,
                                       backgroundColor: ColorPalette.primary,
                                       child: SvgPicture.string(
-                                        OrderSvg().locationIcon,color: Colors.white,),
+                                        OrderSvg().directionIcon),
 
                                     ),
                                   ],
@@ -133,7 +131,7 @@ class _ActivityLogState extends State<ActivityLog> {
                                   radius: 18,
                                   backgroundColor: ColorPalette.primary,
                                   child:
-                                  SvgPicture.string(OrderSvg().locationIcon,color: Colors.white),
+                                  SvgPicture.string(OrderSvg().directionIcon),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(top: 5, bottom: 5),
@@ -182,7 +180,8 @@ class _ActivityLogState extends State<ActivityLog> {
                                       ),
                                     )
                                   ],
-                                )
+                                ),
+                                SizedBox(height: 20,),
                               ],
                             ),
 

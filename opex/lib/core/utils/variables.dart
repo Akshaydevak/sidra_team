@@ -14,6 +14,7 @@ class Variable{
   static bool isselected=true;
   static String locationUrl="";
   static String errorMessage="";
+  static String profilePic="";
 
   static int offerGroupId=0;
   static String typeData="";

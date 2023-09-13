@@ -1,8 +1,10 @@
+import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/task_operation/create/model/task_models.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/performance_appraisal/performance_expansiontile.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +38,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
   bool isExpand3 = false;
   bool isExpand4 = false;
   bool isExpand5 = false;
-  int TotalMark = 0;
+ 
   ReadPerformanceAppraisal? performanceList;
   void grpVal(bool val) {
     loadingBool = val;
@@ -51,7 +53,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
   }
   int? offerperiodId;
   String? offerPeriodName;
-
+  ReadMarkRead? TotalMark;
   bool isSelected=false;
   bool loadingBool=true;
   @override
@@ -60,6 +62,36 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
     var h = MediaQuery.of(context).size.height;
     return MultiBlocListener(
       listeners: [
+           BlocListener<TaskBloc, TaskState>(
+          listener: (context, state) {
+             if (state is CreatePerformanceLoading) {
+      // showSnackBar(context,
+      //     message: "Loading...",
+      //     color: Colors.white,
+      //     // icon: HomeSvg().SnackbarIcon,
+      //     autoDismiss: true);
+    }
+
+    if (state is CreatePerformanceFailed) {
+      showSnackBar(
+        context,
+        message: state.error,
+        color: Colors.red,
+        // icon: Icons.admin_panel_settings_outlined
+      );
+    }
+    if (state is CreatePerformanceSuccess) {
+      // Fluttertoast.showToast(
+      //     msg: 'Performance Created',
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     backgroundColor: Colors.white,
+      //     textColor: Colors.black);
+      context.read<TaskBloc>().add(
+          GetTotalPerformanceEvent(employeeCode: widget.tasklist?.assigningCode??"",widget.tasklist?.id));
+    }
+    }
+        ),
         BlocListener<TaskBloc, TaskState>(
           listener: (context, state) {
             if (state is GetPointListLoading) {}
@@ -114,7 +146,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
           preferredSize: Size.fromHeight(60),
           child: BackAppBar(
             isAction: false,
-            label: "Individual",
+            label: "Performance Appraisal",
 
           ),
         ),
@@ -126,15 +158,16 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Container(
-                        width: 88.64,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Image.network(
-                            "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"),
-                      ),
+                       TextAvatar(
+                              shape: Shape.Circular,
+                              size: 60,
+                              numberLetters: 1,
+                              fontSize: w / 16,
+                              textColor: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              text: widget.tasklist?.assignToName?.toUpperCase() ??
+                                  "".toUpperCase(),
+                            ),
                       SizedBox(
                         height: 10,
                       ),
@@ -153,24 +186,26 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                         widget.tasklist?.assignToEmail ?? "",
                         style: TextStyle(
                           color: Color(0xff6d6d6d),
-                          fontSize: 16,
+                          fontSize: w/28,
                         ),
                       ),
                       SizedBox(
                         height: 20,
                       ),
-                      loadingBool==true?Container(
-                          height: 100,
-                          width: w,
-                          alignment: Alignment.center,
-                          child: LoadingAnimationWidget.threeRotatingDots(
-                            color: Colors.red,
-                            size: 30,
-                          )):Container(
+                        Text(
+                                "OVERALL EMPLOYEE PERFORMANCE",
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontSize: w/26,
+                                  fontWeight: FontWeight.w500
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                      loadingBool==true?customCupertinoLoading():Container(
                         width: w,
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: Color(0xffe6ecf0),
                             width: 1,
@@ -182,31 +217,33 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                               offset: Offset(1, 1),
                             ),
                           ],
-                          color: Colors.white,
+                          color: Color(0xffDFEAF3),
                         ),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                "OVERALL EMPLOYEE PERFORMANCE",
+                            
+                             Text(
+                                TotalMark?.key??"",
                                 style: GoogleFonts.roboto(
-                                  color: Color(0xff939393),
+                                  color: Colors.black,
                                   fontSize: w/26,
+                                  fontWeight: FontWeight.w500
                                 ),
                               ),
                               Container(
                                 padding: EdgeInsets.only(
                                     left: 40, right: 40, top: 16, bottom: 16),
                                 child: LinearProgressIndicator(
-                                  value: TotalMark / 100,
-                                  backgroundColor: Color(0xffECECEC),
-                                  color: Color(0xff198A17),
+                                  value: int.tryParse(TotalMark?.value??"")! / 25,
+                                  backgroundColor: Colors.white,
+                                  color: ColorPalette.primary,
                                   minHeight: 10,
                                 ),
                               ),
                               Text(
-                                "($TotalMark/100)",
+                                "(${TotalMark?.value}/25)",
                                 style: GoogleFonts.roboto(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -251,58 +288,58 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                       // ),
                       PerformanceExpansionTile(
                         load: grpVal,
-                        label: "Project Completion",
+                        label: "Task Quality",
                         pointlist: pointList,
                         tasklist: widget.tasklist,
                         isExpand: isExpand,
                         onTap: () {
                           setState(() {
                             isExpand = !isExpand;
-                            Variable.perfomanceName = "Project Completion";
+                            Variable.perfomanceName = "Task Quality";
                             print("das${Variable.perfomanceName}");
                           });
                         },
                       ),
                       SizedBox(
-                        height: 16,
+                        height: 5,
                       ),
                       PerformanceExpansionTile(
                         load: grpVal,
-                        label: "Punctuality",
+                        label: "Technical Skills and Innovation",
                         pointlist: pointList,
                         tasklist: widget.tasklist,
                         isExpand: isExpand2,
                         onTap: () {
                           setState(() {
                             isExpand2 = !isExpand2;
-                            Variable.perfomanceName = "Punctuality";
+                            Variable.perfomanceName = "Technical Skills and Innovation";
                             print("das${Variable.perfomanceName}");
                           });
                         },
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       PerformanceExpansionTile(
                         load: grpVal,
-                        label: "Time Management",
+                        label: "Team Collaboration and Leadership",
                         pointlist: pointList,
                         tasklist: widget.tasklist,
                         isExpand: isExpand3,
                         onTap: () {
                           setState(() {
                             isExpand3 = !isExpand3;
-                            Variable.perfomanceName = "Time Management";
+                            Variable.perfomanceName = "Team Collaboration and Leadership";
                             print("das${Variable.perfomanceName}");
                           });
                         },
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       PerformanceExpansionTile(
                         load: grpVal,
-                        label: "Team Management & Leadership",
+                        label: "Business Requirements",
                         pointlist: pointList,
                         tasklist: widget.tasklist,
                         isExpand: isExpand4,
@@ -310,24 +347,24 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                           setState(() {
                             isExpand4 = !isExpand4;
                             Variable.perfomanceName =
-                                "Team Management & Leadership";
+                                "Business Requirements";
                             print("das${Variable.perfomanceName}");
                           });
                         },
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       PerformanceExpansionTile(
                         load: grpVal,
-                        label: "Attitude",
+                        label: "Efficient Time Management",
                         pointlist: pointList,
                         tasklist: widget.tasklist,
                         isExpand: isExpand5,
                         onTap: () {
                           setState(() {
                             isExpand5 = !isExpand5;
-                            Variable.perfomanceName = "Attitude";
+                            Variable.perfomanceName = "Efficient Time Management";
                             print("das${Variable.perfomanceName}");
                           });
                         },

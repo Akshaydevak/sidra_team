@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
     ));
 
     return StreamProvider<InternetConnectionStatus>(
+
         initialData: InternetConnectionStatus.connected,
         create: (_) {
           return InternetConnectionChecker().onStatusChange;

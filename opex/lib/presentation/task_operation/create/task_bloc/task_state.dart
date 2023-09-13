@@ -145,7 +145,7 @@ class GetTotalPerformanceInitial extends TaskState {}
 class GetTotalPerformanceLoading extends TaskState {}
 
 class GetTotalPerformanceSuccess extends TaskState {
-  final int totalMark;
+  final ReadMarkRead totalMark;
   GetTotalPerformanceSuccess({required this.totalMark});
   @override
   List<Object> get props => [totalMark];

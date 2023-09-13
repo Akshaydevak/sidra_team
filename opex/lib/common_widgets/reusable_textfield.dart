@@ -171,15 +171,15 @@ InputDecoration loginInputDecoration(
       filled: true,
       border: OutlineInputBorder(
         borderSide: BorderSide(color: readOnly==true?Colors.white:Color(0xffe6ecf0)),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: readOnly==true?Colors.white:Color(0xffe6ecf0)),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: readOnly==true?Colors.white:ColorPalette.black, width: 1.0),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       isDense: false,
       helperStyle: TextStyle(fontSize: 8),

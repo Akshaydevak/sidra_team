@@ -1,8 +1,11 @@
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/seller_admin_app/model_seller_admin/seller_admin_models.dart';
 import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_admin_bloc.dart';
+import 'package:cluster/presentation/task_operation/create/create_svg.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -66,7 +69,7 @@ class _CreateUserState extends State<CreateUser> {
   String designationName='';
   String departmentCodeUser='';
   String contactNumber='';
-  String userRoleName='';
+  String userRoleName='Normal User';
   int officialId=0;
   int select=0;
   void onselct(index){
@@ -244,7 +247,13 @@ class _CreateUserState extends State<CreateUser> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70),
-          child: TitleAppBar(label: "New User"),
+          child: BackAppBar(
+            label: "New User",
+            isAction: false,
+            isBack: false,
+            onTap: (){
+              Navigator.pop(context);
+            }),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -276,10 +285,10 @@ class _CreateUserState extends State<CreateUser> {
                         },
                         child: Row(
                           children: [
-                            SvgPicture.string(userRoleName==userTypeList[i] ? HomeSvg()
-                                .radioButtonActive : HomeSvg()
-                                .radioButtonInActive,height: 20,),
+                            SvgPicture.string(select == i ? HomeSvg()
+                                .radioButtonActive :  CreateSvg().radioInActiveButton),
                             SizedBox(width: 5,),
+                            
                             Text(
                               userTypeList[i]=="Staff"?"Normal User":
                               userTypeList[i]=="Associative Admin"?"Associative Admin":"",
@@ -306,7 +315,7 @@ class _CreateUserState extends State<CreateUser> {
                   },
                 )),
                 const SizedBox(
-                  height: 16,
+                  height: 25,
                 ),
                 TextFormReusable(
                   label: "First Name",
@@ -802,6 +811,7 @@ class _CreateUserState extends State<CreateUser> {
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
+        isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           double w1 = MediaQuery.of(context).size.width ;
@@ -811,7 +821,7 @@ class _CreateUserState extends State<CreateUser> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 2,
+                height: h / 1.3,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -853,7 +863,7 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/2.5,
+                          height: h/1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
@@ -868,14 +878,7 @@ class _CreateUserState extends State<CreateUser> {
                                     BlocBuilder<SellerAdminBloc, SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is OfficialRoleListLoading) {
-                                          return Container(
-                                              height: 200,
-                                              width: w,
-                                              alignment: Alignment.center,
-                                              child: LoadingAnimationWidget.threeRotatingDots(
-                                                color: Colors.red,
-                                                size: 30,
-                                              ));
+                                          return LottieLoader();
                                         }
                                         if (state is OfficialRoleListSuccess) {
                                           return Column(
@@ -937,8 +940,8 @@ class _CreateUserState extends State<CreateUser> {
                                                                       "",
                                                                   style: GoogleFonts.roboto(
                                                                     color: Colors.black,
-                                                                    fontSize: w / 22,
-                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: w / 24,
+                                                                    // fontWeight: FontWeight.w500,
                                                                   ),overflow: TextOverflow.ellipsis,
                                                                 ),
                                                               ),
@@ -1071,6 +1074,7 @@ class _CreateUserState extends State<CreateUser> {
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         useRootNavigator: true,
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
@@ -1081,7 +1085,7 @@ class _CreateUserState extends State<CreateUser> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 2,
+                height: h / 1.3,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -1122,7 +1126,7 @@ class _CreateUserState extends State<CreateUser> {
                           height: h / 40,
                         ),
                         SizedBox(
-                          height: h/2.5,
+                          height: h/1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
@@ -1173,7 +1177,7 @@ class _CreateUserState extends State<CreateUser> {
                                               style: GoogleFonts.roboto(
                                                 color: Colors.black,
                                                 fontSize: w / 24,
-                                                fontWeight: FontWeight.w500,
+                                                // fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           ),
@@ -1246,6 +1250,7 @@ class _CreateUserState extends State<CreateUser> {
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
+        isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           double w1 = MediaQuery.of(context).size.width ;
@@ -1255,7 +1260,7 @@ class _CreateUserState extends State<CreateUser> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 2,
+                height: h / 1.3  ,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -1297,7 +1302,7 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/2.5,
+                          height: h/1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
@@ -1317,17 +1322,11 @@ class _CreateUserState extends State<CreateUser> {
                                           },
                                         )
                                     ),
+                                    SizedBox(height: 15,),
                                     BlocBuilder<SellerAdminBloc, SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is DepartmentListLoading) {
-                                          return Container(
-                                              height: 200,
-                                              width: w,
-                                              alignment: Alignment.center,
-                                              child: LoadingAnimationWidget.threeRotatingDots(
-                                                color: Colors.red,
-                                                size: 30,
-                                              ));
+                                          return LottieLoader();
                                         }
                                         if (state is DepartmentListSuccess) {
                                           return Column(
@@ -1384,8 +1383,8 @@ class _CreateUserState extends State<CreateUser> {
                                                                       "",
                                                                   style: GoogleFonts.roboto(
                                                                     color: Colors.black,
-                                                                    fontSize: w / 22,
-                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: w / 24,
+                                                                    // fontWeight: FontWeight.w500,
                                                                   ),overflow: TextOverflow.ellipsis,
                                                                 ),
                                                               ),
@@ -1793,6 +1792,7 @@ class _CreateUserState extends State<CreateUser> {
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
+        isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           double w1 = MediaQuery.of(context).size.width ;
@@ -1802,7 +1802,7 @@ class _CreateUserState extends State<CreateUser> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 2,
+                height: h / 1.3,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -1844,7 +1844,7 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/2.5,
+                          height: h/1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
@@ -1859,14 +1859,7 @@ class _CreateUserState extends State<CreateUser> {
                                     BlocBuilder<SellerAdminBloc, SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is DesignationListLoading) {
-                                          return Container(
-                                              height: 200,
-                                              width: w,
-                                              alignment: Alignment.center,
-                                              child: LoadingAnimationWidget.threeRotatingDots(
-                                                color: Colors.red,
-                                                size: 30,
-                                              ));
+                                          return LottieLoader();
                                         }
                                         if (state is DesignationListSuccess) {
                                           return Column(
@@ -1942,8 +1935,8 @@ class _CreateUserState extends State<CreateUser> {
                                                                       "",
                                                                   style: GoogleFonts.roboto(
                                                                     color: Colors.black,
-                                                                    fontSize: w / 22,
-                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: w / 24,
+                                                                    // fontWeight: FontWeight.w500,
                                                                   ),overflow: TextOverflow.ellipsis,
                                                                 ),
                                                               ),

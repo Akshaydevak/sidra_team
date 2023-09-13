@@ -5,7 +5,9 @@ import 'package:cluster/presentation/comunication_module/communication_homescree
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dymmy_login_page.dart';
 import 'package:cluster/presentation/dashboard_screen/drawer/appdrawer.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/help_screen.dart';
+import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/widgets/app_card.dart';
+import 'package:cluster/presentation/empty_page_communication.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     context.read<JobBloc>().add(const GetNewJobListEvent('', '', ''));
+    context.read<ProfileBloc>().add(const GetProfilePicEvent());
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
     ));
@@ -104,7 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen: DashBoard(
+                          screen:
+                          // EmptyPageCommunication(), 
+                          DashBoard(
                             index: 1,
                           ),
                           withNavBar: false,
@@ -117,9 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   pageTransitionAnimation: PageTransitionAnimation.fade,
                         // );
                       },
-                      appTitle: "Communication App",
+                      appTitle: "Communication",
                       appDescription:
-                          "Amet minim mollit not ulla lorem ipsum dolar sit amet",
+                          "This app tailored for efficient internal communication within organization.",
                       svgIcon: AppsSvg().communicationSvgIcon,
                     )),
                 SizedBox(
@@ -139,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       appTitle: "Task & Operations",
                       appDescription:
-                          "Amet minim mollit not ulla lorem ipsum dolar sit amet",
+                          "For seamless internal organization task assign and team collaboration.",
                       svgIcon: AppsSvg().taskOpSvgIcon,
                     )),
 
