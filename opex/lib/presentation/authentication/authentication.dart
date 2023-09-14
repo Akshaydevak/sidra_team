@@ -17,8 +17,11 @@ class Authentication {
   String _keyAuthenticatedUser = "keyAuthenticated";
   String _keyAuthenticatedToken = "keyAuthenticatedToken";
   String keyAdmin = "keyAdmin";
+  String keyAssociateAdmin = "keyAssociateAdmin";
   bool _isAdmin=false;
+  bool _isAssociateAdmin=false;
   bool get isAdmin=>_isAdmin;
+  bool get isAssociateAdmin=>_isAssociateAdmin;
   User _authenticatedUser = User();
   User get authenticatedUser => _authenticatedUser;
   List<User>? _authenticatedTokenData;
@@ -47,6 +50,8 @@ class Authentication {
       sharedPreferences.getString(_keyAuthenticatedUser);
       bool? authenticatedAdmin =
       sharedPreferences.getBool(keyAdmin);
+      bool? authenticatedAssociateAdmin =
+      sharedPreferences.getBool(keyAssociateAdmin);
       if (authenticatedUserJsonString != null) {
         print("retrieve cache data");
         _authenticatedUser = User.fromJson(
@@ -58,6 +63,11 @@ class Authentication {
         print("debug issue found inbetween ater user  ullil ethiii");
         _isAdmin = authenticatedAdmin;
         print("debug issue found inbetween ater user adminnnnn ${_isAdmin}");
+      }
+      if (authenticatedAssociateAdmin != null) {
+        print("debug issue found inbetween ater user  ullil ethiii");
+        _isAssociateAdmin = authenticatedAssociateAdmin;
+        print("debug issue found inbetween ater user adminnnnn ${_isAssociateAdmin}");
       }
       String? authenticatedTokenJsonString =
       sharedPreferences.getString(_keyAuthenticatedToken);
@@ -78,6 +88,7 @@ class Authentication {
   }
 
   Future<void> saveAuthenticatedUser({
+    bool? isAssociateAdmin, 
     bool? isAdmin,
     required User authenticatedUser,
   }) async {
@@ -87,12 +98,15 @@ class Authentication {
       // }
       _authenticatedUser = authenticatedUser;
       _isAdmin=isAdmin??false;
+      _isAssociateAdmin=isAssociateAdmin??false;
+
       await SharedPreferences.getInstance()
         ..setBool(
           keyAdmin,
           isAdmin??false,
         );
       print("anganene admin val = $isAdmin");
+      print("anganene admin val = $isAssociateAdmin");
 
       if (authenticatedUser.token!.isNotEmpty) {
         print("enteredddd savingg!!!");

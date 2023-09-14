@@ -234,8 +234,8 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     final dataResponse = await _jobRepo.getUserVerify();
 
 
-    if (dataResponse.data.isNotEmpty) {
-      yield GetUserVerifySuccess(dataResponse.data);
+    if (dataResponse.data) {
+      yield GetUserVerifySuccess(dataResponse.error??"");
     } else {
       yield GetUserVerifyFailed();
     }
@@ -246,8 +246,8 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     final dataResponse = await _jobRepo.getAdminData();
 
-    if (dataResponse.data.isNotEmpty) {
-      yield GetAdminDataSuccess(dataResponse.data);
+    if (dataResponse.data) {
+      yield GetAdminDataSuccess(dataResponse.error??"");
     } else {
       yield GetAdminDataFailed();
     }

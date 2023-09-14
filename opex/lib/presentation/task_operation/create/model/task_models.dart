@@ -128,6 +128,8 @@ class GetTaskList extends Equatable {
   final int? jobId;
   @JsonKey(name: "image_count")
   final int? imgCount;
+   @JsonKey(name: "review_count")
+  final int? reviewCount;
   @JsonKey(name: "task_type")
   final int? taskType;
   @JsonKey(name: "status_stages_id")
@@ -141,6 +143,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.reviewCount,
     this.topic,
     this.imgCount,
     this.taskTypeName,
@@ -784,4 +787,35 @@ class ReadMarkRead extends Equatable {
       _$ReadMarkReadFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReadMarkReadToJson(this);
+}
+
+
+//perfomerModel
+@JsonSerializable()
+class PerfomerModel extends Equatable {
+ 
+  @JsonKey(name: 'first_name')
+  final String? fName;
+  @JsonKey(name: 'last_name')
+  final String? lName;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'highest_average_points')
+  final double? points;
+
+  const PerfomerModel({
+    this.fName,
+    this.lName,
+  this.email,
+  this.points,
+   
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory PerfomerModel.fromJson(Map<String, dynamic> json) =>
+      _$PerfomerModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PerfomerModelToJson(this);
 }

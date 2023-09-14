@@ -47,7 +47,7 @@ class EmployeeRepo {
     if (restAPIresponse.data) {
       return DataResponse(error: restAPIresponse.error,data: restAPIresponse.data);
     } else {
-      return DataResponse(error: restAPIresponse.error ?? "",data: restAPIresponse.error);
+      return DataResponse(error: restAPIresponse.error ?? "",data: restAPIresponse.data);
     }
   }
   //chage

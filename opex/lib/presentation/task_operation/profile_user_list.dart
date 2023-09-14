@@ -55,7 +55,7 @@ class _ProfileUserListState extends State<ProfileUserList> {
         }
         if(state is GetEmployeeReadSuccess){
           readEmployee = state.getEmployee;
-          _showModalBottomAdditionalRole(readEmployee);
+          authentication.isAssociateAdmin?Container():_showModalBottomAdditionalRole(readEmployee);
           setState(() {
 
           });
@@ -123,7 +123,7 @@ class _ProfileUserListState extends State<ProfileUserList> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(label:"Users",isAction: false,
-          action: Padding(
+          action: authentication.isAssociateAdmin?Container():Padding(
             padding: const EdgeInsets.only(top: 0,left: 16),
             child: InkWell(
               onTap: (){

@@ -105,6 +105,7 @@ class _CreateUserState extends State<CreateUser> {
             }
             if(state is GetReadTypeSuccess){
               userTypeList=state.readType.userRole??[];
+              userRoleName=state.readType.userRole?[0]??"";
               genderList=state.readType.gender??[];
               setState(() {
 
@@ -649,27 +650,27 @@ class _CreateUserState extends State<CreateUser> {
                 const SizedBox(
                   height: 16,
                 ),
-                widget.edit==true?ReadDropDownCard(
-                  label: "Role",
-                  selValue: officialRoleName==""?"Select":officialRoleName,
-                  onTap: (){
-                    context.read<SellerAdminBloc>()
-                        .add(const OfficialRoleListEvent('',"", ""));
-                    _showModalBottomOfficialRole(officialRoleName);
-                  },
-                ):DropDownCard(
-                  label: "Role",
-                  isMandatory: true,
-                  selValue: officialRoleName==""?"Select":officialRoleName,
-                  onTap: (){
-                    context.read<SellerAdminBloc>()
-                        .add(const OfficialRoleListEvent('',"", ""));
-                    _showModalBottomOfficialRole(officialRoleName);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
+                // widget.edit==true?ReadDropDownCard(
+                //   label: "Role",
+                //   selValue: officialRoleName==""?"Select":officialRoleName,
+                //   onTap: (){
+                //     context.read<SellerAdminBloc>()
+                //         .add(const OfficialRoleListEvent('',"", ""));
+                //     _showModalBottomOfficialRole(officialRoleName);
+                //   },
+                // ):DropDownCard(
+                //   label: "Role",
+                //   isMandatory: true,
+                //   selValue: officialRoleName==""?"Select":officialRoleName,
+                //   onTap: (){
+                //     context.read<SellerAdminBloc>()
+                //         .add(const OfficialRoleListEvent('',"", ""));
+                //     _showModalBottomOfficialRole(officialRoleName);
+                //   },
+                // ),
+                // const SizedBox(
+                //   height: 16,
+                // ),
                 DropDownCard(
                   label: "Additional Role",
                   isMandatory: true,

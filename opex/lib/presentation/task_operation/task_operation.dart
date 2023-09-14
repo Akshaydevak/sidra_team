@@ -438,7 +438,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             //   ],
                             // ),
 
-                            authentication.isAdmin
+                            authentication.isAdmin ||authentication.isAssociateAdmin
                                 ? Column(
                               children: [
                                 const SizedBox(
@@ -541,7 +541,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             )
                                 : Container(),
                             HeadlineText(headText: "Quick access to :"),
-                            authentication.isAdmin
+                            authentication.isAdmin ||authentication.isAssociateAdmin
                                 ? Column(
                                   children: [
                                     Padding(
@@ -651,7 +651,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                 label: "Reported List",
                                                 svg: TaskSvg().reportedList,
                                               )),
-                                          GestureDetector(
+                                          authentication.isAdmin? GestureDetector(
                                               onTap: () {
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
@@ -666,7 +666,32 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               child: FourCard(
                                                 label: "Create Group",
                                                   svg: TaskSvg().createGroupSvg
-                                              )),
+                                              )):Container(
+                                            width: w1/6,
+                                            height: 60,
+                                            padding: EdgeInsets.all(10),
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                // SvgPicture.string(svg??TaskSvg().quickaccessIcon),
+                                                //
+                                                // SizedBox(height: 5,),
+                                                // Text(
+                                                //   label??"Employees",
+                                                //   textAlign: TextAlign.center,
+                                                //   style: TextStyle(
+                                                //     color: ColorPalette.black,
+                                                //     fontSize: 11,
+                                                //
+                                                //   ),
+                                                // )
+                                              ],
+                                            ),
+                                          ),
                                           Container(
                                             width: w1/6,
                                             height: 60,
@@ -733,7 +758,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   },
                                   child: FourCard(
                                     label: "Pinned Job",
-                                    svg: TaskSvg().pinIcon,
+                                    svg: TaskSvg().pinnedSvg,
                                     
                                   ),
                                 ),
@@ -902,7 +927,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       separatorBuilder:
                                           (BuildContext cxt, int i) {
                                         return const SizedBox(
-                                          height: 10,
+                                          height: 5,
                                         );
                                       },
                                       itemBuilder:

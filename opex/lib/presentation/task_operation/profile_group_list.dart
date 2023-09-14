@@ -1,3 +1,4 @@
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,7 +34,7 @@ class _ProfileGroupListState extends State<ProfileGroupList> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(label:"Groups",isAction: false,
-          action: Padding(
+          action: authentication.isAssociateAdmin?Container():Padding(
             padding: const EdgeInsets.only(top: 0,left: 16),
             child:
             InkWell(

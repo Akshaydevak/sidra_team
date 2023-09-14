@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      reviewCount: json['review_count'] as int?,
       topic: json['topic'] as String?,
       imgCount: json['image_count'] as int?,
       taskTypeName: json['task_type_name'] as String?,
@@ -134,6 +135,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'parent': instance.parent,
       'job_id': instance.jobId,
       'image_count': instance.imgCount,
+      'review_count': instance.reviewCount,
       'task_type': instance.taskType,
       'status_stages_id': instance.statusStagesId,
       'reporting_person': instance.reportingPerson,
@@ -483,17 +485,29 @@ Map<String, dynamic> _$NotificationListToJson(NotificationList instance) =>
       'is_new': instance.isNew,
     };
 
-    ReadMarkRead _$ReadMarkReadFromJson(Map<String, dynamic> json) =>
-    ReadMarkRead(
+ReadMarkRead _$ReadMarkReadFromJson(Map<String, dynamic> json) => ReadMarkRead(
       key: json['key'] as String?,
       value: json['value'] as String?,
-     
     );
 
 Map<String, dynamic> _$ReadMarkReadToJson(ReadMarkRead instance) =>
     <String, dynamic>{
       'key': instance.key,
       'value': instance.value,
-  
     };
 
+
+PerfomerModel _$PerfomerModelFromJson(Map<String, dynamic> json) => PerfomerModel(
+      fName: json['first_name'] as String?,
+      lName: json['last_name'] as String?,
+      email: json['email'] as String?,
+      points: json['highest_average_points'] as double?,
+    );
+
+Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>
+    <String, dynamic>{
+      'first_name': instance.fName,
+      'last_name': instance.lName,
+      'email': instance.email,
+      'highest_average_points': instance.points,
+    };

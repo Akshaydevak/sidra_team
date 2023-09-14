@@ -43,7 +43,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
   @override
   void initState() {
     context.read<JobBloc>().add(GetReportingPersonListEvent());
-    context.read<JobBloc>().add(GetRoleListEvent());
+    // context.read<JobBloc>().add(GetRoleListEvent());
     context.read<JobBloc>().add(const GetUserUderGroupEvent());
     setState(() {});
     super.initState();

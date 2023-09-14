@@ -1,5 +1,6 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:cluster/presentation/order_app/order_svg.dart';
@@ -46,12 +47,12 @@ class _EmptyPageCommunicationState extends State<EmptyPageCommunication> {
                     child: Column(
                       children: [
                         SizedBox(height: 100,),
-                        Text("Coming Soon",
+                      Text("Coming Soon",
                         style: GoogleFonts.roboto(
                           fontSize: w/10,
                           fontWeight: FontWeight.bold
                         ),),
-SizedBox(height: 25,),
+                        SizedBox(height: 25,),
                         Container(
                           width: w,
                           decoration: BoxDecoration(

@@ -34,6 +34,20 @@ class GetTaskListFailed extends TaskState {
   final String msg;
   const GetTaskListFailed( this.msg);
 }
+//
+class GetOrgPerfListLoading extends TaskState {}
+
+class GetOrgPerfListSuccess extends TaskState {
+  final List<PerfomerModel>? taskList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetOrgPerfListSuccess({this.taskList, this.prevPageUrl, this.nextPageUrl});
+}
+
+class GetOrgPerfListFailed extends TaskState {
+  final String msg;
+  const GetOrgPerfListFailed( this.msg);
+}
 
 //notification
 class GetNotificationListLoading extends TaskState {}

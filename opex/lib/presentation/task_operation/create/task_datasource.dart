@@ -107,6 +107,47 @@ class TaskDataSource {
     );
   }
 
+  //
+  Future<PaginatedResponse<List<PerfomerModel>>> getOrganisationPerformanceList(
+      int? year,int? month) async {
+    print("URL Task Under Job List:${ClusterUrls.perfonamceTopperUrl}year=${year}&&month=$month");
+    List<PerfomerModel> nationalityModel = [];
+    String api="";
+    // if(next!=""){
+    //   api=next??"";
+    // }
+    // else if(prev!=""){
+    //   api=prev??"";
+    // }
+    // else{
+    //   api = search!.isNotEmpty
+    //       ? "${ClusterUrls.taskListUrl+id.toString()}?name=$search"
+    //       : ClusterUrls.taskListUrl+id.toString();
+    // }
+
+
+    final response = await client.get(
+        "${ClusterUrls.perfonamceTopperUrl}year=${year}&&month=$month",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          },
+        ));
+    print("api " + api);
+    print("response${response.data['data']}");
+    (response.data['data'] as List).forEach((element) {
+      nationalityModel.add(PerfomerModel.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      "",
+      "",
+      previousUrl: "",
+    );
+  }
+
   //notification
   Future<PaginatedResponse<List<NotificationList>>> getNotificationList(
       String? search,String? next,String? prev) async {

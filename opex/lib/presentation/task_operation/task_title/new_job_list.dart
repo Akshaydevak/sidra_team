@@ -21,12 +21,12 @@ class NewJobList extends StatefulWidget {
 }
 
 class _NewJobListState extends State<NewJobList> {
-  List<String> assignTypeList = [
-    "All Jobs",
-    "Pending Jobs",
-    "On Progress",
-    "Completed"
-  ];
+    List<String> assignTypeList = [
+      "All Jobs",
+      "Pending Jobs",
+      "On Progress",
+      "Completed"
+    ];
   List<GetJobList> joblist = [];
   String? selectedType;
   bool isFilter=false;

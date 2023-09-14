@@ -111,19 +111,19 @@ class JobRepo {
   //userverify
   Future<DataResponse> getUserVerify() async {
     final apiResponse = await _dataSource.getUserVerify();
-    if (apiResponse.hasData) {
-      return DataResponse(error: apiResponse.error);
+    if (apiResponse.data) {
+      return DataResponse(error: apiResponse.error,data: apiResponse.data);
     } else {
-      return DataResponse(error: apiResponse.error ?? "");
+      return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
     }
   }
   //admin
   Future<DataResponse> getAdminData() async {
     final apiResponse = await _dataSource.getAdminData();
-    if (apiResponse.hasData) {
-      return DataResponse(error: apiResponse.error);
+    if (apiResponse.data) {
+      return DataResponse(error: apiResponse.error,data: apiResponse.data);
     } else {
-      return DataResponse(error: apiResponse.error ?? "");
+      return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
     }
   }
   //employeelist

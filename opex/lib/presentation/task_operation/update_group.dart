@@ -1,4 +1,5 @@
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/cart_screen/cart_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
@@ -93,7 +94,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
           backgroundColor: Colors.white,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
-            child: BackAppBar(label: "Edit Group",
+            child: BackAppBar(label: readGroup?.gName??"",
                 onTap: (){
                   context.read<JobBloc>().add(GetGroupListEvent());
                   Navigator.pop(context);
@@ -280,7 +281,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                       ),
                                     ),
                                     SizedBox(width: 10,),
-                                    InkWell(
+                                    authentication.isAssociateAdmin?Container(): InkWell(
                                       onTap: (){
                                         _showModalBottomAdditionalRole();
                                       },
@@ -347,7 +348,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                 //         fontWeight: FontWeight.w600,
                                 //       ),
                                 //     )),
-                                isValid==true?GradientButton(
+                                authentication.isAssociateAdmin?Container(): isValid==true?GradientButton(
                                     onPressed: () {
 
                                       BlocProvider.of<EmployeeBloc>(context).add(

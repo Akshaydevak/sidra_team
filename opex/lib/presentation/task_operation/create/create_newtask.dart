@@ -1589,7 +1589,23 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                       startDate:
                                                           "${_range.split(" - ")[0]} $startTime2",
                                                     ));
-                                              isSubTask = !isSubTask;
+                                              Variable.taskType == 0 ||
+                                                  taskTitle.text == "" ||
+                                                  discription.text == "" ||
+                                                  _range == "" ||
+                                                  Variable.assignType ==
+                                                      "" ||
+                                                  Variable.assignCode == ""
+                                                  ? Fluttertoast.showToast(
+                                                  msg:
+                                                  'Please fill the fields',
+                                                  toastLength:
+                                                  Toast.LENGTH_SHORT,
+                                                  gravity:
+                                                  ToastGravity.BOTTOM,
+                                                  backgroundColor:
+                                                  Colors.black,
+                                                  textColor: Colors.white):isSubTask = !isSubTask;
                                               // createButton=false;
                                             });
                                           },
@@ -1691,7 +1707,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                                 .pushNewScreen(
                                                               context,
                                                               screen:
-                                                                  CreateNewTask(
+                                                                  CreateNewTask(jobId: widget.jobId,
                                                                 isSubTask: true,
                                                                 subTaskId:
                                                                     int.tryParse(
@@ -1802,15 +1818,15 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           createdOn:
                                               "${_range.split(" - ")[0]} ${startTime2}",
                                           jobId: widget.jobId ?? 0,
-                                          notas: notesController.text ?? "",
+                                          notas: notesController.text,
                                           priorityLeval: "1",
-                                          remarks: remarksController.text ?? "",
-                                          taskName: taskTitle.text ?? "",
+                                          remarks: remarksController.text,
+                                          taskName: taskTitle.text,
                                           taskType: Variable.taskType,
                                           lastmodified: null,
                                           parant: widget.subTaskId,
                                           statusStagesId: null,
-                                          discription: discription.text ?? "",
+                                          discription: discription.text,
                                           createdBy: authentication
                                                   .authenticatedUser.code ??
                                               "",

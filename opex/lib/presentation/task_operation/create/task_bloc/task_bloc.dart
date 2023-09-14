@@ -28,6 +28,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       next: event.next,
       search: event.search);
     }
+    if (event is GetOrganisationPerformanceList) {
+      yield* getOrganisationPerformanceList(
+          month: event.month,
+          year: event.year,);
+    }
     if (event is GetNotificationListEvent) {
       yield* getNotificationList(
       prev: event.prev,
@@ -361,6 +366,23 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     else {
       yield GetTaskListFailed("failed");
+    }
+  }
+
+  //orgPerlist
+  Stream<TaskState> getOrganisationPerformanceList({
+    int? year,int? month,
+  }) async* {
+    yield GetOrgPerfListLoading();
+    final dataResponse = await _taskRepo.getOrganisationPerformanceList(year,month);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetOrgPerfListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          taskList:  dataResponse.data);  }
+
+    else {
+      yield GetOrgPerfListFailed("failed");
     }
   }
 

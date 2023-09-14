@@ -65,7 +65,7 @@ class DropDownCard extends StatelessWidget {
                       fontSize: w/22,
                     ),
                   ),
-                  const Icon(Icons.keyboard_arrow_down_outlined),
+                  const Icon(Icons.keyboard_arrow_down_outlined,color: ColorPalette.primary,),
                 ],
               )
           ),

@@ -648,82 +648,80 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                       title: getTaskRead?.taskName,
                                       subText: getTaskRead?.description,
                                     )),
+                                SizedBox(height: 5,),
+                                Container(
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: const Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Color(0xfff8f7f5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Row(
+                                      // mainAxisAlignment:
+                                      // MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 28,
+                                          padding:
+                                          const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(4),
+                                            color:
+                                            ColorPalette.blue,
+                                          ),
+                                          child: SvgPicture.string(
+                                              CreateSvg().prioriyIcon),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 3),
+                                          child: Text(
+                                            "Priority : ",
+                                            style: GoogleFonts.roboto(
+                                              color:
+                                              const Color(0xff151522),
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        // Spacer(),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 3),
+                                          child: Text(
+                                              getTaskRead?.priority ??
+                                                  ""),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                                 widget.isMyJob
                                     ? Column(
                                   children: [
                                     const SizedBox(
                                       height: 15,
-                                    ),
-                                    Container(
-                                      width: w,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: const Color(0xffe6ecf0),
-                                          width: 1,
-                                        ),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color(0x05000000),
-                                            blurRadius: 8,
-                                            offset: Offset(1, 1),
-                                          ),
-                                        ],
-                                        color: Color(0xfff8f7f5),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                                      child: GestureDetector(
-                                        onTap: () {},
-                                        child: Row(
-                                          // mainAxisAlignment:
-                                          // MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: 28,
-                                              padding:
-                                              const EdgeInsets.all(8),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(4),
-                                                color:
-                                                ColorPalette.blue,
-                                              ),
-                                              child: SvgPicture.string(
-                                                  CreateSvg().prioriyIcon),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 3),
-                                              child: Text(
-                                                "Priority : ",
-                                                style: GoogleFonts.roboto(
-                                                  color:
-                                                  const Color(0xff151522),
-                                                  fontSize: w / 24,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                            // Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 3),
-                                              child: Text(
-                                                  getTaskRead?.priority ??
-                                                      ""),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
                                     ),
                                     getTaskRead?.assigningType == "Individual"
                                         ? Container(
@@ -1188,7 +1186,8 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
+                                getTaskRead?.notes == ""
+                                    ? Container(): SizedBox(
                                   height: 15,
                                 ),
                                 getTaskRead?.notes == ""
@@ -1199,7 +1198,8 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                     widget: TextCard(
                                         title: "Note",
                                         subText: getTaskRead?.notes)),
-                                const SizedBox(
+                                getTaskRead?.remarks == ""
+                                    ? Container(): SizedBox(
                                   height: 5,
                                 ),
                                 getTaskRead?.remarks == ""
@@ -1210,8 +1210,9 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                     widget: TextCard(
                                         title: "Remarks",
                                         subText: getTaskRead?.remarks)),
-                                const SizedBox(
-                                  height: 10,
+                                getTaskRead?.remarks == ""
+                                    ? Container(): SizedBox(
+                                  height: 5,
                                 ),
                                 authentication.isAdmin == false &&
                                     getTaskRead?.rewardsData?.description !=

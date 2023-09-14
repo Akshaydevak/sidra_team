@@ -228,6 +228,13 @@ return true;
     
             });
           }
+          if(state is GetReviewListFailed){
+            reviewList=[];
+            _isLoading=false;
+            setState(() {
+
+            });
+          }
         },
       ),
       ],

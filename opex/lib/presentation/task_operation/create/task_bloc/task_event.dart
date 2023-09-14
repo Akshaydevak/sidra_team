@@ -18,6 +18,13 @@ class GetTaskListEvent extends TaskEvent {
   const GetTaskListEvent(this.id, this.search, this.next, this.prev);
 }
 
+class GetOrganisationPerformanceList extends TaskEvent {
+  final int? year;
+  final int? month;
+
+  const GetOrganisationPerformanceList(this.month, this.year,);
+}
+
 class GetNotificationListEvent extends TaskEvent {
   final String? search;
   final String? next;

@@ -198,7 +198,7 @@ class JobDataSource {
       return DataResponse(
           data: response.data["status"]=="success", error: response.data['message'].toString());
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
   //admin
@@ -221,9 +221,9 @@ class JobDataSource {
       // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
 
       return DataResponse(
-          data: response.data["status"]=="success", error: response.data['message'].toString());
+          data: response.data["status"]=="success", error: response.data['message']);
     } else {
-      return DataResponse(data: null, error: response.data['message']);
+      return DataResponse(data: false, error: response.data['message']);
     }
   }
   //employeelist
@@ -851,25 +851,6 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
     String? token = sharedPreferences.getString('token');
     print(ClusterUrls.roleListngUrl);
 
-    try {
-      final response = await client.get(
-        ClusterUrls.roleListngUrl,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}'
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        role.add(RoleList.fromJson(element));
-      });
-
-      return role;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
     final response = await client.get(
       ClusterUrls.roleListngUrl,
       options: Options(

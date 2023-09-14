@@ -95,7 +95,11 @@ class OrderDataSource {
       i++) {
         if (authentication.authenticatedUser.roleList?[i] == "admin") {
           await authentication.saveAuthenticatedUser(
-              authenticatedUser: authenticatedUser, isAdmin: true);
+              authenticatedUser: authenticatedUser, isAdmin: true,isAssociateAdmin: false);
+        }
+        else   if (authentication.authenticatedUser.roleList?[i] == "associate_admin") {
+          await authentication.saveAuthenticatedUser(
+              authenticatedUser: authenticatedUser, isAssociateAdmin: true,isAdmin: false);
         }
         else{
           await authentication.saveAuthenticatedUser(

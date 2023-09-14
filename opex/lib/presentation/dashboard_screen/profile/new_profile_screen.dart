@@ -343,7 +343,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                         SizedBox(
                           height: 35,
                         ),
-                        authentication.isAdmin==true?
+                        authentication.isAdmin==true||authentication.isAssociateAdmin?
                         Container(
                           alignment: Alignment.centerLeft,
                           padding: EdgeInsets.only(left: 20),
@@ -363,7 +363,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               SizedBox(
                                 height: 20,
                               ),
-                              Container(
+                              authentication.isAssociateAdmin?Container(): Container(
                                 padding: EdgeInsets.only(right: 15),
                                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -392,15 +392,15 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              authentication.isAssociateAdmin?Container():SizedBox(
                                 height: 10,
                               ),
-                              Container(
+                              authentication.isAssociateAdmin?Container():Container(
                                 height: 1,
                                 width: w,
                                 color: Colors.grey.shade200,
                               ),
-                              SizedBox(
+                              authentication.isAssociateAdmin?Container():SizedBox(
                                 height: 10,
                               ),
                               GestureDetector(

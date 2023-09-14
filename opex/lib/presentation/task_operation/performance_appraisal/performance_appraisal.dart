@@ -236,14 +236,14 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
                                 padding: EdgeInsets.only(
                                     left: 40, right: 40, top: 16, bottom: 16),
                                 child: LinearProgressIndicator(
-                                  value: int.tryParse(TotalMark?.value??"")! / 25,
+                                  value: TotalMark?.value==null?0/25:int.tryParse(TotalMark?.value??"")! / 25,
                                   backgroundColor: Colors.white,
                                   color: ColorPalette.primary,
                                   minHeight: 10,
                                 ),
                               ),
                               Text(
-                                "(${TotalMark?.value}/25)",
+                                TotalMark?.value==null?"0/25":"(${TotalMark?.value}/25)",
                                 style: GoogleFonts.roboto(
                                   color: Colors.black,
                                   fontSize: 14,
