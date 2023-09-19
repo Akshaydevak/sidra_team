@@ -1792,8 +1792,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                   "",
                                               isActive: true,
                                               priority: Variable.prioritys,
-                                              reportingPerson: authentication
-                                                      .authenticatedUser.code ??
+                                              reportingPerson: readTask?.reportingPersonCode ??
                                                   "",
                                               endDate:
                                                   "$ebdDate" " " "$endTime2",

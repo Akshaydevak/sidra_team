@@ -71,22 +71,25 @@ class _PendingJobsState extends State<PendingJobs> {
         ),
         body: SingleChildScrollView(
           child: 
-          // taskList.isEmpty
-          //     ? Container(
-          //         padding: EdgeInsets.all(25),
-          //         height: h / 3,
-          //         child: SvgPicture.string(TaskSvg().nolistSvg),
-          //       )
-          //     : 
+
               BlocBuilder<TaskBloc, TaskState>(
                   builder: (context, state) {
+                    print("pendingffff$state");
                       if (state is GetPendingTaskListLoading) {
                         return LottieLoader();
                       }
             if (state is GetPendingTaskListSuccess) {
               taskList = state.taskList;
           
-                    return Column(
+                    return
+                      taskList.isEmpty
+                          ? Container(
+                              padding: EdgeInsets.all(25),
+                              height: h / 3,
+                              child: SvgPicture.string(TaskSvg().nolistSvg),
+                            )
+                          :
+                          Column(
                       children: [
                         Container(
                           padding: const EdgeInsets.only(
@@ -142,6 +145,15 @@ class _PendingJobsState extends State<PendingJobs> {
                         ),
                       ],
                     );
+            }
+            if(state is GetPendingTaskListFailed){
+              taskList=[];
+              return  Container(
+                padding: EdgeInsets.only(top: 50),
+                alignment: Alignment.center,
+                height: h / 3.5,
+                child: SvgPicture.string(TaskSvg().nolistSvg),
+              );
             }
             return Container();
                   },

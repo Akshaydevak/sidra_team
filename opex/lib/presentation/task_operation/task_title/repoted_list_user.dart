@@ -1,11 +1,15 @@
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
+import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/color_palatte.dart';
+import '../task_svg.dart';
 
 class ReportedListUser extends StatefulWidget {
   const ReportedListUser({super.key});
@@ -59,6 +63,7 @@ class _ReportedListUserState extends State<ReportedListUser> {
                     child: BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
                         if (state is ReportListUserListLoading) {
+                          return LottieLoader();
 
                         }
                         if (state is ReportListUserListSuccess) {
@@ -245,6 +250,15 @@ class _ReportedListUserState extends State<ReportedListUser> {
                               ),
                             ],
                           );
+                        }
+                        if(state is ReportListUserListFailed){
+                            return  Container(
+                            padding: EdgeInsets.only(top: 50),
+                            alignment: Alignment.center,
+                            height: h / 3.5,
+                            child: SvgPicture.string(TaskSvg().nolistSvg),
+                          );
+
                         }
                         return Container();
                       },

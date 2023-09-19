@@ -50,7 +50,7 @@ dependencies:
   loading_indicator: ^3.1.0
   mime_type: ^1.0.0
   json_annotation: ^4.8.1
-  carousel_slider: ^4.1.1
+#  carousel_slider: ^4.0.0
   geocoding:
   geolocator:
   google_maps_flutter:

@@ -192,26 +192,6 @@ class TaskDataSource {
   Future<List<GetTaskList>> getPendingTaskList() async {
     List<GetTaskList> taskList = [];
     print("URL Task:${ClusterUrls.pendingtaskUrl+authentication.authenticatedUser.code.toString()}?status=PENDING");
-
-    try {
-      final response = await client.get(
-        "${ClusterUrls.pendingtaskUrl}${authentication.authenticatedUser.code.toString()}?status=PENDING",
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        taskList.add(GetTaskList.fromJson(element));
-      });
-
-      return taskList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
     final response = await client.get("${ClusterUrls.pendingtaskUrl}${authentication.authenticatedUser.code.toString()}?status=PENDING",
       options: Options(
         headers: {
@@ -221,6 +201,7 @@ class TaskDataSource {
         },
       ),
     );
+    print("reasjkxjk${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
       taskList.add(GetTaskList.fromJson(element));
     });

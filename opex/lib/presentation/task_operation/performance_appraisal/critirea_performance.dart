@@ -5,10 +5,9 @@ import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import '../../../common_widgets/gradient_button.dart';
 import '../../../common_widgets/loading.dart';
 import '../../../core/color_palatte.dart';
 import '../../dashboard_screen/home_screen/home_svg.dart';
@@ -206,101 +205,113 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
             ),
             perfomance.isEmpty
                 ? Container()
-                : CarouselSlider.builder(
-                    itemCount: perfomance.length,
-                    disableGesture: true,
-                    options: CarouselOptions(
-                      height: 100,
-                      aspectRatio: 16 / 12,
-                      viewportFraction: 1,
-                      initialPage: 0,
-                      enableInfiniteScroll: false,
-                      reverse: false,
-                      autoPlay: false,
-                      // autoPlayInterval: Duration(seconds: 3),
-                      autoPlayAnimationDuration: Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      enlargeFactor: 0.3,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                    itemBuilder: (context, i, j) {
-                      return Container(
-                        width: w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFF2772B0),
-                              const Color(0xFF27A8B0),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            // begin: const FractionalOffset(0.0, 0.0),
-                            // end: const FractionalOffset(1.0, 0.0),
-                            // stops: [0.0, 1.0],
-                            // tileMode: TileMode.clamp
-                          ),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        child: Column(children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              TextAvatar(
-                                shape: Shape.Circular,
-                                size: 40,
-                                numberLetters: 1,
-                                fontSize: w / 14,
-                                textColor: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                text: perfomance[i].fName ?? "".toUpperCase(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      perfomance[i].fName ?? "",
-                                      style: GoogleFonts.roboto(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                          fontSize: w / 24),
-                                    ),
-                                    Text(
-                                      perfomance[i].email ?? "",
-                                      style: GoogleFonts.roboto(
-                                          // fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                          fontSize: w / 26),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 45),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Total Points : ${perfomance[i].points}",
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
-                                    fontSize: w / 28),
-                              ),
+                : Container(
+              height: 100,
+                  child: CarouselSlider.builder(
+                      slideTransform: DefaultTransform(),
+                      slideIndicator: CircularSlideIndicator(
+                          padding: EdgeInsets.only(bottom: 10, left: 0),
+                          alignment: Alignment.bottomCenter,
+                          indicatorBorderWidth: 0.2,
+                          indicatorRadius: 3.5,
+                          itemSpacing: 10,
+                          currentIndicatorColor: Color(0xff086DB5),
+                          indicatorBackgroundColor: ColorPalette.cardBackground),
+                      itemCount: perfomance.length,
+                      // disableGesture: true,
+                      // options: CarouselOptions(
+                      //   height: 100,
+                      //   aspectRatio: 16 / 12,
+                      //   viewportFraction: 1,
+                      //   initialPage: 0,
+                      //   enableInfiniteScroll: false,
+                      //   reverse: false,
+                      //   autoPlay: false,
+                      //   // autoPlayInterval: Duration(seconds: 3),
+                      //   autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      //   autoPlayCurve: Curves.fastOutSlowIn,
+                      //   enlargeCenterPage: true,
+                      //   enlargeFactor: 0.3,
+                      //   scrollDirection: Axis.horizontal,
+                      // ),
+                      slideBuilder: (int i) {
+                        return Container(
+                          width: w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF2772B0),
+                                const Color(0xFF27A8B0),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              // begin: const FractionalOffset(0.0, 0.0),
+                              // end: const FractionalOffset(1.0, 0.0),
+                              // stops: [0.0, 1.0],
+                              // tileMode: TileMode.clamp
                             ),
                           ),
-                        ]),
-                      );
-                    }),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Column(children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                TextAvatar(
+                                  shape: Shape.Circular,
+                                  size: 40,
+                                  numberLetters: 1,
+                                  fontSize: w / 14,
+                                  textColor: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  text: perfomance[i].fName ?? "".toUpperCase(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        perfomance[i].fName ?? "",
+                                        style: GoogleFonts.roboto(
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                            fontSize: w / 24),
+                                      ),
+                                      Text(
+                                        perfomance[i].email ?? "",
+                                        style: GoogleFonts.roboto(
+                                            // fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                            fontSize: w / 26),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 45),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Total Points : ${perfomance[i].points}",
+                                  style: GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                      fontSize: w / 28),
+                                ),
+                              ),
+                            ),
+                          ]),
+                        );
+                      }),
+                ),
             SizedBox(
               height: 15,
             ),
@@ -319,28 +330,43 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
             SizedBox(
               height: 5,
             ),
-            if(readCriteria!=null)...{
+            if (readCriteria != null) ...{
               Column(
                 children: [
-                  CarouselSlider.builder(
-                      itemCount: readCriteria!.overAllPoints!.length<=5?readCriteria?.overAllPoints?.length:5,
-                      disableGesture: true,
-                      options: CarouselOptions(
-                        height: 200,
-                        aspectRatio: 16 / 12,
-                        viewportFraction: 1,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: false,
-                        // autoPlayInterval: Duration(seconds: 3),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeCenterPage: true,
-                        enlargeFactor: 0.3,
-                        scrollDirection: Axis.horizontal,
-                      ),
-                      itemBuilder: (context, i, j) {
+                  Container(
+                    height: 140,
+                    child: CarouselSlider.builder(
+                      slideTransform: DefaultTransform(),
+                      slideIndicator: CircularSlideIndicator(
+                          padding: EdgeInsets.only(bottom: 10, left: 0),
+                          alignment: Alignment.bottomCenter,
+                          indicatorBorderWidth: 0.2,
+                          indicatorRadius: 3.5,
+                          itemSpacing: 10,
+                          currentIndicatorColor: Color(0xff086DB5),
+                          indicatorBackgroundColor: ColorPalette.cardBackground),
+                      itemCount: readCriteria!.overAllPoints!.length <= 5
+                          ? readCriteria!.overAllPoints!.length
+                          : 5,
+                      // disableGesture: true,
+
+                      // options: CarouselOptions(
+                      //   height: 200,
+                      //   aspectRatio: 16 / 12,
+                      //   viewportFraction: 1,
+                      //   initialPage: 0,
+                      //   enableInfiniteScroll: false,
+                      //   reverse: false,
+                      //   autoPlay: false,
+                      //   // autoPlayInterval: Duration(seconds: 3),
+                      //   autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      //   autoPlayCurve: Curves.fastOutSlowIn,
+                      //   enlargeCenterPage: true,
+                      //   enlargeFactor: 0.3,
+                      //   scrollDirection: Axis.horizontal,
+                      // ),
+
+                      slideBuilder: (int i) {
                         return Column(
                           children: [
                             Container(
@@ -357,26 +383,32 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                                 // ),
                                 color: Color(0xfff8f7f5),
                               ),
-
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
                               child: Column(children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Best Performer",
+                                      Text(
+                                        "Best Performer",
                                         style: GoogleFonts.roboto(
                                             fontSize: w / 24,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black),),
-                                      Text("Total Points : ${readCriteria?.overAllPoints?[i].points}",
+                                            color: Colors.black),
+                                      ),
+                                      Text(
+                                        "Total Points : ${readCriteria?.overAllPoints?[i].points}",
                                         style: GoogleFonts.roboto(
                                             fontSize: w / 24,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black),),
-                                    ],),
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 Container(
                                   width: w,
@@ -384,7 +416,8 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                                   color: Color(0xffA9A8A8).withOpacity(0.2),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -396,16 +429,19 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                                         fontSize: w / 14,
                                         textColor: Colors.white,
                                         fontWeight: FontWeight.w500,
-                                        text: readCriteria?.overAllPoints?[i].name ??
+                                        text: readCriteria
+                                                ?.overAllPoints?[i].name ??
                                             "".toUpperCase(),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(4.0),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              readCriteria?.overAllPoints?[i].name ??
+                                              readCriteria
+                                                      ?.overAllPoints?[i].name ??
                                                   "",
                                               style: GoogleFonts.roboto(
                                                   fontWeight: FontWeight.w500,
@@ -413,86 +449,96 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                                                   fontSize: w / 24),
                                             ),
                                             Text(
-                                              readCriteria?.overAllPoints?[i].email ??
+                                              readCriteria
+                                                      ?.overAllPoints?[i].email ??
                                                   "",
                                               style: GoogleFonts.roboto(
-                                                // fontWeight: FontWeight.w500,
+                                                  // fontWeight: FontWeight.w500,
                                                   color: Colors.black,
                                                   fontSize: w / 26),
                                             ),
-
                                           ],
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-
                               ]),
                             ),
-                            // DotsIndicator(
-                            //   dotsCount: readCriteria!.overAllPoints!.length-1,
-                            //   position: i,
-                            // ),
                           ],
                         );
-                      }),
-
+                      },
+                    ),
+                  ),
                 ],
               )
-
             },
 
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
 
+            Container(
+              height: 500,
+              child: CarouselSlider(
+                slideTransform: DefaultTransform(),
+                slideIndicator: CircularSlideIndicator(
+                    padding: EdgeInsets.only(bottom: 10, left: 0),
+                    alignment: Alignment.bottomCenter,
+                    indicatorBorderWidth: 0.2,
+                    indicatorRadius: 3.5,
+                    itemSpacing: 10,
+                    currentIndicatorColor: Color(0xff086DB5),
+                    indicatorBackgroundColor: ColorPalette.cardBackground),
 
-            CarouselSlider(
-              items: [
-                if(readCriteria!=null)...{
-                if (readCriteria!.punctuality!.isNotEmpty) ...{
-                  CritiriaCard(
-                      label: "Task Quality",
-                      list: readCriteria?.punctuality ?? []),
-                },
-                if (readCriteria!.attittude!.isNotEmpty) ...{
-                  CritiriaCard(
-                    label: "Technical Skills and Innovation",
-                    list: readCriteria?.attittude ?? [],
-                  ),
-                },
-                if (readCriteria!.projectCompletion!.isNotEmpty) ...{
-                  CritiriaCard(
-                    label: "Team Collaboration and Leadership",
-                    list: readCriteria?.projectCompletion ?? [],
-                  ),
-                },
-                if (readCriteria!.teamManagement!.isNotEmpty) ...{
-                  CritiriaCard(
-                    label: "Business Requirements",
-                    list: readCriteria?.teamManagement ?? [],
-                  ),
-                },
-                if (readCriteria!.timeMange!.isNotEmpty) ...{
-                  CritiriaCard(
-                    label: "Efficient Time Management",
-                    list: readCriteria?.timeMange ?? [],
-                  ),
-                },}
-              ],
-              options: CarouselOptions(
-                height: h / 1.5,
-                aspectRatio: 16 / 12,
-                viewportFraction: 1,
-                initialPage: 0,
-                enableInfiniteScroll: false,
-                reverse: false,
-                autoPlay: false,
-                // autoPlayInterval: Duration(seconds: 3),
-                autoPlayAnimationDuration: Duration(milliseconds: 800),
-                autoPlayCurve: Curves.fastOutSlowIn,
-                enlargeCenterPage: true,
-                enlargeFactor: 0.3,
-                scrollDirection: Axis.horizontal,
+                children: [
+                  if (readCriteria != null) ...{
+                    if (readCriteria!.punctuality!.isNotEmpty) ...{
+                      CritiriaCard(
+                          label: "Task Quality",
+                          list: readCriteria?.punctuality ?? []),
+                    },
+                    if (readCriteria!.attittude!.isNotEmpty) ...{
+                      CritiriaCard(
+                        label: "Technical Skills and Innovation",
+                        list: readCriteria?.attittude ?? [],
+                      ),
+                    },
+                    if (readCriteria!.projectCompletion!.isNotEmpty) ...{
+                      CritiriaCard(
+                        label: "Team Collaboration and Leadership",
+                        list: readCriteria?.projectCompletion ?? [],
+                      ),
+                    },
+                    if (readCriteria!.teamManagement!.isNotEmpty) ...{
+                      CritiriaCard(
+                        label: "Business Requirements",
+                        list: readCriteria?.teamManagement ?? [],
+                      ),
+                    },
+                    if (readCriteria!.timeMange!.isNotEmpty) ...{
+                      CritiriaCard(
+                        label: "Efficient Time Management",
+                        list: readCriteria?.timeMange ?? [],
+                      ),
+                    },
+                  }
+                ],
+                // options: CarouselOptions(
+                //   height: h / 1.5,
+                //   aspectRatio: 16 / 12,
+                //   viewportFraction: 1,
+                //   initialPage: 0,
+                //   enableInfiniteScroll: false,
+                //   reverse: false,
+                //   autoPlay: false,
+                //   // autoPlayInterval: Duration(seconds: 3),
+                //   autoPlayAnimationDuration: Duration(milliseconds: 800),
+                //   autoPlayCurve: Curves.fastOutSlowIn,
+                //   enlargeCenterPage: true,
+                //   enlargeFactor: 0.3,
+                //   scrollDirection: Axis.horizontal,
+                // ),
               ),
             ),
           ],

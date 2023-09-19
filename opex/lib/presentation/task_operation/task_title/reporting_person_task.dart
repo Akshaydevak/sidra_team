@@ -101,6 +101,11 @@ class _ReportingPersonState extends State<ReportingPerson> {
                     backgroundColor: Colors.black,
                     textColor: Colors.white);
                 Navigator.pop(context);
+                context.read<TaskBloc>()
+                    .add(
+                    GetTaskReadListEvent(
+                        widget.readTask
+                            ?.id ?? 0));
               }
             },
           ),
@@ -509,7 +514,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                               widget.readTask
                                                                   ?.id ?? 0));
                                                       read();
-                                                      Navigator.pop(context);
+
                                                     },
                                                     child: Container(
                                                       decoration: BoxDecoration(

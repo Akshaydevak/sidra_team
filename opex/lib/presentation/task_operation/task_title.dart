@@ -1282,9 +1282,11 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                   height: 5,
                                 ),
                                 authentication.isAdmin == false &&
-                                    getTaskRead?.rewardsData?.description !=
-                                        "" &&
-                                    getTaskRead?.rewardsData?.description !=
+                                    getTaskRead?.rewardsData?.name !=
+                                        null
+                                    ?SizedBox(height: 5,):Container(),
+                                authentication.isAdmin == false &&
+                                    getTaskRead?.rewardsData?.name !=
                                         null
                                     ? TaskTitleCard(
                                     paddingg: const EdgeInsets.symmetric(
@@ -1308,12 +1310,10 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                     ))
                                     : Container(),
                                 SizedBox(
-                                  height: 10,
+                                  height: 5,
                                 ),
                                 authentication.isAdmin == false &&
-                                    getTaskRead?.paymentMeta?.description !=
-                                        "" &&
-                                    getTaskRead?.paymentMeta?.description !=
+                                    getTaskRead?.paymentMeta?.descriptionreward !=
                                         null
                                     ? TaskTitleCard(
                                     paddingg: const EdgeInsets.symmetric(
@@ -1336,9 +1336,8 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                       ],
                                     ))
                                     : Container(),
-                                SizedBox(height: 10),
+                                SizedBox(height: 5),
                                 authentication.isAdmin == false &&
-                                    getTaskRead?.metaData?.description != "" &&
                                     getTaskRead?.metaData?.description != null
                                     ? TaskTitleCard(
                                     paddingg: const EdgeInsets.symmetric(

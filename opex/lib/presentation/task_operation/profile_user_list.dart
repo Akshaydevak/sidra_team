@@ -55,7 +55,7 @@ class _ProfileUserListState extends State<ProfileUserList> {
         }
         if(state is GetEmployeeReadSuccess){
           readEmployee = state.getEmployee;
-          authentication.isAssociateAdmin?Container():_showModalBottomAdditionalRole(readEmployee);
+          authentication.isAssociateAdmin||state.getEmployee?.role=="Admin"?Container():_showModalBottomAdditionalRole(readEmployee);
           setState(() {
 
           });

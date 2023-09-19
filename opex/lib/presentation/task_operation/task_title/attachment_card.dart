@@ -58,9 +58,9 @@ class _AttachmentCardState extends State<AttachmentCard> {
   @override
   Widget build(BuildContext context) {
     picData();
-    print("hgfhgfhgf${widget.readData?.metaData?.image1}");
-    print("hgfhgfhgf${picModel[0].url}");
-    print("hgfhgfhgf${picLength}");
+    // print("hgfhgfhgf${widget.readData?.metaData?.image1}");
+    // print("hgfhgfhgf${picModel[0].url}");
+    // print("hgfhgfhgf${picLength}");
      var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return    Container(

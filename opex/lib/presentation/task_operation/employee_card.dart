@@ -85,7 +85,8 @@ class EmployeeCard extends StatelessWidget {
                            ),
                          ),
                        ),
-                       employeeList?.role=="Staff"?Container():Container(
+                       employeeList?.role=="Staff"?Container():
+                       employeeList?.role=="Associative Admin"?Container(
                          decoration: BoxDecoration(
                            color: ColorPalette.primary.withOpacity(0.2),
                            borderRadius: BorderRadius.circular(2)
@@ -97,7 +98,19 @@ class EmployeeCard extends StatelessWidget {
                            fontWeight: FontWeight.w500,
                            fontSize: w/32
                          ),),
-                       )
+                       ):employeeList?.role=="Admin"?Container(
+                         decoration: BoxDecoration(
+                             color: ColorPalette.primary.withOpacity(0.2),
+                             borderRadius: BorderRadius.circular(2)
+                         ),
+                         padding: EdgeInsets.only(left: 4,right: 4,top: 2,bottom: 2),
+                         child: Text("Admin",
+                           style: GoogleFonts.roboto(
+                               color: ColorPalette.primary,
+                               fontWeight: FontWeight.w500,
+                               fontSize: w/32
+                           ),),
+                       ):Container()
                      ],
                    ),
                    const SizedBox(height: 2,),

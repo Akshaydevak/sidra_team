@@ -13,7 +13,7 @@ class JobRepo {
       if (apiResponse.isNotEmpty) {
         return DataResponse(data: apiResponse);
       } else {
-        return DataResponse(error: "error Text");
+        return DataResponse(data: apiResponse??[]);
       }
     } catch (e) {
       debugPrint("error Text$e");

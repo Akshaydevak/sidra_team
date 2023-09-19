@@ -424,7 +424,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final dataResponse = await _taskRepo.getPendingTaskList();
 
     if (dataResponse.data.isNotEmpty) {
-      yield GetPendingTaskListSuccess(dataResponse.data);
+      yield GetPendingTaskListSuccess(dataResponse.data??[]);
     } else {
       yield GetPendingTaskListFailed();
     }

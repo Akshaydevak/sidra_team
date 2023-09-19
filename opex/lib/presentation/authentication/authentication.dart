@@ -105,6 +105,11 @@ class Authentication {
           keyAdmin,
           isAdmin??false,
         );
+      await SharedPreferences.getInstance()
+        ..setBool(
+          keyAssociateAdmin,
+          isAssociateAdmin??false,
+        );
       print("anganene admin val = $isAdmin");
       print("anganene admin val = $isAssociateAdmin");
 
