@@ -22,6 +22,7 @@ import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'employee_group_screen.dart';
 import 'group_list.dart';
+import 'lottieLoader.dart';
 
 class UpdateGroup extends StatefulWidget {
   final bool edit;
@@ -79,6 +80,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
       isValid=false;
     }
   }
+  bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -126,7 +128,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                 isActive: true));
 
                       }
-                      print("LLLL$emailList");
+                    _isLoading=false;
                       setState(() {
 
                       });
@@ -172,238 +174,391 @@ class _UpdateGroupState extends State<UpdateGroup> {
                     }
                   },
                 ),
+                BlocListener<EmployeeBloc, EmployeeState>(
+                  listener: (context, state) {
+                    print("state group$state");
+                    if(state is DeleteGroupLoading){
+
+                    }
+                    if(state is DeleteGroupSuccess){
+                      Fluttertoast.showToast(
+                          msg: 'Group Deleted Successfully',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.black,
+                          textColor: Colors.white);
+                      Navigator.pop(context);
+                      context.read<JobBloc>().add(GetGroupListEvent());
+                      setState(() {
+
+                      });
+                    }
+
+                  },
+                ),
               ],
               child:  SingleChildScrollView(
                 child: Column(
                     children: [
-                      Container(
-                        width: w,
-                        // height: 185,
-                        margin: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          children: [
-                            TextFormField(
-                              style:GoogleFonts.roboto(
-                                  fontWeight: FontWeight.w600
-                              ) ,
-                              onChanged: (n){
-                                validationCheck();
-                                setState(() {
-
-                                });
-                              },
-                              focusNode: focusNode,
-                              decoration:  InputDecoration(
-                                contentPadding: EdgeInsets.only(left:16,right: 16 ),
-                                hintText: "Group Name",
-                                hintStyle: TextStyle(
-                                  color: Color(0x66151522),
-                                  fontSize: w/26,
-                                ),
-                                border: InputBorder.none,
-
+                    if(_isLoading)...[
+                  LottieLoader()
+            ]
+            else...[
+                      Column(
+                        children: [
+                          Container(
+                            width: w,
+                            // height: 185,
+                            margin: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Color(0xffe6ecf0),
+                                width: 1,
                               ),
-                              controller: groupName,
-
-                              maxLines: 1,
-                            ),
-
-                            Container(
-                              margin: EdgeInsets.only(left:16),
-                              width: w,
-                              height: 1.50,
-                              color: ColorPalette.divider,
-                            ),
-
-                            TextFormField(
-                              controller: discription,
-                              maxLines: 4,
-                              minLines: 1,
-                              onChanged: (n){
-                                validationCheck();
-                                setState(() {
-
-                                });
-                              },
-                              focusNode: descriptionfocusNode,
-                              decoration:  InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
-                                hintText: "Group Description",
-                                hintStyle: TextStyle(
-                                  color: Color(0x66151522),
-                                  fontSize: w/26,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
                                 ),
-                                border: InputBorder.none,
-                              ),
+                              ],
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: h / 1.6,
-                        child: SingleChildScrollView(
-                          child: Container(
-                            padding: EdgeInsets.all(16),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
                               children: [
+                                TextFormField(
+                                  style:GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w600
+                                  ) ,
+                                  onChanged: (n){
+                                    validationCheck();
+                                    setState(() {
 
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Row(crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "Users List",
-                                      style: GoogleFonts.roboto(
-                                        color: Color(0xff151522),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                    });
+                                  },
+                                  focusNode: focusNode,
+                                  decoration:  InputDecoration(
+                                    contentPadding: EdgeInsets.only(left:16,right: 16 ),
+                                    hintText: "Group Name",
+                                    hintStyle: TextStyle(
+                                      color: Color(0x66151522),
+                                      fontSize: w/26,
                                     ),
-                                    SizedBox(width: 10,),
-                                    authentication.isAssociateAdmin?Container(): InkWell(
-                                      onTap: (){
-                                        _showModalBottomAdditionalRole();
-                                      },
-                                      child: Text(
-                                        "Add or Remove",
-                                        style: GoogleFonts.roboto(
-                                          color: ColorPalette.primary,
-                                          fontSize: w/26,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                ListView.separated(
-                                    primary: true,
-                                    shrinkWrap: true,
-                                    physics:
-                                    NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) =>
-                                        Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 15, horizontal: 10),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Color(0x05000000),
-                                                  blurRadius: 8,
-                                                  offset: Offset(1, 1),
-                                                ),
-                                              ],
-                                              color: Color(0x19ff9900),
-                                            ),
-                                            child: Text(emailList[index])),
-                                    separatorBuilder:
-                                        (context, index) => Container(
-                                          height: 5,
-                                        ),
-                                    itemCount:emailList.length),
-                                SizedBox(height: h/30,),
-                                // GradientButton(
-                                //     onPressed: () {
-                                //       _showModalBottomAdditionalRole();
-                                //     },
-                                //     gradient: const LinearGradient(
-                                //       colors: [
-                                //         Color(0xfffe5762),
-                                //         Color(0xfffe5762),
-                                //       ],
-                                //       begin: Alignment.topCenter,
-                                //       end: Alignment.bottomCenter,
-                                //     ),
-                                //     color: const Color(0xfffe5762),
-                                //     child: Text(
-                                //       "Add Or Remove",
-                                //       textAlign: TextAlign.center,
-                                //       style: GoogleFonts.roboto(
-                                //         color: Colors.white,
-                                //         fontSize: 18,
-                                //         fontWeight: FontWeight.w600,
-                                //       ),
-                                //     )),
-                                authentication.isAssociateAdmin?Container(): isValid==true?GradientButton(
-                                    onPressed: () {
+                                    border: InputBorder.none,
 
-                                      BlocProvider.of<EmployeeBloc>(context).add(
-                                          UpdateGroupEvent(
-                                              groupName: groupName.text,
-                                              discription: discription.text,
-                                              userList: userList??[],
-                                              isActive: true,
-                                              id: readGroup?.id??0));
-                                    },
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xfffe5762),
-                                        Color(0xfffe5762),
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
+                                  ),
+                                  controller: groupName,
+
+                                  maxLines: 1,
+                                ),
+
+                                Container(
+                                  margin: EdgeInsets.only(left:16),
+                                  width: w,
+                                  height: 1.50,
+                                  color: ColorPalette.divider,
+                                ),
+
+                                TextFormField(
+                                  controller: discription,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  onChanged: (n){
+                                    validationCheck();
+                                    setState(() {
+
+                                    });
+                                  },
+                                  focusNode: descriptionfocusNode,
+                                  decoration:  InputDecoration(
+                                    contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                                    hintText: "Group Description",
+                                    hintStyle: TextStyle(
+                                      color: Color(0x66151522),
+                                      fontSize: w/26,
                                     ),
-                                    color: const Color(0xfffe5762),
-                                    child: Text(
-                                      "Update Group",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )):
-                                GradientButton(
-                                    onPressed: () {
-                                    },
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xffD3D3D3),
-                                        Color(0xffD3D3D3),
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                    color: const Color(0xffD3D3D3),
-                                    child: Text(
-                                      "Update Group",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                SizedBox(height: h/10,)
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
+                          SizedBox(
+                            height: h / 1.6,
+                            child: SingleChildScrollView(
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Row(crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "Users List",
+                                          style: GoogleFonts.roboto(
+                                            color: Color(0xff151522),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        authentication.isAssociateAdmin?Container(): InkWell(
+                                          onTap: (){
+                                            _showModalBottomAdditionalRole();
+                                          },
+                                          child: Text(
+                                            "Add or Remove",
+                                            style: GoogleFonts.roboto(
+                                              color: ColorPalette.primary,
+                                              fontSize: w/26,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    ListView.separated(
+                                        primary: true,
+                                        shrinkWrap: true,
+                                        physics:
+                                        NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) =>
+                                            Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 15, horizontal: 10),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                      color: Color(0x05000000),
+                                                      blurRadius: 8,
+                                                      offset: Offset(1, 1),
+                                                    ),
+                                                  ],
+                                                  color: Color(0x19ff9900),
+                                                ),
+                                                child: Text(emailList[index])),
+                                        separatorBuilder:
+                                            (context, index) => Container(
+                                          height: 5,
+                                        ),
+                                        itemCount:emailList.length),
+                                    SizedBox(height: h/30,),
+                                    // GradientButton(
+                                    //     onPressed: () {
+                                    //       _showModalBottomAdditionalRole();
+                                    //     },
+                                    //     gradient: const LinearGradient(
+                                    //       colors: [
+                                    //         Color(0xfffe5762),
+                                    //         Color(0xfffe5762),
+                                    //       ],
+                                    //       begin: Alignment.topCenter,
+                                    //       end: Alignment.bottomCenter,
+                                    //     ),
+                                    //     color: const Color(0xfffe5762),
+                                    //     child: Text(
+                                    //       "Add Or Remove",
+                                    //       textAlign: TextAlign.center,
+                                    //       style: GoogleFonts.roboto(
+                                    //         color: Colors.white,
+                                    //         fontSize: 18,
+                                    //         fontWeight: FontWeight.w600,
+                                    //       ),
+                                    //     )),
+                                    authentication.isAssociateAdmin?Container(): isValid==true?GradientButton(
+                                        onPressed: () {
+
+                                          BlocProvider.of<EmployeeBloc>(context).add(
+                                              UpdateGroupEvent(
+                                                  groupName: groupName.text,
+                                                  discription: discription.text,
+                                                  userList: userList??[],
+                                                  isActive: true,
+                                                  id: readGroup?.id??0));
+                                        },
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            ColorPalette.primary,
+                                            ColorPalette.primary,
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        color:  ColorPalette.primary,
+                                        child: Text(
+                                          "Update Group",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.white,
+                                            fontSize: w/24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )):
+                                    GradientButton(
+                                        onPressed: () {
+                                        },
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xffD3D3D3),
+                                            Color(0xffD3D3D3),
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        color: const Color(0xffD3D3D3),
+                                        child: Text(
+                                          "Update Group",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )),
+                                    SizedBox(height: 15),
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Are you Sure ?",
+                                                      textAlign: TextAlign.center,
+                                                      style: GoogleFonts.roboto(
+                                                        color: Color(0xff151522),
+                                                        fontSize: w/22,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 16,
+                                                    ),
+                                                    Text(
+                                                      "Did you wants to delete this group",
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: Color(0xff6d6d6d),
+                                                        fontSize: w/26,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 16,
+                                                    ),
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment.spaceBetween,
+                                                        children: <Widget>[
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: Container(
+                                                              width: w / 3.3,
+                                                              padding: EdgeInsets.symmetric(
+                                                                  vertical: 10),
+                                                              decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                BorderRadius.circular(5),
+                                                                border: Border.all(
+                                                                  color: ColorPalette.primary,
+                                                                  width: 1,
+                                                                ),
+                                                              ),
+                                                              child: const Center(
+                                                                  child: Text(
+                                                                    "Cancel",
+                                                                    style: TextStyle(
+                                                                      color: ColorPalette.primary,
+                                                                      fontSize: 18,
+                                                                    ),
+                                                                  )),
+                                                            ),
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              BlocProvider.of<EmployeeBloc>(context)
+                                                                  .add(DeleteGroupEvent(
+                                                                  readGroup?.id??0));
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: Container(
+                                                                width: w / 3.1,
+                                                                padding: EdgeInsets.symmetric(
+                                                                    vertical: 10),
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(5),
+                                                                  color: ColorPalette.primary,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "Delete",
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 18,
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        ])
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      },
+                                      child: Container(
+                                          width: w,
+                                          // height: 60,
+                                          padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(
+                                              color: Color(0xffe6ecf0),
+                                              width: 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color(0x05000000),
+                                                blurRadius: 8,
+                                                offset: Offset(1, 1),
+                                              ),
+                                            ],
+                                            color: Colors.white,
+                                          ),
+                                          child: Center(
+                                            child: Text("Delete this Group",
+                                                style: GoogleFonts.roboto(
+                                                  color: Color(0xffe70c0c),
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w400,
+                                                )),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+        ]
                     ]),
               )
 
@@ -498,10 +653,10 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                     BorderRadius.circular(10),
-                                                    border: Border.all(
-                                                      color: Color(0xffe6ecf0),
-                                                      width: 1,
-                                                    ),
+                                                    // border: Border.all(
+                                                    //   color: Color(0xffe6ecf0),
+                                                    //   width: 1,
+                                                    // ),
                                                     boxShadow: const [
                                                       BoxShadow(
                                                         color: Color(0x05000000),
@@ -526,7 +681,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                                               employeeList: state
                                                                   .assignMeList?[index]),
                                                       separatorBuilder:
-                                                          (context, index) => Divider(),
+                                                          (context, index) => Container(),
                                                       itemCount:
                                                       state.assignMeList!.length),
                                                 ),

@@ -7,9 +7,10 @@ import '../presentation/order_app/order_svg.dart';
 
 class CustomCheckBox extends StatefulWidget {
   final bool value;
+  final String text;
   final Function(bool)? onChange;
 
-  const CustomCheckBox({Key? key, this.value = false, this.onChange})
+  const CustomCheckBox({Key? key, this.value = false,this.text="", this.onChange})
       : super(key: key);
 
   @override
@@ -22,6 +23,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
 
   @override
   Widget build(BuildContext context) {
+    var w = MediaQuery.of(context).size.width;
     if (!onChange) val = widget.value;
     onChange = false;
     return InkWell(
@@ -31,17 +33,31 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
         onChange = true;
         setState(() {});
       },
-      child:    Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.only(top: 0),
-        child: Center(
-          child: val
-              ? Container(
-              child: SvgPicture.string(
-                  OrderSvg().checkBoxActiveIcon,color: ColorPalette.primary,))
-              : SvgPicture.string(
-              OrderSvg().checkBoxIcon),
-        ),
+      child:    Row(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(top: 0),
+            child: Center(
+              child: val
+                  ? Container(
+                padding: EdgeInsets.all(7),
+                  child: SvgPicture.string(
+                      OrderSvg().checkBoxActiveIcon,color: ColorPalette.primary,))
+                  : SvgPicture.string(
+                  OrderSvg().checkBoxIcon,height: 35,width: 35,),
+            ),
+          ),
+          SizedBox(
+            width: w / 24,
+          ),
+          Text(widget.text,
+           style: GoogleFonts.roboto(
+            color: Colors.black,
+            fontSize: w / 24,
+            // fontWeight: FontWeight.w500,
+          ),)
+        ],
       ),
     );
   }
@@ -56,9 +72,10 @@ class CustomCheckBoxData extends StatefulWidget {
   final String lname;
   final String profile;
   final String role;
+  final List<String>? emailList;
   final Function(bool)? onChange;
 
-  const CustomCheckBoxData({Key? key, this.value = false, this.onChange,  this.name="",  this.email="", required this.lname, required this.profile, required this.role})
+  const CustomCheckBoxData({Key? key, this.value = false, this.onChange,  this.name="",  this.email="", required this.lname, required this.profile, required this.role,  this.emailList})
       : super(key: key);
 
   @override
@@ -87,7 +104,7 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
         padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: val==true?ColorPalette.primary:Color(0xffe6ecf0), width: 1, ),
+          border: Border.all(color: val==true||widget.emailList==widget.email?ColorPalette.primary:Color(0xffe6ecf0), width: 1, ),
           boxShadow: [
             BoxShadow(
               color: Color(0x05000000),

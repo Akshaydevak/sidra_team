@@ -93,6 +93,9 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     else if (event is DeleteEmployeeEvent) {
       yield* deleteEmployee(reviewId: event.employeId);
     }
+    else if (event is DeleteGroupEvent) {
+      yield* deleteGroup(reviewId: event.groupId);
+    }
     else if (event is GetGroupTReadEvent) {
       yield* getGroupRead(event.id);
     }
@@ -332,6 +335,16 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield DeleteEmployeeSuccess();
     } else {
       yield DeleteEmployeeFailed();
+    }
+  }
+  //gr
+  Stream<EmployeeState> deleteGroup({required int reviewId}) async* {
+    yield DeleteGroupLoading();
+    final dataResponse = await _employeeDataSource.deleteGroup(reviewId);
+    if (dataResponse == "success") {
+      yield DeleteGroupSuccess();
+    } else {
+      yield DeleteGroupFailed();
     }
   }
   //listActivity

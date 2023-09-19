@@ -332,6 +332,26 @@ print(groupRead.userId);
     return statusCode;
   }
 
+
+  //
+  Future<String> deleteGroup(int empid) async {
+    String statusCode;
+    print("delete group${ClusterUrls.groupUpdateUrl + empid.toString()}");
+    final response = await client.delete(
+      ClusterUrls.groupUpdateUrl + empid.toString(),
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    statusCode = (response.data['status']);
+    print("statusCode${response.data}");
+    return statusCode;
+  }
+
   //listActivity
   Future<List<ActivityList>> getActivityList(int? id) async {
     List<ActivityList> activityList = [];

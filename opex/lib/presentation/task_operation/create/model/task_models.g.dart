@@ -395,6 +395,9 @@ CriteriaRead _$CriteriaReadFromJson(Map<String, dynamic> json) => CriteriaRead(
       attittude: (json['Technical Skills and Innovation'] as List<dynamic>?)
           ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
           .toList(),
+      overAllPoints: (json['Overall Points'] as List<dynamic>?)
+          ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
+          .toList(),
       projectCompletion:
           (json['Team Collaboration and Leadership'] as List<dynamic>?)
               ?.map((e) => Punchuality.fromJson(e as Map<String, dynamic>))
@@ -412,6 +415,7 @@ CriteriaRead _$CriteriaReadFromJson(Map<String, dynamic> json) => CriteriaRead(
 
 Map<String, dynamic> _$CriteriaReadToJson(CriteriaRead instance) =>
     <String, dynamic>{
+      'Overall Points': instance.overAllPoints,
       'Task Quality': instance.punctuality,
       'Technical Skills and Innovation': instance.attittude,
       'Team Collaboration and Leadership': instance.projectCompletion,
@@ -421,13 +425,15 @@ Map<String, dynamic> _$CriteriaReadToJson(CriteriaRead instance) =>
 
 Punchuality _$PunchualityFromJson(Map<String, dynamic> json) => Punchuality(
       name: json['name'] as String?,
-      points: json['points'] as int?,
+      points: (json['average_points'] as num?)?.toDouble(),
+      email: json['email'] as String?,
     );
 
 Map<String, dynamic> _$PunchualityToJson(Punchuality instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'points': instance.points,
+      'email': instance.email,
+      'average_points': instance.points,
     };
 
 ReportModel _$ReportModelFromJson(Map<String, dynamic> json) => ReportModel(
@@ -496,12 +502,12 @@ Map<String, dynamic> _$ReadMarkReadToJson(ReadMarkRead instance) =>
       'value': instance.value,
     };
 
-
-PerfomerModel _$PerfomerModelFromJson(Map<String, dynamic> json) => PerfomerModel(
+PerfomerModel _$PerfomerModelFromJson(Map<String, dynamic> json) =>
+    PerfomerModel(
       fName: json['first_name'] as String?,
       lName: json['last_name'] as String?,
       email: json['email'] as String?,
-      points: json['highest_average_points'] as double?,
+      points: (json['highest_average_points'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>

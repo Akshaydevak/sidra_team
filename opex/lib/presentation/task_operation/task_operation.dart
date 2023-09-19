@@ -402,26 +402,29 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             const SizedBox(
                               height: 16,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                HomeCard(
+                            Container(
+                              width: w1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  HomeCard(
+                                      head:
+                                      taskcount?.assignTask.toString() ?? "0",
+                                      sub: "Assigned Task",
+                                  colorContainer: Color(0xff2871AF).withOpacity(0.2),),
+                                  HomeCard(
+                                      head: taskcount?.taskCompleted.toString() ??
+                                          "0",
+                                      sub: "Task Completed",
+                                  colorContainer: Color(0xffE8FFE0)),
+                                  HomeCard(
                                     head:
-                                    taskcount?.assignTask.toString() ?? "0",
-                                    sub: "Assigned Task",
-                                colorContainer: Color(0xff2871AF).withOpacity(0.2),),
-                                HomeCard(
-                                    head: taskcount?.taskCompleted.toString() ??
-                                        "0",
-                                    sub: "Task Completed",
-                                colorContainer: Color(0xffE8FFE0)),
-                                HomeCard(
-                                  head:
-                                  taskcount?.taskPending.toString() ?? "0",
-                                  sub: "Task Pending",
-                                  colorContainer: Color(0xffFFEAEA),
-                                )
-                              ],
+                                    taskcount?.taskPending.toString() ?? "0",
+                                    sub: "Task Pending",
+                                    colorContainer: Color(0xffFFEAEA),
+                                  )
+                                ],
+                              ),
                             ),
                             // const SizedBox(
                             //   height: 10,
@@ -602,19 +605,20 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                             TaskSvg().groupSvg
                                         ),
                                       ),
-                                      GestureDetector(
-                                          onTap: () {
-                                            PersistentNavBarNavigator.pushNewScreen(
-                                              context,
-                                              screen: CreatePerformance(),
-                                              withNavBar: false, // OPTIONAL VALUE. True by default.
-                                              pageTransitionAnimation: PageTransitionAnimation.fade,
-                                            );
-                                          },
-                                          child: FourCard(
-                                            label: "Criteria",
-                                            svg: TaskSvg().criteriaIcon,
-                                          ))
+                                GestureDetector(
+                                    onTap: () {
+                                      PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ReportedListAdmin(),
+                                        withNavBar: false, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                                      );
+                                    },
+                                    child: FourCard(
+                                      label: "Reported List",
+                                      svg: TaskSvg().reportedList,
+                                    )),
+
                               ],
                             ),
                                     ),
@@ -638,19 +642,44 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                 label: "Reporter",
                                                 svg: TaskSvg().reporterSvg,
                                               )),
-                                          GestureDetector(
+                                          authentication.isAssociateAdmin==false?GestureDetector(
                                               onTap: () {
                                                 PersistentNavBarNavigator.pushNewScreen(
                                                   context,
-                                                  screen: ReportedListAdmin(),
+                                                  screen: CreatePerformance(),
                                                   withNavBar: false, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation: PageTransitionAnimation.fade,
                                                 );
                                               },
                                               child: FourCard(
-                                                label: "Reported List",
-                                                svg: TaskSvg().reportedList,
-                                              )),
+                                                label: "Criteria",
+                                                svg: TaskSvg().criteriaIcon,
+                                              )):  Container(
+                                            width: w1/6,
+                                            height: 60,
+                                            padding: EdgeInsets.all(10),
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                // SvgPicture.string(svg??TaskSvg().quickaccessIcon),
+                                                //
+                                                // SizedBox(height: 5,),
+                                                // Text(
+                                                //   label??"Employees",
+                                                //   textAlign: TextAlign.center,
+                                                //   style: TextStyle(
+                                                //     color: ColorPalette.black,
+                                                //     fontSize: 11,
+                                                //
+                                                //   ),
+                                                // )
+                                              ],
+                                            ),
+                                          ),
                                           authentication.isAdmin? GestureDetector(
                                               onTap: () {
                                                 PersistentNavBarNavigator
@@ -693,7 +722,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                             ),
                                           ),
                                           Container(
-                                            width: w1/6,
+                                            width: w1/5.4,
                                             height: 60,
                                             padding: EdgeInsets.all(10),
 

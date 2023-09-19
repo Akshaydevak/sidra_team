@@ -738,124 +738,11 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Container(
-              //   width: w,
-              //   // height: 120,
-              //   // padding: EdgeInsets.all(16),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(10),
-              //     border: Border.all(
-              //       color: Color(0xffe6ecf0),
-              //       width: 1,
-              //     ),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Color(0x05000000),
-              //         blurRadius: 8,
-              //         offset: Offset(1, 1),
-              //       ),
-              //     ],
-              //     color: Colors.white,
-              //   ),
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.start,
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       // Container(
-              //       //   padding: EdgeInsets.only(
-              //       //       left: 16, right: 16, top: 20, bottom: 10),
-              //       //   child: Row(
-              //       //     children: [
-              //       //       Container(
-              //       //         width: 32,
-              //       //         height: 32,
-              //       //         decoration: BoxDecoration(
-              //       //           borderRadius: BorderRadius.circular(5),
-              //       //           color: Color(0xff1ECAC0),
-              //       //         ),
-              //       //         child: Center(
-              //       //           child:
-              //       //           SvgPicture.string(CreateSvg().calenderIcon),
-              //       //         ),
-              //       //       ),
-              //       //       SizedBox(
-              //       //         width: 10,
-              //       //       ),
-              //       //       Text(
-              //       //         "Invite from device contacts",
-              //       //         style: TextStyle(
-              //       //           color: Color(0xff151522),
-              //       //           fontSize: 18,
-              //       //         ),
-              //       //       )
-              //       //     ],
-              //       //   ),
-              //       // ),
-              //       // Divider(
-              //       //   indent: 50,
-              //       //   color: Color(0xffE6ECF0),
-              //       // ),
-              //       // Container(
-              //       //   padding: EdgeInsets.only(
-              //       //       left: 16, right: 16, top: 10, bottom: 20),
-              //       //   child: Row(
-              //       //     children: [
-              //       //       Container(
-              //       //         width: 32,
-              //       //         height: 32,
-              //       //         decoration: BoxDecoration(
-              //       //           borderRadius: BorderRadius.circular(5),
-              //       //           color: Color(0xffFC3B98),
-              //       //         ),
-              //       //         child: Center(
-              //       //           child: SvgPicture.string(CreateSvg().clockIcon),
-              //       //         ),
-              //       //       ),
-              //       //       SizedBox(
-              //       //         width: 10,
-              //       //       ),
-              //       //       Text(
-              //       //         "Invite from device contacts",
-              //       //         style: TextStyle(
-              //       //           color: Color(0xff151522),
-              //       //           fontSize: 18,
-              //       //         ),
-              //       //       )
-              //       //     ],
-              //       //   ),
-              //       // ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 16,
-              // ),
-              // Text(
-              //   "Task Assign To",
-              //   style: GoogleFonts.roboto(
-              //     color: Color(0xff151522),
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 16,
-              // ),
-              Text(
-                "Select from List",
-                style: GoogleFonts.roboto(
-                  color: Color(0xff151522),
-                  fontSize: w / 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
+
               BlocBuilder<JobBloc, JobState>(
                 builder: (context, state) {
                   if (state is GetUserUderGroupLoading) {
-                    customCupertinoLoading();
+                    return LottieLoader();
                   }
                   if (state is GetUserUderGroupSuccess) {
                     return Container(
@@ -863,10 +750,10 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                       // height: 577,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: const Color(0xffe6ecf0),
-                          width: 1,
-                        ),
+                        // border: Border.all(
+                        //   color: const Color(0xffe6ecf0),
+                        //   width: 1,
+                        // ),
                         boxShadow: const [
                           BoxShadow(
                             color: Color(0x05000000),
@@ -874,7 +761,7 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                             offset: Offset(1, 1),
                           ),
                         ],
-                        color: Color(0xffd3d3d3).withOpacity(0.2),
+                        color: Colors.white,
                       ),
                       child: ListView.separated(
                           shrinkWrap: true,
@@ -891,53 +778,56 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                     Navigator.pop(context);
                                   });
                                 },
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Radio(
-                                          value: index,
-                                          groupValue: indValue,
-                                          activeColor: ColorPalette.primary,
-                                          onChanged: (int? value) {
-                                            setState(() {
-                                              indValue = value!;
-                                              Variable.assignType =
-                                                  "Individual";
-                                              Variable.assignCode =
-                                                  state.userlist[index].code ??
-                                                      "";
-                                            });
-                                          },
-                                        ),
-                                        Row(
-                                          children: [
-                                            Image.asset("asset/newprofile.png",
-                                                width: 35, height: 35),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Container(
-                                              width: w / 1.7,
-                                              child: Text(
-                                                state.userlist[index].email ??
-                                                    "",
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color: Color(0xff151522),
-                                                  fontSize: w / 24,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                child: EmployeeCardUnderGroup(
+                                  userList: state.userlist[index],
+                                )
+                                // Card(
+                                //   child: Padding(
+                                //     padding: const EdgeInsets.all(10),
+                                //     child: Row(
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.start,
+                                //       children: [
+                                //         Radio(
+                                //           value: index,
+                                //           groupValue: indValue,
+                                //           activeColor: ColorPalette.primary,
+                                //           onChanged: (int? value) {
+                                //             setState(() {
+                                //               indValue = value!;
+                                //               Variable.assignType =
+                                //                   "Individual";
+                                //               Variable.assignCode =
+                                //                   state.userlist[index].code ??
+                                //                       "";
+                                //             });
+                                //           },
+                                //         ),
+                                //         Row(
+                                //           children: [
+                                //             Image.asset("asset/newprofile.png",
+                                //                 width: 35, height: 35),
+                                //             SizedBox(
+                                //               width: 5,
+                                //             ),
+                                //             Container(
+                                //               width: w / 1.7,
+                                //               child: Text(
+                                //                 state.userlist[index].email ??
+                                //                     "",
+                                //                 overflow: TextOverflow.ellipsis,
+                                //                 style: TextStyle(
+                                //                   color: Color(0xff151522),
+                                //                   fontSize: w / 24,
+                                //                 ),
+                                //               ),
+                                //             )
+                                //           ],
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
                               ),
                           separatorBuilder: (context, index) {
                             return SizedBox(

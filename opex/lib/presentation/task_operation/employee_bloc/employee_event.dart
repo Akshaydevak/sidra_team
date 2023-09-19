@@ -178,6 +178,11 @@ class DeleteEmployeeEvent extends EmployeeEvent {
   const DeleteEmployeeEvent(this.employeId);
 }
 //
+class DeleteGroupEvent extends EmployeeEvent {
+  final int groupId;
+  const DeleteGroupEvent(this.groupId);
+}
+//
 class GetActivityLogListingEvent extends EmployeeEvent {
   final int? id;
   const GetActivityLogListingEvent(this.id);

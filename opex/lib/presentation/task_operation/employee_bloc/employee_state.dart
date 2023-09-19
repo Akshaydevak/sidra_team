@@ -170,6 +170,13 @@ class DeleteEmployeeSuccess extends EmployeeState {}
 
 class DeleteEmployeeFailed extends EmployeeState {}
 
+//
+class DeleteGroupLoading extends EmployeeState {}
+
+class DeleteGroupSuccess extends EmployeeState {}
+
+class DeleteGroupFailed extends EmployeeState {}
+
 //listActivity
 class GetActivityLogListInitial extends EmployeeState {}
 

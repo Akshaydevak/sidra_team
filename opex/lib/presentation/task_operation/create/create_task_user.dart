@@ -107,6 +107,7 @@ class _CreateUserState extends State<CreateUser> {
               userTypeList=state.readType.userRole??[];
               userRoleName=state.readType.userRole?[0]??"";
               genderList=state.readType.gender??[];
+              print("user type List$userTypeList");
               setState(() {
 
               });
@@ -243,6 +244,7 @@ class _CreateUserState extends State<CreateUser> {
             }
           },
         ),
+
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -263,58 +265,67 @@ class _CreateUserState extends State<CreateUser> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                width: w - 55,
-                height: 20,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(right: 0, left: 0),
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: userTypeList.length,
-                  itemBuilder: (BuildContext context, int i) {
-                    return GestureDetector(
-                        onTap: () {
-                          onselct(i);
-                          userRoleName=userTypeList[i];
-                          setState(() {
+                BlocBuilder<EmployeeBloc, EmployeeState>(
+  builder: (context, state) {
+    if(state is GetReadTypeLoading){
+      return customCupertinoLoading();
+    }
+    if(state is GetReadTypeSuccess){
+      userTypeList=state.readType.userRole??[];
+      return SizedBox(
+          width: w,
+          height: 20,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.only(right: 0, left: 0),
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: userTypeList.length,
+            itemBuilder: (BuildContext context, int i) {
+              return GestureDetector(
+                  onTap: () {
+                    onselct(i);
+                    userRoleName=userTypeList[i];
+                    setState(() {
 
-                          });
-                          // jobtype=state.jobTypeList[i].id;
-                          // select==2?context.read<JobBloc>().add(GetInstantJobListEvent()):null;
-                          // context.read<JobBloc>().add(GetJobTypeListEvent());
-                        },
-                        child: Row(
-                          children: [
-                            SvgPicture.string(select == i ? HomeSvg()
-                                .radioButtonActive :  CreateSvg().radioInActiveButton),
-                            SizedBox(width: 5,),
-                            
-                            Text(
-                              userTypeList[i]=="Staff"?"Normal User":
-                              userTypeList[i]=="Associative Admin"?"Associative Admin":"",
-                              style: select == i
-                                  ? GoogleFonts.roboto(
-                                color: ColorPalette.black,
-                                fontSize: w/23,
-                                fontWeight:
-                                FontWeight.w500,
-                              )
-                                  : GoogleFonts.roboto(
-                                color: ColorPalette.black,
-                                fontSize: w/23,
-                              ),
-                            ),
-                          ],
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.string(select == i ? HomeSvg()
+                          .radioButtonActive :  CreateSvg().radioInActiveButton),
+                      SizedBox(width: 5,),
 
-                        ));
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(
-                      width: 16,
-                    );
-                  },
-                )),
+                      Text(
+                        userTypeList[i]=="Staff"?"Normal User":
+                        userTypeList[i]=="Associative Admin"?"Associative Admin":
+                        userTypeList[i]=="Admin"?"Admin":"",
+                        style: select == i
+                            ? GoogleFonts.roboto(
+                          color: ColorPalette.black,
+                          fontSize: w/23,
+                          fontWeight:
+                          FontWeight.w500,
+                        )
+                            : GoogleFonts.roboto(
+                          color: ColorPalette.black,
+                          fontSize: w/23,
+                        ),
+                      ),
+                    ],
+
+                  ));
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(
+                width: 16,
+              );
+            },
+          ));
+    }
+    return Container();
+  },
+),
                 const SizedBox(
                   height: 25,
                 ),
@@ -551,7 +562,7 @@ class _CreateUserState extends State<CreateUser> {
                               color: Color(0x7f666161)),
                           elevation: 1,
                           underline: Container(),
-                          hint: Text("India",
+                          hint: Text("Country",
                             style: GoogleFonts.roboto(
                                 color: Color(0x66151522)
                             ),),
@@ -1165,23 +1176,19 @@ class _CreateUserState extends State<CreateUser> {
                                               print("fsd$passNameList");
                                               refresh();
                                             },
+                                            text: roleList[index].role??"",
 
 
                                           ),
-                                          SizedBox(
-                                            width: w / 24,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              roleList[index].role??"",
-                                              style: GoogleFonts.roboto(
-                                                color: Colors.black,
-                                                fontSize: w / 24,
-                                                // fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
+
+                                          // Text(
+                                          //   roleList[index].role??"",
+                                          //   style: GoogleFonts.roboto(
+                                          //     color: Colors.black,
+                                          //     fontSize: w / 24,
+                                          //     // fontWeight: FontWeight.w500,
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                       separatorBuilder: (context, index) =>
@@ -1314,16 +1321,16 @@ class _CreateUserState extends State<CreateUser> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: w1 / 1.1,
-                                        child: SearchCard(
-                                          hint: "Search Department",
-                                          onchange: (aa){
-                                            context.read<SellerAdminBloc>()
-                                                .add( DepartmentListEvent(aa,"", ""));
-                                          },
-                                        )
-                                    ),
-                                    SizedBox(height: 15,),
+                                    // SizedBox(width: w1 / 1.1,
+                                    //     child: SearchCard(
+                                    //       hint: "Search Department",
+                                    //       onchange: (aa){
+                                    //         context.read<SellerAdminBloc>()
+                                    //             .add( DepartmentListEvent(aa,"", ""));
+                                    //       },
+                                    //     )
+                                    // ),
+                                    // SizedBox(height: 15,),
                                     BlocBuilder<SellerAdminBloc, SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is DepartmentListLoading) {
@@ -1471,34 +1478,34 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                       ],
                     ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                        child: GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  ColorPalette.primary,
-                                  ColorPalette.primary
-                                ]),
-                            child: Text(
-                              "Continue",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                      ),)
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           Navigator.pop(context);
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Continue",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),)
                   ],
                 ),
               );
@@ -2024,34 +2031,34 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                       ],
                     ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                        child: GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              _showModalBottomCreateDesignation(departmentCode);
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  ColorPalette.primary,
-                                  ColorPalette.primary
-                                ]),
-                            child: Text(
-                              "Create New",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                      ),)
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                    //     child: GradientButton(
+                    //         color: ColorPalette.primary,
+                    //         onPressed: () {
+                    //           _showModalBottomCreateDesignation(departmentCode);
+                    //         },
+                    //         gradient: const LinearGradient(
+                    //             begin: Alignment.topCenter,
+                    //             end: Alignment.bottomCenter,
+                    //             colors: [
+                    //               ColorPalette.primary,
+                    //               ColorPalette.primary
+                    //             ]),
+                    //         child: Text(
+                    //           "Create New",
+                    //           textAlign: TextAlign.center,
+                    //           style: GoogleFonts.roboto(
+                    //             color: Colors.white,
+                    //             fontSize: w / 22,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         )),
+                    //   ),)
                   ],
                 ),
               );

@@ -66,13 +66,23 @@ class _ProfileUserListState extends State<ProfileUserList> {
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
         if(state is DeleteEmployeeLoading){
-
+          // showSnackBar(context,
+          //     message: "User Dele Loading",
+          //     color: ColorPalette.green);
         }
         if(state is DeleteEmployeeSuccess){
-          showSnackBar(context, message: "User Deleted Successfully", color: Colors.black);
-          setState(() {
+          showSnackBar(context,
+              message:"User Deleted Successfully",
+              color: ColorPalette.green);
+          // Navigator.pop(context);
+          context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
+        }
+        if(state is DeleteEmployeeFailed){
 
-          });
+          showSnackBar(context,
+              message: "Not Deleted",
+              color: ColorPalette.green);
+
         }
       },
     ),

@@ -20,6 +20,7 @@ import '../../inventory/inventory_new_list.dart';
 import '../create/model/task_models.dart';
 import '../create/task_bloc/task_bloc.dart';
 import '../employee_bloc/employee_bloc.dart';
+import '../image_preview_task.dart';
 import '../lottieLoader.dart';
 import '../task_operation_appbar.dart';
 
@@ -528,14 +529,30 @@ return true;
                                                                     SizedBox(
                                                                       height: 10,
                                                                     ),
-                                                                    reviewList[index].reviewMeta?.image1==null?Container():Container(
-                                                                      height: h/10,
-                                                                      width: w/3,
-                                                                      decoration: BoxDecoration(
-                                                                          image: DecorationImage(
-                                                                              image: NetworkImage(
-                                                                                  reviewList[index].reviewMeta?.image1 ?? ""),
-                                                                              fit: BoxFit.fill)),
+                                                                    reviewList[index].reviewMeta?.image1==null?Container():
+                                                                    GestureDetector(
+                                                                      onTap: (){
+                                                                        showDialog(
+                                                                            context: context,
+                                                                            barrierDismissible: true,
+                                                                            builder: (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                content: ImagePreview(
+                                                                                  assetName: reviewList[index].reviewMeta?.image1??"",
+                                                                                ),
+                                                                              );
+                                                                            }
+                                                                        );
+                                                                      },
+                                                                      child: Container(
+                                                                        height: h/10,
+                                                                        width: w/3,
+                                                                        decoration: BoxDecoration(
+                                                                            image: DecorationImage(
+                                                                                image: NetworkImage(
+                                                                                    reviewList[index].reviewMeta?.image1 ?? ""),
+                                                                                fit: BoxFit.fill)),
+                                                                      ),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -547,7 +564,7 @@ return true;
                                                                 height: 20,
                                                               ),
     
-                                                              Container(
+                                                              reviewList[index].reviewedPersonCode==authentication.authenticatedUser.code?Container(
                                                                 child: Row(
                                                                   children: [
                                                                     GestureDetector(
@@ -664,7 +681,7 @@ return true;
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              )
+                                                              ):Container()
                                                             ],
                                                           ),
                                                         ),

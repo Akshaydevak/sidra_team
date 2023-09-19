@@ -20,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -52,6 +53,12 @@ class _JobTitleState extends State<JobTitle> {
   GetJobList? JobRead;
   String nextUrl = "";
   String prevUrl = "";
+  String endstdDate='';
+  String startstdDate='';
+  String startTime="";
+  String startTime2="";
+  String endTime="";
+  String endTime2="";
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -101,6 +108,29 @@ class _JobTitleState extends State<JobTitle> {
               if (state is GetJobReadLoading) {}
               if (state is GetJobReadSuccess) {
                 JobRead = state.getjobRead;
+                var date = JobRead?.endDate;
+                var date2 = JobRead?.startDate;
+                var dateTime = DateTime.parse("$date");
+                var dateTime2 = DateTime.parse("$date2");
+                endstdDate =
+                    DateFormat('dd-MM-yyyy').format(dateTime).toString();
+                startstdDate =
+                    DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+
+                startTime=JobRead?.startDate?.split("T")[1].split("+")[0]??"";
+                endTime=JobRead?.endDate?.split("T")[1].split("+")[0]??"";
+                final timeOfDay = TimeOfDay(hour: int.tryParse(startTime.split(":")[0])??0, minute: int.tryParse(startTime.split(":")[1])??0); // Example time of day (3:30 PM)
+                final timeOfDayEnd = TimeOfDay(hour: int.tryParse(endTime.split(":")[0])??0, minute: int.tryParse(endTime.split(":")[1])??0); // Example time of day (3:30 PM)
+
+                final twentyFourHourFormat = DateFormat('HH:mm:00');
+                final twelveHourFormat = DateFormat('h:mm a');
+
+                final dateTimet = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+                final dateTimett = DateTime(1, 1, 1, timeOfDayEnd.hour, timeOfDayEnd.minute);
+                startTime = twelveHourFormat.format(dateTimet);
+                startTime2 = twentyFourHourFormat.format(dateTimet);
+                endTime=twelveHourFormat.format(dateTimett);
+                endTime2=twentyFourHourFormat.format(dateTimett);
 
                 print("Succsess read");
                 setState(() {});
@@ -249,11 +279,92 @@ class _JobTitleState extends State<JobTitle> {
             child: SingleChildScrollView(
               child: Container(
                 padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+                    EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      width: w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: const Color(0x4ca9a8a8),
+                          width: 1,
+                        ),
+                        color: const Color(0xfff8f7f5),
+                      ),
+                      padding:
+                      const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+                      child: Column(
+                        children: [
+                          Row(children: [
+                            Container(
+                              width: w/3.5,
+                              child: const Text(
+                                "Start On",
+                                style: TextStyle(
+                                  color: Color(0xff6d6d6d),
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 16,
+                              child: const Text(":",
+                                style: TextStyle(
+                                  color: Color(0xff6d6d6d),
+                                  fontSize: 15,
+                                ),),
+                            ),
+                            Text(
+                              "${startstdDate}  ${startTime}" ,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontFamily: "Roboto",
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],),
+                          const SizedBox(height: 5,),
+                          Row(children: [
+                            Container(
+                              width: w/3.5,
+                              child: const Text(
+                                "Due On",
+                                style: TextStyle(
+                                  color: Color(0xff6d6d6d),
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 16,
+                              child: const Text(":",
+                                style: TextStyle(
+                                  color: Color(0xff6d6d6d),
+                                  fontSize: 15,
+                                ),),
+                            ),
+                            Text(
+                              "$endstdDate  $endTime",
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: 15,
+
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],),
+
+
+
+
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10,),
                     BlocBuilder<TaskBloc, TaskState>(
                       builder: (context, state) {
                         if (state is GetTaskListLoading) {
@@ -291,12 +402,12 @@ class _JobTitleState extends State<JobTitle> {
                                 "Task List",
                                 style: GoogleFonts.roboto(
                                   color: ColorPalette.black,
-                                  fontSize: w / 22,
+                                  fontSize: w / 24,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               SizedBox(
-                                height: 16,
+                                height: 10,
                               ),
                               GridView.builder(
                                   shrinkWrap: true,

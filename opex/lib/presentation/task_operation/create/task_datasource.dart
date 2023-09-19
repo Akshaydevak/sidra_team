@@ -232,25 +232,7 @@ class TaskDataSource {
     List<GetTaskList> taskList = [];
     print("URL Task:${ClusterUrls.pinnedListUrl+authentication.authenticatedUser.code.toString()}");
 
-    try {
-      final response = await client.get(
-        ClusterUrls.pinnedListUrl+authentication.authenticatedUser.code.toString(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        taskList.add(GetTaskList.fromJson(element));
-      });
 
-      return taskList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
     final response = await client.get(ClusterUrls.pinnedListUrl+authentication.authenticatedUser.code.toString(),
       options: Options(
         headers: {
@@ -260,6 +242,7 @@ class TaskDataSource {
         },
       ),
     );
+    print(response.data);
     (response.data['data'] as List).forEach((element) {
       taskList.add(GetTaskList.fromJson(element));
     });

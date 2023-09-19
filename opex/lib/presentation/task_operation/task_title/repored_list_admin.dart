@@ -215,6 +215,14 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
                                 child: SvgPicture.string(TaskSvg().nolistSvg),
                               );
                             }
+                            if(state is ReportListAdminListFailed){
+                              return Container(
+                                padding: EdgeInsets.only(top: 10),
+                                alignment: Alignment.center,
+                                height: h / 3.5,
+                                child: SvgPicture.string(TaskSvg().nolistSvg),
+                              );
+                            }
                             return Container();
                           },
                         )

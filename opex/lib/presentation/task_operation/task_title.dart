@@ -1,4 +1,5 @@
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -668,55 +669,122 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                     color: Color(0xfff8f7f5),
                                   ),
                                   padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                                  child: GestureDetector(
-                                    onTap: () {},
-                                    child: Row(
-                                      // mainAxisAlignment:
-                                      // MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 28,
-                                          padding:
-                                          const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(4),
+                                  child: Row(
+                                    // mainAxisAlignment:
+                                    // MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 28,
+                                        padding:
+                                        const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(4),
+                                          color:
+                                          ColorPalette.blue,
+                                        ),
+                                        child: SvgPicture.string(
+                                            CreateSvg().prioriyIcon),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 3),
+                                        child: Text(
+                                          "Priority : ",
+                                          style: GoogleFonts.roboto(
                                             color:
-                                            ColorPalette.blue,
-                                          ),
-                                          child: SvgPicture.string(
-                                              CreateSvg().prioriyIcon),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 3),
-                                          child: Text(
-                                            "Priority : ",
-                                            style: GoogleFonts.roboto(
-                                              color:
-                                              const Color(0xff151522),
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            const Color(0xff151522),
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        // Spacer(),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 3),
-                                          child: Text(
-                                              getTaskRead?.priority ??
-                                                  ""),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      // Spacer(),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 3),
+                                        child: Text(
+                                            getTaskRead?.priority ??
+                                                ""),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                authentication.isAdmin||authentication.isAssociateAdmin?
+                                    SizedBox(height: 5,):Container(),
+
+                                authentication.isAdmin||authentication.isAssociateAdmin?
+                                Container(
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: const Color(0xffe6ecf0),
+                                      width: 1,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x05000000),
+                                        blurRadius: 8,
+                                        offset: Offset(1, 1),
+                                      ),
+                                    ],
+                                    color: Color(0xfff8f7f5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                                  child: Row(
+                                    // mainAxisAlignment:
+                                    // MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 28,
+                                        width: 28,
+                                        padding:
+                                        const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(4),
+                                          color:
+                                          ColorPalette.green,
+                                        ),
+                                        child: SvgPicture.string(
+                                            CreateSvg().priorityIcon),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 3),
+                                        child: Text(
+                                          "Status : ",
+                                          style: GoogleFonts.roboto(
+                                            color:
+                                            const Color(0xff151522),
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      // Spacer(),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 3),
+                                        child: Text(
+                                            getTaskRead?.statusName ??
+                                                "STARTED"),
+                                      ),
+                                    ],
+                                  ),
+                                ):Container(),
                                 widget.isMyJob
                                     ? Column(
                                   children: [
@@ -834,7 +902,7 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                         ? Column(
                                       children: [
                                         const SizedBox(
-                                          height: 5,
+                                          height: 2,
                                         ),
                                         TaskTitleCard(
                                           widget: Column(
@@ -861,7 +929,7 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                                             
                                                           ),
                                                           withNavBar:
-                                                          true, // OPTIONAL VALUE. True by default.
+                                                          false, // OPTIONAL VALUE. True by default.
                                                           pageTransitionAnimation:
                                                           PageTransitionAnimation
                                                               .fade,
@@ -882,11 +950,10 @@ context.read<JobBloc>().add(GetReorterListEvent('','',''));
                                                                 .spaceBetween,
                                                             children: [
                                                               Text(
-                                                                "${index + 1}: ${taskListNew[index].taskName}",
+                                                                "${index + 1}: ${taskListNew[index].taskName.toString().toTitleCase()}",
                                                                 style: GoogleFonts
                                                                     .roboto(
-                                                                  color: const Color(
-                                                                      0xfffe5762),
+                                                                  color: ColorPalette.primary,
                                                                   fontSize:
                                                                   w / 22,
                                                                   fontWeight:

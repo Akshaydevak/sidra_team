@@ -614,6 +614,8 @@ class PointId extends Equatable {
 @JsonSerializable()
 class CriteriaRead extends Equatable {
 
+  @JsonKey(name: 'Overall Points')
+  final List<Punchuality>? overAllPoints;
   @JsonKey(name: 'Task Quality')
   final List<Punchuality>? punctuality;
   @JsonKey(name: 'Technical Skills and Innovation')
@@ -627,6 +629,7 @@ class CriteriaRead extends Equatable {
 
   const CriteriaRead({
     this.attittude,
+    this.overAllPoints,
     this.projectCompletion,
     this.punctuality,
     this.teamManagement,
@@ -649,13 +652,16 @@ class Punchuality extends Equatable {
 
   @JsonKey(name: 'name')
   final String? name;
-  @JsonKey(name: 'points')
-  final int? points;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'average_points')
+  final double? points;
 
 
   const Punchuality({
     this.name,
     this.points,
+    this.email,
 
 
   });

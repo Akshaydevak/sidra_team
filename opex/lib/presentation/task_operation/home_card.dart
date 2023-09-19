@@ -48,7 +48,7 @@ class HomeCard extends StatelessWidget {
             sub??"",
             style: TextStyle(
               color: color,
-              fontSize: w/25,
+              fontSize: w/24,
             ),
           )
         ],

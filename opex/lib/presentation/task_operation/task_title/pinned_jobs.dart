@@ -108,7 +108,7 @@ class _PinnedJobsState extends State<PinnedJobs> {
                         return LottieLoader();
                       }
                       if(state is GetPinnedTaskListSuccess){
-taskList = state.taskList;
+ taskList = state.taskList;
                      
                     return Column(
                       children: [
@@ -206,6 +206,15 @@ taskList = state.taskList;
                         ),
                       ],
                     );
+                      }
+                      if(state is GetPinnedTaskListFailed){
+                        taskList=[];
+                        return  Container(
+                          padding: EdgeInsets.only(top: 50),
+                          alignment: Alignment.center,
+                          height: h / 3.5,
+                          child: SvgPicture.string(TaskSvg().nolistSvg),
+                        );
                       }
                       return Container();
                   },
