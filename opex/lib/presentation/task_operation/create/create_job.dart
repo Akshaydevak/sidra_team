@@ -819,8 +819,8 @@ class _CreateJobState extends State<CreateJob> {
                                         child:Container(
                                           width: w/3,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: selectInstat==i?Border.all(color: Colors.red, width: 1, ):
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: selectInstat==i?Border.all(color: ColorPalette.primary, width: 1, ):
                                             Border.all(color: Color(0xffe6ecf0), width: 1, ),
                                             boxShadow: [
                                               BoxShadow(
@@ -844,14 +844,15 @@ class _CreateJobState extends State<CreateJob> {
                                   },
                                   separatorBuilder: (BuildContext context, int index) {
                                     return SizedBox(
-                                      width: 10,
+                                      width: 5,
                                     );
                                   },
                                 )),
                             Container(
                               width: w,
+                              // height: 120,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: Color(0xffe6ecf0),
                                   width: 1,
@@ -868,7 +869,11 @@ class _CreateJobState extends State<CreateJob> {
                               child: Column(
                                 children: [
                                   Container(
-                                    margin:EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 10),
+                                    margin: EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 10,
+                                        top: 10),
                                     child: SingleRow(
                                         color: Color(0xfffc3a97),
                                         label: "Date & Time",
@@ -879,20 +884,26 @@ class _CreateJobState extends State<CreateJob> {
                                           });
                                         },
                                         endIcon: GestureDetector(
-                                          onTap: (){
 
-
+                                          onTap: () {
+                                            focusNode.unfocus();
+                                            descriptionfocusNode.unfocus();
                                             showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) {
+                                                builder: (BuildContext
+                                                context) {
                                                   return AlertDialog(
                                                     content: Column(
-                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisSize:
+                                                      MainAxisSize
+                                                          .min,
                                                       children: [
                                                         Container(
                                                           height: 300,
-                                                          child: Scaffold(
-                                                            body: SfDateRangePicker(
+                                                          child:
+                                                          Scaffold(
+                                                            body:
+                                                            SfDateRangePicker(
                                                               backgroundColor:
                                                               Colors.white,
                                                               endRangeSelectionColor:
@@ -924,14 +935,22 @@ class _CreateJobState extends State<CreateJob> {
                                                           ),
                                                         ),
                                                         GestureDetector(
-                                                          onTap: (){
-                                                            Navigator.pop(context);
+                                                          onTap: () {
+                                                            Navigator.pop(
+                                                                context);
                                                           },
-                                                          child: Container(width: w/3,
-                                                            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
-                                                            alignment: Alignment.center,
-                                                            color: ColorPalette.primary,
-                                                            child: Text("Ok",style: GoogleFonts.roboto(color: Colors.white),),
+                                                          child:
+                                                          Container(
+                                                            height: 25,
+                                                            width: 75,
+                                                            color: ColorPalette
+                                                                .primary,
+                                                            child: Center(
+                                                                child: Text(
+                                                                  "Ok",
+                                                                  style: GoogleFonts.roboto(
+                                                                      color: Colors.white
+                                                                  ),)),
                                                           ),
                                                         )
                                                       ],
@@ -939,152 +958,147 @@ class _CreateJobState extends State<CreateJob> {
                                                   );
                                                 });
                                           },
+
                                           child: Container(
                                               padding: EdgeInsets.all(5),
-                                              child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),)
-                                    ),
+                                              child:  Text("Choose Date",
+                                                style: GoogleFonts.roboto(
+                                                    fontSize: w/24,
+                                                    color: ColorPalette.primary,
+                                                    fontWeight: FontWeight.w500
+                                                ),)),
+                                        )),
                                   ),
                                   Column(
                                     children: [
                                       Divider(
-                                        indent: 50,
+                                        indent: 10,
+                                        height: 2,
                                       ),
                                       Container(
-                                        margin:
-                                        EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 10),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        margin: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            bottom: 10,
+                                            top: 10),
+                                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              "Start Date :",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: w/22,
-                                              ),
-                                            ),
-
-                                            GestureDetector(
-                                              // onTap: (){
-                                              //
-                                              //
-                                              //   showDialog(
-                                              //       context: context,
-                                              //       builder: (BuildContext context) {
-                                              //         return AlertDialog(
-                                              //           content: Column(
-                                              //             mainAxisSize: MainAxisSize.min,
-                                              //             children: [
-                                              //               Container(
-                                              //                 height: 300,
-                                              //                 child: Scaffold(
-                                              //                   body: SfDateRangePicker(
-                                              //                     backgroundColor:
-                                              //                     Colors.white,
-                                              //                     endRangeSelectionColor:
-                                              //                     ColorPalette.primary,
-                                              //                     startRangeSelectionColor:
-                                              //                     ColorPalette.primary,
-                                              //                     rangeSelectionColor:
-                                              //                     ColorPalette.primary
-                                              //                         .withOpacity(0.1),
-                                              //                     selectionColor:
-                                              //                     Colors.grey,
-                                              //                     todayHighlightColor:
-                                              //                     ColorPalette.primary,
-                                              //                     onSelectionChanged:
-                                              //                     _onSelectionChanged,
-                                              //                     selectionMode:
-                                              //                     DateRangePickerSelectionMode
-                                              //                         .range,
-                                              //                     initialSelectedRange: widget.edit?PickerDateRange(
-                                              //                         DateTime.parse(startDate),
-                                              //                         DateTime.parse(ebdDate)):
-                                              //                     startDate!=""?PickerDateRange(
-                                              //                         DateTime.parse(startDate),
-                                              //                         DateTime.parse(ebdDate)):
-                                              //                     PickerDateRange(
-                                              //                         DateTime.now(),
-                                              //                         DateTime.now()),
-                                              //                   ),
-                                              //                 ),
-                                              //               ),
-                                              //               GestureDetector(
-                                              //                 onTap: (){
-                                              //                   Navigator.pop(context);
-                                              //                 },
-                                              //                 child: Container(width: w/3,
-                                              //                   padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
-                                              //                   alignment: Alignment.center,
-                                              //                   color: ColorPalette.primary,
-                                              //                   child: Text("Ok",style: GoogleFonts.roboto(color: Colors.white),),
-                                              //                 ),
-                                              //               )
-                                              //             ],
-                                              //           ),
-                                              //         );
-                                              //       });
-                                              // },
-                                              child: Text(
-                                                _range2.isNotEmpty?startDate2:"Choose Date",
-                                                style: GoogleFonts.roboto(
-                                                  color: ColorPalette.black,
-                                                  fontSize: w/22,
-                                                  fontWeight: FontWeight.w500,
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "From :",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: w/24,
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-
-                                            GestureDetector(
-                                              onTap:
-                                              _selectTime,
-
-                                              child: Text(
-                                                widget.edit?startTime:startTime,
-                                                style: GoogleFonts.roboto(
-                                                  color: Color(0xfffe5762),
-                                                  fontSize: w/22,
-                                                  fontWeight: FontWeight.w500,
+                                                SizedBox(width: w/40,),
+                                                Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    // border:
+                                                    // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Color(0xffF4F4F4),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    _range2.isNotEmpty? startDate2:"           ",
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.black,
+                                                      fontSize: w/24,
+                                                      fontWeight:
+                                                      FontWeight.w500,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "To :",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: w/24,
+                                                  ),
+                                                ),
+                                                SizedBox(width: w/40,),
+                                                Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    // border:
+                                                    // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Color(0xffF4F4F4),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    _range2.isNotEmpty?ebdDate2:"           ",
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.black,
+                                                      fontSize: w/24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              ],
                                             )
                                           ],
                                         ),
                                       ),
+
                                       Divider(
-                                        indent: 50,
+                                        indent: 10,
+                                        height: 2,
                                       ),
                                       Container(
-                                        margin:
-                                        EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 10),
+                                        margin: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            bottom: 12,
+                                            top: 12),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .spaceBetween,
                                           children: [
-                                            const Text(
-                                              "End Date :",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-
-                                            Text(
-                                              _range2.isNotEmpty?ebdDate2:"Choose Date",
-                                              style: GoogleFonts.roboto(
-                                                color: ColorPalette.black,
-                                                fontSize: w/22,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-
                                             GestureDetector(
-                                              onTap:_endTime,
-
+                                              onTap: _selectTime,
                                               child: Text(
-                                                widget.edit?endTime:endTime,
+                                                startTime,
                                                 style: GoogleFonts.roboto(
-                                                  color: Color(0xfffe5762),
-                                                  fontSize: w/22,
-                                                  fontWeight: FontWeight.w500,
+                                                  color: const Color(0xff2871AF),
+                                                  fontSize: w/24,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: _endTime,
+                                              child: Text(
+                                                endTime,
+                                                style: GoogleFonts.roboto(
+                                                  color: Color(0xff2871AF),
+                                                  fontSize: w/24,
+                                                  fontWeight:
+                                                  FontWeight.w500,
                                                 ),
                                               ),
                                             )
@@ -1093,7 +1107,6 @@ class _CreateJobState extends State<CreateJob> {
                                       ),
                                     ],
                                   ),
-
                                 ],
                               ),
                             ),

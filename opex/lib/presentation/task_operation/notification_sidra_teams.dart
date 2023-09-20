@@ -111,7 +111,7 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
                                             color: Color(0xff555555)
                                         ),),
                                       SizedBox(width: 5,),
-                                      // widget.notification?[index].isNew==true?
+                                      widget.notification?[index].isNew==true?
                                       Container(
                                         padding: EdgeInsets.only(top: 3,bottom: 3,left: 6,right: 6),
                                         decoration: BoxDecoration(
@@ -126,7 +126,7 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
                                               color: Colors.green
                                           ),),
                                       )
-                                          // :Container(),
+                                          :Container(),
                                     ],
                                   ),
                                   SizedBox(height: 5,),
