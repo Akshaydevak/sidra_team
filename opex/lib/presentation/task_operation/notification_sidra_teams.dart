@@ -132,8 +132,7 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
                                   SizedBox(height: 5,),
                                   Container(
                                       width: w/1.4,
-                                      child: Text(widget.notification?[index].description??""
-                                        ,
+                                      child: Text(widget.notification?[index].description??"",
                                         textAlign: TextAlign.justify,
                                         style: GoogleFonts.roboto(
 
