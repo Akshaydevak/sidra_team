@@ -18,6 +18,13 @@ class GetTaskListEvent extends TaskEvent {
   const GetTaskListEvent(this.id, this.search, this.next, this.prev);
 }
 
+class GetAllJobsListEvent extends TaskEvent {
+  final String? search;
+  final String? next;
+  final String? prev;
+  const GetAllJobsListEvent(this.search, this.next, this.prev);
+}
+
 class GetOrganisationPerformanceList extends TaskEvent {
   final int? year;
   final int? month;

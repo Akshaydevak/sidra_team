@@ -7,6 +7,7 @@ class ClusterUrls{
   static const groupCreate="${taskAndOperationBaseURL}task-manage/task-group-create";
   static const groupUpdateUrl="${taskAndOperationBaseURL}task-manage/task-group-update/";
 
+  static const adminAllJobListUrl="${taskAndOperationBaseURL}task-manage/list-jobs";
   static const myjobsListUrl = "${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
   static const newJoblistUrl="${taskAndOperationBaseURL}task-manage/my-jobs-listing/";
   static const repoterlistUrl="${taskAndOperationBaseURL}task-manage/my-jobs-listing-as-reporting-person/";

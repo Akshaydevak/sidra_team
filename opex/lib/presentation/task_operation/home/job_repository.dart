@@ -211,7 +211,7 @@ class JobRepo {
   Future<PaginatedResponse> getAssignedMeList(String? search,String? next,String? prev) async {
     final apiResponse = await _dataSource.getAssignedMeList(search,next,prev);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data!= null ) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 

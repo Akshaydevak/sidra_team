@@ -429,7 +429,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                           ),
                                         )),
                                     SizedBox(height: 15),
-                                    GestureDetector(
+                                    authentication.isAssociateAdmin?Container():GestureDetector(
                                       onTap: () {
                                         showDialog(
                                             context: context,

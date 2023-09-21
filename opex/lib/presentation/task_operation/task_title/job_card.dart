@@ -16,7 +16,8 @@ import '../task_title.dart';
 
 class JobCard extends StatelessWidget {
   final GetJobList? joblist;
-   JobCard({Key? key, this.joblist}) : super(key: key);
+  final bool? isReporter;
+   JobCard({Key? key, this.joblist,this.isReporter=false}) : super(key: key);
   String endstdDate='';
 
   @override
@@ -33,7 +34,7 @@ class JobCard extends StatelessWidget {
             GetTaskReadListEvent(joblist?.id??0));
         PersistentNavBarNavigator.pushNewScreen(
           context,
-          screen: TaskTitle(),
+          screen: TaskTitle(isReporter: isReporter??false),
           withNavBar: false, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.slideUp,
         );
@@ -65,7 +66,7 @@ class JobCard extends StatelessWidget {
               children: [
                 Container(
                   width: joblist?.statusName=="STARTED"||joblist?.statusName=="PENDING"?
-                  w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/4.6,
+                  w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/3.6,
                   // height: 25,
                   padding: EdgeInsets.symmetric(horizontal: 5,vertical: 4),
                   decoration: BoxDecoration(
@@ -86,7 +87,7 @@ class JobCard extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    joblist?.statusName??"STARTED",
+                    joblist?.statusName??"NOT INITIATED",
                     style: GoogleFonts.roboto(
                       color: Colors.white,
                       // joblist?.statusName=="STARTED"?

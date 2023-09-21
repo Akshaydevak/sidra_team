@@ -613,6 +613,21 @@ class _CreateJobState extends State<CreateJob> {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
+                                                            if(_range.isEmpty)
+                                                            setState(() {
+                                                              // if (DateTime.now() is PickerDateRange) {
+                                                                _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                                _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                                print("range is here$_range");
+
+                                                              startDate=_range;
+                                                              startDate2=_range2;
+                                                              ebdDate=_range;
+                                                              ebdDate2=_range2;
+
+                                                              // validationCheck();
+                                                            });
+
                                                             Navigator.pop(
                                                                 context);
                                                           },
@@ -936,6 +951,21 @@ class _CreateJobState extends State<CreateJob> {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
+                                                            if(_range.isEmpty)
+                                                              setState(() {
+                                                                // if (DateTime.now() is PickerDateRange) {
+                                                                _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                                _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                                print("range is here$_range");
+
+                                                                startDate=_range;
+                                                                startDate2=_range2;
+                                                                ebdDate=_range;
+                                                                ebdDate2=_range2;
+
+                                                                // validationCheck();
+                                                              });
+
                                                             Navigator.pop(
                                                                 context);
                                                           },

@@ -656,7 +656,23 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        Navigator.pop(context);
+                                                        if(_range.isEmpty)
+                                                          setState(() {
+                                                            // if (DateTime.now() is PickerDateRange) {
+                                                            _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                            _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                            print("range is here$_range");
+
+                                                            startDate=_range;
+                                                            startDate2=_range2;
+                                                            ebdDate=_range;
+                                                            ebdDate2=_range2;
+
+                                                            // validationCheck();
+                                                          });
+
+                                                        Navigator.pop(
+                                                            context);
                                                       },
                                                       child: Container(
                                                         height: 25,
@@ -836,200 +852,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ],
                           ),
                         ),
-                        // Container(
-                        //   width: w,
-                        //   decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     border: Border.all(
-                        //       color: Color(0xffe6ecf0),
-                        //       width: 1,
-                        //     ),
-                        //     boxShadow: const [
-                        //       BoxShadow(
-                        //         color: Color(0x05000000),
-                        //         blurRadius: 8,
-                        //         offset: Offset(1, 1),
-                        //       ),
-                        //     ],
-                        //     color: Colors.white,
-                        //   ),
-                        //   child: Column(
-                        //     children: [
-                        //       Container(
-                        //         margin: const EdgeInsets.only(
-                        //             left: 16, right: 16, bottom: 10, top: 20),
-                        //         child: SingleRow(
-                        //             color: const Color(0xff1ECAC0),
-                        //             label: "Date & Time",
-                        //             svg: CreateSvg().calenderIcon,
-                        //             onTap: () {
-                        //               setState(() {
-                        //                 // isTime = !isTime;
-                        //               });
-                        //             },
-                        //             endIcon: GestureDetector(
-                        //               onTap: () {
-                        //                 showDialog(
-                        //                     context: context,
-                        //                     builder: (BuildContext context) {
-                        //                       return AlertDialog(
-                        //                         content: Column(
-                        //                           mainAxisSize:
-                        //                           MainAxisSize.min,
-                        //                           children: [
-                        //                             Container(
-                        //                               height: 300,
-                        //                               child: Scaffold(
-                        //                                 body:
-                        //                                 SfDateRangePicker(
-                        //                                   backgroundColor:
-                        //                                   Colors.white,
-                        //                                   endRangeSelectionColor:
-                        //                                   ColorPalette.primary,
-                        //                                   startRangeSelectionColor:
-                        //                                   ColorPalette.primary,
-                        //                                   rangeSelectionColor:
-                        //                                   ColorPalette.primary
-                        //                                       .withOpacity(0.1),
-                        //                                   selectionColor:
-                        //                                   Colors.grey,
-                        //                                   todayHighlightColor:
-                        //                                   ColorPalette.primary,
-                        //                                   onSelectionChanged:
-                        //                                   _onSelectionChanged,
-                        //                                   selectionMode:
-                        //                                   DateRangePickerSelectionMode
-                        //                                       .range,
-                        //                                   initialSelectedRange: widget.editTask?PickerDateRange(
-                        //                                       DateTime.parse(startDate),
-                        //                                       DateTime.parse(ebdDate)):
-                        //                                   startDate!=""?PickerDateRange(
-                        //                                       DateTime.parse(startDate),
-                        //                                       DateTime.parse(ebdDate)):
-                        //                                   PickerDateRange(
-                        //                                       DateTime.now(),
-                        //                                       DateTime.now()),
-                        //                                 ),
-                        //                               ),
-                        //                             ),
-                        //                             GestureDetector(
-                        //                               onTap: () {
-                        //                                 Navigator.pop(
-                        //                                     context);
-                        //                               },
-                        //                               child: Container(
-                        //                                 height: 25,
-                        //                                 width: 75,
-                        //                                 color: ColorPalette
-                        //                                     .primary,
-                        //                                 child: const Center(
-                        //                                     child:
-                        //                                     Text("Ok")),
-                        //                               ),
-                        //                             ),
-                        //                           ],
-                        //                         ),
-                        //                       );
-                        //                     });
-                        //               },
-                        //               child: Container(
-                        //                   padding: EdgeInsets.all(5),
-                        //                   child: const Icon(Icons.arrow_forward_ios,color: ColorPalette.primary,)),
-                        //             )),
-                        //       ),
-                        //       Column(
-                        //         children: [
-                        //           Divider(
-                        //             indent: 50,
-                        //           ),
-                        //           Container(
-                        //             margin: EdgeInsets.only(
-                        //                 left: 16, right: 16, bottom: 10, top: 10),
-                        //             child: Row(
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 GestureDetector(
-                        //                   onTap: () {
-                        //                     // _restorableDatePickerRouteFuture.present();
-                        //                   },
-                        //                   child:  Text(
-                        //                     "Start Date :",
-                        //                     style: TextStyle(
-                        //                       color: Colors.black,
-                        //                       fontSize: w/22,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 GestureDetector(
-                        //
-                        //                   child: Text(
-                        //                     _range2.isNotEmpty? startDate2:"Choose Date",
-                        //                     style: GoogleFonts.roboto(
-                        //                       color: ColorPalette.black,
-                        //                       fontSize: w/22,
-                        //                       fontWeight: FontWeight.w500,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 GestureDetector(
-                        //                   onTap: _selectTime,
-                        //                   child: Text(
-                        //                    startTime,
-                        //                     style: GoogleFonts.roboto(
-                        //                       color: Color(0xfffe5762),
-                        //                       fontSize: w/22,
-                        //                       fontWeight: FontWeight.w500,
-                        //                     ),
-                        //                   ),
-                        //                 )
-                        //               ],
-                        //             ),
-                        //           ),
-                        //           Divider(
-                        //             indent: 50,
-                        //           ),
-                        //           Container(
-                        //             margin: EdgeInsets.only(
-                        //                 left: 16, right: 16, bottom: 20, top: 10),
-                        //             child: Row(
-                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                  Text(
-                        //                   "End Date :",
-                        //                   style: TextStyle(
-                        //                     color: Colors.black,
-                        //                     fontSize: w/22,
-                        //                   ),
-                        //                 ),
-                        //                 Text(
-                        //                   _range2.isNotEmpty? ebdDate2:"Choose Date",
-                        //                   style: GoogleFonts.roboto(
-                        //                     color: ColorPalette.black,
-                        //                     fontSize: w/22,
-                        //                     fontWeight: FontWeight.w500,
-                        //                   ),
-                        //                 ),
-                        //                 GestureDetector(
-                        //                   onTap: _endTime,
-                        //                   child: Text(
-                        //                     // widget.edit?endTime:
-                        //                      endTime,
-                        //                     style: GoogleFonts.roboto(
-                        //                       color: Color(0xfffe5762),
-                        //                       fontSize: w/22,
-                        //                       fontWeight: FontWeight.w500,
-                        //                     ),
-                        //                   ),
-                        //                 )
-                        //               ],
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
                         SizedBox(
                           height: 5,
                         ),

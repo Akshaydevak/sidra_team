@@ -8,11 +8,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../../common_widgets/loading.dart';
 import '../../../core/color_palatte.dart';
 import '../../dashboard_screen/home_screen/home_svg.dart';
-import '../../promotion_app/blocs/discount_bloc/discount_bloc.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import '../../promotion_app/dropdown_card.dart';
 import 'critirea_card.dart';
 
@@ -43,6 +42,28 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
     "December",
   ];
   List<PerfomerModel> perfomance = [];
+  var formatter =  DateFormat('MM').format(DateTime.now());
+  @override
+  void initState() {
+    print("formater$formatter");
+    int.tryParse(formatter)==01?selectedType="January":
+    int.tryParse(formatter)==02?selectedType="February":
+    int.tryParse(formatter)==03?selectedType="March":
+    int.tryParse(formatter)==04?selectedType="April":
+    int.tryParse(formatter)==05?selectedType="May":
+    int.tryParse(formatter)==06?selectedType="June":
+    int.tryParse(formatter)==07?selectedType="July":
+    int.tryParse(formatter)==08?selectedType="August":
+    int.tryParse(formatter)==09?selectedType="October":
+    int.tryParse(formatter)==10?selectedType="October":
+    int.tryParse(formatter)==11?selectedType="November":
+    int.tryParse(formatter)==12?selectedType="December":selectedType;
+    print("formater$selectedType");
+    context
+        .read<TaskBloc>()
+        .add(GetOrganisationPerformanceList(int.tryParse(formatter), 2023));
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -313,7 +334,7 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                       }),
                 ),
             SizedBox(
-              height: 15,
+              height: 50,
             ),
 
             DropDownCard(

@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../common_widgets/gradient_button.dart';
-import '../../../common_widgets/loading.dart';
 import '../../../common_widgets/no_glow.dart';
 import '../../../common_widgets/reusable_textfield.dart';
 import '../../../core/color_palatte.dart';
@@ -17,9 +16,7 @@ import '../../../core/common_snackBar.dart';
 import '../../dashboard_screen/home_screen/home_svg.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../../mpos/search_card.dart';
-import '../../promotion_app/blocs/discount_bloc/discount_bloc.dart';
 import '../../promotion_app/dropdown_card.dart';
-import '../../promotion_app/widget/file_upload_card.dart';
 import '../bloc/inventory_bloc.dart';
 import '../inventory_new_list.dart';
 import '../model/division_model.dart';

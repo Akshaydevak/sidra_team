@@ -34,6 +34,22 @@ class GetTaskListFailed extends TaskState {
   final String msg;
   const GetTaskListFailed( this.msg);
 }
+
+//jobs
+class GetAllJobsListLoading extends TaskState {}
+
+class GetAllJobsListSuccess extends TaskState {
+  final List<GetJobList>? taskList;
+  final String? prevPageUrl;
+  final String? nextPageUrl;
+  const GetAllJobsListSuccess({this.taskList, this.prevPageUrl, this.nextPageUrl});
+}
+
+class GetAllJobsListFailed extends TaskState {
+  final String msg;
+  const GetAllJobsListFailed( this.msg);
+}
+
 //
 class GetOrgPerfListLoading extends TaskState {}
 

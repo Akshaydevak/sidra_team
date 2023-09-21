@@ -62,6 +62,30 @@ class TaskRepo {
     );
   }
 
+  //jobs
+  Future<PaginatedResponse> getAllJobsList(String? search,String? next,String? prev) async {
+    final apiResponse = await _dataSource.getAllJobsList(search,next,prev);
+    try {
+      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+        return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
+          previousUrl: apiResponse.previousUrl,
+
+        );
+      } else {
+        return PaginatedResponse([],"","",
+          previousUrl: "",
+
+        );
+      }
+    } catch (e) {
+      debugPrint("error Text$e");
+    }
+    return PaginatedResponse([],"","",
+      previousUrl: "",
+
+    );
+  }
+
   //orgPerf
   Future<PaginatedResponse> getOrganisationPerformanceList(int? year,int? month) async {
     final apiResponse = await _dataSource.getOrganisationPerformanceList(year,month);

@@ -1,33 +1,22 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
-import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/order_app/activity_log.dart';
 import 'package:cluster/presentation/task_operation/create/model/task_models.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/payment_option.dart';
-import 'package:cluster/presentation/task_operation/performance_appraisal/performance_appraisal.dart';
 import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/task_card.dart';
-import 'package:cluster/presentation/task_operation/task_operation.dart';
-import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
-import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-
-import '../../../../common_widgets/loading.dart';
 import '../../../../core/common_snackBar.dart';
-import '../../../../core/utils/variables.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'create/create_job.dart';
@@ -40,7 +29,8 @@ import 'lottieLoader.dart';
 
 class JobTitle extends StatefulWidget {
   bool isMyJob = false;
-  JobTitle({Key? key, this.isMyJob = false}) : super(key: key);
+  bool isAllJob = false;
+  JobTitle({Key? key, this.isMyJob = false,this.isAllJob = false}) : super(key: key);
 
   @override
   State<JobTitle> createState() => _JobTitleState();
@@ -65,6 +55,9 @@ class _JobTitleState extends State<JobTitle> {
     var h = MediaQuery.of(context).size.height;
     return WillPopScope(
         onWillPop: () async {
+          if(widget.isAllJob==true){
+            context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+          }
           context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
       return true;},
       child: MultiBlocListener(
@@ -72,11 +65,11 @@ class _JobTitleState extends State<JobTitle> {
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
               if (state is DeleteJobLoading) {
-                showSnackBar(context,
-                    message: "Loading...",
-                    color: Colors.white,
-                    // icon: HomeSvg().SnackbarIcon,
-                    autoDismiss: true);
+                // showSnackBar(context,
+                //     message: "Loading...",
+                //     color: Colors.white,
+                //     // icon: HomeSvg().SnackbarIcon,
+                //     autoDismiss: true);
               }
 
               if (state is DeleteJobFailed) {
@@ -147,6 +140,9 @@ class _JobTitleState extends State<JobTitle> {
                 isAction: false,
                 isBack: false,
                 onTap: (){
+                  if(widget.isAllJob==true){
+                    context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+                  }
                   context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
                   Navigator.pop(context);
                 },
@@ -682,6 +678,87 @@ class _JobTitleState extends State<JobTitle> {
                     SizedBox(
                       height: 5,
                     ),
+                    widget.isAllJob?Container(
+                      width: w,
+                      // padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Color(0xffe6ecf0),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x05000000),
+                            blurRadius: 8,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
+                              PersistentNavBarNavigator.pushNewScreen(
+                                context,
+                                screen: ReportingPersonJob(),
+                                withNavBar: true,
+                                // OPTIONAL VALUE. True by default.
+                                pageTransitionAnimation:
+                                PageTransitionAnimation.fade,
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  left: 16, right: 16, bottom: 10, top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4)
+                              ),
+                              child: SingleRow(
+                                label: "Created Person",
+                                color: Color(0xffAD51E0),
+                                svg: TaskSvg().personIcon,
+                                endIcon: Container(),
+                                onTap: () {
+                                  setState(() {
+                                    // isReporting = !isReporting;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            indent: 10,
+                            height: 2,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: 16, right: 16, bottom: 16, top: 10),
+                            child: Row(
+                              children: [
+                                SvgPicture.string(TaskSvg().profileReporting),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    JobRead?.createdPerson ?? "",
+                                    style: TextStyle(
+                                      color: ColorPalette.primary,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ):Container(),
+                    widget.isAllJob?SizedBox(height: 5,):Container(),
                     GestureDetector(
                       onTap: () {
                         JobRead?.paymentId != null

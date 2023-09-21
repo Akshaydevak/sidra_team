@@ -186,7 +186,7 @@ class _ReporterListState extends State<ReporterList> {
                                   itemBuilder: (BuildContext context, int i) {
                                     return InkWell(
                                       onTap: () {},
-                                      child: JobCard(joblist: joblist[i]),
+                                      child: JobCard(joblist: joblist[i],isReporter: true),
                                     );
                                   },
                                   itemCount: joblist.length),

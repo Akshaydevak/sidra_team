@@ -211,7 +211,7 @@ class _MyJobsState extends State<MyJobs> {
                               itemBuilder: (BuildContext context, int i) {
                                 return InkWell(
                                   onTap: () {},
-                                  child: JobCard(joblist: jobList[i]),
+                                  child: JobCard(joblist: jobList[i],isReporter: false),
                                   // MyJobCard(isPinned: false,
                                   //   isTaskCard: false,
                                   //   jobsList: jobList[i],

@@ -18,10 +18,12 @@ import 'package:cluster/presentation/task_operation/task_title/repored_list_admi
 import 'package:cluster/presentation/task_operation/task_title/repoted_list_user.dart';
 import 'package:cluster/presentation/task_operation/task_title/staff_joblist.dart';
 import 'package:cluster/presentation/task_operation/task_title/two_card.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -34,9 +36,11 @@ import '../../../../core/common_snackBar.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
+import 'all_job_list_admin.dart';
 import 'create/create_job.dart';
 import 'create/create_svg.dart';
 import 'create/model/task_models.dart';
+import 'create/task_bloc/task_bloc.dart';
 import 'create_group.dart';
 import 'employee_group_screen.dart';
 import 'home/model/joblist_model.dart';
@@ -87,6 +91,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
   String _range1 = '';
   String _rangeCount = '';
   List<GetJobList> joblist = [];
+  List<PerfomerModel> perfomance = [];
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
@@ -112,18 +117,21 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
       print("statatat$ebdDate");
     });
   }
-
+  var formatter =  DateFormat('MM').format(DateTime.now());
   @override
   void initState() {
     print("init");
     context.read<JobBloc>().add(const GetUserVerifyEvent());
     context.read<JobBloc>().add(const GetAdminDataEvent());
     context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+    context.read<TaskBloc>().add(GetOrganisationPerformanceList(int.tryParse(formatter), 2023));
     kkkk();
 
     super.initState();
   }
+  // final now = DateTime.now();
 
+ // String month = formatter.format(now);
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width ;
@@ -131,7 +139,9 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
         ? 400
         : w1;
     var h=MediaQuery.of(context).size.height;
-    return BlocListener<JobBloc, JobState>(
+    return MultiBlocListener(
+  listeners: [
+    BlocListener<JobBloc, JobState>(
       listener: (context, state) {
         if (state is GetNewJobListLoading) {
           customCupertinoLoading();
@@ -141,7 +151,22 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
           joblist = state.jobList??[];
         }
       },
-      child: Scaffold(
+),
+    BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is GetOrgPerfListLoading) {}
+        if (state is GetOrgPerfListSuccess) {
+          perfomance = state.taskList ?? [];
+          setState(() {});
+        }
+        if (state is GetOrgPerfListFailed) {
+          perfomance = [];
+          setState(() {});
+        }
+      },
+    ),
+  ],
+  child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
@@ -441,6 +466,129 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             //   ],
                             // ),
 
+                            perfomance.isEmpty
+                                ? Container()
+                                : Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 15,),
+                                    Text(
+                                      "Best Performer",
+                                      style: GoogleFonts.roboto(
+                                          fontSize: w / 24,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black),
+                                    ),
+                                    SizedBox(height: 5,),
+                                    Container(
+                              height: 100,
+                              child: CarouselSlider.builder(
+                                      slideTransform: DefaultTransform(),
+                                      slideIndicator: CircularSlideIndicator(
+                                          padding: EdgeInsets.only(bottom: 10, left: 0),
+                                          alignment: Alignment.bottomCenter,
+                                          indicatorBorderWidth: 0.2,
+                                          indicatorRadius: 3.5,
+                                          itemSpacing: 10,
+                                          currentIndicatorColor: Color(0xff086DB5),
+                                          indicatorBackgroundColor: ColorPalette.cardBackground),
+                                      itemCount: perfomance.length,
+                                      // disableGesture: true,
+                                      // options: CarouselOptions(
+                                      //   height: 100,
+                                      //   aspectRatio: 16 / 12,
+                                      //   viewportFraction: 1,
+                                      //   initialPage: 0,
+                                      //   enableInfiniteScroll: false,
+                                      //   reverse: false,
+                                      //   autoPlay: false,
+                                      //   // autoPlayInterval: Duration(seconds: 3),
+                                      //   autoPlayAnimationDuration: Duration(milliseconds: 800),
+                                      //   autoPlayCurve: Curves.fastOutSlowIn,
+                                      //   enlargeCenterPage: true,
+                                      //   enlargeFactor: 0.3,
+                                      //   scrollDirection: Axis.horizontal,
+                                      // ),
+                                      slideBuilder: (int i) {
+                                        return Container(
+                                          width: w,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(4),
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                const Color(0xFF2772B0),
+                                                const Color(0xFF27A8B0),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              // begin: const FractionalOffset(0.0, 0.0),
+                                              // end: const FractionalOffset(1.0, 0.0),
+                                              // stops: [0.0, 1.0],
+                                              // tileMode: TileMode.clamp
+                                            ),
+                                          ),
+                                          padding:
+                                          EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                          child: Column(children: [
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                TextAvatar(
+                                                  shape: Shape.Circular,
+                                                  size: 40,
+                                                  numberLetters: 1,
+                                                  fontSize: w / 14,
+                                                  textColor: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                  text: perfomance[i].fName ?? "".toUpperCase(),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(4.0),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        perfomance[i].fName ?? "",
+                                                        style: GoogleFonts.roboto(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.white,
+                                                            fontSize: w / 24),
+                                                      ),
+                                                      Text(
+                                                        perfomance[i].email ?? "",
+                                                        style: GoogleFonts.roboto(
+                                                          // fontWeight: FontWeight.w500,
+                                                            color: Colors.white,
+                                                            fontSize: w / 26),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 45),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "Total Points : ${perfomance[i].points}",
+                                                  style: GoogleFonts.roboto(
+                                                      fontWeight: FontWeight.w500,
+                                                      color: Colors.white,
+                                                      fontSize: w / 28),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                        );
+                                      }),
+                            ),
+                                  ],
+                                ),
+
                             authentication.isAdmin ||authentication.isAssociateAdmin
                                 ? Column(
                               children: [
@@ -624,7 +772,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     ),
                                     SizedBox(height: 20,),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.only(left: 10,right: 15),
                                       child: Row(
                                         mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -721,8 +869,23 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               ],
                                             ),
                                           ),
-                                          Container(
-                                            width: w1/5.4,
+                                          authentication.isAdmin?GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator
+                                                    .pushNewScreen(
+                                                  context,
+                                                  screen:  AllJobListAdmin(),
+                                                  withNavBar: false,
+                                                  // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                  label: "All Job List",
+                                                  svg: TaskSvg().createGroupSvg
+                                              )):Container(
+                                            width: w1/6,
                                             height: 60,
                                             padding: EdgeInsets.all(10),
 
@@ -746,7 +909,8 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                 // )
                                               ],
                                             ),
-                                          )
+                                          ),
+
                                         ],
                                       ),
                                     ),
@@ -981,7 +1145,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
           ),
         ),
       ),
-    );
+);
   }
 
   _showModalBottomSheet() {

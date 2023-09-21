@@ -11,6 +11,7 @@ import 'package:cluster/presentation/order_app/screens/all_order_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,14 +30,18 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController codeController = TextEditingController();
+  bool _isLoading=false;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async{
+        print("log state$state");
+
 
         if (state is LoginSuccess) {
+          _isLoading=false;
 
           String? token;
           //
@@ -57,11 +62,16 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
         else if(state is LoginFailed){
+
           showSnackBar(context,
               message: "Enter Valid Credentials",
               color: Colors.red,
               // icon: HomeSvg().SnackbarIcon,
               autoDismiss: true);
+          _isLoading=false;
+          setState(() {
+
+          });
         }
       },
       child: Scaffold(
@@ -141,6 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           GradientButton(
                               onPressed: () {
+                                _isLoading=true;
                                 context.read<AuthBloc>().add(LoginEvent(
                                     email: emailController.text,
                                     password: passwordController.text,
@@ -153,6 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //   pageTransitionAnimation: PageTransitionAnimation.fade,
                                 // );
                                 //OtpScreen
+                                setState(() {
+                                  
+                                });
                               },
                               gradient: const LinearGradient(
                                 colors: [ColorPalette.primary, ColorPalette.primary],
@@ -160,7 +174,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 end: Alignment.bottomCenter,
                               ),
                               color: Colors.transparent,
-                              child: Text(
+                              child: _isLoading==true?
+                              SpinKitThreeBounce(
+                                color: Colors.white,
+                                size: 15.0,
+                              ):
+                              Text(
                                 "Login",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.roboto(

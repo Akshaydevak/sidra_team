@@ -1,5 +1,6 @@
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/task_operation/home/model/joblist_model.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/cluster_urls.dart';
@@ -106,6 +107,48 @@ class TaskDataSource {
       previousUrl: response.data['data']['previous'],
     );
   }
+
+  ///jobs
+  ///
+  Future<PaginatedResponse<List<GetJobList>>> getAllJobsList(
+      String? search,String? next,String? prev) async {
+    print("URL Task Under Job List:${ClusterUrls.adminAllJobListUrl}");
+    List<GetJobList> nationalityModel = [];
+    String api="";
+    if(next!=""){
+      api=next??"";
+    }
+    else if(prev!=""){
+      api=prev??"";
+    }
+    else{
+      api = search!.isNotEmpty
+          ? "${ClusterUrls.adminAllJobListUrl}?name=$search"
+          : ClusterUrls.adminAllJobListUrl;
+    }
+
+
+    final response = await client.get(api,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          },
+        ));
+    print("api " + api);
+    print("response${response.data['data']}");
+    (response.data['data']['results'] as List).forEach((element) {
+      nationalityModel.add(GetJobList.fromJson(element));
+    });
+    return PaginatedResponse(
+      nationalityModel,
+      response.data['data']['next'],
+      response.data['data']['count'].toString(),
+      previousUrl: response.data['data']['previous'],
+    );
+  }
+
 
   //
   Future<PaginatedResponse<List<PerfomerModel>>> getOrganisationPerformanceList(

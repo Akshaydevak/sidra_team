@@ -314,11 +314,12 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   }) async* {
     yield GetAssignedMeListLoading();
     final dataResponse = await _jobRepo.getAssignedMeList(search,next,prev);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null ) {
       yield GetAssignedMeListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",
-          assignMeList:  dataResponse.data);  }
+          assignMeList:  dataResponse.data);
+    }
 
     else {
       yield GetAssignedMeListFailed("failed");

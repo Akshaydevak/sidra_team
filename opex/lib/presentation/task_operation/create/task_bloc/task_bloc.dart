@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../core/utils/data_response.dart';
+import '../../home/model/joblist_model.dart';
 import '../model/task_models.dart';
 import '../task_datasource.dart';
 import '../task_repository.dart';
@@ -27,6 +28,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       prev: event.prev,
       next: event.next,
       search: event.search);
+    }
+    if (event is GetAllJobsListEvent) {
+      yield* getAllJobsListState(
+          prev: event.prev,
+          next: event.next,
+          search: event.search);
     }
     if (event is GetOrganisationPerformanceList) {
       yield* getOrganisationPerformanceList(
@@ -340,18 +347,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield GetTaskTypeListFailed();
     }
   }
-  //task list
-  // Stream<TaskState> getTaskListState(int? id) async* {
-  //   yield GetTaskListLoading();
-  //
-  //   final dataResponse = await _taskRepo.getTaskList(id);
-  //
-  //   if (dataResponse.data.isNotEmpty) {
-  //     yield GetTaskListSuccess(dataResponse.data);
-  //   } else {
-  //     yield GetTaskListFailed();
-  //   }
-  // }
 
   Stream<TaskState> getTaskListState({
     String? search,String? next,String? prev,int? id
@@ -368,6 +363,24 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield GetTaskListFailed("failed");
     }
   }
+
+  //all
+  Stream<TaskState> getAllJobsListState({
+    String? search,String? next,String? prev
+  }) async* {
+    yield GetAllJobsListLoading();
+    final dataResponse = await _taskRepo.getAllJobsList(search,next,prev);
+    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+      yield GetAllJobsListSuccess(
+          prevPageUrl: dataResponse.previousUrl??"",
+          nextPageUrl: dataResponse.nextPageUrl ?? "",
+          taskList:  dataResponse.data);  }
+
+    else {
+      yield GetAllJobsListFailed("failed");
+    }
+  }
+
 
   //orgPerlist
   Stream<TaskState> getOrganisationPerformanceList({

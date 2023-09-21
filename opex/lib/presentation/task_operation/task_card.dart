@@ -104,6 +104,8 @@ class TaskCard extends StatelessWidget {
                       children: [
                         Container(
                           width: w/2,
+                          height: 35,
+                          // color: Colors.red,
                           child: Text(
                             taskList?.taskName?.toString().toTitleCase() ?? "",
                             maxLines: 2,

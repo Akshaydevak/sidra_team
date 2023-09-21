@@ -241,7 +241,7 @@ class _NewJobListState extends State<NewJobList> {
                               itemBuilder: (BuildContext context, int i) {
                                 return InkWell(
                                   onTap: () {},
-                                  child: JobCard(joblist: joblist[i]),
+                                  child: JobCard(joblist: joblist[i],),
                                 );
                               },
                               itemCount: joblist.length),
