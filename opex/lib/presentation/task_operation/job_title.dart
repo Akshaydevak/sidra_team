@@ -409,7 +409,7 @@ class _JobTitleState extends State<JobTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: (){
-                                      _showModalBottomAdditionalRole();
+                                      // _showModalBottomAdditionalRole();
 
                                     },
                                     child: Container(
