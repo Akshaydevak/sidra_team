@@ -245,11 +245,10 @@ class _TaskTitleState extends State<TaskTitle> {
                 }
                 // setState(() {});
 
-                if(authentication.isAssociateAdmin==false){
-                  for (var i=0;i<statusList.length;i++) {
+                if (authentication.isAssociateAdmin == false) {
+                  for (var i = 0; i < statusList.length; i++) {
                     // print("name eeeeee i   ${i.name}")
-                    if (statusList[i].name=="VERIFIED"){
-
+                    if (statusList[i].name == "VERIFIED") {
                       statusList.removeAt(i);
                     }
                   }
@@ -809,9 +808,24 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                               ),
                                               // Spacer(),
-                                              Padding(
+                                              getTaskRead?.statusName=="VERIFIED"?Padding(
                                                 padding: const EdgeInsets.only(
-                                                    top: 3),
+                                                    top: 5),
+                                                child: Row(
+                                                  children: [
+                                                    Text("COMPLETED"),
+                                                    SizedBox(width: 3,),
+                                                    SvgPicture.string(
+                                                      TaskSvg().tickIcon,
+                                                      color: Colors.green,
+                                                      width: 15,
+                                                      height: 15,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ): Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
                                                 child: Text(
                                                     getTaskRead?.statusName ??
                                                         "NOT INITIATED"),
@@ -1870,7 +1884,12 @@ class _TaskTitleState extends State<TaskTitle> {
                                         )
                                       : GestureDetector(
                                           onTap: () {
-                                            _showModalBottomSheet();
+                                            if(getTaskRead?.statusStagesId == 5&&authentication.isAdmin==false&&authentication.isAssociateAdmin==false){
+
+                                            }
+                                            else{
+                                              _showModalBottomSheet();
+                                            }
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -1918,8 +1937,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                 ? const Text(
                                                                     "ON PROGRESS",
                                                                     style: TextStyle(
-                                                                        fontWeight: FontWeight
-                                                                            .w600,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
                                                                         color: ColorPalette
                                                                             .primary))
                                                                 : getTaskRead?.statusStagesId ==
@@ -1936,11 +1956,25 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                         ? const Text(
                                                                             "PENDING",
                                                                             style: TextStyle(fontWeight: FontWeight.w500, color: ColorPalette.primary))
-                                                                        : Text(
-                                                                            "STARTED",
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.w600, color: ColorPalette.primary),
-                                                                          )),
+                                                                        : getTaskRead?.statusStagesId == 5
+                                                                            ? Row(
+                                                                                children: [
+                                                                                  Text("COMPLETED", style: TextStyle(fontWeight: FontWeight.w600, color: ColorPalette.primary)),
+                                                                                  SizedBox(
+                                                                                    width: 5,
+                                                                                  ),
+                                                                                  SvgPicture.string(
+                                                                                    TaskSvg().tickIcon,
+                                                                                    color: Colors.green,
+                                                                                    width: 15,
+                                                                                    height: 15,
+                                                                                  ),
+                                                                                ],
+                                                                              )
+                                                                            : Text(
+                                                                                "NOT INITIATED",
+                                                                                style: TextStyle(fontWeight: FontWeight.w600, color: ColorPalette.primary),
+                                                                              )),
                                                   ],
                                                 )),
                                           ),

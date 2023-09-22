@@ -8,9 +8,11 @@ import '../presentation/order_app/order_svg.dart';
 class CustomCheckBox extends StatefulWidget {
   final bool value;
   final String text;
+  final Widget? widget;
+  final bool? isWidget;
   final Function(bool)? onChange;
 
-  const CustomCheckBox({Key? key, this.value = false,this.text="", this.onChange})
+  const CustomCheckBox({Key? key, this.value = false,this.text="",this.isWidget=false, this.onChange,this.widget})
       : super(key: key);
 
   @override
@@ -49,8 +51,17 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
             ),
           ),
           SizedBox(
-            width: w / 24,
+            width: w / 40,
           ),
+          widget.isWidget==true?Row(
+            children: [
+              widget.widget??Container(),
+              SizedBox(
+                width: w / 24,
+              ),
+
+            ],
+          ):Container(),
           Text(widget.text,
            style: GoogleFonts.roboto(
             color: Colors.black,

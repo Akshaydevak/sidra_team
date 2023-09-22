@@ -8,6 +8,7 @@ import 'package:cluster/presentation/task_operation/payment_option.dart';
 import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/task_card.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +18,9 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../core/common_snackBar.dart';
+import '../../common_widgets/custom_checkbox.dart';
 import '../../common_widgets/gradient_button.dart';
+import '../../common_widgets/loading.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'create/create_job.dart';
 import 'create/create_newtask.dart';
@@ -394,13 +397,44 @@ class _JobTitleState extends State<JobTitle> {
                           prevUrl = state.prevPageUrl ?? "";
                           return Column(crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Task List",
-                                style: GoogleFonts.roboto(
-                                  color: ColorPalette.black,
-                                  fontSize: w / 24,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Task List",
+                                    style: GoogleFonts.roboto(
+                                      color: ColorPalette.black,
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      _showModalBottomAdditionalRole();
+
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff086DB5).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(4)
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "Filter",
+                                            style: GoogleFonts.roboto(
+                                              color: ColorPalette.primary,
+                                              fontSize: w / 28,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8,),
+                                          SvgPicture.string(TaskSvg().filterSvg),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 height: 10,
@@ -411,7 +445,7 @@ class _JobTitleState extends State<JobTitle> {
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                          childAspectRatio: 1.2,
+                                          childAspectRatio: 1.1,
                                           crossAxisCount: 2,
                                           mainAxisSpacing: 10,
                                           crossAxisSpacing: 10),
@@ -698,35 +732,22 @@ class _JobTitleState extends State<JobTitle> {
                       ),
                       child: Column(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-                                screen: ReportingPersonJob(),
-                                withNavBar: true,
-                                // OPTIONAL VALUE. True by default.
-                                pageTransitionAnimation:
-                                PageTransitionAnimation.fade,
-                              );
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  left: 16, right: 16, bottom: 10, top: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4)
-                              ),
-                              child: SingleRow(
-                                label: "Created Person",
-                                color: Color(0xffAD51E0),
-                                svg: TaskSvg().personIcon,
-                                endIcon: Container(),
-                                onTap: () {
-                                  setState(() {
-                                    // isReporting = !isReporting;
-                                  });
-                                },
-                              ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: 16, right: 16, bottom: 10, top: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4)
+                            ),
+                            child: SingleRow(
+                              label: "Created Person",
+                              color: Color(0xffAD51E0),
+                              svg: TaskSvg().personIcon,
+                              endIcon: Container(),
+                              onTap: () {
+                                setState(() {
+                                  // isReporting = !isReporting;
+                                });
+                              },
                             ),
                           ),
                           Divider(
@@ -747,7 +768,7 @@ class _JobTitleState extends State<JobTitle> {
                                   child: Text(
                                     JobRead?.createdPerson ?? "",
                                     style: TextStyle(
-                                      color: ColorPalette.primary,
+                                      color: ColorPalette.black,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -1172,5 +1193,325 @@ class _JobTitleState extends State<JobTitle> {
         ),
       ),
     );
+  }
+  _showModalBottomAdditionalRole() {
+    List<String> status=['Not Initiated','Started','Completed','Pending'];
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 1.1,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Task Filter",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        SizedBox(
+                          height: h/1.3,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SingleChildScrollView(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Task Status",
+                                                  style: GoogleFonts.roboto(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10,),
+                                                Column(
+                                                  children: [
+
+                                                    Container(
+                                                      width:w,
+                                                      child: GridView.builder(
+                                                          shrinkWrap: true,
+                                                          // scrollDirection: Axis.horizontal,
+                                                          physics: NeverScrollableScrollPhysics(),
+                                                          gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                              childAspectRatio: 5,
+                                                              crossAxisCount: 2,
+                                                              mainAxisSpacing: 10,
+                                                              crossAxisSpacing: 10),
+                                                          itemBuilder: (BuildContext context, int i) {
+                                                            return InkWell(
+                                                              onTap: () {},
+                                                              child: CustomCheckBox(
+                                                                key: UniqueKey(),
+                                                                value: true,
+                                                                // passNameList.contains(roleList[index].role),
+                                                                onChange: (p0) {
+                                                                  if (p0) {
+                                                                    // passIdList.add(roleList[index].id ?? 0);
+                                                                    // passNameList.add(roleList[index].role??"");
+
+                                                                  } else {
+                                                                    // passIdList.remove(
+                                                                    //     roleList[index].id ?? 0);
+                                                                    // passNameList.remove(roleList[index].role??"");
+
+                                                                  }
+                                                                  // print("fsd$passNameList");
+                                                                  // refresh();
+                                                                },
+                                                                text: status[i],
+
+
+                                                              ),
+                                                            );
+                                                          },
+                                                          itemCount: 4),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 10,),
+                                                Divider(height: 2,indent: 10,color: Colors.grey,),
+                                                SizedBox(height: 10,),
+                                                Text(
+                                                  "Reporting Person",
+                                                  style: GoogleFonts.roboto(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10,),
+                                                Container(
+                                                  width: w,
+                                                  // height: h / 2.5,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    // border: Border.all(
+                                                    //   color: Color(0xffe6ecf0),
+                                                    //   width: 1,
+                                                    // ),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: ListView.separated(
+                                                      primary: true,
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                      itemBuilder: (context, index) =>
+                                                          InkWell(
+                                                            onTap: () {},
+                                                            child: CustomCheckBox(
+                                                              key: UniqueKey(),
+                                                              value: true,
+                                                              // passNameList.contains(roleList[index].role),
+                                                              onChange: (p0) {
+                                                                if (p0) {
+                                                                  // passIdList.add(roleList[index].id ?? 0);
+                                                                  // passNameList.add(roleList[index].role??"");
+
+                                                                } else {
+                                                                  // passIdList.remove(
+                                                                  //     roleList[index].id ?? 0);
+                                                                  // passNameList.remove(roleList[index].role??"");
+
+                                                                }
+                                                                // print("fsd$passNameList");
+                                                                // refresh();
+                                                              },
+                                                              text: "Name",
+                                                              widget: TextAvatar(
+                                                                shape: Shape.Circular,
+                                                                size: 35,
+                                                                numberLetters: 2,
+                                                                fontSize: w/22,
+                                                                textColor: Colors.white,
+                                                                fontWeight: FontWeight.w500,
+                                                                text:"NAme" ,
+                                                              ),
+                                                              isWidget: true,
+
+
+                                                            ),
+                                                          ),
+                                                      separatorBuilder:
+                                                          (context, index) => SizedBox(height: 5,),
+                                                      itemCount:
+                                                      5),
+                                                ),
+                                                SizedBox(height: 15,),
+                                                Text(
+                                                  "Task Priority",
+                                                  style: GoogleFonts.roboto(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10,),
+                                                Container(
+                                                  width: w,
+                                                  // height: h / 2.5,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    // border: Border.all(
+                                                    //   color: Color(0xffe6ecf0),
+                                                    //   width: 1,
+                                                    // ),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: ListView.separated(
+                                                      primary: true,
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                      itemBuilder: (context, index) =>
+                                                          InkWell(
+                                                            onTap: () {},
+                                                            child: CustomCheckBox(
+                                                              key: UniqueKey(),
+                                                              value: true,
+                                                              // passNameList.contains(roleList[index].role),
+                                                              onChange: (p0) {
+                                                                if (p0) {
+                                                                  // passIdList.add(roleList[index].id ?? 0);
+                                                                  // passNameList.add(roleList[index].role??"");
+
+                                                                } else {
+                                                                  // passIdList.remove(
+                                                                  //     roleList[index].id ?? 0);
+                                                                  // passNameList.remove(roleList[index].role??"");
+
+                                                                }
+                                                                // print("fsd$passNameList");
+                                                                // refresh();
+                                                              },
+                                                              text: "Low",
+                                                              isWidget: false,
+
+
+                                                            ),
+                                                          ),
+                                                      separatorBuilder:
+                                                          (context, index) => SizedBox(height: 5,),
+                                                      itemCount:
+                                                      3),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        child: GradientButton(
+                            color: ColorPalette.primary,
+                            onPressed: () {
+                              // refresh();
+                              Navigator.pop(context);
+                            },
+                            gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  ColorPalette.primary,
+                                  ColorPalette.primary
+                                ]),
+                            child: Text(
+                              "Done",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 }

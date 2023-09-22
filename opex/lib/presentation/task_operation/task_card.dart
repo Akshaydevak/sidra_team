@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../../core/color_palatte.dart';
 import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
 
@@ -58,12 +59,47 @@ class TaskCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              padding: EdgeInsets.only(left: 5,right: 5,top: 10,bottom: 5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  taskList?.statusName=="VERIFIED"?
+                  Row(
+                    children: [
+                      Container(
+                          // width: 121,
+                          // height: 30,
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x05000000),
+                                blurRadius: 8,
+                                offset: Offset(1, 1),
+                              ),
+                            ],
+                             color: Color(0xff079B16)
+                          ),
+                          child: Text(
+                            "COMPLETED",
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: w / 36,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )),
+                      SizedBox(width: 3,),
+                      SvgPicture.string(
+                        TaskSvg().tickIcon,
+                        color: Colors.green,
+                        width: 15,
+                        height: 15,
+                      ),
+                    ],
+                  ):Container(
                       // width: 121,
                       // height: 30,
                       padding:
@@ -121,6 +157,28 @@ class TaskCard extends StatelessWidget {
                         // Image.asset("asset/img_7.png",height: 20,),
                       ],
                     ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  taskList?.assigningType=="Individual"?Icon(Icons.person,color: ColorPalette.primary,
+                    size: 13,):
+              Icon(Icons.group,color: ColorPalette.primary,
+              size: 13,),
+                  SizedBox(width: 2,),
+                  Container(width: w/3,
+                    // color: Colors.deepOrange,
+                    child: Text(taskList?.assignNameCard??"",
+                    overflow: TextOverflow.ellipsis,
+                     maxLines: 1,
+                    style: GoogleFonts.roboto(
+                      fontSize: w/36,
+                      fontWeight: FontWeight.w500,
+                    ),),
                   ),
                 ],
               ),

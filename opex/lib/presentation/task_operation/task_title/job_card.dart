@@ -64,6 +64,46 @@ class JobCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                joblist?.statusName=="VERIFIED"?
+                Row(
+                  children: [
+                    Container(
+                      width: joblist?.statusName=="STARTED"||joblist?.statusName=="PENDING"?
+                      w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/3.6,
+                      // height: 25,
+                      padding: EdgeInsets.symmetric(horizontal: 5,vertical: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 8,
+                              offset: Offset(1, 1),
+                            ),
+                          ],
+                          // color: Color(0x19ff9900),
+                          color: Color(0xff079B16)
+                      ),
+                      alignment: Alignment.center,
+                      child:
+                      Text(
+                        "COMPLETED",
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontSize: w/28,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 3,),
+                    SvgPicture.string(
+                      TaskSvg().tickIcon,
+                      color: Colors.green,
+                      width: 15,
+                      height: 15,
+                    ),
+                  ],
+                ):
                 Container(
                   width: joblist?.statusName=="STARTED"||joblist?.statusName=="PENDING"?
                   w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/3.6,
@@ -86,7 +126,8 @@ class JobCard extends StatelessWidget {
                     Color(0xffFF0000):Color(0xffFFE5BE)
                   ),
                   alignment: Alignment.center,
-                  child: Text(
+                  child:
+                  Text(
                     joblist?.statusName??"NOT INITIATED",
                     style: GoogleFonts.roboto(
                       color: Colors.white,

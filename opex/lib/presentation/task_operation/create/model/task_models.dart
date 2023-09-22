@@ -96,6 +96,8 @@ class GetTaskList extends Equatable {
   final String? reportingName;
   @JsonKey(name: "assigned_by_name")
   final String? assignName;
+  @JsonKey(name: "assigning_name")
+  final String? assignNameCard;
   @JsonKey(name: "assigning_code")
   final String? assigningCode;
   @JsonKey(name: "notes")
@@ -144,6 +146,7 @@ class GetTaskList extends Equatable {
   const GetTaskList({
     this.name,
     this.reviewCount,
+    this.assignNameCard,
     this.topic,
     this.imgCount,
     this.taskTypeName,
