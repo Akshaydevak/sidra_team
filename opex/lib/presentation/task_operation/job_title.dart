@@ -20,20 +20,21 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../core/common_snackBar.dart';
 import '../../common_widgets/custom_checkbox.dart';
 import '../../common_widgets/gradient_button.dart';
-import '../../common_widgets/loading.dart';
+import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'create/create_job.dart';
 import 'create/create_newtask.dart';
+import 'create/create_svg.dart';
 import 'create/reporting_person_job.dart';
 import 'create/single_row.dart';
 import 'home/bloc/job_bloc.dart';
 import 'home/model/joblist_model.dart';
-import 'lottieLoader.dart';
 
 class JobTitle extends StatefulWidget {
   bool isMyJob = false;
   bool isAllJob = false;
-  JobTitle({Key? key, this.isMyJob = false,this.isAllJob = false}) : super(key: key);
+  bool isCreated = false;
+  JobTitle({Key? key, this.isMyJob = false,this.isAllJob = false,this.isCreated=false}) : super(key: key);
 
   @override
   State<JobTitle> createState() => _JobTitleState();
@@ -52,6 +53,197 @@ class _JobTitleState extends State<JobTitle> {
   String startTime2="";
   String endTime="";
   String endTime2="";
+  String priorityFilter="";
+  String statusFilter="";
+  String reportingPersonFilter="";
+  int tappedTile = 0;
+  void changeTappedTile(int val) {
+    tappedTile = val;
+
+    setState(() {});
+  }
+  onRefreash(){
+    setState(() {
+
+    });
+  }
+  @override
+  void initState() {
+    // dialog();
+    super.initState();
+    widget.isCreated==true?WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog(
+          useSafeArea: true,
+          barrierDismissible: true,
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 1.3,
+                        // height: MediaQuery.of(context).size.height / 2.5,
+                        // padding: const EdgeInsets.all(8),
+
+                        // decoration: BoxDecoration(
+                        //   image: DecorationImage(
+                        //       image: NetworkImage(
+                        //         "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80",
+                        //       ),
+                        //       fit: BoxFit.fill),
+                        // ),
+                        child: SvgPicture.string(TaskSvg().jobSucsess,width:MediaQuery.of(context).size.width / 3,
+                        height: MediaQuery.of(context).size.height / 3,),
+                      ),
+                      Positioned(
+                        right: 90,
+                        bottom: 140,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            child: Lottie.asset(
+                              'asset/tick.json',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // event.data['card_banner'].toString() == "true"
+                  //     ? Container(
+                  //   padding: const EdgeInsets.all(8),
+                  //   width: MediaQuery.of(context).size.width / 1.5,
+                  //   height: MediaQuery.of(context).size.height / 6.5,
+                  //   color: Colors.white,
+                  //   child: Column(
+                  //     // mainAxisAlignment: MainAxisAlignment.end,
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Text(
+                  //         event.data['title'] ?? "hi",
+                  //         style: const TextStyle(
+                  //           color: Colors.black,
+                  //           fontSize: 20,
+                  //           fontFamily: 'Roboto',
+                  //           fontWeight: FontWeight.w600,
+                  //         ),
+                  //       ),
+                  //       Text(
+                  //         event.data['description'] ?? "",
+                  //         style: const TextStyle(
+                  //           color: Colors.black,
+                  //           fontSize: 14,
+                  //           fontFamily: 'Roboto',
+                  //           fontWeight: FontWeight.w400,
+                  //         ),
+                  //       ),
+                  //       Center(
+                  //         child: Container(
+                  //           width: 160,
+                  //           height: 45,
+                  //           decoration: ShapeDecoration(
+                  //             gradient: const LinearGradient(
+                  //               begin: Alignment(0.00, -1.00),
+                  //               end: Alignment(0, 1),
+                  //               colors: [
+                  //                 Color(0xFFFF9900),
+                  //                 Color(0xFFFF7E07)
+                  //               ],
+                  //             ),
+                  //             shape: RoundedRectangleBorder(
+                  //                 borderRadius:
+                  //                 BorderRadius.circular(5)),
+                  //           ),
+                  //           child: const Center(
+                  //             child: Text(
+                  //               'CHECK NOW',
+                  //               textAlign: TextAlign.center,
+                  //               style: TextStyle(
+                  //                 color: Colors.white,
+                  //                 fontSize: 18,
+                  //                 fontFamily: 'Roboto',
+                  //                 fontWeight: FontWeight.w600,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       )
+                  //     ],
+                  //   ),
+                  // )
+                  //     : Container()
+                  //  Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Text(
+                  //       event.data['title'] ?? "",
+                  //       style: const TextStyle(
+                  //         color: Colors.black,
+                  //         fontSize: 20,
+                  //         fontFamily: 'Roboto',
+                  //         fontWeight: FontWeight.w600,
+                  //         height: 41,
+                  //       ),
+                  //     ),
+                  //     // const SizedBox(height: 8),
+                  //     Text(
+                  //       event.data['description'] ?? "",
+                  //       style: const TextStyle(
+                  //         color: Colors.black,
+                  //         fontSize: 14,
+                  //         fontFamily: 'Roboto',
+                  //         fontWeight: FontWeight.w400,
+                  //         height: 22,
+                  //       ),
+                  //     ),
+                  //     // Container(
+                  //     //   // width: 160,
+                  //     //   // height: 45,
+                  //     //   decoration: ShapeDecoration(
+                  //     //     gradient: const LinearGradient(
+                  //     //       begin: Alignment(0.00, -1.00),
+                  //     //       end: Alignment(0, 1),
+                  //     //       colors: [
+                  //     //         Color(0xFFFF9900),
+                  //     //         Color(0xFFFF7E07)
+                  //     //       ],
+                  //     //     ),
+                  //     //     shape: RoundedRectangleBorder(
+                  //     //         borderRadius: BorderRadius.circular(5)),
+                  //     //   ),
+                  //     //   child: const Text(
+                  //     //     'CHECK NOW',
+                  //     //     textAlign: TextAlign.center,
+                  //     //     style: TextStyle(
+                  //     //       color: Colors.white,
+                  //     //       fontSize: 18,
+                  //     //       fontFamily: 'Roboto',
+                  //     //       fontWeight: FontWeight.w600,
+                  //     //       height: 20,
+                  //     //     ),
+                  //     //   ),
+                  //     // )
+                  //   ],
+                  // ) ,
+                ],
+              ),
+            );
+          });
+    }):null;
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -409,8 +601,7 @@ class _JobTitleState extends State<JobTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: (){
-                                      // _showModalBottomAdditionalRole();
-
+                                      _showModalBottomAdditionalRole(priorityFilter,statusFilter);
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(5),
@@ -443,8 +634,7 @@ class _JobTitleState extends State<JobTitle> {
                                   shrinkWrap: true,
                                   // scrollDirection: Axis.horizontal,
                                   physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                           childAspectRatio: 1.1,
                                           crossAxisCount: 2,
                                           mainAxisSpacing: 10,
@@ -475,7 +665,7 @@ class _JobTitleState extends State<JobTitle> {
                                                       JobRead?.id,
                                                       '',
                                                       '',
-                                                      prevUrl));
+                                                      prevUrl,false,'',''));
                                               // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
                                             },
                                             child: Text(
@@ -497,7 +687,7 @@ class _JobTitleState extends State<JobTitle> {
                                                         JobRead?.id,
                                                         '',
                                                         nextUrl,
-                                                        ""));
+                                                        "",false,'',''));
                                               });
                                             },
                                             child: Text(
@@ -1194,8 +1384,9 @@ class _JobTitleState extends State<JobTitle> {
       ),
     );
   }
-  _showModalBottomAdditionalRole() {
+  _showModalBottomAdditionalRole(String? type,String? statusType) {
     List<String> status=['Not Initiated','Started','Completed','Pending'];
+    List<String> priority=['Low','Medium','High'];
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -1210,7 +1401,7 @@ class _JobTitleState extends State<JobTitle> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 1.1,
+                height: h / 1.7,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -1251,7 +1442,7 @@ class _JobTitleState extends State<JobTitle> {
                           height: h / 40,
                         ),
                         SizedBox(
-                          height: h/1.3,
+                          height: h/2.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
@@ -1287,118 +1478,137 @@ class _JobTitleState extends State<JobTitle> {
                                                           physics: NeverScrollableScrollPhysics(),
                                                           gridDelegate:
                                                           SliverGridDelegateWithFixedCrossAxisCount(
-                                                              childAspectRatio: 5,
+                                                              childAspectRatio: 4,
                                                               crossAxisCount: 2,
                                                               mainAxisSpacing: 10,
                                                               crossAxisSpacing: 10),
                                                           itemBuilder: (BuildContext context, int i) {
-                                                            return InkWell(
-                                                              onTap: () {},
-                                                              child: CustomCheckBox(
-                                                                key: UniqueKey(),
-                                                                value: true,
-                                                                // passNameList.contains(roleList[index].role),
-                                                                onChange: (p0) {
-                                                                  if (p0) {
-                                                                    // passIdList.add(roleList[index].id ?? 0);
-                                                                    // passNameList.add(roleList[index].role??"");
-
-                                                                  } else {
-                                                                    // passIdList.remove(
-                                                                    //     roleList[index].id ?? 0);
-                                                                    // passNameList.remove(roleList[index].role??"");
-
-                                                                  }
-                                                                  // print("fsd$passNameList");
-                                                                  // refresh();
-                                                                },
-                                                                text: status[i],
+                                                            return GestureDetector(
+                                                              onTap: () {
+                                                                changeTappedTile(i);
 
 
+                                                                statusFilter=status[i];
+                                                                onRefreash();
+                                                                // Navigator.pop(context);
+                                                                setState(() {});
+                                                              },
+                                                              child: Container(
+                                                                padding: EdgeInsets.symmetric(
+                                                                    horizontal: 16, vertical: 10),
+                                                                color: statusType ==
+                                                                    status[i]
+                                                                    ? ColorPalette.cardBackground
+                                                                    : ColorPalette.white,
+                                                                child: Row(
+                                                                  children: [
+                                                                    statusType == status[i]
+                                                                        ? SvgPicture.string(
+                                                                      HomeSvg()
+                                                                          .radioButtonActive,
+                                                                    )
+                                                                        : SvgPicture.string(
+                                                                        CreateSvg()
+                                                                            .radioInActiveButton),
+                                                                    const SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      status[i] ??
+                                                                          "",
+                                                                      style: GoogleFonts.roboto(
+                                                                        color: Colors.black,
+                                                                        fontSize: w / 24,
+                                                                        // fontWeight: FontWeight.w500,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
                                                               ),
                                                             );
                                                           },
-                                                          itemCount: 4),
+                                                          itemCount: status.length),
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10,),
+                                                SizedBox(height: 5,),
                                                 Divider(height: 2,indent: 10,color: Colors.grey,),
-                                                SizedBox(height: 10,),
-                                                Text(
-                                                  "Reporting Person",
-                                                  style: GoogleFonts.roboto(
-                                                    color: Colors.black,
-                                                    fontSize: w / 24,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10,),
-                                                Container(
-                                                  width: w,
-                                                  // height: h / 2.5,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    // border: Border.all(
-                                                    //   color: Color(0xffe6ecf0),
-                                                    //   width: 1,
-                                                    // ),
-                                                    boxShadow: const [
-                                                      BoxShadow(
-                                                        color: Color(0x05000000),
-                                                        blurRadius: 8,
-                                                        offset: Offset(1, 1),
-                                                      ),
-                                                    ],
-                                                    color: Colors.white,
-                                                  ),
-                                                  child: ListView.separated(
-                                                      primary: true,
-                                                      shrinkWrap: true,
-                                                      physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                      itemBuilder: (context, index) =>
-                                                          InkWell(
-                                                            onTap: () {},
-                                                            child: CustomCheckBox(
-                                                              key: UniqueKey(),
-                                                              value: true,
-                                                              // passNameList.contains(roleList[index].role),
-                                                              onChange: (p0) {
-                                                                if (p0) {
-                                                                  // passIdList.add(roleList[index].id ?? 0);
-                                                                  // passNameList.add(roleList[index].role??"");
+                                                SizedBox(height: 5,),
+                                                // Text(
+                                                //   "Reporting Person",
+                                                //   style: GoogleFonts.roboto(
+                                                //     color: Colors.black,
+                                                //     fontSize: w / 24,
+                                                //     fontWeight: FontWeight.w500,
+                                                //   ),
+                                                // ),
+                                                // SizedBox(height: 10,),
+                                                // Container(
+                                                //   width: w,
+                                                //   // height: h / 2.5,
+                                                //   decoration: BoxDecoration(
+                                                //     borderRadius:
+                                                //     BorderRadius.circular(10),
+                                                //     // border: Border.all(
+                                                //     //   color: Color(0xffe6ecf0),
+                                                //     //   width: 1,
+                                                //     // ),
+                                                //     boxShadow: const [
+                                                //       BoxShadow(
+                                                //         color: Color(0x05000000),
+                                                //         blurRadius: 8,
+                                                //         offset: Offset(1, 1),
+                                                //       ),
+                                                //     ],
+                                                //     color: Colors.white,
+                                                //   ),
+                                                //   child: ListView.separated(
+                                                //       primary: true,
+                                                //       shrinkWrap: true,
+                                                //       physics:
+                                                //       NeverScrollableScrollPhysics(),
+                                                //       itemBuilder: (context, index) =>
+                                                //           InkWell(
+                                                //             onTap: () {},
+                                                //             child: CustomCheckBox(
+                                                //               key: UniqueKey(),
+                                                //               value: true,
+                                                //               // passNameList.contains(roleList[index].role),
+                                                //               onChange: (p0) {
+                                                //                 if (p0) {
+                                                //                   // passIdList.add(roleList[index].id ?? 0);
+                                                //                   // passNameList.add(roleList[index].role??"");
+                                                //
+                                                //                 } else {
+                                                //                   // passIdList.remove(
+                                                //                   //     roleList[index].id ?? 0);
+                                                //                   // passNameList.remove(roleList[index].role??"");
 
-                                                                } else {
-                                                                  // passIdList.remove(
-                                                                  //     roleList[index].id ?? 0);
-                                                                  // passNameList.remove(roleList[index].role??"");
-
-                                                                }
-                                                                // print("fsd$passNameList");
-                                                                // refresh();
-                                                              },
-                                                              text: "Name",
-                                                              widget: TextAvatar(
-                                                                shape: Shape.Circular,
-                                                                size: 35,
-                                                                numberLetters: 2,
-                                                                fontSize: w/22,
-                                                                textColor: Colors.white,
-                                                                fontWeight: FontWeight.w500,
-                                                                text:"NAme" ,
-                                                              ),
-                                                              isWidget: true,
-
-
-                                                            ),
-                                                          ),
-                                                      separatorBuilder:
-                                                          (context, index) => SizedBox(height: 5,),
-                                                      itemCount:
-                                                      5),
-                                                ),
+                                                //
+                                                //                 }
+                                                //                 // print("fsd$passNameList");
+                                                //                 // refresh();
+                                                //               },
+                                                //               text: "Name",
+                                                //               widget: TextAvatar(
+                                                //                 shape: Shape.Circular,
+                                                //                 size: 35,
+                                                //                 numberLetters: 2,
+                                                //                 fontSize: w/22,
+                                                //                 textColor: Colors.white,
+                                                //                 fontWeight: FontWeight.w500,
+                                                //                 text:"Name" ,
+                                                //               ),
+                                                //               isWidget: true,
+                                                //
+                                                //
+                                                //             ),
+                                                //           ),
+                                                //       separatorBuilder:
+                                                //           (context, index) => SizedBox(height: 5,),
+                                                //       itemCount:
+                                                //       5),
+                                                // ),
                                                 SizedBox(height: 15,),
                                                 Text(
                                                   "Task Priority",
@@ -1409,16 +1619,13 @@ class _JobTitleState extends State<JobTitle> {
                                                   ),
                                                 ),
                                                 SizedBox(height: 10,),
+
                                                 Container(
                                                   width: w,
                                                   // height: h / 2.5,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                     BorderRadius.circular(10),
-                                                    // border: Border.all(
-                                                    //   color: Color(0xffe6ecf0),
-                                                    //   width: 1,
-                                                    // ),
                                                     boxShadow: const [
                                                       BoxShadow(
                                                         color: Color(0x05000000),
@@ -1434,36 +1641,53 @@ class _JobTitleState extends State<JobTitle> {
                                                       physics:
                                                       NeverScrollableScrollPhysics(),
                                                       itemBuilder: (context, index) =>
-                                                          InkWell(
-                                                            onTap: () {},
-                                                            child: CustomCheckBox(
-                                                              key: UniqueKey(),
-                                                              value: true,
-                                                              // passNameList.contains(roleList[index].role),
-                                                              onChange: (p0) {
-                                                                if (p0) {
-                                                                  // passIdList.add(roleList[index].id ?? 0);
-                                                                  // passNameList.add(roleList[index].role??"");
-
-                                                                } else {
-                                                                  // passIdList.remove(
-                                                                  //     roleList[index].id ?? 0);
-                                                                  // passNameList.remove(roleList[index].role??"");
-
-                                                                }
-                                                                // print("fsd$passNameList");
-                                                                // refresh();
-                                                              },
-                                                              text: "Low",
-                                                              isWidget: false,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              changeTappedTile(index);
 
 
+                                                              priorityFilter=priority[index];
+                                                              onRefreash();
+                                                              // Navigator.pop(context);
+                                                              setState(() {});
+                                                            },
+                                                            child: Container(
+                                                              padding: EdgeInsets.symmetric(
+                                                                  horizontal: 16, vertical: 5),
+                                                              color: type ==
+                                                                  priority[index]
+                                                                  ? ColorPalette.cardBackground
+                                                                  : ColorPalette.white,
+                                                              child: Row(
+                                                                children: [
+                                                                  type == priority[index]
+                                                                      ? SvgPicture.string(
+                                                                    HomeSvg()
+                                                                        .radioButtonActive,
+                                                                  )
+                                                                      : SvgPicture.string(
+                                                                      CreateSvg()
+                                                                          .radioInActiveButton),
+                                                                  const SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    priority[index] ??
+                                                                        "",
+                                                                    style: GoogleFonts.roboto(
+                                                                      color: Colors.black,
+                                                                      fontSize: w / 24,
+                                                                      // fontWeight: FontWeight.w500,
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                       separatorBuilder:
                                                           (context, index) => SizedBox(height: 5,),
                                                       itemCount:
-                                                      3),
+                                                      priority.length),
                                                 ),
                                               ],
                                             ),
@@ -1486,7 +1710,7 @@ class _JobTitleState extends State<JobTitle> {
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
-                              // refresh();
+                              context.read<TaskBloc>().add(GetTaskListEvent(JobRead?.id,'','','',true,statusFilter,priorityFilter));
                               Navigator.pop(context);
                             },
                             gradient: const LinearGradient(
@@ -1511,6 +1735,183 @@ class _JobTitleState extends State<JobTitle> {
                 ),
               );
             },
+          );
+        });
+  }
+  dialog(){
+    showDialog(
+        useSafeArea: true,
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return Material(
+            color: Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      height: MediaQuery.of(context).size.height / 2.5,
+                      // padding: const EdgeInsets.all(8),
+
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(
+                              "event.data['image'].toString()",
+                            ),
+                            fit: BoxFit.fill),
+                      ),
+                    ),
+                    Positioned(
+                      right: 3,
+                      top: 3,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 31,
+                          height: 31,
+                          decoration: const ShapeDecoration(
+                            color: Colors.white,
+                            shape: OvalBorder(),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 4,
+                                offset: Offset(0, -1),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // event.data['card_banner'].toString() == "true"
+                //     ? Container(
+                //   padding: const EdgeInsets.all(8),
+                //   width: MediaQuery.of(context).size.width / 1.5,
+                //   height: MediaQuery.of(context).size.height / 6.5,
+                //   color: Colors.white,
+                //   child: Column(
+                //     // mainAxisAlignment: MainAxisAlignment.end,
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         event.data['title'] ?? "hi",
+                //         style: const TextStyle(
+                //           color: Colors.black,
+                //           fontSize: 20,
+                //           fontFamily: 'Roboto',
+                //           fontWeight: FontWeight.w600,
+                //         ),
+                //       ),
+                //       Text(
+                //         event.data['description'] ?? "",
+                //         style: const TextStyle(
+                //           color: Colors.black,
+                //           fontSize: 14,
+                //           fontFamily: 'Roboto',
+                //           fontWeight: FontWeight.w400,
+                //         ),
+                //       ),
+                //       Center(
+                //         child: Container(
+                //           width: 160,
+                //           height: 45,
+                //           decoration: ShapeDecoration(
+                //             gradient: const LinearGradient(
+                //               begin: Alignment(0.00, -1.00),
+                //               end: Alignment(0, 1),
+                //               colors: [
+                //                 Color(0xFFFF9900),
+                //                 Color(0xFFFF7E07)
+                //               ],
+                //             ),
+                //             shape: RoundedRectangleBorder(
+                //                 borderRadius:
+                //                 BorderRadius.circular(5)),
+                //           ),
+                //           child: const Center(
+                //             child: Text(
+                //               'CHECK NOW',
+                //               textAlign: TextAlign.center,
+                //               style: TextStyle(
+                //                 color: Colors.white,
+                //                 fontSize: 18,
+                //                 fontFamily: 'Roboto',
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     ],
+                //   ),
+                // )
+                //     : Container()
+                //  Column(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Text(
+                //       event.data['title'] ?? "",
+                //       style: const TextStyle(
+                //         color: Colors.black,
+                //         fontSize: 20,
+                //         fontFamily: 'Roboto',
+                //         fontWeight: FontWeight.w600,
+                //         height: 41,
+                //       ),
+                //     ),
+                //     // const SizedBox(height: 8),
+                //     Text(
+                //       event.data['description'] ?? "",
+                //       style: const TextStyle(
+                //         color: Colors.black,
+                //         fontSize: 14,
+                //         fontFamily: 'Roboto',
+                //         fontWeight: FontWeight.w400,
+                //         height: 22,
+                //       ),
+                //     ),
+                //     // Container(
+                //     //   // width: 160,
+                //     //   // height: 45,
+                //     //   decoration: ShapeDecoration(
+                //     //     gradient: const LinearGradient(
+                //     //       begin: Alignment(0.00, -1.00),
+                //     //       end: Alignment(0, 1),
+                //     //       colors: [
+                //     //         Color(0xFFFF9900),
+                //     //         Color(0xFFFF7E07)
+                //     //       ],
+                //     //     ),
+                //     //     shape: RoundedRectangleBorder(
+                //     //         borderRadius: BorderRadius.circular(5)),
+                //     //   ),
+                //     //   child: const Text(
+                //     //     'CHECK NOW',
+                //     //     textAlign: TextAlign.center,
+                //     //     style: TextStyle(
+                //     //       color: Colors.white,
+                //     //       fontSize: 18,
+                //     //       fontFamily: 'Roboto',
+                //     //       fontWeight: FontWeight.w600,
+                //     //       height: 20,
+                //     //     ),
+                //     //   ),
+                //     // )
+                //   ],
+                // ) ,
+              ],
+            ),
           );
         });
   }

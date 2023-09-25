@@ -83,7 +83,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     return WillPopScope(
       onWillPop: ()async{
 
-        context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','',''));
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','','',false,'',''));
         return true;
       },
       child: MultiBlocListener(
@@ -238,7 +238,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
           child:  BackAppBar(
             label: "Rewards",
             onTap: (){
-              context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','',''));
+              context.read<TaskBloc>().add(GetTaskListEvent(widget.typeId,'','','',false,'',''));
               Navigator.pop(context);
             },
             isBack: false,

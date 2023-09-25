@@ -1,4 +1,5 @@
 import 'package:cluster/common_widgets/button_text.dart';
+import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/icon_constants.dart';
 // import 'package:cluster/presentation/base/login_screen.dart';
@@ -37,6 +38,43 @@ class OnBoarding extends StatelessWidget {
               // height: h/2,
                 padding: const EdgeInsets.only(left: 50,right: 50,top: 50),
                 child: SvgPicture.string(IconConstants().onBoardingSvg)),
+            Container(
+              width: w,
+              // color: Colors.pink,
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Align(
+                alignment: Alignment.center,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Come and",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      fontSize: w/10,
+
+                      fontWeight: FontWeight.w700
+                    ),),
+                    Text("work anytime.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                          fontSize: w/10,
+
+                          fontWeight: FontWeight.w700
+                      ),),
+                    SizedBox(height: 15,),
+                    Text("Plan, Track and organize with Task & operation environment full of hustlers around you.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                          fontSize: w/26,
+                          fontWeight: FontWeight.w400,
+                        color: Color(0xff6A6E77).withOpacity(0.5)
+                      ),),
+                    SizedBox(height: 50,),
+                  ],
+                ),
+              ),
+            ),
+
             Container(
 
               padding: const EdgeInsets.only(left: 16,right: 16),
@@ -91,7 +129,7 @@ class OnBoarding extends StatelessWidget {
                         width: w/2.3,
                         height: 54,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           color: const Color(0xff2871AF),
                         ),
                         alignment: Alignment.center,

@@ -35,7 +35,7 @@ class _AssignedMeCardState extends State<AssignedMeCard> {
     return GestureDetector(
       onTap: (){
 
-        context.read<TaskBloc>().add(GetTaskListEvent(widget.assignedMe?.id,'','',''));
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.assignedMe?.id,'','','',false,'',''));
         context.read<JobBloc>().add(GetJobReadListEvent(widget.assignedMe?.id??0));
         PersistentNavBarNavigator.pushNewScreen(
           context,

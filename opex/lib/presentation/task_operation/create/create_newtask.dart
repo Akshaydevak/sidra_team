@@ -210,7 +210,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
       onWillPop: () async {
         context
             .read<TaskBloc>()
-            .add(GetTaskListEvent(widget.jobId, '', '', ''));
+            .add(GetTaskListEvent(widget.jobId, '', '', '',false,'',''));
         return true;
       },
       child: MultiBlocListener(
@@ -412,7 +412,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                   onTap: () {
                     context
                         .read<TaskBloc>()
-                        .add(GetTaskListEvent(widget.jobId, '', '', ''));
+                        .add(GetTaskListEvent(widget.jobId, '', '', '',false,'',''));
                     Navigator.pop(context);
                   },
                 )),

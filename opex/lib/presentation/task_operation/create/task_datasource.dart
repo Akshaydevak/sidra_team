@@ -70,7 +70,7 @@ class TaskDataSource {
   // }
 
   Future<PaginatedResponse<List<GetTaskList>>> getTaskList(
-      String? search,String? next,String? prev,int? id) async {
+      String? search,String? next,String? prev,int? id,bool? filter,String? status,String? priority) async {
     print("URL Task Under Job List:${ClusterUrls.taskListUrl+id.toString()}");
     List<GetTaskList> nationalityModel = [];
     String api="";
@@ -79,6 +79,9 @@ class TaskDataSource {
     }
     else if(prev!=""){
       api=prev??"";
+    }
+    else if(filter==true){
+      api="${ClusterUrls.taskListUrl+id.toString()}?assigned_to=&reporter=&priority=$priority&task_status=$status";
     }
     else{
       api = search!.isNotEmpty

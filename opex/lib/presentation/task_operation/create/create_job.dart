@@ -212,19 +212,19 @@ class _CreateJobState extends State<CreateJob> {
                 }
                 if (state is CreateJobSuccess) {
                   print("JOBID${state.jobId}");
-                  Fluttertoast.showToast(
-                      msg: 'Successfully Created',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.black,
-                      textColor: Colors.white);
+                  // Fluttertoast.showToast(
+                  //     msg: 'Successfully Created',
+                  //     toastLength: Toast.LENGTH_SHORT,
+                  //     gravity: ToastGravity.BOTTOM,
+                  //     backgroundColor: Colors.black,
+                  //     textColor: Colors.white);
                   Navigator.pop(context);
 
                   context.read<JobBloc>().add(
                       GetJobReadListEvent(int.tryParse(state.jobId)??0));
                   PersistentNavBarNavigator.pushNewScreen(
                     context,
-                    screen: JobTitle(),
+                    screen: JobTitle(isCreated: true),
                     withNavBar: true, // OPTIONAL VALUE. True by default.
                     pageTransitionAnimation: PageTransitionAnimation.fade,
                   );
@@ -624,7 +624,10 @@ class _CreateJobState extends State<CreateJob> {
                                                               startDate2=_range2;
                                                               ebdDate=_range;
                                                               ebdDate2=_range2;
-
+                                                                print("range is here$startDate");
+                                                                print("range is here$startDate2");
+                                                                print("range is here$ebdDate");
+                                                                print("range is here$startDate2");
                                                               // validationCheck();
                                                             });
 
@@ -1354,7 +1357,6 @@ class _CreateJobState extends State<CreateJob> {
                       topRight: Radius.circular(10),
                       topLeft: Radius.circular(10),
                     )),
-                // alignment: Alignment.center,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(10),

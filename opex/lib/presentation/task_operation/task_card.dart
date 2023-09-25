@@ -165,7 +165,8 @@ class TaskCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8),
               child: Row(crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  taskList?.assigningType=="Individual"?Icon(Icons.person,color: ColorPalette.primary,
+                  taskList?.assigningType=="Individual"?
+                  Icon(Icons.person,color: ColorPalette.primary,
                     size: 13,):
               Icon(Icons.group,color: ColorPalette.primary,
               size: 13,),

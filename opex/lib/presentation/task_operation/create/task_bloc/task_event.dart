@@ -15,7 +15,10 @@ class GetTaskListEvent extends TaskEvent {
   final String? search;
   final String? next;
   final String? prev;
-  const GetTaskListEvent(this.id, this.search, this.next, this.prev);
+  final bool? filter;
+  final String? status;
+  final   String? priority;
+  const GetTaskListEvent(this.id, this.search, this.next, this.prev,this.filter, this.status, this.priority);
 }
 
 class GetAllJobsListEvent extends TaskEvent {

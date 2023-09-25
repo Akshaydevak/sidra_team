@@ -39,8 +39,8 @@ class TaskRepo {
   //   return DataResponse(error: "error Text");
   // }
 
-  Future<PaginatedResponse> getTaskList(String? search,String? next,String? prev,int? id) async {
-    final apiResponse = await _dataSource.getTaskList(search,next,prev,id);
+  Future<PaginatedResponse> getTaskList(String? search,String? next,String? prev,int? id,bool? filter,String? status,String? priority) async {
+    final apiResponse = await _dataSource.getTaskList(search,next,prev,id,filter,status,priority);
     try {
       if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,

@@ -27,7 +27,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getTaskListState(id:event.id,
       prev: event.prev,
       next: event.next,
-      search: event.search);
+      search: event.search,
+      filter: event.filter,
+      priority: event.priority,
+      status: event.status);
     }
     if (event is GetAllJobsListEvent) {
       yield* getAllJobsListState(
@@ -349,10 +352,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Stream<TaskState> getTaskListState({
-    String? search,String? next,String? prev,int? id
+    String? search,String? next,String? prev,int? id,bool? filter,String? status,String? priority
   }) async* {
     yield GetTaskListLoading();
-    final dataResponse = await _taskRepo.getTaskList(search,next,prev,id);
+    final dataResponse = await _taskRepo.getTaskList(search,next,prev,id,filter,status,priority);
     if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
       yield GetTaskListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",

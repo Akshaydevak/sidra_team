@@ -54,7 +54,7 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
     int.tryParse(formatter)==06?selectedType="June":
     int.tryParse(formatter)==07?selectedType="July":
     int.tryParse(formatter)==08?selectedType="August":
-    int.tryParse(formatter)==09?selectedType="October":
+    int.tryParse(formatter)==09?selectedType="September":
     int.tryParse(formatter)==10?selectedType="October":
     int.tryParse(formatter)==11?selectedType="November":
     int.tryParse(formatter)==12?selectedType="December":selectedType;
@@ -227,7 +227,8 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
             perfomance.isEmpty
                 ? Container()
                 : Container(
-              height: 100,
+              height: 110,
+                  color: Colors.white,
                   child: CarouselSlider.builder(
                       slideTransform: DefaultTransform(),
                       slideIndicator: CircularSlideIndicator(
@@ -239,97 +240,88 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                           currentIndicatorColor: Color(0xff086DB5),
                           indicatorBackgroundColor: ColorPalette.cardBackground),
                       itemCount: perfomance.length,
-                      // disableGesture: true,
-                      // options: CarouselOptions(
-                      //   height: 100,
-                      //   aspectRatio: 16 / 12,
-                      //   viewportFraction: 1,
-                      //   initialPage: 0,
-                      //   enableInfiniteScroll: false,
-                      //   reverse: false,
-                      //   autoPlay: false,
-                      //   // autoPlayInterval: Duration(seconds: 3),
-                      //   autoPlayAnimationDuration: Duration(milliseconds: 800),
-                      //   autoPlayCurve: Curves.fastOutSlowIn,
-                      //   enlargeCenterPage: true,
-                      //   enlargeFactor: 0.3,
-                      //   scrollDirection: Axis.horizontal,
-                      // ),
                       slideBuilder: (int i) {
-                        return Container(
-                          width: w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFF2772B0),
-                                const Color(0xFF27A8B0),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              // begin: const FractionalOffset(0.0, 0.0),
-                              // end: const FractionalOffset(1.0, 0.0),
-                              // stops: [0.0, 1.0],
-                              // tileMode: TileMode.clamp
-                            ),
-                          ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          child: Column(children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TextAvatar(
-                                  shape: Shape.Circular,
-                                  size: 40,
-                                  numberLetters: 1,
-                                  fontSize: w / 14,
-                                  textColor: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  text: perfomance[i].fName ?? "".toUpperCase(),
+                        return Column(
+                          children: [
+                            Container(
+                              width: w,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    const Color(0xFF2772B0),
+                                    const Color(0xFF27A8B0),
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  // begin: const FractionalOffset(0.0, 0.0),
+                                  // end: const FractionalOffset(1.0, 0.0),
+                                  // stops: [0.0, 1.0],
+                                  // tileMode: TileMode.clamp
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
+                              ),
+                              child: Container(
+                                // color: Colors.teal,
+                                child: Column(children: [
+                                  Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        perfomance[i].fName ?? "",
-                                        style: GoogleFonts.roboto(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white,
-                                            fontSize: w / 24),
+                                      TextAvatar(
+                                        shape: Shape.Circular,
+                                        size: 40,
+                                        numberLetters: 1,
+                                        fontSize: w / 14,
+                                        textColor: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        text: perfomance[i].fName ?? "".toUpperCase(),
                                       ),
-                                      Text(
-                                        perfomance[i].email ?? "",
-                                        style: GoogleFonts.roboto(
-                                            // fontWeight: FontWeight.w500,
-                                            color: Colors.white,
-                                            fontSize: w / 26),
+                                      Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              perfomance[i].fName ?? "",
+                                              style: GoogleFonts.roboto(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white,
+                                                  fontSize: w / 24),
+                                            ),
+                                            Text(
+                                              perfomance[i].email ?? "",
+                                              style: GoogleFonts.roboto(
+                                                  // fontWeight: FontWeight.w500,
+                                                  color: Colors.white,
+                                                  fontSize: w / 26),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 45),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Total Points : ${perfomance[i].points}",
-                                  style: GoogleFonts.roboto(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                      fontSize: w / 28),
-                                ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 45),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Total Points : ${perfomance[i].points}",
+                                        style: GoogleFonts.roboto(
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                            fontSize: w / 28),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
                               ),
                             ),
-                          ]),
+                          ],
                         );
                       }),
                 ),
@@ -369,23 +361,6 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                       itemCount: readCriteria!.overAllPoints!.length <= 5
                           ? readCriteria!.overAllPoints!.length
                           : 5,
-                      // disableGesture: true,
-
-                      // options: CarouselOptions(
-                      //   height: 200,
-                      //   aspectRatio: 16 / 12,
-                      //   viewportFraction: 1,
-                      //   initialPage: 0,
-                      //   enableInfiniteScroll: false,
-                      //   reverse: false,
-                      //   autoPlay: false,
-                      //   // autoPlayInterval: Duration(seconds: 3),
-                      //   autoPlayAnimationDuration: Duration(milliseconds: 800),
-                      //   autoPlayCurve: Curves.fastOutSlowIn,
-                      //   enlargeCenterPage: true,
-                      //   enlargeFactor: 0.3,
-                      //   scrollDirection: Axis.horizontal,
-                      // ),
 
                       slideBuilder: (int i) {
                         return Column(
@@ -402,7 +377,7 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                                 //   begin: Alignment.topCenter,
                                 //   end: Alignment.bottomCenter,
                                 // ),
-                                color: Color(0xfff8f7f5),
+                                color:Color(0xfff8f7f5),
                               ),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),

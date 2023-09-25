@@ -113,7 +113,7 @@ class _PaymentOptionState extends State<PaymentOption> {
     return WillPopScope(
       onWillPop: ()async{
         widget.isJob?
-        context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','')):null;
+        context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','',false,'','')):null;
         return true;
       },
       child: MultiBlocListener(
@@ -289,7 +289,7 @@ class _PaymentOptionState extends State<PaymentOption> {
             isBack: false,
             onTap: (){
               widget.isJob?
-              context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','')):null;
+              context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','','',false,'','')):null;
               Navigator.pop(context);
             },
             action: Column(

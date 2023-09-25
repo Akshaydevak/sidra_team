@@ -154,7 +154,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                               return InkWell(
                                 onTap: () {
 
-                                  context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','',''));
+                                  context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','','',false,'',''));
                                   context.read<JobBloc>().add(GetJobReadListEvent(jobList[i].id??0));
                                   PersistentNavBarNavigator.pushNewScreen(
                                     context,

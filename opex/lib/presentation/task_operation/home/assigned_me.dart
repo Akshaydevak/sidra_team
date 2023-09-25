@@ -150,7 +150,7 @@ class _AssignedByMeState extends State<AssignedByMe> {
                                 onTap: () {
                                   // Variable.jobReadId=jobList[i].id??0;
                                   // print("HHH${Variable.jobReadId}");
-                                  context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','',''));
+                                  context.read<TaskBloc>().add(GetTaskListEvent(jobList[i].id,'','','',false,'',''));
                                   context.read<JobBloc>().add(GetJobReadListEvent(jobList[i].id??0));
                                   PersistentNavBarNavigator.pushNewScreen(
                                     context,

@@ -155,7 +155,7 @@ class _TaskTitleState extends State<TaskTitle> {
         if (widget.isReporter == true) {
           context
               .read<TaskBloc>()
-              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
           context
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
@@ -163,7 +163,7 @@ class _TaskTitleState extends State<TaskTitle> {
         } else {
           context
               .read<TaskBloc>()
-              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
           context
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
@@ -319,7 +319,7 @@ class _TaskTitleState extends State<TaskTitle> {
                     int.tryParse(getTaskRead?.jobId.toString() ?? ""),
                     '',
                     '',
-                    ''));
+                    '',false,'',''));
                 Navigator.pop(context);
               }
             },
@@ -409,7 +409,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 Navigator.pop(context);
                 context
                     .read<TaskBloc>()
-                    .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+                    .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
               }
             },
           ),
@@ -426,7 +426,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 if (widget.isReporter == true) {
                   context
                       .read<TaskBloc>()
-                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
@@ -434,7 +434,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 } else if (widget.isReporter == false) {
                   context
                       .read<TaskBloc>()
-                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', ''));
+                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
