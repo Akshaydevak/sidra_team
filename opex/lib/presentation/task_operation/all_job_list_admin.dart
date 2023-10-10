@@ -14,6 +14,7 @@ import '../../common_widgets/custom_checkbox.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import '../order_app/order_svg.dart';
 import 'create/create_svg.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_model/employee_model.dart';
@@ -115,6 +116,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
           // ):
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
+
               if (state is GetAllJobsListLoading) {
                 return LottieLoader();
               }
@@ -124,14 +126,82 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                 print("hereeee open $open");
                 nextUrl = state.nextPageUrl ?? "";
                 prevUrl = state.prevPageUrl ?? "";
-                return jobList.isEmpty?Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.center,
-                  height: h / 2,
-                  child: SvgPicture.string(
-                    TaskSvg().nolistSvg,
-                    height: h / 4.5,
-                  ),
+                return jobList.isEmpty?Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total ${jobList.length} Jobs",
+                              style: GoogleFonts.roboto(
+                                color: ColorPalette.black,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                _showModalBottomAdditionalRole(priorityFilter,statusFilter,reportingPersonFilter);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Color(0xff086DB5).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(4)
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Filter",
+                                      style: GoogleFonts.roboto(
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 28,
+                                        // fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8,),
+                                    SvgPicture.string(TaskSvg().filterSvg),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Row(
+                            //   children: [
+                            //
+                            //     Container(
+                            //         width: 37,
+                            //         height: 37,
+                            //         padding: EdgeInsets.all(8),
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.circular(5),
+                            //           border: Border.all(
+                            //             color: Color(0xffe6ecf0), width: 1,),
+                            //           boxShadow: const [
+                            //             BoxShadow(
+                            //               color: Color(0x05000000),
+                            //               blurRadius: 8,
+                            //               offset: Offset(1, 1),
+                            //             ),
+                            //           ],
+                            //           color: Colors.white,
+                            //         ),
+                            //         child: SvgPicture.string(TaskSvg().moreTaskIcon))
+                            //   ],
+                            // ),
+                          ]),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 10),
+                      alignment: Alignment.center,
+                      height: h / 2,
+                      child: SvgPicture.string(
+                        TaskSvg().nolistSvg,
+                        height: h / 4.5,
+                      ),
+                    ),
+                  ],
                 ):Container(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -305,6 +375,9 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
     );
   }
   _showModalBottomAdditionalRole(String? type,String? statusType,String empCode) {
+    String newStatus='';
+    String newPriority='';
+    String newReportibg='';
     List<String> status=['Not Initiated','Started','Completed','Pending'];
     List<String> priority=['Low','Medium','High'];
     showModalBottomSheet(
@@ -321,6 +394,8 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
               ? 400
               : w1;
           var h=MediaQuery.of(context).size.height;
+          newPriority=priorityFilter;
+          newReportibg=reportingPersonFilter;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -381,82 +456,82 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Task Status",
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.black,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          SizedBox(height: 10,),
-                                          Column(
-                                            children: [
-
-                                              Container(
-                                                width:w,
-                                                child: GridView.builder(
-                                                    shrinkWrap: true,
-                                                    // scrollDirection: Axis.horizontal,
-                                                    physics: NeverScrollableScrollPhysics(),
-                                                    gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                        childAspectRatio: 4,
-                                                        crossAxisCount: 2,
-                                                        mainAxisSpacing: 10,
-                                                        crossAxisSpacing: 10),
-                                                    itemBuilder: (BuildContext context, int i) {
-                                                      return GestureDetector(
-                                                        onTap: () {
-                                                          changeTappedTile(i);
-
-
-                                                          statusFilter=status[i];
-                                                          onRefreash();
-                                                          // Navigator.pop(context);
-                                                          setState(() {});
-                                                        },
-                                                        child: Container(
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: 16, vertical: 10),
-                                                          color: statusType ==
-                                                              status[i]
-                                                              ? ColorPalette.cardBackground
-                                                              : ColorPalette.white,
-                                                          child: Row(
-                                                            children: [
-                                                              statusType == status[i]
-                                                                  ? SvgPicture.string(
-                                                                HomeSvg()
-                                                                    .radioButtonActive,
-                                                              )
-                                                                  : SvgPicture.string(
-                                                                  CreateSvg()
-                                                                      .radioInActiveButton),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Text(
-                                                                status[i] ??
-                                                                    "",
-                                                                style: GoogleFonts.roboto(
-                                                                  color: Colors.black,
-                                                                  fontSize: w / 24,
-                                                                  // fontWeight: FontWeight.w500,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    itemCount: status.length),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 5,),
-                                          Divider(height: 2,indent: 10,color: Colors.grey,),
-                                          SizedBox(height: 5,),
+                                          // Text(
+                                          //   "Task Status",
+                                          //   style: GoogleFonts.roboto(
+                                          //     color: Colors.black,
+                                          //     fontSize: w / 24,
+                                          //     fontWeight: FontWeight.w500,
+                                          //   ),
+                                          // ),
+                                          // SizedBox(height: 10,),
+                                          // Column(
+                                          //   children: [
+                                          //
+                                          //     Container(
+                                          //       width:w1,
+                                          //       child: GridView.builder(
+                                          //           shrinkWrap: true,
+                                          //           // scrollDirection: Axis.horizontal,
+                                          //           physics: NeverScrollableScrollPhysics(),
+                                          //           gridDelegate:
+                                          //           SliverGridDelegateWithFixedCrossAxisCount(
+                                          //               childAspectRatio: w1>700?6:4,
+                                          //               crossAxisCount: w1>700?3:2,
+                                          //               mainAxisSpacing: 10,
+                                          //               crossAxisSpacing: 10),
+                                          //           itemBuilder: (BuildContext context, int i) {
+                                          //             return GestureDetector(
+                                          //               onTap: () {
+                                          //                 changeTappedTile(i);
+                                          //
+                                          //
+                                          //                 newStatus=status[i];
+                                          //                 onRefreash();
+                                          //                 // Navigator.pop(context);
+                                          //                 setState(() {});
+                                          //               },
+                                          //               child: Container(
+                                          //                 padding: EdgeInsets.symmetric(
+                                          //                     horizontal: 16, vertical: 10),
+                                          //                 color: newStatus ==
+                                          //                     status[i]
+                                          //                     ? ColorPalette.cardBackground
+                                          //                     : ColorPalette.white,
+                                          //                 child: Row(
+                                          //                   children: [
+                                          //                     newStatus == status[i]
+                                          //                         ? SvgPicture.string(
+                                          //                       HomeSvg()
+                                          //                           .radioButtonActive,
+                                          //                     )
+                                          //                         : SvgPicture.string(
+                                          //                         CreateSvg()
+                                          //                             .radioInActiveButton),
+                                          //                     const SizedBox(
+                                          //                       width: 10,
+                                          //                     ),
+                                          //                     Text(
+                                          //                       status[i] ??
+                                          //                           "",
+                                          //                       style: GoogleFonts.roboto(
+                                          //                         color: Colors.black,
+                                          //                         fontSize: w / 24,
+                                          //                         // fontWeight: FontWeight.w500,
+                                          //                       ),
+                                          //                     )
+                                          //                   ],
+                                          //                 ),
+                                          //               ),
+                                          //             );
+                                          //           },
+                                          //           itemCount: status.length),
+                                          //     ),
+                                          //   ],
+                                          // ),
+                                          // SizedBox(height: 5,),
+                                          // Divider(height: 2,indent: 10,color: Colors.grey,),
+                                          // SizedBox(height: 5,),
                                           Text(
                                             "Reporting Person",
                                             style: GoogleFonts.roboto(
@@ -467,7 +542,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                           ),
                                           SizedBox(height: 10,),
                                           Container(
-                                            width: w,
+                                            width: w1,
                                             // height: h / 2.5,
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -485,7 +560,49 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                               ],
                                               color: Colors.white,
                                             ),
-                                            child: ListView.separated(
+                                            child:
+                                            // ListView.separated(
+                                            //     padding:
+                                            //     EdgeInsets.symmetric(horizontal: 16),
+                                            //     physics: ScrollPhysics(),
+                                            //     shrinkWrap: true,
+                                            //     itemBuilder: (context, index) =>
+                                            //         GestureDetector(
+                                            //           onTap: () {
+                                            //             reportingPersonFilter=employee[index].userCode??"";
+                                            //                         print("code user$reportingPersonFilter");
+                                            //                         setState((){});
+                                            //             // onRefresh();
+                                            //             // Navigator.pop(context);
+                                            //           },
+                                            //           child: Row(
+                                            //             mainAxisAlignment:
+                                            //             MainAxisAlignment.start,
+                                            //             crossAxisAlignment:
+                                            //             CrossAxisAlignment.center,
+                                            //             children: [
+                                            //               empCode == employee[index].code
+                                            //                   ? Container(
+                                            //                 // padding: EdgeInsets.all(10),
+                                            //                   child: SvgPicture.string(
+                                            //                       OrderSvg()
+                                            //                           .checkBoxActiveIcon))
+                                            //                   : SvgPicture.string(
+                                            //                 OrderSvg().checkBoxIcon,
+                                            //               ),
+                                            //               SizedBox(
+                                            //                 width: 10,
+                                            //               ),
+                                            //               Text(employee?[index].fname ?? "")
+                                            //             ],
+                                            //           ),
+                                            //         ),
+                                            //     separatorBuilder: (context, index) =>
+                                            //         SizedBox(
+                                            //           height: 10,
+                                            //         ),
+                                            //     itemCount: employee!.length)
+                                            ListView.separated(
                                                 primary: true,
                                                 shrinkWrap: true,
                                                 physics:
@@ -493,17 +610,26 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                 itemBuilder: (context, index) =>
                                                     InkWell(
                                                       onTap: () {
+                                                        newReportibg=employee[index].userCode??"";
                                                         reportingPersonFilter=employee[index].userCode??"";
                                                         print("code user$reportingPersonFilter");
                                                         setState((){});
+                                                        onRefreash();
                                                       },
                                                       child:
-                                                        Row(
+                                                      Container(
+                                                        padding: EdgeInsets.symmetric(
+                                                            horizontal: 16, vertical: 10),
+                                                        color: newReportibg ==
+                                                            employee[index].userCode
+                                                            ? ColorPalette.cardBackground
+                                                            : ColorPalette.white,
+                                                        child: Row(
                                                           children: [
-                                                            empCode == employee[index].code
+                                                            newReportibg == employee[index].userCode
                                                                 ? SvgPicture.string(
                                                               HomeSvg()
-                                                                  .radioButtonActive,
+                                                                  .radioButtonActive,width: 24,height: 24,
                                                             )
                                                                 : SvgPicture.string(
                                                                 CreateSvg()
@@ -516,12 +642,13 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                                   "",
                                                               style: GoogleFonts.roboto(
                                                                 color: Colors.black,
-                                                                fontSize: w / 24,
-                                                                // fontWeight: FontWeight.w500,
+                                                                fontSize: w / 26,
+                                                                fontWeight:newReportibg == employee[index].userCode? FontWeight.w500:FontWeight.w400,
                                                               ),
                                                             )
                                                           ],
-                                                        )
+                                                        ),
+                                                      ),
                                                       // CustomCheckBox(
                                                       //   key: UniqueKey(),
                                                       //   value: true,
@@ -557,11 +684,11 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                       // ),
                                                     ),
                                                 separatorBuilder:
-                                                    (context, index) => SizedBox(height: 5,),
+                                                    (context, index) => Container(height: 1,width: w1,color: Colors.grey.withOpacity(0.2),),
                                                 itemCount:
                                                 employee.length),
                                           ),
-                                          SizedBox(height: 15,),
+                                          SizedBox(height: 30,),
                                           Text(
                                             "Task Priority",
                                             style: GoogleFonts.roboto(
@@ -573,7 +700,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                           SizedBox(height: 10,),
 
                                           Container(
-                                            width: w,
+                                            width: w1,
                                             // height: h / 2.5,
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -598,6 +725,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                         changeTappedTile(index);
 
 
+                                                        newPriority=priority[index];
                                                         priorityFilter=priority[index];
                                                         onRefreash();
                                                         // Navigator.pop(context);
@@ -605,17 +733,17 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                       },
                                                       child: Container(
                                                         padding: EdgeInsets.symmetric(
-                                                            horizontal: 16, vertical: 5),
-                                                        color: type ==
+                                                            horizontal: 16, vertical: 10),
+                                                        color: newPriority ==
                                                             priority[index]
                                                             ? ColorPalette.cardBackground
                                                             : ColorPalette.white,
                                                         child: Row(
                                                           children: [
-                                                            type == priority[index]
+                                                            newPriority == priority[index]
                                                                 ? SvgPicture.string(
                                                               HomeSvg()
-                                                                  .radioButtonActive,
+                                                                  .radioButtonActive,width: 24,height: 24
                                                             )
                                                                 : SvgPicture.string(
                                                                 CreateSvg()
@@ -628,7 +756,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                                   "",
                                                               style: GoogleFonts.roboto(
                                                                 color: Colors.black,
-                                                                fontSize: w / 24,
+                                                                fontSize: w / 26,
                                                                 // fontWeight: FontWeight.w500,
                                                               ),
                                                             )
@@ -637,7 +765,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                                       ),
                                                     ),
                                                 separatorBuilder:
-                                                    (context, index) => SizedBox(height: 5,),
+                                                    (context, index) => Container(height: 1,width: w1,color: Colors.grey.withOpacity(0.2),),
                                                 itemCount:
                                                 priority.length),
                                           ),
@@ -654,15 +782,74 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                       ],
                     ),
                     Positioned(
+                      right: 0,
+                      top: 50,
+                      left: w1/1.1,
+                      child: newReportibg==""&&newPriority==""?
+                      GestureDetector(
+                        onTap: (){
+                          // priorityFilter='';
+                          // reportingPersonFilter='';
+                          // context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',false,"","",""));
+                          // Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Clear All",
+                          style: GoogleFonts.roboto(
+                            color: ColorPalette.inactiveGrey,
+                            fontSize: w / 28,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ):GestureDetector(
+                        onTap: (){
+                          priorityFilter='';
+                          reportingPersonFilter='';
+                          context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',false,"","",""));
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Clear All",
+                          style: GoogleFonts.roboto(
+                            color: ColorPalette.primary,
+                            fontSize: w / 28,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
                       bottom: 0,
                       left: 0,
                       right: 0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                        child: GradientButton(
+                        child: newReportibg==""&&newPriority==""?GradientButton(
+                            color: ColorPalette.inactiveGrey,
+                            onPressed: () {
+                              // context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',true,newStatus,newPriority,newReportibg));
+                              // Navigator.pop(context);
+                            },
+                            gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  ColorPalette.inactiveGrey,
+                                  ColorPalette.inactiveGrey
+                                ]),
+                            child: Text(
+                              "View Result",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )):
+                            GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
-                              context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',true,statusFilter,priorityFilter,reportingPersonFilter));
+                              context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',true,newStatus,newPriority,newReportibg));
                               Navigator.pop(context);
                             },
                             gradient: const LinearGradient(
@@ -673,7 +860,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                   ColorPalette.primary
                                 ]),
                             child: Text(
-                              "Done",
+                              "View Result",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.roboto(
                                 color: Colors.white,

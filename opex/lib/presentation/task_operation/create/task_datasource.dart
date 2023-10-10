@@ -125,7 +125,7 @@ class TaskDataSource {
       api=prev??"";
     }
     else if(filter==true){
-      api="${ClusterUrls.adminAllJobListUrl}?creator=$reportingPersonFilter&reporter=$reportingPersonFilter&priority=$priority&status=$status";
+      api="${ClusterUrls.adminAllJobListUrl}?creator=&reporter=$reportingPersonFilter&priority=$priority&status=$status";
     }
     else{
       api = search!.isNotEmpty

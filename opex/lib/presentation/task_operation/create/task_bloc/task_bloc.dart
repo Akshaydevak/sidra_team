@@ -360,7 +360,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) async* {
     yield GetTaskListLoading();
     final dataResponse = await _taskRepo.getTaskList(search,next,prev,id,filter,status,priority);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null ) {
       yield GetTaskListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",
@@ -377,7 +377,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) async* {
     yield GetAllJobsListLoading();
     final dataResponse = await _taskRepo.getAllJobsList(search,next,prev,filter,status,priority,reportingPersonFilter);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null) {
       yield GetAllJobsListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",

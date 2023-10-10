@@ -42,7 +42,7 @@ class TaskRepo {
   Future<PaginatedResponse> getTaskList(String? search,String? next,String? prev,int? id,bool? filter,String? status,String? priority) async {
     final apiResponse = await _dataSource.getTaskList(search,next,prev,id,filter,status,priority);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data!= null ) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 
@@ -66,7 +66,7 @@ class TaskRepo {
   Future<PaginatedResponse> getAllJobsList(String? search,String? next,String? prev,bool? filter,String? status,String? priority,String? reportingPersonFilter) async {
     final apiResponse = await _dataSource.getAllJobsList(search,next,prev,filter,status,priority,reportingPersonFilter);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data!= null ) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 
