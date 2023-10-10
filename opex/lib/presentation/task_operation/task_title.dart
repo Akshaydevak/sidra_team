@@ -147,8 +147,11 @@ class _TaskTitleState extends State<TaskTitle> {
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         print("popScope");
@@ -683,7 +686,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     height: 5,
                                   ),
                                   Container(
-                                    width: w,
+                                    width: w1,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(4),
                                       border: Border.all(
@@ -753,7 +756,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   authentication.isAdmin ||
                                           authentication.isAssociateAdmin
                                       ? Container(
-                                          width: w,
+                                          width: w1,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(4),
@@ -843,7 +846,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             getTaskRead?.assigningType ==
                                                     "Individual"
                                                 ? Container(
-                                                    width: w,
+                                                    width: w1,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1536,7 +1539,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 // location();
                                               },
                                               child: Container(
-                                                width: w,
+                                                width: w1,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(4),
@@ -1669,7 +1672,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 );
                                               },
                                               child: Container(
-                                                width: w,
+                                                width: w1,
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10),
@@ -1757,7 +1760,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 );
                                               },
                                               child: Container(
-                                                width: w,
+                                                width: w1,
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10),
@@ -1838,7 +1841,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 );
                                               },
                                               child: Container(
-                                                width: w,
+                                                width: w1,
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10),
@@ -1996,7 +1999,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                       );
                                     },
                                     child: Container(
-                                      width: w,
+                                      width: w1,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 10),
                                       decoration: BoxDecoration(
@@ -2075,7 +2078,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 );
                                               },
                                               child: Container(
-                                                width: w,
+                                                width: w1,
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 16,
                                                     vertical: 10),
@@ -2118,7 +2121,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     height: 5,
                                   ),
                                   Container(
-                                    width: w,
+                                    width: w1,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 10),
                                     decoration: BoxDecoration(
@@ -2363,7 +2366,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                               : _showModalBottomAdditionalRole();
                                     },
                                     child: Container(
-                                      width: w,
+                                      width: w1,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 10),
                                       decoration: BoxDecoration(

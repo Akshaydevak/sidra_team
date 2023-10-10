@@ -23,7 +23,11 @@ class TaskCard extends StatelessWidget {
     var date2 = taskList?.endDate;
     var dateTime = DateTime.parse("$date2");
     endstdDate = DateFormat('dd-MM-yyyy').format(dateTime).toString();
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
         context.read<TaskBloc>().add(GetTaskReadListEvent(taskList?.id ?? 0));
@@ -140,7 +144,7 @@ class TaskCard extends StatelessWidget {
                       children: [
                         Container(
                           width: w/2,
-                          height: 35,
+                          height: w1>700?50:35,
                           // color: Colors.red,
                           child: Text(
                             taskList?.taskName?.toString().toTitleCase() ?? "",

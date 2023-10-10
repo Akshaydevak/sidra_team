@@ -18,7 +18,11 @@ class _TaskAndOperationHomePageState extends State<TaskAndOperationHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -38,7 +42,7 @@ class _TaskAndOperationHomePageState extends State<TaskAndOperationHomePage> {
                   color: Colors.white,
                   padding: const EdgeInsets.only(top: 10),
                   child: SizedBox(
-                    width: w / 1,
+                    width: w1 / 1,
                     child:  TabBar(
                         labelColor: Colors.black,
                         indicatorColor: ColorPalette.primary,

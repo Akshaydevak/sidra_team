@@ -243,7 +243,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                 // ],
               ),
               Container(
-                width: w,
+                width: w1,
                 height: 1.50,
                 decoration: const BoxDecoration(
                   color: Color(0xb2e6e6e6),
@@ -608,7 +608,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     );
                                   },
                                   child: Container(
-                                    width: w,
+                                    width: w1,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 16),
                                     // height: 60,
@@ -656,7 +656,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     );
                                   },
                                   child: Container(
-                                    width: w,
+                                    width: w1,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 16),
                                     // height: 60,
@@ -952,7 +952,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                   child: FourCard(
                                     label: "Pinned Job",
                                     svg: TaskSvg().pinnedSvg,
-                                    
+
                                   ),
                                 ),
                                 GestureDetector(

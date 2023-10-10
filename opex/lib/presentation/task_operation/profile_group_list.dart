@@ -33,7 +33,9 @@ class _ProfileGroupListState extends State<ProfileGroupList> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: BackAppBar(label:"Groups",isAction: false,
+        child: BackAppBar(
+          label:"Groups",
+          isAction: false,
           action: authentication.isAssociateAdmin?Container():Padding(
             padding: const EdgeInsets.only(top: 0,left: 16),
             child:

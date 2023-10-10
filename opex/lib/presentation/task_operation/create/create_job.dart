@@ -183,8 +183,11 @@ class _CreateJobState extends State<CreateJob> {
 
   @override
   Widget build(BuildContext context) {
-    var w =MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -373,7 +376,7 @@ class _CreateJobState extends State<CreateJob> {
                             if (state is GetJobTypeListSuccess) {
 
                               return SizedBox(
-                                  width: w,
+                                  width: w1,
                                   height: 36,
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
@@ -439,7 +442,7 @@ class _CreateJobState extends State<CreateJob> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: w,
+                              width: w1,
                               // height: 185,
                               // padding: EdgeInsets.all(16),
                               decoration: BoxDecoration(
@@ -490,7 +493,7 @@ class _CreateJobState extends State<CreateJob> {
 
                                   Container(
                                     margin: EdgeInsets.only(left:16),
-                                    width: w,
+                                    width: w1,
                                     height: 1.50,
                                     color: ColorPalette.divider,
                                   ),
@@ -526,7 +529,7 @@ class _CreateJobState extends State<CreateJob> {
                               height: 16,
                             ),
                             Container(
-                              width: w,
+                              width: w1,
                               // height: 120,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
@@ -835,7 +838,7 @@ class _CreateJobState extends State<CreateJob> {
                                           relatedJobId=joblist?[i].id??0;
                                         },
                                         child:Container(
-                                          width: w/3,
+                                          width: w1/3,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(4),
                                             border: selectInstat==i?Border.all(color: ColorPalette.primary, width: 1, ):
@@ -867,7 +870,7 @@ class _CreateJobState extends State<CreateJob> {
                                   },
                                 )),
                             Container(
-                              width: w,
+                              width: w1,
                               // height: 120,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
@@ -1161,7 +1164,7 @@ class _CreateJobState extends State<CreateJob> {
                             });
                           },
                           child: Container(
-                            width: w,
+                            width: w1,
                             padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
@@ -1341,8 +1344,11 @@ class _CreateJobState extends State<CreateJob> {
         context: context,
         useRootNavigator: true,
         builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          var w = MediaQuery.of(context).size.width;
+          double w1 = MediaQuery.of(context).size.width ;
+          double w = w1> 700
+              ? 400
+              : w1;
+          var h=MediaQuery.of(context).size.height;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(

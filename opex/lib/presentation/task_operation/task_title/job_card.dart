@@ -25,7 +25,10 @@ class JobCard extends StatelessWidget {
     var date = joblist?.endDate;
     var dateTime =  DateTime.parse("$date");
     endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return GestureDetector(
       onTap: (){
         print("object");
@@ -42,7 +45,7 @@ class JobCard extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            width: w,
+            width: w1,
 
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(

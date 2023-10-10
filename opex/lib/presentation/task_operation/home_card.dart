@@ -16,7 +16,7 @@ class HomeCard extends StatelessWidget {
         : w1;
     return Container(
       padding: EdgeInsets.all(10),
-      width: w1>700?w1/2.1:w1/3.4,
+      width: w1>700?w1/3.2:w1/3.4,
       // height: 90,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

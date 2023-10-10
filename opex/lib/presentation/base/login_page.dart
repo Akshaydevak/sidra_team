@@ -4,20 +4,21 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
-// import 'package:cluster/presentation/authentication/authenticate.dart';
-// import 'package:cluster/presentation/authentication/bloc/auth_bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/dashboard.dart';
+import 'package:cluster/presentation/base/register_new_user.dart';
 import 'package:cluster/presentation/order_app/screens/all_order_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/phonenum_field.dart';
+import '../dashboard_screen/home_screen/home_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -37,23 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
     var h = MediaQuery.of(context).size.height;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async{
-        print("log state$state");
-
-
         if (state is LoginSuccess) {
           _isLoading=false;
 
           String? token;
-          //
-          // print("shifas${state.logData?.email}");
-          // final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          // sharedPreferences.setString('token',state.logData?.token??"");
-          // sharedPreferences.setString('code',state.logData?.employeeCode??"");
-          // sharedPreferences.setString('legalEntry',state.logData?.legalEntry??"");
-          // sharedPreferences.setString('organizationCode',state.logData?.orgCode??"");
-          // token = sharedPreferences.getString('token');
-
-          print("token${authentication.authenticatedUser.token}");
+               print("token${authentication.authenticatedUser.token}");
           PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: DashBoard(),
@@ -101,12 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          SvgPicture.string(HomeSvg().teamsIcon),
 
                           Text(
-                            "Login",
+                            "Login to account",
                             style: GoogleFonts.inter(
                               color: Colors.black,
-                              fontSize: w/11,
+                              fontSize: w/14,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -123,21 +113,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(
                             height: 30,
                           ),
-                          TextFormReusable(
-                            label: "Email",
-                            hint: "eg.example@email.com",
+                          TextFormReusableNoLabel(
+                            hint: "Enter business/organization email",
                             controller: emailController,
                           ),
-                          SizedBox(height: 16,),
+                          SizedBox(height: 5,),
 
-                          TextFormReusable(
-                              label: "Password",
-                              hint: "atleast 8 characters",
+                          TextFormReusableNoLabel(
+                              hint: "Enter password",
                               controller: passwordController),
-                          SizedBox(height: 16,),
-                          TextFormReusable(
-                              label: "Employee Code",
-                              hint: "eg.EMPY000",
+                          SizedBox(height: 5,),
+                          TextFormReusableNoLabel(
+                              hint: "Director/Employee code",
                               onchange: (bb){
                                 codeController.value = codeController.value.copyWith(
                                   text: bb.toUpperCase(),
@@ -147,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               controller: codeController),
                           // PhoneWidget(),
                           SizedBox(
-                            height:40,
+                            height:30,
                           ),
                           GradientButton(
                               onPressed: () {
@@ -184,55 +171,77 @@ class _LoginScreenState extends State<LoginScreen> {
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.roboto(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: w/24,
                                   fontWeight: FontWeight.w600,
                                 ),
                               )),
                           SizedBox(
                             height: 30,
                           ),
+                          // GestureDetector(
+                          //   onTap: (){
+                          //        PersistentNavBarNavigator.pushNewScreen(
+                          //       context,
+                          //       screen: RegisterNewUser(),
+                          //       withNavBar: true,
+                          //       // OPTIONAL VALUE. True by default.
+                          //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                          //     );
+                          //   },
+                          //   child: Text("Register your organization",
+                          //   style: GoogleFonts.roboto(
+                          //     fontSize: w/26,
+                          //     color: ColorPalette.primary
+                          //   ),),
+                          // )
 
                         ],
                       ),
                       Positioned(
                         bottom: 0,
                         child: Container(
-                          width: w/1.14,
+                          width: w/1.2,
                           child: RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
-                                  text: 'By clicking, I accept the ',
+                                  text: 'By logging in, ',
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
-                                    fontSize: w / 27,
+                                    fontSize: w / 28,
                                     height: 1.5,
                                     fontWeight: FontWeight.normal,
                                   ),
                                   children: [
                                     TextSpan(
-                                      text: 'Terms & Condition ',
+                                      text: 'You accept to our',
                                       style: GoogleFonts.roboto(
                                         color: ColorPalette.black,
-                                        decoration: TextDecoration.underline,
-                                        fontSize: w / 27,
+                                        fontSize: w / 28,
                                         height: 1.5,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
+                                    TextSpan(
+                                        text: 'Terms \n',
+                                        style: GoogleFonts.roboto(
+                                          color: ColorPalette.primary,
+                                          fontSize: w / 28,
+                                          height: 1.5,
+                                          fontWeight: FontWeight.w500,
+                                        )),
                                     TextSpan(
                                         text: 'and ',
                                         style: GoogleFonts.roboto(
                                           color: Colors.black,
-                                          fontSize: w / 27,
+                                          fontSize: w / 28,
                                           height: 1.5,
                                           fontWeight: FontWeight.normal,
                                         )),
                                     TextSpan(
                                       text: 'Privacy Policy',
                                       style: GoogleFonts.roboto(
-                                        color: ColorPalette.black,
-                                        decoration: TextDecoration.underline,
-                                        fontSize: w / 27,
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 28,
                                         height: 1.5,
                                         fontWeight: FontWeight.w500,
                                       ),

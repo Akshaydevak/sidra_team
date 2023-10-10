@@ -63,8 +63,8 @@ class TaskRepo {
   }
 
   //jobs
-  Future<PaginatedResponse> getAllJobsList(String? search,String? next,String? prev) async {
-    final apiResponse = await _dataSource.getAllJobsList(search,next,prev);
+  Future<PaginatedResponse> getAllJobsList(String? search,String? next,String? prev,bool? filter,String? status,String? priority,String? reportingPersonFilter) async {
+    final apiResponse = await _dataSource.getAllJobsList(search,next,prev,filter,status,priority,reportingPersonFilter);
     try {
       if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,

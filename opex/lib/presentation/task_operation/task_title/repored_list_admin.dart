@@ -30,8 +30,11 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: () async {
         // context.read<JobBloc>().add(GetNewJobListEvent('','',''));
@@ -63,7 +66,7 @@ class _ReportedListAdminState extends State<ReportedListAdmin> {
                     // height: h/1.3,
                     padding:
                         const EdgeInsets.only(left: 16, right: 16, top: 16),
-                    width: w,
+                    width: w1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

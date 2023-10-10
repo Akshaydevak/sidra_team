@@ -114,7 +114,7 @@ class TaskDataSource {
   ///jobs
   ///
   Future<PaginatedResponse<List<GetJobList>>> getAllJobsList(
-      String? search,String? next,String? prev) async {
+      String? search,String? next,String? prev,bool? filter,String? status,String? priority,reportingPersonFilter) async {
     print("URL Task Under Job List:${ClusterUrls.adminAllJobListUrl}");
     List<GetJobList> nationalityModel = [];
     String api="";
@@ -124,11 +124,15 @@ class TaskDataSource {
     else if(prev!=""){
       api=prev??"";
     }
+    else if(filter==true){
+      api="${ClusterUrls.adminAllJobListUrl}?creator=$reportingPersonFilter&reporter=$reportingPersonFilter&priority=$priority&status=$status";
+    }
     else{
       api = search!.isNotEmpty
           ? "${ClusterUrls.adminAllJobListUrl}?name=$search"
           : ClusterUrls.adminAllJobListUrl;
     }
+    print("ALLL JOB API$api");
 
 
     final response = await client.get(api,

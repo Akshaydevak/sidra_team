@@ -53,7 +53,11 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
   GetEmployeeList? readEmployee;
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return MultiBlocListener(
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(

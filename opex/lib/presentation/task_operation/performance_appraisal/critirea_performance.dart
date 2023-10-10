@@ -66,8 +66,11 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
   }
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return MultiBlocListener(
       listeners: [
         BlocListener<TaskBloc, TaskState>(
@@ -244,7 +247,7 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                         return Column(
                           children: [
                             Container(
-                              width: w,
+                              width: w1,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
                               decoration: BoxDecoration(
@@ -366,7 +369,7 @@ class _CritireaPerformanceState extends State<CritireaPerformance> {
                         return Column(
                           children: [
                             Container(
-                              width: w,
+                              width: w1,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
                                 // gradient: LinearGradient(

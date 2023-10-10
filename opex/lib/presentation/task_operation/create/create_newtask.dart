@@ -205,7 +205,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   bool createButton = false;
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         context
@@ -443,7 +447,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 context, typelist ?? [], taskYype);
                           },
                           child: Container(
-                            width: w,
+                            width: w1,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
@@ -489,7 +493,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           height: 5,
                         ),
                         Container(
-                          width: w,
+                          width: w1,
                           // height: 185,
                           // padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -532,7 +536,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                               ),
                               Container(
                                 margin: EdgeInsets.only(left: 16),
-                                width: w,
+                                width: w1,
                                 height: 1.50,
                                 color: ColorPalette.divider,
                               ),
@@ -563,7 +567,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           height: 15,
                         ),
                         Container(
-                          width: w,
+                          width: w1,
                           // height: 120,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
@@ -860,7 +864,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             _showModalBottomSheetPriority(PriorityLeval);
                           },
                           child: Container(
-                            width: w,
+                            width: w1,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
@@ -963,7 +967,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   );
                           },
                           child: Container(
-                            width: w,
+                            width: w1,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
@@ -1051,7 +1055,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         //           widget.editTask == false ? false : true),
                         // ),
                         Container(
-                          width: w,
+                          width: w1,
                           // height: 185,
                           // padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -1094,7 +1098,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                               ),
                               Container(
                                 margin: EdgeInsets.only(left: 16),
-                                width: w,
+                                width: w1,
                                 height: 1.50,
                                 color: ColorPalette.divider,
                               ),
@@ -1144,7 +1148,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       );
                                     },
                                     child: Container(
-                                      width: w,
+                                      width: w1,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 14, vertical: 14),
                                       decoration: BoxDecoration(
@@ -1227,7 +1231,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       );
                                     },
                                     child: Container(
-                                      width: w,
+                                      width: w1,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 10),
                                       decoration: BoxDecoration(
@@ -1809,8 +1813,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         isScrollControlled: true,
         context: context,
         builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          var w = MediaQuery.of(context).size.width;
+          double w1 = MediaQuery.of(context).size.width ;
+          double w = w1> 700
+              ? 400
+              : w1;
+          var h=MediaQuery.of(context).size.height;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(

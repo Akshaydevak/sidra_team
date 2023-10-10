@@ -3,14 +3,20 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../../common_widgets/custom_checkbox.dart';
+import '../../common_widgets/gradient_button.dart';
+import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'create/create_svg.dart';
 import 'create/task_bloc/task_bloc.dart';
+import 'employee_model/employee_model.dart';
 import 'home/model/joblist_model.dart';
 import 'job_title.dart';
 
@@ -25,9 +31,13 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
   List<GetJobList> jobList = [];
   String nextUrl = "";
   String prevUrl = "";
+  String priorityFilter="";
+  String statusFilter="";
+  String reportingPersonFilter="";
   @override
   void initState() {
-    context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+    context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,"",'',''));
+    context.read<JobBloc>().add(GetReportingPersonListEvent());
     super.initState();
   }
   bool isExpanded=false;
@@ -43,13 +53,28 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
   List<bool> open=[];
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   GlobalKey<RefreshIndicatorState>();
+  int tappedTile = 0;
+  void changeTappedTile(int val) {
+    tappedTile = val;
+
+    setState(() {});
+  }
+  onRefreash(){
+    setState(() {
+
+    });
+  }
+  List<GetEmployeeList> employee = [];
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: ()async{
-        context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+        context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
         // context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
         return Future<void>.delayed(const Duration(seconds: 3));
       },
@@ -58,7 +83,19 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
       // backgroundColor: Colors.transparent,
 
       strokeWidth: 2.0,
-      child: Scaffold(
+      child:     BlocListener<JobBloc, JobState>(
+        listener: (context, state) {
+          if (state is GetReportingPersonListLoading) {
+            // customCupertinoLoading();
+          }
+          if (state is GetReportingPersonListSuccess) {
+            employee = state.employeeList;
+
+            print("sucsess${state.employeeList}");
+            setState(() {});
+          }
+        },
+  child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(
@@ -108,6 +145,32 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                 color: ColorPalette.black,
                                 fontSize: w / 22,
                                 fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                _showModalBottomAdditionalRole(priorityFilter,statusFilter,reportingPersonFilter);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Color(0xff086DB5).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(4)
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Filter",
+                                      style: GoogleFonts.roboto(
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 28,
+                                        // fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8,),
+                                    SvgPicture.string(TaskSvg().filterSvg),
+                                  ],
+                                ),
                               ),
                             ),
                             // Row(
@@ -238,7 +301,394 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
           )),
         ),
       ),
+),
     );
+  }
+  _showModalBottomAdditionalRole(String? type,String? statusType,String empCode) {
+    List<String> status=['Not Initiated','Started','Completed','Pending'];
+    List<String> priority=['Low','Medium','High'];
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          double w1 = MediaQuery.of(context).size.width ;
+          double w = w1> 700
+              ? 400
+              : w1;
+          var h=MediaQuery.of(context).size.height;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 1.7,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Task Filter",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        SizedBox(
+                          height: h/2.5,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Task Status",
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.black,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10,),
+                                          Column(
+                                            children: [
+
+                                              Container(
+                                                width:w,
+                                                child: GridView.builder(
+                                                    shrinkWrap: true,
+                                                    // scrollDirection: Axis.horizontal,
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        childAspectRatio: 4,
+                                                        crossAxisCount: 2,
+                                                        mainAxisSpacing: 10,
+                                                        crossAxisSpacing: 10),
+                                                    itemBuilder: (BuildContext context, int i) {
+                                                      return GestureDetector(
+                                                        onTap: () {
+                                                          changeTappedTile(i);
+
+
+                                                          statusFilter=status[i];
+                                                          onRefreash();
+                                                          // Navigator.pop(context);
+                                                          setState(() {});
+                                                        },
+                                                        child: Container(
+                                                          padding: EdgeInsets.symmetric(
+                                                              horizontal: 16, vertical: 10),
+                                                          color: statusType ==
+                                                              status[i]
+                                                              ? ColorPalette.cardBackground
+                                                              : ColorPalette.white,
+                                                          child: Row(
+                                                            children: [
+                                                              statusType == status[i]
+                                                                  ? SvgPicture.string(
+                                                                HomeSvg()
+                                                                    .radioButtonActive,
+                                                              )
+                                                                  : SvgPicture.string(
+                                                                  CreateSvg()
+                                                                      .radioInActiveButton),
+                                                              const SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              Text(
+                                                                status[i] ??
+                                                                    "",
+                                                                style: GoogleFonts.roboto(
+                                                                  color: Colors.black,
+                                                                  fontSize: w / 24,
+                                                                  // fontWeight: FontWeight.w500,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    itemCount: status.length),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Divider(height: 2,indent: 10,color: Colors.grey,),
+                                          SizedBox(height: 5,),
+                                          Text(
+                                            "Reporting Person",
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.black,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10,),
+                                          Container(
+                                            width: w,
+                                            // height: h / 2.5,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                              // border: Border.all(
+                                              //   color: Color(0xffe6ecf0),
+                                              //   width: 1,
+                                              // ),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0x05000000),
+                                                  blurRadius: 8,
+                                                  offset: Offset(1, 1),
+                                                ),
+                                              ],
+                                              color: Colors.white,
+                                            ),
+                                            child: ListView.separated(
+                                                primary: true,
+                                                shrinkWrap: true,
+                                                physics:
+                                                NeverScrollableScrollPhysics(),
+                                                itemBuilder: (context, index) =>
+                                                    InkWell(
+                                                      onTap: () {
+                                                        reportingPersonFilter=employee[index].userCode??"";
+                                                        print("code user$reportingPersonFilter");
+                                                        setState((){});
+                                                      },
+                                                      child:
+                                                        Row(
+                                                          children: [
+                                                            empCode == employee[index].code
+                                                                ? SvgPicture.string(
+                                                              HomeSvg()
+                                                                  .radioButtonActive,
+                                                            )
+                                                                : SvgPicture.string(
+                                                                CreateSvg()
+                                                                    .radioInActiveButton),
+                                                            const SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Text(
+                                                              employee[index].fname ??
+                                                                  "",
+                                                              style: GoogleFonts.roboto(
+                                                                color: Colors.black,
+                                                                fontSize: w / 24,
+                                                                // fontWeight: FontWeight.w500,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      // CustomCheckBox(
+                                                      //   key: UniqueKey(),
+                                                      //   value: true,
+                                                      //   // passNameList.contains(roleList[index].role),
+                                                      //   onChange: (p0) {
+                                                      //     if (p0) {
+                                                      //       // passIdList.add(roleList[index].id ?? 0);
+                                                      //       // passNameList.add(roleList[index].role??"");
+                                                      //
+                                                      //     } else {
+                                                      //       // passIdList.remove(
+                                                      //       //     roleList[index].id ?? 0);
+                                                      //       // passNameList.remove(roleList[index].role??"");
+                                                      //
+                                                      //
+                                                      //     }
+                                                      //     // print("fsd$passNameList");
+                                                      //     // refresh();
+                                                      //   },
+                                                      //   text: employee[index].fname??"",
+                                                      //   widget: TextAvatar(
+                                                      //     shape: Shape.Circular,
+                                                      //     size: 35,
+                                                      //     numberLetters: 2,
+                                                      //     fontSize: w/22,
+                                                      //     textColor: Colors.white,
+                                                      //     fontWeight: FontWeight.w500,
+                                                      //     text:employee[index].fname ,
+                                                      //   ),
+                                                      //   isWidget: true,
+                                                      //
+                                                      //
+                                                      // ),
+                                                    ),
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(height: 5,),
+                                                itemCount:
+                                                employee.length),
+                                          ),
+                                          SizedBox(height: 15,),
+                                          Text(
+                                            "Task Priority",
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.black,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10,),
+
+                                          Container(
+                                            width: w,
+                                            // height: h / 2.5,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0x05000000),
+                                                  blurRadius: 8,
+                                                  offset: Offset(1, 1),
+                                                ),
+                                              ],
+                                              color: Colors.white,
+                                            ),
+                                            child: ListView.separated(
+                                                primary: true,
+                                                shrinkWrap: true,
+                                                physics:
+                                                NeverScrollableScrollPhysics(),
+                                                itemBuilder: (context, index) =>
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        changeTappedTile(index);
+
+
+                                                        priorityFilter=priority[index];
+                                                        onRefreash();
+                                                        // Navigator.pop(context);
+                                                        setState(() {});
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets.symmetric(
+                                                            horizontal: 16, vertical: 5),
+                                                        color: type ==
+                                                            priority[index]
+                                                            ? ColorPalette.cardBackground
+                                                            : ColorPalette.white,
+                                                        child: Row(
+                                                          children: [
+                                                            type == priority[index]
+                                                                ? SvgPicture.string(
+                                                              HomeSvg()
+                                                                  .radioButtonActive,
+                                                            )
+                                                                : SvgPicture.string(
+                                                                CreateSvg()
+                                                                    .radioInActiveButton),
+                                                            const SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Text(
+                                                              priority[index] ??
+                                                                  "",
+                                                              style: GoogleFonts.roboto(
+                                                                color: Colors.black,
+                                                                fontSize: w / 24,
+                                                                // fontWeight: FontWeight.w500,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(height: 5,),
+                                                itemCount:
+                                                priority.length),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        child: GradientButton(
+                            color: ColorPalette.primary,
+                            onPressed: () {
+                              context.read<TaskBloc>().add( GetAllJobsListEvent('', '', '',true,statusFilter,priorityFilter,reportingPersonFilter));
+                              Navigator.pop(context);
+                            },
+                            gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  ColorPalette.primary,
+                                  ColorPalette.primary
+                                ]),
+                            child: Text(
+                              "Done",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 }
 
@@ -290,7 +740,11 @@ class _CardExpanedState extends State<CardExpaned> {
     startTime2 = twentyFourHourFormat.format(dateTimet);
     endTime=twelveHourFormat.format(dateTimett);
     endTime2=twentyFourHourFormat.format(dateTimett);
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Container(
       width: w,
       decoration: BoxDecoration(

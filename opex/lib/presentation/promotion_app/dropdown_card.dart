@@ -2,10 +2,11 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 class DropDownCard extends StatelessWidget {
-  DropDownCard({Key? key,this.label,this.onTap,this.selValue,this.isMandatory}) : super(key: key);
+  DropDownCard({Key? key,this.label,this.onTap,this.selValue,this.isLabel,this.isMandatory}) : super(key: key);
   String? selValue,label;
   VoidCallback? onTap;
   bool? isMandatory;
+  bool? isLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class DropDownCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        isLabel==false?Row(
           children: [
             Text(
               label?? "Select Segment",
@@ -32,7 +33,7 @@ class DropDownCard extends StatelessWidget {
               child: Text(" *",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w900),),
             ):Container()
           ],
-        ),
+        ):Container(),
         const SizedBox(height: 5,),
         GestureDetector(
           onTap: onTap ,

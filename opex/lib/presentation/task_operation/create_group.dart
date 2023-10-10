@@ -75,8 +75,11 @@ class _CreateGroupState extends State<CreateGroup> {
   @override
   Widget build(BuildContext context) {
     print("uuu$newTable");
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -131,7 +134,7 @@ class _CreateGroupState extends State<CreateGroup> {
   child:  Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: w,
+              width: w1,
               // height: 185,
               margin: EdgeInsets.symmetric(horizontal: 16,vertical: 5),
               decoration: BoxDecoration(
@@ -182,7 +185,7 @@ class _CreateGroupState extends State<CreateGroup> {
 
                   Container(
                     margin: EdgeInsets.only(left:16),
-                    width: w,
+                    width: w1,
                     height: 1.50,
                     color: ColorPalette.divider,
                   ),
@@ -259,7 +262,7 @@ class _CreateGroupState extends State<CreateGroup> {
                                   height: 10,
                                 ),
                                 Container(
-                                  width: w,
+                                  width: w1,
                                   // height: h / 2.5,
                                   // decoration: BoxDecoration(
                                   //   borderRadius:

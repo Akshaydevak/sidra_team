@@ -36,7 +36,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       yield* getAllJobsListState(
           prev: event.prev,
           next: event.next,
-          search: event.search);
+          search: event.search,
+          filter: event.filter,
+          priority: event.priority,
+          status: event.status,
+      reportingPersonFilter: event.reportingPersonFilter);
     }
     if (event is GetOrganisationPerformanceList) {
       yield* getOrganisationPerformanceList(
@@ -369,10 +373,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   //all
   Stream<TaskState> getAllJobsListState({
-    String? search,String? next,String? prev
+    String? search,String? next,String? prev,bool? filter,String? status,String? priority,String? reportingPersonFilter
   }) async* {
     yield GetAllJobsListLoading();
-    final dataResponse = await _taskRepo.getAllJobsList(search,next,prev);
+    final dataResponse = await _taskRepo.getAllJobsList(search,next,prev,filter,status,priority,reportingPersonFilter);
     if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
       yield GetAllJobsListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",

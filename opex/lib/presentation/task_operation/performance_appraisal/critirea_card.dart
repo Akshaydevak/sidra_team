@@ -18,7 +18,11 @@ class CritiriaCard extends StatefulWidget {
 class _CritiriaCardState extends State<CritiriaCard> {
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Container(
       width: w/1.1,
       padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),

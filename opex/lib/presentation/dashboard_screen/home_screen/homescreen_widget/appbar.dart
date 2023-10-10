@@ -42,7 +42,10 @@ class _AppBarState extends State<AppBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return MultiBlocListener(
       listeners:[ 
         BlocListener<TaskBloc, TaskState>(
@@ -479,7 +482,10 @@ class BackAppBar extends StatefulWidget {
 class _BackAppBarState extends State<BackAppBar> {
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Column(
       children: [
         AppBar(
@@ -545,7 +551,7 @@ class _BackAppBarState extends State<BackAppBar> {
           ],
         ),
         Container(
-          width: w,
+          width: w1,
           height: 1.50,
           decoration: const BoxDecoration(
             color: Color(0xb2e6e6e6),

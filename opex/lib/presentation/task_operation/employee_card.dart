@@ -24,7 +24,10 @@ class EmployeeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     var h=MediaQuery.of(context).size.height;
     return Container(
         // width: w,
@@ -63,7 +66,7 @@ class EmployeeCard extends StatelessWidget {
              // ),
              SizedBox(width: 8,),
              SizedBox(
-               width: w/1.4,
+               width: w1>700?w1/1.15:w1/1.4,
                child: Column(
                  mainAxisAlignment: MainAxisAlignment.start,
                  crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +75,7 @@ class EmployeeCard extends StatelessWidget {
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
                        Container(
-                         width: w/2.2,
+                         width: w1/2.2,
                          // color: Colors.yellow,
                          child: Text(
                            "${employeeList?.fname}"" ""${employeeList?.lname}",

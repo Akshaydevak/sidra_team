@@ -146,6 +146,114 @@ class _TextReusableState extends State<TextFormReusable> {
   }
 }
 
+class TextFormReusableNoLabel extends StatefulWidget {
+  String? label;
+  String? error;
+  String? hint;
+  void Function(String)? onchange;
+  TextEditingController? controller;
+  int maxLength;
+  FormFieldValidator<String>? validator;
+  bool password;
+  bool? isMandatory;
+  bool readOnly;
+  bool isError;
+  bool? numField;
+  bool? floatVal;
+  VoidCallback? onTap;
+  TextFormReusableNoLabel(
+      {Key? key,
+        this.label,
+        this.error,
+        this.isMandatory,
+        this.numField,
+        this.floatVal,
+        this.onTap,
+        this.controller,
+        this.validator,
+        this.password = false,
+        this.readOnly = false,
+        this.isError = false,
+        this.hint,
+        this.maxLength = 1,  this.onchange})
+      : super(key: key);
+
+  @override
+  State<TextFormReusableNoLabel> createState() => _TextFormReusableNoLabelState();
+}
+
+class _TextFormReusableNoLabelState extends State<TextFormReusableNoLabel> {
+  bool show = true;
+
+  @override
+  void initState() {
+    show = widget.password;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    // show = widget.password;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          readOnly: widget.readOnly,
+          onChanged: widget.onchange,
+          scrollPadding: EdgeInsets.all(10),
+          cursorColor: ColorPalette.black,
+          obscureText: show,
+          style: TextStyle(color: ColorPalette.black, fontSize: 16),
+          keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+          inputFormatters: [
+            widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+            widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+            FilteringTextInputFormatter.singleLineFormatter,
+
+          ],
+          controller: widget.controller,
+          maxLines: widget.maxLength,
+          decoration: loginInputDecoration(
+            hintText: widget.hint,
+            readOnly: widget.readOnly,
+            ('Username'),
+            suffix: widget.password
+                ? InkWell(
+                onTap: () {
+                  setState(() {
+                    show = !show;
+                  });
+                },
+                child: Container(
+                    height: 16,
+                    margin: EdgeInsets.only(right: 5, left: 5),
+                    child: show
+                        ? Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 16.0,
+                      color: Color(0xff7C7C7C),
+                    )
+                        :
+                    // SvgPicture.string(IconConstants().eyeIcon,height: 16,width: 16,):
+                    Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 16.0,
+                      color: Color(0xff7C7C7C),
+                    )))
+                : null,
+          ),
+          validator: widget.validator,
+        ),
+      ],
+    );
+  }
+}
+
 InputDecoration loginInputDecoration(
     String label, {
       String? hintText,

@@ -246,12 +246,15 @@ class _JobTitleState extends State<JobTitle> {
   }
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return WillPopScope(
         onWillPop: () async {
           if(widget.isAllJob==true){
-            context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+            context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
           }
           context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
       return true;},
@@ -336,7 +339,7 @@ class _JobTitleState extends State<JobTitle> {
                 isBack: false,
                 onTap: (){
                   if(widget.isAllJob==true){
-                    context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', ''));
+                    context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
                   }
                   context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
                   Navigator.pop(context);
@@ -476,7 +479,7 @@ class _JobTitleState extends State<JobTitle> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: w,
+                      width: w1,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
@@ -635,9 +638,11 @@ class _JobTitleState extends State<JobTitle> {
                                   // scrollDirection: Axis.horizontal,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          childAspectRatio: 1.1,
-                                          crossAxisCount: 2,
+                                          // childAspectRatio: 1.1,
+                                          // crossAxisCount: 2,
                                           mainAxisSpacing: 10,
+                                      crossAxisCount: w1 > 700 ? 3 : 2,
+                                      childAspectRatio: w1 > 700 ? 1.5 : 1.1,
                                           crossAxisSpacing: 10),
                                   itemBuilder: (BuildContext context, int i) {
                                     return InkWell(
@@ -803,7 +808,7 @@ class _JobTitleState extends State<JobTitle> {
                       height: 26,
                     ),
                     Container(
-                      width: w,
+                      width: w1,
                       // padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
@@ -903,7 +908,7 @@ class _JobTitleState extends State<JobTitle> {
                       height: 5,
                     ),
                     widget.isAllJob?Container(
-                      width: w,
+                      width: w1,
                       // padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
@@ -993,7 +998,7 @@ class _JobTitleState extends State<JobTitle> {
                         );
                       },
                       child: Container(
-                        width: w,
+                        width: w1,
                         padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
@@ -1049,7 +1054,7 @@ class _JobTitleState extends State<JobTitle> {
                         );
                       },
                       child: Container(
-                        width: w,
+                        width: w1,
                         padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
@@ -1345,7 +1350,7 @@ class _JobTitleState extends State<JobTitle> {
                             });
                       },
                       child: Container(
-                          width: w,
+                          width: w1,
                           // height: 60,
                           padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
                           decoration: BoxDecoration(
@@ -1396,8 +1401,11 @@ class _JobTitleState extends State<JobTitle> {
         isScrollControlled: true,
         context: context,
         builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          var w = MediaQuery.of(context).size.width;
+          double w1 = MediaQuery.of(context).size.width ;
+          double w = w1> 700
+              ? 400
+              : w1;
+          var h=MediaQuery.of(context).size.height;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(

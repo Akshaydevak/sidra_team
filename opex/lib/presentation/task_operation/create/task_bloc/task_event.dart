@@ -25,7 +25,11 @@ class GetAllJobsListEvent extends TaskEvent {
   final String? search;
   final String? next;
   final String? prev;
-  const GetAllJobsListEvent(this.search, this.next, this.prev);
+  final bool? filter;
+  final String? status;
+  final   String? priority;
+  final   String? reportingPersonFilter;
+  const GetAllJobsListEvent(this.search, this.next, this.prev, this.filter, this.status, this.priority, this.reportingPersonFilter);
 }
 
 class GetOrganisationPerformanceList extends TaskEvent {

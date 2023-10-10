@@ -49,8 +49,11 @@ class _AssignedByMeState extends State<AssignedByMe> {
   GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return RefreshIndicator(
         onRefresh: ()async{
           context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
@@ -285,7 +288,11 @@ class _CardExpanedState extends State<CardExpaned> {
     startTime2 = twentyFourHourFormat.format(dateTimet);
     endTime=twelveHourFormat.format(dateTimett);
     endTime2=twentyFourHourFormat.format(dateTimett);
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Container(
       width: w,
       decoration: BoxDecoration(

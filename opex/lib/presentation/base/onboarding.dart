@@ -25,7 +25,10 @@ class OnBoarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var h=MediaQuery.of(context).size.height;
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -34,12 +37,13 @@ class OnBoarding extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              width: w1,
 
               // height: h/2,
                 padding: const EdgeInsets.only(left: 50,right: 50,top: 50),
                 child: SvgPicture.string(IconConstants().onBoardingSvg)),
             Container(
-              width: w,
+              width: w1,
               // color: Colors.pink,
               padding: EdgeInsets.symmetric(horizontal: 25),
               child: Align(

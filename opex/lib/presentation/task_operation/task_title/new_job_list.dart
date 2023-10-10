@@ -42,7 +42,10 @@ class _NewJobListState extends State<NewJobList> {
   GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     var h = MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: ()async{
@@ -107,7 +110,7 @@ class _NewJobListState extends State<NewJobList> {
                       ),
                       Spacer(),
                       Container(
-                        width: w/2.5,
+                        width: w1/2.5,
                         height: 35,
                         padding: EdgeInsets.symmetric(horizontal: 5),
                         decoration: BoxDecoration(
@@ -213,7 +216,7 @@ class _NewJobListState extends State<NewJobList> {
                     // height: h/1.3,
                     padding:
                     const EdgeInsets.only(left: 16, right: 16, top: 16),
-                    width: w,
+                    width: w1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,7 +379,7 @@ class _NewJobListState extends State<NewJobList> {
                           // height: h/1.3,
                           padding:
                               const EdgeInsets.only(left: 16, right: 16, top: 16),
-                          width: w,
+                          width: w1,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,

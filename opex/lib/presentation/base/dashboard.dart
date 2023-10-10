@@ -117,6 +117,10 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaleFactor: 1.0

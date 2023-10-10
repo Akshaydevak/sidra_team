@@ -77,7 +77,7 @@ class _EmptyPageCommunicationState extends State<EmptyPageCommunication> {
                             GestureDetector(
                               onTap: ()async{
                                   String email = Uri.encodeComponent("care@sidrateams.com");
-                                  String subject = Uri.encodeComponent("Sugestions");
+                                  String subject = Uri.encodeComponent("Suggestions");
                                   String body = Uri.encodeComponent("Hi,");
                                   
                                   Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
