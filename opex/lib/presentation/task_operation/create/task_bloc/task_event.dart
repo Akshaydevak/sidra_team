@@ -430,9 +430,9 @@ class CreateReviewTaskEvent extends TaskEvent {
   final int? parant;
   final int taskId;
   final String reviewdBy;
-  final int image;
-  final String review;
-  final String notes;
+  final int? image;
+  final String? review;
+  final String? notes;
   const CreateReviewTaskEvent( {
     this.parant,
     required this.taskId,
@@ -443,7 +443,7 @@ class CreateReviewTaskEvent extends TaskEvent {
   });
   @override
   List<Object> get props => [
-    review,
+    review??"",
   ];
 }
 //updateReview
@@ -454,8 +454,8 @@ class UpdateReviewTaskEvent extends TaskEvent {
   final dynamic image;
   final int taskId;
   final int id;
-  final String review;
-  final String notes;
+  final String? review;
+  final String? notes;
   const UpdateReviewTaskEvent( {
     this.parant,
     required this.isActive,
@@ -468,7 +468,7 @@ class UpdateReviewTaskEvent extends TaskEvent {
   });
   @override
   List<Object> get props => [
-    review,
+    review??'',
   ];
 }
 //createRewards

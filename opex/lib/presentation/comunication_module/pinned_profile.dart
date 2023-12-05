@@ -15,7 +15,7 @@ class PinnedProfile extends StatelessWidget {
       height: 75,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.only(right: 10, left: 10),
+        // padding: EdgeInsets.only(right: 10, left: 10),
         physics: ScrollPhysics(),
         shrinkWrap: true,
         itemCount: 5,
@@ -24,6 +24,7 @@ class PinnedProfile extends StatelessWidget {
               // onTap: onTapListTile(i, context),
               child: Container(
                   // width: 226,
+                  height: 90,
                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -38,22 +39,33 @@ class PinnedProfile extends StatelessWidget {
                         offset: Offset(1, 1),
                       ),
                     ],
-                    color: Colors.white,
+                    color: Color(0xffEFF1F3),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
 
                         children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                            ),
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius:30,
+                                backgroundImage: NetworkImage(
+                                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                                ),
+                              ),
+                              Positioned(
+                                top:5,
+                                left:45,
+                                child:SvgPicture.string(
+                                  CommunicationSvg().pinned
+                                )
+                              ),
+                            ],
                           ),
                           SizedBox(width: 10,),
-                          Container(width: w/3,
+                          Container(width: w/3.7,
                           child:  Text(
                             "Muhammed Gassali",
                             style: GoogleFonts.roboto(
@@ -66,7 +78,6 @@ class PinnedProfile extends StatelessWidget {
 
                         ],
                       ),
-                      SvgPicture.string(CommunicationSvg().pinnedIcon)
                     ],
                   )));
         },

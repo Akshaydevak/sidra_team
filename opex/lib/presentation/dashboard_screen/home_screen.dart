@@ -20,9 +20,9 @@ import '../../common_widgets/headline_text.dart';
 import '../../common_widgets/no_glow.dart';
 import '../mpos/mpos_homepage.dart';
 import '../order_app/screens/order_home_page.dart';
-import '../promotion_app/promotion_dashboard.dart';
 import '../sales_app/sales_dashboard.dart';
 import '../seller_app/seller_homepage.dart';
+import '../sidra_learning/sidra_learning_home_page.dart';
 import '../task_operation/home/bloc/job_bloc.dart';
 import 'home_screen/homescreen_widget/appbar.dart';
 import 'home_screen/homescreen_widget/apps_svg.dart';
@@ -150,9 +150,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           "For seamless internal organization task assign and team collaboration.",
                       svgIcon: AppsSvg().taskOpSvgIcon,
                     )),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: AppHomeCard(
+                      onTap: () {
+                        PersistentNavBarNavigator.pushNewScreen(
+                          context,
+                          screen: const SidraLearningHomePage(),
+                          withNavBar: false,
+                          // OPTIONAL VALUE. True by default.
+                          pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                        );
+                      },
+                      appTitle: "Sidra Learning",
+                      appDescription:
+                      "For seamless internal organization task assign and team collaboration.",
+                      svgIcon: AppsSvg().sidraLearningIcon,
+                    )),
 
                 SizedBox(
-                  height: h / 3.5,
+                  height: h / 5,
                 ),
                 Center(
                     child: Row(
@@ -524,13 +544,7 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 5:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: const PromotionDashBoard(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+
         };
         break;
       case 6:

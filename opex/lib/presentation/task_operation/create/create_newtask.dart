@@ -195,7 +195,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove('index');
     await pref.remove('index2');
-    Variable.isselected=true;
+    Variable.isselected = true;
   }
 
   String? taskId;
@@ -205,16 +205,14 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   bool createButton = false;
   @override
   Widget build(BuildContext context) {
-    double w1 = MediaQuery.of(context).size.width ;
-    double w = w1> 700
-        ? 400
-        : w1;
-    var h=MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
+    var h = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         context
             .read<TaskBloc>()
-            .add(GetTaskListEvent(widget.jobId, '', '', '',false,'',''));
+            .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
         return true;
       },
       child: MultiBlocListener(
@@ -414,9 +412,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                   isAction: false,
                   isBack: false,
                   onTap: () {
-                    context
-                        .read<TaskBloc>()
-                        .add(GetTaskListEvent(widget.jobId, '', '', '',false,'',''));
+                    context.read<TaskBloc>().add(GetTaskListEvent(
+                        widget.jobId, '', '', '', false, '', ''));
                     Navigator.pop(context);
                   },
                 )),
@@ -474,10 +471,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       : taskYype ?? "",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontSize: w / 24,
-                                    fontWeight: FontWeight.w500
-                                  ),
+                                      color: ColorPalette.primary,
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w500),
                                 ),
                                 const Icon(
                                   Icons.arrow_forward_ios_sharp,
@@ -660,23 +656,26 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        if(_range.isEmpty)
+                                                        if (_range.isEmpty)
                                                           setState(() {
                                                             // if (DateTime.now() is PickerDateRange) {
-                                                            _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-                                                            _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
-                                                            print("range is here$_range");
+                                                            _range =
+                                                                '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                            _range2 =
+                                                                '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                            print(
+                                                                "range is here$_range");
 
-                                                            startDate=_range;
-                                                            startDate2=_range2;
-                                                            ebdDate=_range;
-                                                            ebdDate2=_range2;
+                                                            startDate = _range;
+                                                            startDate2 =
+                                                                _range2;
+                                                            ebdDate = _range;
+                                                            ebdDate2 = _range2;
 
                                                             // validationCheck();
                                                           });
 
-                                                        Navigator.pop(
-                                                            context);
+                                                        Navigator.pop(context);
                                                       },
                                                       child: Container(
                                                         height: 25,
@@ -1416,22 +1415,23 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                           "${_range.split(" - ")[0]} $startTime2",
                                                     ));
                                               Variable.taskType == 0 ||
-                                                  taskTitle.text == "" ||
-                                                  discription.text == "" ||
-                                                  _range == "" ||
-                                                  Variable.assignType ==
-                                                      "" ||
-                                                  Variable.assignCode == ""
+                                                      taskTitle.text == "" ||
+                                                      discription.text == "" ||
+                                                      _range == "" ||
+                                                      Variable.assignType ==
+                                                          "" ||
+                                                      Variable.assignCode == ""
                                                   ? Fluttertoast.showToast(
-                                                  msg:
-                                                  'Please fill the fields',
-                                                  toastLength:
-                                                  Toast.LENGTH_SHORT,
-                                                  gravity:
-                                                  ToastGravity.BOTTOM,
-                                                  backgroundColor:
-                                                  Colors.black,
-                                                  textColor: Colors.white):isSubTask = !isSubTask;
+                                                      msg:
+                                                          'Please fill the fields',
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      textColor: Colors.white)
+                                                  : isSubTask = !isSubTask;
                                               // createButton=false;
                                             });
                                           },
@@ -1533,7 +1533,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                                 .pushNewScreen(
                                                               context,
                                                               screen:
-                                                                  CreateNewTask(jobId: widget.jobId,
+                                                                  CreateNewTask(
+                                                                jobId: widget
+                                                                    .jobId,
                                                                 isSubTask: true,
                                                                 subTaskId:
                                                                     int.tryParse(
@@ -1552,20 +1554,31 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                               alignment:
                                                                   Alignment
                                                                       .center,
-                                                             decoration: BoxDecoration(
-                                                               borderRadius: BorderRadius.circular(4),
-                                                               color: Color(0xffF4F4F4),
-                                                             ),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4),
+                                                                color: Color(
+                                                                    0xffF4F4F4),
+                                                              ),
                                                               padding: EdgeInsets
-                                                                  .symmetric(horizontal: 16,vertical: 10),
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16,
+                                                                      vertical:
+                                                                          10),
                                                               child: Text(
                                                                 "Add Subtask",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: ColorPalette.primary,
-                                                                  fontSize: w/24,
-                                                                      fontWeight: FontWeight.w500
-                                                                ),
+                                                                style: TextStyle(
+                                                                    color: ColorPalette
+                                                                        .primary,
+                                                                    fontSize:
+                                                                        w / 24,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500),
                                                               )),
                                                         )
                                                       : Container(),
@@ -1618,7 +1631,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                   "",
                                               isActive: true,
                                               priority: Variable.prioritys,
-                                              reportingPerson: readTask?.reportingPersonCode ??
+                                              reportingPerson: readTask
+                                                      ?.reportingPersonCode ??
                                                   "",
                                               endDate:
                                                   "$ebdDate" " " "$endTime2",
@@ -1664,10 +1678,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                       .toString()
                                                   : Variable.reportingCode
                                                       .toString(),
-                                          endDate:
-                                              "${_range.split(" - ")[1]} ${endTime2}",
-                                          startDate:
-                                              "${_range.split(" - ")[0]} ${startTime2}",
+                                          endDate: "$ebdDate ${endTime2}",
+                                          startDate: "$startDate ${startTime2}",
                                         ));
                                 },
                                 gradient: const LinearGradient(
@@ -1813,11 +1825,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         isScrollControlled: true,
         context: context,
         builder: (context) {
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
-          var h=MediaQuery.of(context).size.height;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
+          var h = MediaQuery.of(context).size.height;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -2014,16 +2024,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                     padding: const EdgeInsets.all(10),
                     child: Column(
                       children: [
-
                         Text(
                           "Set Priority ",
                           style: GoogleFonts.roboto(
                             color: Colors.black,
-                            fontSize: w/22,
+                            fontSize: w / 22,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Container(
                           // thickness: 1,
                           // indent: 10,
@@ -2031,18 +2042,24 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           width: w,
                           color: Color(0xfff8f7f5),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         InkWell(
-                          onTap: (){
-                            Variable.prioritys="High";
-                            PriorityLeval="High";
-                            setState((){});
+                          onTap: () {
+                            Variable.prioritys = "High";
+                            PriorityLeval = "High";
+                            setState(() {});
                             refreah();
                             Navigator.pop(context);
                           },
                           child: Container(
-                            padding: priorityread=="High"?EdgeInsets.all(10):null,
-                            color: priorityread=="High"?Color(0xffF4F4F4):Colors.white,
+                            padding: priorityread == "High"
+                                ? EdgeInsets.all(10)
+                                : null,
+                            color: priorityread == "High"
+                                ? Color(0xffF4F4F4)
+                                : Colors.white,
                             child: Row(
                               children: [
                                 Container(
@@ -2057,7 +2074,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     ),
                                     color: Colors.white,
                                   ),
-                                  child: SvgPicture.string(TaskSvg().priorityIcon),
+                                  child:
+                                      SvgPicture.string(TaskSvg().priorityIcon),
                                 ),
                                 SizedBox(
                                   width: 16,
@@ -2066,15 +2084,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   "High Priority",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
-                                    fontSize: w/22,
-                                    fontWeight: priorityread=="High"?FontWeight.w500:FontWeight.w400,
+                                    fontSize: w / 22,
+                                    fontWeight: priorityread == "High"
+                                        ? FontWeight.w500
+                                        : FontWeight.w400,
                                   ),
                                 )
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Container(
                           // thickness: 1,
                           // indent: 10,
@@ -2082,19 +2104,25 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           width: w,
                           color: Color(0xfff8f7f5),
                         ),
-                        SizedBox(height: 10,),
-                        InkWell(onTap: (){
-                          Variable.prioritys="Medium";
-                          PriorityLeval="Medium";
-                          setState((){});
-                          refreah();
-                          print("TASK PRIORITY${Variable.prioritys}");
-                          Navigator.pop(context);
-
-                        },
+                        SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Variable.prioritys = "Medium";
+                            PriorityLeval = "Medium";
+                            setState(() {});
+                            refreah();
+                            print("TASK PRIORITY${Variable.prioritys}");
+                            Navigator.pop(context);
+                          },
                           child: Container(
-                            padding: priorityread=="Medium"?EdgeInsets.all(10):null,
-                            color: priorityread=="Medium"?Color(0xffF4F4F4):Colors.white,
+                            padding: priorityread == "Medium"
+                                ? EdgeInsets.all(10)
+                                : null,
+                            color: priorityread == "Medium"
+                                ? Color(0xffF4F4F4)
+                                : Colors.white,
                             child: Row(
                               children: [
                                 Container(
@@ -2121,15 +2149,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   "Medium Priority",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
-                                    fontSize: w/22,
-                                    fontWeight: priorityread=="Medium"?FontWeight.w500:FontWeight.w400,
+                                    fontSize: w / 22,
+                                    fontWeight: priorityread == "Medium"
+                                        ? FontWeight.w500
+                                        : FontWeight.w400,
                                   ),
                                 )
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Container(
                           // thickness: 1,
                           // indent: 10,
@@ -2137,22 +2169,26 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                           width: w,
                           color: Color(0xfff8f7f5),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         InkWell(
-                          onTap: (){
-                            Variable.prioritys="Low";
-                            PriorityLeval="Low";
-                            setState((){});
+                          onTap: () {
+                            Variable.prioritys = "Low";
+                            PriorityLeval = "Low";
+                            setState(() {});
                             refreah();
                             print("TASK PRIORITY${Variable.prioritys}");
                             Navigator.pop(context);
-                            setState((){});
-
-
+                            setState(() {});
                           },
                           child: Container(
-                            padding: priorityread=="Low"?EdgeInsets.all(10):null,
-                            color: priorityread=="Low"?Color(0xffF4F4F4):Colors.white,
+                            padding: priorityread == "Low"
+                                ? EdgeInsets.all(10)
+                                : null,
+                            color: priorityread == "Low"
+                                ? Color(0xffF4F4F4)
+                                : Colors.white,
                             child: Row(
                               children: [
                                 Container(
@@ -2179,15 +2215,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                   "Low Priority",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
-                                    fontSize: w/22,
-                                    fontWeight: priorityread=="Low"?FontWeight.w500:FontWeight.w400,
+                                    fontSize: w / 22,
+                                    fontWeight: priorityread == "Low"
+                                        ? FontWeight.w500
+                                        : FontWeight.w400,
                                   ),
                                 )
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 25,)
+                        SizedBox(
+                          height: 25,
+                        )
 
                         // Row(
                         //   children: [

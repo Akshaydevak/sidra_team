@@ -211,11 +211,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is CreateReviewTaskEvent) {
       yield* createReviewTask(
-        image: event.image,
+        image: event.image??0,
         parant: event.parant,
         taskId: event.taskId,
-        notes: event.notes.trim(),
-        review: event.review.trim(),
+        notes: event.notes??"",
+        review: event.review??"",
         reviewedBy: event.reviewdBy.trim()
 
 
@@ -227,8 +227,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           image: event.image,
           parant: event.parant,
           id: event.id,
-          notas: event.notes.trim(),
-          review: event.review.trim(),
+          notas: event.notes??"",
+          review: event.review??"",
           reviewdBy: event.reviewdBy.trim(),
         isActive: event.isActive
 

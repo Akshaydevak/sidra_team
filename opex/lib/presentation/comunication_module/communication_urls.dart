@@ -1,6 +1,9 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
-      "https://api-communication-application.hilalcart.com/";
+      "https://api-communication-application.hilalcart.com/"
+      // "https://6af7-116-68-110-250.ngrok-free.app/"
+     
+      ;
 
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";

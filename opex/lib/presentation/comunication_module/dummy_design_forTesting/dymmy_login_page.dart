@@ -36,34 +36,29 @@ class _LoginDemoState extends State<LoginDemo> {
   Widget build(BuildContext context) {
     print("build");
 
-    return DefaultTabController(
-      length: 2,
-      child: BlocListener<DummyLoginBloc, DummyLoginState>(
-        listener: (context, state) {
-          if (state is TokenCreationCommunicationLoading) {
-            customCupertinoLoading();
-          } else if (state is TokenCreationCommunicationSuccess) {
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: CommunicationModule(
-                token: state.token,
-              ),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-          }
-        },
-        child: Center(
-          child: SizedBox(
+    return BlocListener<DummyLoginBloc, DummyLoginState>(
+      listener: (context, state) {
+         if (state is TokenCreationCommunicationSuccess) {
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: CommunicationModule(
+              token: state.token,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+        }
+      },
+      child: Center(
+        child: SizedBox(
 
-            width: MediaQuery.of(context).size.width / 8,
-            child: const LoadingIndicator(
-                indicatorType: Indicator.ballPulse,
-                colors: [ColorPalette.primary],
-                strokeWidth: 0.1,
-                backgroundColor: Colors.transparent,
-                pathBackgroundColor: Colors.black),
-          ),
+          width: MediaQuery.of(context).size.width / 8,
+          child: const LoadingIndicator(
+              indicatorType: Indicator.ballPulse,
+              colors: [ColorPalette.primary],
+              strokeWidth: 0.1,
+              backgroundColor: Colors.transparent,
+              pathBackgroundColor: Colors.black),
         ),
       ),
     );

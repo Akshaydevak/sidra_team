@@ -1,41 +1,33 @@
-
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 
 class ApplicationModel {
-  String name,icon;
+  String title, subTitle, image, url;
 
-
-  ApplicationModel({required this.name,required this.icon});
+  ApplicationModel(
+      {required this.image,
+      required this.title,
+      required this.subTitle,
+      required this.url});
 }
 
 List<ApplicationModel> applicationList = [
-  ApplicationModel(name: 'Task & Operation',icon: "asset/app_icon/task.png"),
-  ApplicationModel(name: 'Chat App',icon: "asset/app_icon/chat.png"),
-  // ApplicationModel(name: 'Order Mgt',icon: AppsSvg().OrderManagementIcon),
-  //
-  // ApplicationModel(name: 'MPOS',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Inventory',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Promotion app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Seller app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Seller Admin',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Logistic app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Sales app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Purchase app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Product Hub',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'User',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Delivery app',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Call center',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Self check',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Organisation',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Contract',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Tax',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Loyality',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Vendor',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Stock',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Manufacture',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Payments',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Wallet',icon: AppsSvg().OrderManagementIcon),
-  // ApplicationModel(name: 'Settings',icon: AppsSvg().OrderManagementIcon),
-
+  ApplicationModel(
+      title: 'Al Rawabi Group of Companies- Corporate Ad',
+      image:
+          "https://rawabihypermarket.com/wp-content/uploads/2021/07/r1.jpg",
+      subTitle: "New add",
+      url: "https://youtu.be/JznIwGjczCg?si=busBQ2dCFS6M5uU-"),
+  ApplicationModel(
+      title:
+          'ലോകത്തെ ആദ്യ കുടുംബ കേന്ദ്രീകൃത ഹൈപ്പർമാർക്കറ്റുമായി അൽറവാബി ഗ്രൂപ്പ് ഓഫ് കമ്പനീസ്',
+      image:
+          "https://menafn.com/updates/pr/2023-03/11/GT_2c0d9image_story.jpeg",
+      subTitle: "Task and operation",
+      url: "https://youtu.be/pRc92jBKroY?si=eHf6bwcCLjOOTUzV"),
+  ApplicationModel(
+      title: 'Rawabi Hypermarket Al Murrah',
+      image: "https://alrawabigroup.com/uploads/media/news215549.jpg",
+      subTitle: "Task and operation",
+      url: "https://youtu.be/CTpZBJS9B6M?si=e8SN8RBIVSn_8sIF"),
 
 ];

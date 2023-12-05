@@ -428,12 +428,13 @@ class _ChatScreenState extends State<ChatScreen>
         })
       ],
       child: Scaffold(
+        backgroundColor: Color(0xffEFF1F3),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(0),
           child: AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.white,
-              statusBarColor: Colors.white,
+              statusBarColor: ColorPalette.primary,
             ),
             elevation: 0,
           ),
@@ -455,24 +456,27 @@ class _ChatScreenState extends State<ChatScreen>
               messageList.isEmpty
                   ? Expanded(
                       // height: h / 1.5,
-                      child: Center(
-                          child: Container(
-                      width: w / 1.5,
-                      height: h / 9,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xfff8f7f5),
-                      ),
-                      child: const Center(
-                          child: Text(
-                        "This conversation currently has no messages...",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xff6d6d6d),
-                          fontSize: 14,
+                      child: Padding(
+                        padding: EdgeInsets.only(top:170,left:62,right:62,bottom:h/2),
+                        child: Container(
+                        // width: w / 1.5,
+                        // height: h/9,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xffFFFFFF),
                         ),
-                      )),
-                    )))
+                        child:Center(
+                        child: Text(
+                          "This conversation\ncurrently has no messages...",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                        color: Color(0xFF151522),
+                        fontSize: 14,
+                          ),
+                          ),
+                        )),
+                                          ),
+                      ))
                   : Expanded(
                       child: NotificationListener<ScrollEndNotification>(
                         onNotification: (scrollEnd) {
@@ -664,13 +668,13 @@ class _ChatScreenState extends State<ChatScreen>
                                                               8),
                                                       color: Colors.white),
                                                   child: SvgPicture.string(
-                                                      TaskSvg().docIcon),
+                                                      TaskSvg().docIcon2),
                                                 ),
                                                 const SizedBox(
                                                   width: 5,
                                                 ),
                                                 Container(
-                                                  width: w / 2.5,
+                                                  width: w / 2,
                                                   height: 45,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
@@ -700,10 +704,10 @@ class _ChatScreenState extends State<ChatScreen>
                                                         messageList[index]
                                                                 .message ??
                                                             "",
-                                                        style: const TextStyle(
+                                                        style: GoogleFonts.roboto(textStyle:TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 8,
-                                                        ),
+                                                        ),)
                                                       ),
                                                       const SizedBox(height: 4),
                                                       // Text(
@@ -734,7 +738,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                 }
                                               },
                                               child: SvgPicture.string(
-                                                  TaskSvg().downloadIcon)),
+                                                  TaskSvg().dwnldIcon)),
                                         ],
                                       ),
                                     } else ...{
@@ -1005,13 +1009,13 @@ class _ChatScreenState extends State<ChatScreen>
                                                           child:
                                                               SvgPicture.string(
                                                                   TaskSvg()
-                                                                      .docIcon),
+                                                                      .docIcon2),
                                                         ),
                                                         const SizedBox(
                                                           width: 5,
                                                         ),
                                                         Container(
-                                                          width: w / 2.5,
+                                                          width: w / 2,
                                                           height: 45,
                                                           decoration:
                                                               BoxDecoration(
@@ -1048,11 +1052,12 @@ class _ChatScreenState extends State<ChatScreen>
                                                                         .message ??
                                                                     "",
                                                                 style:
-                                                                    const TextStyle(
+                                                                    GoogleFonts.roboto(textStyle: TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontSize: 8,
                                                                 ),
+                                                                    ),
                                                               ),
                                                               const SizedBox(
                                                                   height: 4),
@@ -1159,10 +1164,11 @@ class _ChatScreenState extends State<ChatScreen>
                                                               messageList[index]
                                                                       .message ??
                                                                   "",
-                                                              style: const TextStyle(
+                                                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                                                   fontSize: 16,
                                                                   color: Colors
                                                                       .white),
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -1288,6 +1294,7 @@ class _ChatScreenState extends State<ChatScreen>
                                             )))
                                   } else if (messageList[index].type ==
                                       "audio") ...{
+
                                     VoiceMessage(
                                       audioSrc:
                                           messageList[index].message ?? "",
@@ -1299,40 +1306,53 @@ class _ChatScreenState extends State<ChatScreen>
                                     )
                                   } else if (messageList[index].type ==
                                       "file") ...{
+                                    Column(
+                                      children: [
+                                  
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
+                                        InkWell(
+                                            onTap: () async {
+                                              final url =
+                                                  messageList[index].message ??
+                                                      "";
+                                              if (await canLaunch(url)) {
+                                                await launch(url);
+                                              } else {
+                                                throw 'Could not launch $url';
+                                              }
+                                            },
+                                            child: SvgPicture.string(
+                                                TaskSvg().dwnldIcon)),
+                                                 const SizedBox(
+                                          width: 5,
+                                        ),
                                         Container(
-                                          width: w / 1.75,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 8),
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                              bottomLeft: Radius.circular(0),
-                                              bottomRight: Radius.circular(10),
-                                            ),
-                                            color: Color(0xfff8f7f5),
+                                          height: 55,
+                                          decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(0),
                                           ),
+                                                    color: Colors.white),
                                           child: Row(
                                             children: [
-                                              Container(
-                                                height: 45,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: Colors.white),
+                                              SizedBox(width: 8,),
+                                              SizedBox(
+                                                width: 34,
+                                                height: 36,
                                                 child: SvgPicture.string(
-                                                    TaskSvg().docIcon),
+                                                    TaskSvg().docIcon2),
                                               ),
                                               const SizedBox(
                                                 width: 5,
                                               ),
                                               Container(
-                                                width: w / 2.5,
-                                                height: 45,
+                                                width: w / 1.8,
+                                                height: 52,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
@@ -1358,10 +1378,10 @@ class _ChatScreenState extends State<ChatScreen>
                                                       messageList[index]
                                                               .message ??
                                                           "",
-                                                      style: const TextStyle(
+                                                      style:GoogleFonts.roboto (textStyle: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: 8,
-                                                      ),
+                                                        fontSize:10,
+                                                      ),)
                                                     ),
                                                     const SizedBox(height: 4),
                                                     // Text(
@@ -1376,25 +1396,24 @@ class _ChatScreenState extends State<ChatScreen>
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        InkWell(
-                                            onTap: () async {
-                                              final url =
-                                                  messageList[index].message ??
-                                                      "";
-                                              if (await canLaunch(url)) {
-                                                await launch(url);
-                                              } else {
-                                                throw 'Could not launch $url';
-                                              }
-                                            },
-                                            child: SvgPicture.string(
-                                                TaskSvg().downloadIcon)),
+                                        ), 
                                       ],
                                     ),
+                                    SizedBox(height: 5,),
+                                    Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              messageList[index].createdAt ??
+                                                  "",
+                                              style: const TextStyle(
+                                                  fontSize: 13,
+                                                  color: Color(0xFF6D6D6D)),
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
                                   } else if (messageList[index].type ==
                                       "video") ...{
                                     VideoPlayerScreen(
@@ -1415,8 +1434,7 @@ class _ChatScreenState extends State<ChatScreen>
                                             constraints: BoxConstraints(
                                               maxWidth: MediaQuery.of(context)
                                                       .size
-                                                      .width -
-                                                  45,
+                                                      .width - 45,
                                             ),
                                             child: Card(
                                               elevation: 1,
@@ -1546,14 +1564,14 @@ class _ChatScreenState extends State<ChatScreen>
                             ),
                           ],
                         )
-                      : Container(),
+                      : SizedBox(),
               Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    color: const Color(0xffececec),
+                    color: const Color(0xffFFFFFF),
                     width: w,
                     padding:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                     child: Row(
                       children: [
                         Container(
@@ -1584,9 +1602,9 @@ class _ChatScreenState extends State<ChatScreen>
                                     width: w / 1.32,
                                     child: TextFormField(
                                       style: const TextStyle(
-                                        height: 1.6,
+                                        // height: 1.6,
                                       ),
-                                      maxLines: 3,
+                                      maxLines:4,
                                       minLines: 1,
                                       onChanged: (val) {
                                         if (widget.isGroup == false) {
@@ -1618,7 +1636,8 @@ class _ChatScreenState extends State<ChatScreen>
                                       decoration: InputDecoration(
                                           contentPadding:
                                               const EdgeInsets.symmetric(
-                                                  horizontal: 10),
+                                                  horizontal: 16,
+                                                  vertical: 2),
                                           fillColor: Colors.white,
                                           filled: true,
                                           border: OutlineInputBorder(
@@ -1708,9 +1727,9 @@ class _ChatScreenState extends State<ChatScreen>
                                               typedMessageController.clear();
                                             },
                                             child: SvgPicture.string(
-                                                // height: 60,
+                                                height: 30,
                                                 width: w / 7,
-                                                TaskSvg().sendIcon)))
+                                                TaskSvg().sendIcon,color: Color(0xFF2871AF),)))
                                   } else ...{
                                     GestureDetector(
                                       onLongPressMoveUpdate: (details) {
@@ -1757,17 +1776,23 @@ class _ChatScreenState extends State<ChatScreen>
                                         setState(() {});
                                       },
                                       child: micLongPress == true
-                                          ? CircleAvatar(
-                                              radius: 40,
-                                              backgroundColor: Colors.red,
-                                              child: SvgPicture.string(
-                                                  width: w / 8,
-                                                  TaskSvg().micIcon),
-                                            )
+                                          ? Row(
+                                            children: [
+                                              SizedBox(width: 4,),
+                                              CircleAvatar(
+                                                  radius: 28,
+                                                  backgroundColor: Color(0xFF2871AF),
+                                                  child: SvgPicture.string(
+                                                      width: w / 8,
+                                                      height:28,
+                                                      TaskSvg().mic),
+                                                ),
+                                            ],
+                                          )
                                           : SvgPicture.string(
-                                              height: 60,
-                                              width: w / 7,
-                                              TaskSvg().micIcon),
+                                              height: 51,
+                                              width: w / 12,
+                                              TaskSvg().micIcon2),
                                     )
                                   },
                                 ],
@@ -2019,9 +2044,9 @@ class ScrollService {
       {required ScrollController scrollController, reversed = false}) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollController.animateTo(
-        reversed
-            ? scrollController.position.minScrollExtent
-            : scrollController.position.maxScrollExtent,
+        // reversed
+        //     ? scrollController.position.minScrollExtent
+             scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );

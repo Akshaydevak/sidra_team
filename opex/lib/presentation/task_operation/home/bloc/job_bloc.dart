@@ -173,7 +173,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     final dataResponse = await _jobRepo.getFilterJobList(status);
 
-    if (dataResponse.data!=null&&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data!=null) {
       yield GetFilterJobListSuccess(dataResponse.data);
     } else {
       yield GetFilterJobListFailed();
@@ -197,7 +197,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   }) async* {
     yield GetNewJobListLoading();
     final dataResponse = await _jobRepo.getNewJobList(search,next,prev);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null) {
       yield GetNewJobListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",

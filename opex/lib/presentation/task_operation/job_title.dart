@@ -1853,7 +1853,7 @@ class _JobTitleState extends State<JobTitle> {
                     Positioned(
                       right: 0,
                       top: 50,
-                      left: w1/1.1,
+                      left: w1/1.23,
                       child: newStatus==""&&newPriority==""?
                       GestureDetector(
                         onTap: (){

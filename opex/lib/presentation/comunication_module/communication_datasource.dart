@@ -138,7 +138,7 @@ class CommunicationDatasource {
             'Authorization': 'Bearer $token',
           },
         ));
-
+      print(response.data);
     (response.data['data'] as List).forEach((element) {
       chatListData.add(CommunicationUserModel.fromJson(element));
     });
@@ -166,7 +166,7 @@ class CommunicationDatasource {
 
   Future<ChatMessagaeData> getChatScreenData(
       String token, String userId, int pageNo) async {
-    ChatMessagaeData chatScreenData;
+    ChatMessagaeData chatScreenData =ChatMessagaeData();
     // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
@@ -180,7 +180,8 @@ class CommunicationDatasource {
           },
         ));
     print("got it ${response.data}");
-    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);
+    if(response.data['status']=="success"){
+    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
     return chatScreenData;
   }
 

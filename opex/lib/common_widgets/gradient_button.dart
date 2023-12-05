@@ -8,11 +8,12 @@ class GradientButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Gradient gradient;
   final Color color;
+  final double? border;
 
   const GradientButton({
     required this.onPressed,
     required this.child,
-    required this.gradient,required this.color });
+    required this.gradient,required this.color, this.border=4 });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class GradientButton extends StatelessWidget {
           border: Border.all(
             color: color
           ),
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: BorderRadius.circular(border??4),
         ),
         child:
         Container(

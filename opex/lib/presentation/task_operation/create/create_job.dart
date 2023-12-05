@@ -160,14 +160,15 @@ class _CreateJobState extends State<CreateJob> {
   @override
   void initState() {
     context.read<JobBloc>().add(const GetJobTypeListEvent());
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    // Future.delayed(Duration(seconds: 1), () {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    // });
 
     super.initState();
   }
+  List<JobTypeList> jobTypeList=[];
   FocusNode focusNode=FocusNode();
   FocusNode descriptionfocusNode=FocusNode();
   bool? isValid=false;
@@ -339,6 +340,27 @@ class _CreateJobState extends State<CreateJob> {
                 }
               },
             ),
+            BlocListener<JobBloc, JobState>(
+              listener: (context, state) {
+                if(state is GetJobTypeListLoading){
+
+                }
+                if(state is GetJobTypeListSuccess){
+                  jobTypeList=state.jobTypeList;
+
+                  for(var i=0;i<jobTypeList.length;i++){
+                    if (jobTypeList[i].typeName == "Integeration") {
+                      jobTypeList.removeAt(i);
+                    }
+                  }
+                  _isLoading = false;
+                  print("ttttttt$jobTypeList");
+                  setState(() {
+
+                  });
+                }
+              },
+            ),
           ],
           child: ScrollConfiguration(
             behavior: NoGlow(),
@@ -367,73 +389,62 @@ class _CreateJobState extends State<CreateJob> {
                           ),
                         ),
                         widget.edit==true?Container():SizedBox(height: 10,),
-                        widget.edit==true?Container():BlocBuilder<JobBloc, JobState>(
-                          builder: (context, state) {
-                            print("DASS${state}");
-                            if (state is GetJobTypeListLoading) {
-                              return customCupertinoLoading();
-                            }
-                            if (state is GetJobTypeListSuccess) {
-
-                              return SizedBox(
-                                  width: w1,
-                                  height: 36,
-                                  child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: EdgeInsets.only(right: 0, left: 0),
-                                    physics: ScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: state.jobTypeList.length,
-                                    itemBuilder: (BuildContext context, int i) {
-                                      return GestureDetector(
-                                          onTap: () {
-                                            onselct(i);
-                                            jobtype=state.jobTypeList[i].id;
-                                            select==2?context.read<JobBloc>().add(GetInstantJobListEvent()):null;
-                                            context.read<JobBloc>().add(GetJobTypeListEvent());
-                                          },
-                                          child: Container(
-                                            width: w/3.5,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(4),
-                                              // border:
-                                              // Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Color(0x05000000),
-                                                  blurRadius: 8,
-                                                  offset: Offset(1, 1),
-                                                ),
-                                              ],
-                                              color: select==i?Colors.black:Color(0xffF4F4F4),
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              state.jobTypeList[i].typeName.toString().toTitleCase()??"",
-                                              style: select == i
-                                                  ? GoogleFonts.roboto(
-                                                color: select==i?Colors.white:ColorPalette.black,
-                                                fontSize: w/23,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                              )
-                                                  : GoogleFonts.roboto(
-                                                color: ColorPalette.black,
-                                                fontSize: w/23,
-                                              ),
-                                            ),
-                                          ));
+                        widget.edit==true?Container():
+                        SizedBox(
+                            width: w1,
+                            height: 36,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.only(right: 0, left: 0),
+                              physics: ScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: jobTypeList.length,
+                              itemBuilder: (BuildContext context, int i) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      onselct(i);
+                                      jobtype=jobTypeList[i].id;
+                                      select==2?context.read<JobBloc>().add(GetInstantJobListEvent()):null;
+                                      context.read<JobBloc>().add(GetJobTypeListEvent());
                                     },
-                                    separatorBuilder: (BuildContext context, int index) {
-                                      return SizedBox(
-                                        width: 5,
-                                      );
-                                    },
-                                  ));
-                            }
-                            return SizedBox();
-                          },
-                        ),
+                                    child: Container(
+                                      width: w/3.5,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4),
+                                        // border:
+                                        // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0x05000000),
+                                            blurRadius: 8,
+                                            offset: Offset(1, 1),
+                                          ),
+                                        ],
+                                        color: select==i?Colors.black:Color(0xffF4F4F4),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        jobTypeList[i].typeName.toString().toTitleCase()??"",
+                                        style: select == i
+                                            ? GoogleFonts.roboto(
+                                          color: select==i?Colors.white:ColorPalette.black,
+                                          fontSize: w/23,
+                                          fontWeight:
+                                          FontWeight.w500,
+                                        )
+                                            : GoogleFonts.roboto(
+                                          color: ColorPalette.black,
+                                          fontSize: w/23,
+                                        ),
+                                      ),
+                                    ));
+                              },
+                              separatorBuilder: (BuildContext context, int index) {
+                                return SizedBox(
+                                  width: 5,
+                                );
+                              },
+                            )),
 
                         SizedBox(height: h/80,),
                         select==0||select==1?
@@ -669,10 +680,11 @@ class _CreateJobState extends State<CreateJob> {
                                   ),
                                   Column(
                                     children: [
-                                      Divider(
+                                      _range2.isNotEmpty?Divider(
                                         indent: 10,
                                         height: 2,
-                                      ),
+                                      ):Container(),
+                                      _range2.isNotEmpty?
                                       Container(
                                         margin: EdgeInsets.only(
                                             left: 16,
@@ -759,7 +771,7 @@ class _CreateJobState extends State<CreateJob> {
                                            )
                                           ],
                                         ),
-                                      ),
+                                      ):Container(),
 
                                       Divider(
                                         indent: 10,
@@ -1007,10 +1019,11 @@ class _CreateJobState extends State<CreateJob> {
                                   ),
                                   Column(
                                     children: [
-                                      Divider(
+                                      _range2.isNotEmpty?Divider(
                                         indent: 10,
                                         height: 2,
-                                      ),
+                                      ):Container(),
+                                      _range2.isNotEmpty?
                                       Container(
                                         margin: EdgeInsets.only(
                                             left: 16,
@@ -1097,7 +1110,7 @@ class _CreateJobState extends State<CreateJob> {
                                             )
                                           ],
                                         ),
-                                      ),
+                                      ):Container(),
 
                                       Divider(
                                         indent: 10,
@@ -1261,9 +1274,9 @@ class _CreateJobState extends State<CreateJob> {
                                         priority: PriorityLeval,
                                         relatedJob: relatedJobId,
                                         reportingPerson: authentication.authenticatedUser.code??"",
-                                        endDate: "${_range.split(" - ")[1]} $endTime2",
+                                        endDate: "$ebdDate $endTime2",
                                         originFrom: "Suggestions",
-                                        startDate: "${_range.split(" - ")[0]} $startTime2"
+                                        startDate: "$startDate $startTime2"
                                     )):
                                 BlocProvider.of<JobBloc>(context).add(
                                     CreateJobEvent(
@@ -1276,9 +1289,9 @@ class _CreateJobState extends State<CreateJob> {
                                         priority: PriorityLeval,
                                         relatedJob: null,
                                         reportingPerson: authentication.authenticatedUser.code??"",
-                                        endDate: "${_range.split(" - ")[1]} $endTime2",
+                                        endDate: "$ebdDate $endTime2",
                                         originFrom: "Suggestions",
-                                        startDate: "${_range.split(" - ")[0]} $startTime2"
+                                        startDate: "$startDate $startTime2"
                                     ));
                                 // Navigator.pop(context);
                               },

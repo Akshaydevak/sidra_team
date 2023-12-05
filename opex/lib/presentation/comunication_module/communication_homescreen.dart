@@ -8,6 +8,7 @@ import 'package:cluster/presentation/comunication_module/chat_screen.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/search_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_urls.dart';
 import 'package:cluster/presentation/comunication_module/create_group.dart';
+import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummychatscreen.dart';
 import 'package:cluster/presentation/comunication_module/pinned_profile.dart';
 import 'package:dio/dio.dart';
@@ -40,6 +41,9 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   Dio client = Dio();
   String _data = '';
 
+  UserDummyList? ulist;
+  List< UserDummyList> userlist=[];
+
   final List<String> onlineUsers = [];
   IO.Socket? socketCon;
   String? loginuserId;
@@ -69,6 +73,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   void initState() {
     IO.Socket socket = IO.io(
         'https://api-communication-application.hilalcart.com/',
+        // 'https://6af7-116-68-110-250.ngrok-free.app/',
         // OptionBuilder().setTransports(['websocket']).setQuery({
         //   'transports': ['websocket', 'polling'],
         //   'auth': {'token': widget.token},
@@ -82,6 +87,24 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     socket.connect();
     // Handle socket events
     socket.on('connect', (_) => print('connect success: ${socket.id}'));
+
+//---------------------------------------
+    // socket.on('user.connected',(data){
+    //     print("...user.connected : $data");
+    //     ulist=UserDummyList.fromJson(data['user']);
+    //     userlist.add(ulist!);
+    // //     (data['user'] as List).forEach((element) {
+    // //   ulist!.add(UserDummyList.fromJson(element));
+    // // });
+    //     // print("userlist : ${ulist!.id}");
+    // });
+
+    //   socket.on('user.id',(data){
+    //     print("!!!!!!!!user.id : $data");
+
+    // });
+//-------------------------------------------
+
     socket.on('online', (data) {
       print("online anutto ${data}");
       onlineUsers.add(data['id']);
@@ -101,6 +124,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
       loginuserId = data;
       setState(() {});
     });
+    
     // socket.on("latest.message", (data) => print("homescreen latest message $data"));
     // socket.on('latest.message', (data) => streamSocket.addResponse);
     // socket.onDisconnect((_) => print('disconnect happened'));
@@ -109,7 +133,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     // socket.disconnect();
     BlocProvider.of<CommunicationBloc>(context)
         .add(GetChatListEvent(token: widget.token));
-    _getData();
+    // _getData();
     super.initState();
   }
 
@@ -125,6 +149,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   Widget build(BuildContext context) {
     print("builddd");
     var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -143,14 +168,17 @@ class _CommunicationModuleState extends State<CommunicationModule> {
             pageTransitionAnimation: PageTransitionAnimation.fade,
           );
         },
-        child: const Icon(Icons.chat),
+        child: const Icon(Icons.add,
+        size: 33,
+        color:Colors.white,
+        ),
       ),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
             systemNavigationBarColor: Colors.white, // Navigation bar
-            statusBarColor: Colors.white, // Status bar
+            statusBarColor: Color(0xFF2870AE), // Status bar
           ),
           elevation: 0,
         ),
@@ -169,124 +197,132 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                     width: 0.50,
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              // const PinnedProfile(),
-              // const SizedBox(
-              //   height: 16,
-              // ),
-              Container(
-                width: w,
-                padding: const EdgeInsets.only(left: 8),
-                child: Row(
-                  children: [
-                    // Container(
-                    //   width: 36,
-                    //   height: 36,
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(10),
-                    //     border: Border.all(
-                    //       color: const Color(0x4ca9a8a8),
-                    //       width: 1,
-                    //     ),
-                    //     color: const Color(0xfff8f7f5),
-                    //   ),
-                    //   child: const Icon(Icons.add),
-                    // ),
-                    ChatTypeList(
-                      token: widget.token,
-                    )
-                  ],
+              ), 
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: const PinnedProfile(),),
+                 Divider(
+                  thickness: 4,
+                  color: Color(0xffEFF1F3),
+                 ),
+                 
+                Container(
+                  padding: EdgeInsets.all(10),
+                  width: w,
+                  child: Row(
+                    children: [
+                      // Container(
+                      //   width: 36,
+                      //   height: 36,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(
+                      //       color: const Color(0x4ca9a8a8),
+                      //       width: 1,
+                      //     ),
+                      //     color: const Color(0xfff8f7f5),
+                      //   ),
+                      //   child: const Icon(Icons.add),
+                      // ),
+                      ChatTypeList(
+                        token: widget.token,
+                      )
+                    ],
+                  ),
+                ), 
+                
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
-               const SizedBox(
-                height: 16,
-              ),
+                                                     
               Container(
                 width: w,
-                padding: const EdgeInsets.all(16),
+                // padding: const EdgeInsets.all(10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BlocBuilder<CommunicationBloc, CommunicationState>(
                       builder: (context, state) {
-                        print("state here ${state}");
                         if (state is GetChatListLoading) {
                           return customCupertinoLoading();
                         } else if (state is GetChatListSuccess) {
-                          return Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Recent Chat",
-                                  style: GoogleFonts.roboto(
-                                    color: const Color(0xff151522),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              children: [
+
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Recent Chat",
+                                    style: GoogleFonts.roboto(
+                                      color: const Color(0xff151522),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ListView.separated(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  itemBuilder: (context, index) {
-                                    if (index == 0) {
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                ListView.separated(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    itemBuilder: (context, index) {
+                                      if (index == 0) {
+                                        return ChatCard(
+                                          onlineUsers: onlineUsers,
+                                          loginUserId: loginuserId,
+                                          token: widget.token,
+                                          socket: socketCon,
+                                          communicationUserModel:
+                                              state.chatList[index],
+                                          isGroup:
+                                              state.chatList[index].isGroupChat ??
+                                                  false,
+                                        );
+                                      }
                                       return ChatCard(
                                         onlineUsers: onlineUsers,
                                         loginUserId: loginuserId,
-                                        token: widget.token,
                                         socket: socketCon,
-                                        communicationUserModel:
-                                            state.chatList[index],
                                         isGroup:
                                             state.chatList[index].isGroupChat ??
                                                 false,
+                                        token: widget.token,
+                                        communicationUserModel:
+                                            state.chatList[index],
                                       );
-                                    }
-                                    return ChatCard(
-                                      onlineUsers: onlineUsers,
-                                      loginUserId: loginuserId,
-                                      socket: socketCon,
-                                      isGroup:
-                                          state.chatList[index].isGroupChat ??
-                                              false,
-                                      token: widget.token,
-                                      communicationUserModel:
-                                          state.chatList[index],
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      Container(
-                                        height: 22,
-                                      ),
-                                  itemCount: state.chatList.length),
-                            ],
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        Container(
+                                          height: 22,
+                                        ),
+                                    itemCount: state.chatList.length),
+                              ],
+                            ),
                           );
                         } else if (state is GetChatListFailed) {}
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height / 2,
+                        return Container(
+                          color: Color(0xffEFF1F3),
+                          height: MediaQuery.of(context).size.height,
                           child: Column(
-                            // crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Center(
-                                child: SizedBox(
-                                  // width: 197,
-                                  // height: 23,
-                                  child: Text(
-                                    "You have’nt chat yet",
-                                    style: TextStyle(
-                                      color: Color(0xff151522),
-                                      fontSize: 17,
-                                      fontFamily: "Roboto",
-                                      fontWeight: FontWeight.w500,
+                              Padding(
+                                padding:  EdgeInsets.only(top: h/5),
+                                child: const Center(
+                                  child: SizedBox(
+                                    // width: 197,
+                                    // height: 23,
+                                    child: Text(
+                                      "You have’nt chat yet",
+                                      style: TextStyle(
+                                        color: Color(0xff151522),
+                                        fontSize: 20,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -312,20 +348,50 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                                     child: Center(
                                         child: Text(
                                       "Start Chatting",
-                                      style: TextStyle(color: Colors.white),
+                                      style:GoogleFonts.roboto(textStyle:TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500
+                                        ), ) ,
                                     )),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      color: const Color(0xfffe5762),
+                                      color: const Color(0xFF2871AF),
                                     ),
                                   ),
                                 ),
                               ),
+                              SizedBox(
+                                height:h/2.75,
+                                ),
+                              Column(
+                              children: [
+                              Text("Sidrateams LLC",
+                              style:GoogleFonts.roboto(
+                                textStyle:TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16
+                                )
+                                )
+                              ),
+                              Text("version 1.1.5",
+                              style:GoogleFonts.roboto(
+                                textStyle:TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12
+                                )
+                                )
+                                ),
+                              ],)
+                              
                             ],
                           ),
                         );
                       },
                     ),
+                    //-----------------
                     // ChatCard(isGroup: true,),
                     // SizedBox(
                     //   height: 16,
@@ -347,6 +413,21 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                     //   height: 16,
                     // ),
                     //  ChatCard(),
+                    //------------
+                    // SizedBox(
+                    //   height: h,
+                    //   child: ListView.builder(
+                    //     itemCount:userlist.length,
+                    //     shrinkWrap: true,
+                    //     itemBuilder:(context, index) {
+                    //       return ListTile(
+                    //         leading: Image.network("${userlist[index].photo}"),
+                    //         title: Text("${userlist[index].username}"),
+
+                    //       );
+                          
+                        // }),
+                    // )
                   ],
                 ),
               )

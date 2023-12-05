@@ -57,7 +57,10 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
   FocusNode myfocus2 = FocusNode();
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     var h = MediaQuery.of(context).size.height;
     return MultiBlocListener(
   listeners: [
@@ -125,7 +128,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                 leadingWidth: 28,
                 actions: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 12,left: 16),
+                    padding: const EdgeInsets.only(top: 20,left: 16),
                     child: InkWell(
                       onTap: (){
                         if(activeTextfield==true){
@@ -139,7 +142,16 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                           ));
                         }
                         else{
+                          Future.delayed(Duration(seconds: 0),(){
+                            myfocus.requestFocus(); //auto focus on second text field.
+                          });
 
+                          setState(() {
+
+                            focus=true;
+                            print("focusss$focus");
+                          });
+                          // activeTextfield=false;
                         }
                         myfocus.unfocus();
                         myfocus1.unfocus();
@@ -147,12 +159,14 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                         activeTextfield=false;
                       },
                       child: Text(
-                        "Save",
+                        activeTextfield==true?"Save":"Edit Profile",
                         style: GoogleFonts.roboto(
-                          color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
-                          fontSize: 18,
+                          color:
+                          // activeTextfield==true?
+                          Color(0xFF2871AF),
+                                // :Color(0xFFD3D3D3),
+                          fontSize: w/26,
                           fontWeight: FontWeight.w500,
-                          height: 1.56,
                         ),
                       ),
                     ),
@@ -173,7 +187,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                 ],
               ),
               Container(
-                width: w,
+                width: w1,
                 height: 1.50,
                 decoration: const BoxDecoration(
                   color: Color(0xb2e6e6e6),
@@ -194,7 +208,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 125),
+                          padding:  EdgeInsets.only(left: w1>700?365:140),
                           child: Row(
                             children: [
                               Container(
@@ -212,7 +226,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                         image: DecorationImage(
                                             image: NetworkImage(
                                                 profilePic ?? ""),
-                                            fit: BoxFit.fill),
+                                            fit: BoxFit.cover),
                                         // border: Border.all(
                                         //   color: Colors.white,
                                         //   width: 3,
@@ -256,27 +270,27 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 10,),
-                              GestureDetector(
-                                onTap: () {
-                                  Future.delayed(Duration(seconds: 0),(){
-                                    myfocus.requestFocus(); //auto focus on second text field.
-                                  });
-
-                                  setState(() {
-
-                                    focus=true;
-                                    print("focusss$focus");
-                                  });
-                                },
-                                child: Container(
-                                    child: Text("Edit Profile",
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.primary,
-                                      fontSize: w/26,
-                                      fontWeight: FontWeight.w500
-                                    ),)),
-                              )
+                              // SizedBox(width: 10,),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     Future.delayed(Duration(seconds: 0),(){
+                              //       myfocus.requestFocus(); //auto focus on second text field.
+                              //     });
+                              //
+                              //     setState(() {
+                              //
+                              //       focus=true;
+                              //       print("focusss$focus");
+                              //     });
+                              //   },
+                              //   child: Container(
+                              //       child: Text("Edit Profile",
+                              //       style: GoogleFonts.roboto(
+                              //         color: ColorPalette.primary,
+                              //         fontSize: w/26,
+                              //         fontWeight: FontWeight.w500
+                              //       ),)),
+                              // )
                             ],
                           ),
                         ),
@@ -400,7 +414,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               authentication.isAssociateAdmin?Container():Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               authentication.isAssociateAdmin?Container():SizedBox(
@@ -427,7 +441,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -507,7 +521,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -534,7 +548,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -568,7 +582,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -592,7 +606,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -617,7 +631,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -645,7 +659,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               Container(
                                 height: 1,
-                                width: w,
+                                width: w1,
                                 color: Colors.grey.shade200,
                               ),
                               SizedBox(
@@ -834,14 +848,12 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
         context
             .read<ProfileBloc>()
             .add(UpdateProfilePicEvent(profilePic: cropImage!));
-        // BlocProvider.of<ProfilePicBloc>(context)
-        //     .add(UpdatePictureEvent(cropImage!));
+
       }
       setState(() {
         _cropped = true;
       });
 
-      //Navigator.pop(context);
     } catch (e) {}
   }
 }

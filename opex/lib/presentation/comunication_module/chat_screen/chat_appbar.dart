@@ -1,3 +1,4 @@
+import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
@@ -35,8 +36,8 @@ class ChatAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.only(left: 16,right: 16,top: 3,bottom: 3),
+      color: ColorPalette.primary,
+      padding: const EdgeInsets.only(left: 16,right: 16,top: 3,bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -48,7 +49,7 @@ class ChatAppBar extends StatelessWidget {
                         .add(GetChatListEvent(token: token ?? ""));
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back)),
+                  child: const Icon(Icons.arrow_back,color: Colors.white,size:28,)),
               const SizedBox(
                 width: 10,
               ),
@@ -69,7 +70,8 @@ class ChatAppBar extends StatelessWidget {
                           isGroup??false?
 
                           communicationUserModel?.photoUrl ?? "":
-                           "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                          //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                          "${communicationUserModel?.users?[0].photo}",
                           )),
               ),
               const SizedBox(
@@ -102,7 +104,7 @@ class ChatAppBar extends StatelessWidget {
                               // maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.roboto(
-                                color: const Color(0xff151522),
+                                color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -111,7 +113,7 @@ class ChatAppBar extends StatelessWidget {
                         : Text(
                             communicationUserModel?.name ?? "",
                             style: GoogleFonts.roboto(
-                              color: const Color(0xff151522),
+                              color:  Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
@@ -149,105 +151,92 @@ class ChatAppBar extends StatelessWidget {
             ],
           ),
           PopupMenuButton(
-            icon: SvgPicture.string(TaskSvg().moreIcon),
+            icon: SvgPicture.string(TaskSvg().moreIcon2,height: 30,),
+           offset: Offset(-9,45),
             //don't specify icon if you want 3 dot menu
-            color: Colors.white,
+            color: Color.fromARGB(255, 255, 255, 255),
             elevation: 2,
-            padding: EdgeInsets.zero,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             itemBuilder: (context) => [
-              // PopupMenuItem(
-              //     padding: const EdgeInsets.all(0),
-              //     value: 'a',
-              //     enabled: true,
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         Container(
-              //           padding: const EdgeInsets.only(left: 10),
-              //           child: Row(
-              //             children: [
-              //               SvgPicture.string(TaskSvg().editorIcon),
-              //               const SizedBox(
-              //                 width: 10,
-              //               ),
-              //               Text(
-              //                 'Edit this Job',
-              //                 style: GoogleFonts.poppins(
-              //                     color: Colors.black54,
-              //                     fontSize: 13,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //         const Divider(
-              //           indent: 30,
-              //         ),
-              //         Container(
-              //           padding: const EdgeInsets.only(left: 10),
-              //           child: Row(
-              //             children: [
-              //               SvgPicture.string(TaskSvg().shareJobIcon),
-              //               // SvgPicture.string(TaskSvg().msgSendIcon),
-              //               const SizedBox(
-              //                 width: 10,
-              //               ),
-              //               Text(
-              //                 'share Profile',
-              //                 style: GoogleFonts.poppins(
-              //                     color: Colors.black54,
-              //                     fontSize: 13,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //         const Divider(
-              //           indent: 30,
-              //         ),
-              //         Container(
-              //           padding: const EdgeInsets.only(left: 10),
-              //           child: Row(
-              //             children: [
-              //               SvgPicture.string(TaskSvg().shareJobIcon),
-              //               const SizedBox(
-              //                 width: 10,
-              //               ),
-              //               Text(
-              //                 'Pin',
-              //                 style: GoogleFonts.poppins(
-              //                     color: Colors.black54,
-              //                     fontSize: 13,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //         const Divider(
-              //           indent: 30,
-              //         ),
-              //         Container(
-              //           padding: const EdgeInsets.only(left: 10),
-              //           child: Row(
-              //             children: [
-              //               SvgPicture.string(TaskSvg().activityIcon),
-              //               const SizedBox(
-              //                 width: 10,
-              //               ),
-              //               Text(
-              //                 'Map to a Job ',
-              //                 style: GoogleFonts.poppins(
-              //                     color: Colors.black54,
-              //                     fontSize: 13,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ],
-              //     ))
+              PopupMenuItem(
+                  padding: const EdgeInsets.symmetric(horizontal:9),
+                  value: 'a',
+                  enabled: true,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5,bottom: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Row(
+                            children: [
+                              SvgPicture.string(TaskSvg().profileIcon,height: 35,),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Profile Details',
+                                style: GoogleFonts.roboto(
+                                    color: Color(0xFF151522),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height:20,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 40),
+                            child: const Divider(),
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            children: [
+                              SvgPicture.string(TaskSvg().shareIcon2,height: 35),
+                              // SvgPicture.string(TaskSvg().msgSendIcon),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Share Profile',
+                                style: GoogleFonts.roboto(
+                                    color: Color(0xFF151522),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
+                         SizedBox(
+                          height: 20,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left:40),
+                            child: const Divider(),
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            children: [
+                              SvgPicture.string(TaskSvg().pinICon,height: 35),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Pin this chat',
+                                style: GoogleFonts.roboto(
+                                    color: Color(0xFF151522),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
             ],
             onSelected: (value) {},
           ),

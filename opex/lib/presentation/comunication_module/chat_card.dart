@@ -55,7 +55,7 @@ class _ChatCardState extends State<ChatCard> {
             isGroup: widget.isGroup,
             communicationUserModel: widget.communicationUserModel,
           ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
+          withNavBar: false, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       },
@@ -88,7 +88,9 @@ class _ChatCardState extends State<ChatCard> {
                         backgroundImage: NetworkImage(
                           widget.isGroup?
                             widget.communicationUserModel?.photoUrl ?? "":
-                            "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" ),
+                            // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                            "${widget.communicationUserModel?.users?[0].photo}"
+                            ),
                       ),
                     ),
                     widget.communicationUserModel?.users?[0].connected ==
@@ -111,7 +113,7 @@ class _ChatCardState extends State<ChatCard> {
                   width: 14,
                 ),
                 Container(
-                  width: w / 1.4,
+                  width: w / 1.25,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,8 +143,7 @@ class _ChatCardState extends State<ChatCard> {
                               widget.communicationUserModel?.messages != null
                           ? widget.communicationUserModel!.messages!.isNotEmpty
                               ? widget.communicationUserModel!.messages![0]
-                                          .type !=
-                                      "text"
+                                          .type !="text"
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,

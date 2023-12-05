@@ -49,16 +49,16 @@ class SearchCard extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               borderSide: BorderSide(color: Color(0xffE6ECF0))),
           enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               borderSide: BorderSide(color: Color(0xffE6ECF0))),
           disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               borderSide: BorderSide(color: Color(0xffE6ECF0))),
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               borderSide: BorderSide(color: Color(0xffE6ECF0)))),
     );
   }

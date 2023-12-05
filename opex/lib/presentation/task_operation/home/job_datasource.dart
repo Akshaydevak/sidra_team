@@ -486,7 +486,7 @@ print("DATASS${response.data['data']}");
   Future<List<JobTypeList>> getJobTypeList() async {
     List<JobTypeList> jobTyypeList = [];
     print("URL:${ClusterUrls.listJibTypeUrl}");
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     try {
       final response = await client.get(
         ClusterUrls.listJibTypeUrl,
@@ -498,6 +498,7 @@ print("DATASS${response.data['data']}");
           },
         ),
       );
+      print("typelist${response.data}");
       (response.data['data']['results'] as List).forEach((element) {
         jobTyypeList.add(JobTypeList.fromJson(element));
       });
@@ -515,9 +516,11 @@ print("DATASS${response.data['data']}");
         },
       ),
     );
+    print("typelist${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
       jobTyypeList.add(JobTypeList.fromJson(element));
     });
+
     return jobTyypeList;
   }
 

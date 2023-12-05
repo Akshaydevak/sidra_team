@@ -59,7 +59,7 @@ class ChatMessagaeData extends Equatable {
 }
 
 @JsonSerializable()
-class ChatUser extends Equatable {
+class   ChatUser extends Equatable {
   @JsonKey(name: "createdAt")
   final String? createdAt;
   @JsonKey(name: "updatedAt")

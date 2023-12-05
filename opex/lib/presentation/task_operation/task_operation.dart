@@ -43,6 +43,9 @@ import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'create_group.dart';
 import 'employee_group_screen.dart';
+import 'evaluation_pages/evaluate_user_by_teamleads.dart';
+import 'evaluation_pages/evaluation_list_ceo.dart';
+import 'evaluation_pages/evaluation_user_list.dart';
 import 'home/model/joblist_model.dart';
 
 import 'home/my_jobs.dart';
@@ -193,54 +196,6 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                   ),
                 ),
                 leadingWidth: 28,
-                // actions: [
-                //   // Padding(
-                //   //   padding: const EdgeInsets.only(top: 12,left: 16),
-                //   //   child: InkWell(
-                //   //     onTap: (){},
-                //   //     //   if(activeTextfield==true){
-                //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
-                //   //     //       mobile: mobileController.text,
-                //   //     //       lname: "",
-                //   //     //       fname: nameController.text,
-                //   //     //       dob: "",
-                //   //     //       email: emailController.text,
-                //   //     //
-                //   //     //     ));
-                //   //     //   }
-                //   //     //   else{
-                //   //     //
-                //   //     //   }
-                //   //     //   myfocus.unfocus();
-                //   //     //   myfocus1.unfocus();
-                //   //     //   myfocus2.unfocus();
-                //   //     //   activeTextfield=false;
-                //   //     // },
-                //   //     child: Text(
-                //   //       "Save",
-                //   //       style: GoogleFonts.roboto(
-                //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
-                //   //         fontSize: 18,
-                //   //         fontWeight: FontWeight.w500,
-                //   //         height: 1.56,
-                //   //       ),
-                //   //     ),
-                //   //   ),
-                //   // ),
-                //
-                //
-                //   // SvgPicture.string(HomeSvg().msgIcon),
-                //   //         const SizedBox(
-                //   //           width: 16,
-                //   //         ),
-                //   //         GestureDetector(
-                //   //           onTap: widget.onTap,
-                //   //             child: SvgPicture.string(HomeSvg().addIcon)),
-                //
-                //   const SizedBox(
-                //     width: 16,
-                //   )
-                // ],
               ),
               Container(
                 width: w1,
@@ -910,6 +865,57 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               ],
                                             ),
                                           ),
+
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20,),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10,right: 15),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListing(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate(HR)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListByTLs(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate(TL's)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListToCEO(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate(CEO)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+
 
                                         ],
                                       ),
