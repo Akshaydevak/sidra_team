@@ -13,7 +13,7 @@ import '../product_hub/product_hub_card.dart';
 import '../task_operation/home_card.dart';
 import '../task_operation/task_svg.dart';
 import '../task_operation/task_title/four_card.dart';
-import 'all_contracts.dart';
+// import 'all_contracts.dart';
 import 'new_contract.dart';
 class ManufactureHome extends StatelessWidget {
   String? selGender;
@@ -130,12 +130,12 @@ class ManufactureHome extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: (){
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: AllContracts(),
-                      withNavBar: true, // OPTIONAL VALUE. True by default.
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: AllContracts(),
+                    //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
                   },
                   child: Container(
                     width: w,
