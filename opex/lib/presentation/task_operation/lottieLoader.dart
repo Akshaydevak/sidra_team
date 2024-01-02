@@ -23,9 +23,9 @@ class _LottieLoaderState extends State<LottieLoader> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Lottie.asset(
-            'asset/loadingteams.json',
-          ),
+            Lottie.asset(
+              'asset/loadingteams.json',
+            ),
           Text(
             "Loading...",
             style: GoogleFonts.roboto(

@@ -109,7 +109,7 @@ class JobCard extends StatelessWidget {
                 ):
                 Container(
                   width: joblist?.statusName=="STARTED"||joblist?.statusName=="PENDING"?
-                  w/4.6:joblist?.statusName=="COMPLETED"?w/3.7:joblist?.statusName=="ON PROGRESS"?w/3.5:w/3.6,
+                  w/5.2:joblist?.statusName=="COMPLETED"?w/4.4:joblist?.statusName=="ON PROGRESS"?w/4:w/4.2,
                   // height: 25,
                   padding: EdgeInsets.symmetric(horizontal: 5,vertical: 4),
                   decoration: BoxDecoration(
@@ -139,7 +139,7 @@ class JobCard extends StatelessWidget {
                       // Color(0xffBFD5E7):joblist?.statusName=="COMPLETED"?
                       // Color(0xffB5E2BA):joblist?.statusName=="PENDING"?
                       // Color(0xffFFB3B3):Color(0xffFFE1B3),
-                      fontSize: w/28,
+                      fontSize: w/34,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

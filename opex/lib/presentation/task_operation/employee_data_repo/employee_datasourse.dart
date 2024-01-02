@@ -32,7 +32,7 @@ class EmployeeDataSource {
     required List<String> roleNameList,
     required String roleName
   }) async {
-    GetEmployeeList employeeDetails;
+    print("ffff${ClusterUrls.userCreateUrl}");
     final response = await client.post(
       ClusterUrls.userCreateUrl,
       data: {
@@ -78,6 +78,7 @@ class EmployeeDataSource {
     required String employeeCode,
     required String newPassword,
   }) async {
+    print("AIR${ ClusterUrls.changePawwordUserUrl}");
     final response = await client.post(
       ClusterUrls.changePawwordUserUrl,
       data: {
@@ -111,10 +112,7 @@ class EmployeeDataSource {
     required List<String> userList,
 
   }) async {
-    GetEmployeeList employeeDetails;
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    String? code = sharedPreferences.getString('code');
+   print("LLLLLL${ClusterUrls.groupCreate}");
     final response = await client.post(ClusterUrls.groupCreate,
       data: {
         "group_name":groupName,

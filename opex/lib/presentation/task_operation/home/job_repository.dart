@@ -38,7 +38,7 @@ class JobRepo {
   Future<DataResponse> getFilterJobList(String? status) async {
     final apiResponse = await _dataSource.getFilterJobList(status);
     try {
-      if (apiResponse.isNotEmpty) {
+      if (apiResponse!=null) {
         return DataResponse(data: apiResponse);
       } else {
         return DataResponse(error: "error Text",data: null);
@@ -66,7 +66,7 @@ class JobRepo {
   Future<PaginatedResponse> getNewJobList(String? search,String? next,String? prev) async {
     final apiResponse = await _dataSource.getNewJobList(search,next,prev);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data!= null ) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 

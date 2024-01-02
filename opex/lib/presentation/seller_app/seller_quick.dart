@@ -9,10 +9,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../core/utils/variables.dart';
-import '../inventory/costing.dart';
+// import '../inventory/costing.dart';
 import '../inventory/inventory_create_new_list.dart';
 import '../inventory/manage_inventory.dart';
-import '../inventory/stock_manage.dart';
+// import '../inventory/stock_manage.dart';
 import '../task_operation/task_svg.dart';
 import 'create_product_short.dart';
 import 'new_product_list.dart';
@@ -146,24 +146,24 @@ class SellerQuick extends StatelessWidget {
          break;
        case 2:
          onTap = () {
-           PersistentNavBarNavigator.pushNewScreen(
-             context,
-             screen: StockManage(),
-             withNavBar: true,
-             // OPTIONAL VALUE. True by default.
-             pageTransitionAnimation: PageTransitionAnimation.fade,
-           );
+           // PersistentNavBarNavigator.pushNewScreen(
+           //   context,
+           //   screen: StockManage(),
+           //   withNavBar: true,
+           //   // OPTIONAL VALUE. True by default.
+           //   pageTransitionAnimation: PageTransitionAnimation.fade,
+           // );
          };
          break;
        case 3:
          onTap = () {
-           PersistentNavBarNavigator.pushNewScreen(
-             context,
-             screen: Costing(),
-             withNavBar: true,
-             // OPTIONAL VALUE. True by default.
-             pageTransitionAnimation: PageTransitionAnimation.fade,
-           );
+           // PersistentNavBarNavigator.pushNewScreen(
+           //   context,
+           //   screen: Costing(),
+           //   withNavBar: true,
+           //   // OPTIONAL VALUE. True by default.
+           //   pageTransitionAnimation: PageTransitionAnimation.fade,
+           // );
          };
          break;
        case 4:

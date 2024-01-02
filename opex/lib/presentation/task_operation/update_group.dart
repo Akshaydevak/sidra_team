@@ -254,6 +254,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                   controller: groupName,
 
                                   maxLines: 1,
+                                  readOnly: authentication.isAssociateAdmin?true:false,
                                 ),
 
                                 Container(
@@ -267,6 +268,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                   controller: discription,
                                   maxLines: 4,
                                   minLines: 1,
+                                  readOnly: authentication.isAssociateAdmin?true:false,
                                   onChanged: (n){
                                     validationCheck();
                                     setState(() {

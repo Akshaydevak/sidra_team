@@ -20,11 +20,14 @@ class ProfileTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w=MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
       // color:Colors.yellow,
       height: 35,
-      width: w,
+      width: w1,
       child: TextFormField(
         autofocus: focus??false,
         controller: controller,

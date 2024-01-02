@@ -14,9 +14,12 @@ class ProfileMenuCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
-      width: w/1.15,color: Colors.white,
+      width: w1/1.15,color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
