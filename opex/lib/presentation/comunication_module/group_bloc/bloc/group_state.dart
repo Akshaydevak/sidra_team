@@ -12,17 +12,19 @@ class GroupInitial extends GroupState {}
 class GetAllRegisteredUsersLoading extends GroupState {}
 
 class GetAllRegisteredUsersSuccess extends GroupState {
-  final List<UserModelInventory> registeresUsers;
+  final List<GetEmployeeList> registeresUsers;
   const GetAllRegisteredUsersSuccess({required this.registeresUsers});
 }
 
 class GetAllRegisteredUsersFailed extends GroupState {}
 
+
+
 class CreateGroupLoading extends GroupState {}
 
 class CreateGroupSuccess extends GroupState {
-  final String successMessage;
-  const CreateGroupSuccess({required this.successMessage});
+  GroupList list =GroupList();
+  CreateGroupSuccess({required this.list});
 }
 
 class CreateGroupFailed extends GroupState {
@@ -51,3 +53,22 @@ class GroupLeaveFailed extends GroupState {
   const GroupLeaveFailed({required this.error});
 }
 
+class GroupMemberAddLoading extends GroupState{}
+class GroupMemberAddSuccess extends GroupState{
+  final String successmsg;
+  const GroupMemberAddSuccess({ required this.successmsg});
+}
+class GroupMemberAddFailed extends GroupState{
+  final String error;
+  const GroupMemberAddFailed({required this.error});
+}
+
+class GroupMemberDeleteLoading extends GroupState{}
+class GroupMemberDeleteSuccess extends GroupState{
+  final String successmsg;
+  const GroupMemberDeleteSuccess({ required this.successmsg});
+}
+class GroupMemberDeleteFailed extends GroupState{
+  final String error;
+  const GroupMemberDeleteFailed({required this.error});
+}

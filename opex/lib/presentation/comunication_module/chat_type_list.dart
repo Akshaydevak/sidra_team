@@ -27,7 +27,7 @@ class _ChatTypeListState extends State<ChatTypeList> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: w - 55,
+      width: w - 20,
       height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -49,7 +49,7 @@ class _ChatTypeListState extends State<ChatTypeList> {
                 print(i);
               },
               child: Container(
-                width: 98,
+                width: w/4.5,
                 height: 36,
                 decoration: select == i
                     ? BoxDecoration(
@@ -81,7 +81,7 @@ class _ChatTypeListState extends State<ChatTypeList> {
                   textStyle:TextStyle(
                     color:select==i? Colors.white:Colors.black,
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: w/28,
                     )
                  ),
                 ),

@@ -7,13 +7,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DummyUserDataSource {
   Dio client = Dio();
   Future<String> tokenCreationCommunicationData() async {
-    print("reached datasource ");
+    print("reached datasource  ${authentication.authenticatedUser.code}  ");
 
     String getToken = "";
 
     final response = await client.post(
       CommunicationUrls.tokenCreationCommunicationUrl,
-      data: {"token": "${authentication.authenticatedUser.token}"},
+      data: {
+        "token": "${authentication.authenticatedUser.token}"
+        },
       options: Options(
         headers: {
           'Content-Type': 'application/json',

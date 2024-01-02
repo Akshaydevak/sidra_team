@@ -492,7 +492,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
         required String? endDate,
         required String? priority,
       }) async* {
-    yield CreateJobLoading();
+    yield UpdateJobLoading();
 
     final dataResponse = await _jobRepo.jobUpdatePost(
         startDate: startDate,

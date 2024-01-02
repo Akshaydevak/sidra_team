@@ -39,13 +39,6 @@ class _PinnedJobsState extends State<PinnedJobs> {
       listeners: [
         BlocListener<JobBloc, JobState>(
           listener: (context, state) {
-            if (state is PinCreationLoading) {
-              showSnackBar(context,
-                  message: "Loading...",
-                  color: Colors.white,
-                  // icon: HomeSvg().SnackbarIcon,
-                  autoDismiss: true);
-            }
 
             if (state is PinCreationFailed) {
               showSnackBar(

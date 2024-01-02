@@ -178,9 +178,7 @@ class JobDataSource {
   //userverfy
   Future<DataResponse> getUserVerify() async {
 
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<GetJobList> jobList = [];
-    print("URL:${ClusterUrls.userVerifyUrl}");
+    print("URL vERIFY:${ClusterUrls.userVerifyUrl}");
 
     final response = await client.get(ClusterUrls.userVerifyUrl,
       options: Options(
@@ -418,6 +416,7 @@ class JobDataSource {
   }) async {
     print("startDDDDD$startDate");
     print("startDDDDD$endDate");
+    print("startDDDDD api${ClusterUrls.taskCountUrl+authentication.authenticatedUser.code.toString()}");
     GetCountTask employeeDetails;
 
     final response = await client.post(ClusterUrls.taskCountUrl+authentication.authenticatedUser.code.toString(),
@@ -454,7 +453,6 @@ print("DATASS${response.data['data']}");
     print("pinn$taskId");
     print("pinn$isPinned");
     print("pinn$userCode");
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final response = await client.patch(ClusterUrls.pinnJobCreationUrl,
 
       data: {
@@ -552,6 +550,7 @@ print("DATASS${response.data['data']}");
     print("JOB CREATION$endDate");
     print("JOB CREATION$priority");
     print("JOB CREATION$relatedJob");
+    print("JOB api${ClusterUrls.createJobUrl}");
     final response = await client.post(
       ClusterUrls.createJobUrl,
       data: {
