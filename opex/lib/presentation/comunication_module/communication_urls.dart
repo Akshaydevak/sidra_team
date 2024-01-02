@@ -1,6 +1,7 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
       "https://api-communication-application.hilalcart.com/";
+      // "http://192.168.1.16:5500/";
 
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";
@@ -12,6 +13,8 @@ class CommunicationUrls {
   static const getGroupProfileDetailsUrl="${communicationBaseUrl}api/chat/user/profile/";
   static const getGroupAttachmentsInProfileUrl="${communicationBaseUrl}api/chat/details/group/";
   static const tokenCreationCommunicationUrl="${communicationBaseUrl}api/inventory/inventory-login";
+  static const addGroupMember="${communicationBaseUrl}api/inventory/inventory-add-member/";
+  static const deleteGroupMember="${communicationBaseUrl}api/inventory/inventory-delete-member/";
   //image upload
   static const uploadImageUrl="https://api-uat-user.sidrabazar.com/file-upload";
   //inventory related

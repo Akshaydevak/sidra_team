@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cluster/presentation/comunication_module/communication_datasource.dart';
 import 'package:cluster/presentation/comunication_module/communication_repo.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
+import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:equatable/equatable.dart';
 
 part 'communication_event.dart';
@@ -24,7 +25,8 @@ class CommunicationBloc extends Bloc<CommunicationEvent, CommunicationState> {
           email: event.email,
           fname: event.fname,
           lname: event.lname,
-          photo: event.photo);
+          photo: event.photo,
+          usercode:event.usercode);
     } else if (event is GetChatListEvent) {
       yield* getChatList(token: event.token);
     } else if (event is GetFilterdChatListEvent) {
@@ -51,14 +53,17 @@ class CommunicationBloc extends Bloc<CommunicationEvent, CommunicationState> {
       required String fname,
       required String lname,
       required String email,
-      required String photo}) async* {
+      required String photo,
+      required String usercode}) async* {
     yield AddAFriendUserLoadig();
     final dataResponse =
-        await _productData.addAFriendUser(token, fname, lname, email, photo);
-    if (dataResponse.data1) {
-      yield AddAFriendUserSuccess(successMessage: dataResponse.data2 ?? "");
+        await _productData.addAFriendUser(token, fname, lname, email, photo,usercode);
+    if (dataResponse.id!=null) {
+      print("mlskmdksucess");
+      yield AddAFriendUserSuccess(chatListData1: dataResponse);
     } else {
-      yield AddAFriendUserFailed(error: dataResponse.data2 ?? "");
+      print("kjhkjh failed");
+      yield AddAFriendUserFailed(error:"Failed");
     }
   }
 

@@ -62,7 +62,7 @@ dependencies:
   dotted_border: ^2.0.0+2
   fluttertoast:
   flutter_carousel_slider:
-  optimized_cached_image:
+  # optimized_cached_image:
   getwidget:
   intl: ^0.17.0
   file_picker:
@@ -86,7 +86,7 @@ dependencies:
   video_player: ^2.5.1
   chewie:
   url_launcher: ^6.1.9
-  voice_message_package:
+  voice_message_package: ^1.0.41
   animated_splash_screen:
   mime:
   http_parser :

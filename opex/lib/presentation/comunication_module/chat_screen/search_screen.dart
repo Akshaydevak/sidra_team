@@ -32,8 +32,8 @@ class _CmtnSearchState extends State<CmtnSearch> {
           Navigator.pop(context);
           BlocProvider.of<CommunicationBloc>(context)
               .add(GetChatListEvent(token: widget.token ?? ""));
-          showSnackBar(context,
-              message: state.successMessage, color: Colors.green);
+          // showSnackBar(context,
+          //     message: state.successMessage, color: Colors.green);
         } else if (state is AddAFriendUserFailed) {
           showSnackBar(context, message: state.error, color: Colors.red);
         }
@@ -132,17 +132,21 @@ class _CmtnSearchState extends State<CmtnSearch> {
                                           .add(AddAFriendUserEvent(
                                               token: widget.token ?? "",
                                               email: state.searchedUsers[index]
-                                                      .mail ??
+                                                      .email ??
                                                   "",
                                               fname: state.searchedUsers[index]
-                                                      .name ??
+                                                      .fname ??
                                                   "",
                                               lname: state.searchedUsers[index]
-                                                      .lastName ??
+                                                      .lname ??
                                                   "",
                                               photo: state.searchedUsers[index]
-                                                      .photo ??
-                                                  ""));
+                                                      .profile ??
+                                                  "",
+                                                  usercode: state.searchedUsers[index]
+                                                      .userCode ??
+                                                  ""
+                                                  ));
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
@@ -165,7 +169,7 @@ class _CmtnSearchState extends State<CmtnSearch> {
                                                 children: [
                                                   Text(
                                                     state.searchedUsers[index]
-                                                            .name ??
+                                                            .fname ??
                                                         "",
                                                     style: GoogleFonts.roboto(
                                                       color: const Color(
@@ -177,7 +181,7 @@ class _CmtnSearchState extends State<CmtnSearch> {
                                                   ),
                                                   Text(
                                                     state.searchedUsers[index]
-                                                            .mail ??
+                                                            .email ??
                                                         "",
                                                     style: TextStyle(
                                                       color: Color(0xff6d6d6d),

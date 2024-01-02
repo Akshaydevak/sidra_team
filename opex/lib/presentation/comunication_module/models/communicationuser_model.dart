@@ -59,7 +59,7 @@ class ChatMessagaeData extends Equatable {
 }
 
 @JsonSerializable()
-class ChatUser extends Equatable {
+class   ChatUser extends Equatable {
   @JsonKey(name: "createdAt")
   final String? createdAt;
   @JsonKey(name: "updatedAt")
@@ -159,13 +159,13 @@ class UserModel extends Equatable {
 class UserModelInventory extends Equatable {
   @JsonKey(name: "id")
   final int? id;
-  @JsonKey(name: "primary_mail")
+  @JsonKey(name: "email")
   final String? mail;
-  @JsonKey(name: "fname")
+  @JsonKey(name: "first_name")
   final String? name;
-  @JsonKey(name: "lname")
+  @JsonKey(name: "last_name")
   final String? lastName;
-  @JsonKey(name: "profile_pic")
+  @JsonKey(name: "role")
   final String? photo;
   const UserModelInventory(
       {this.id, this.mail, this.name, this.lastName, this.photo});

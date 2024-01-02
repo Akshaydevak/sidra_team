@@ -14,10 +14,10 @@ class GetAllRegisteredUsersEvent extends GroupEvent {
 
 class CreateGroupEvent extends GroupEvent {
   final String token;
-  final List<UserModelInventory> userIdList;
+  final List<GetEmployeeList> userIdList;
   final String groupName;
   final String groupPhotoUrl;
-  const CreateGroupEvent(
+  const CreateGroupEvent( 
       {required this.groupName,
       required this.userIdList,
       required this.token,
@@ -36,4 +36,16 @@ class GroupLeaveEvent extends GroupEvent {
   const GroupLeaveEvent({required this.token, required this.roomId});
 }
 
+class GroupMemberAddEvent extends GroupEvent {
+  final String token;
+  final String chatId;
+  final String userId;
+  const GroupMemberAddEvent({required this.token, required this.chatId, required this.userId});
+}
 
+class GroupMemberDeleteEvent extends GroupEvent {
+  final String token;
+  final String chatId;
+  final String userId;
+  const GroupMemberDeleteEvent({required this.token, required this.chatId, required this.userId});
+}

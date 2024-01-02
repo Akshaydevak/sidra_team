@@ -19,12 +19,15 @@ class AddAFriendUserEvent extends CommunicationEvent {
   final String lname;
   final String email;
   final String photo;
+  final String usercode;
   const AddAFriendUserEvent(
       {required this.token,
       required this.fname,
       required this.lname,
       required this.email,
-      required this.photo});
+      required this.photo,
+      required this.usercode
+      });
 }
 
 class GetChatListEvent extends CommunicationEvent {

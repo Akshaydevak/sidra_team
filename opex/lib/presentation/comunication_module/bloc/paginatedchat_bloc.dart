@@ -13,17 +13,17 @@ class PaginatedchatBloc extends Bloc<PaginatedchatEvent, PaginatedchatState> {
   Stream<PaginatedchatState> mapEventToState(PaginatedchatEvent event) async* {
     if (event is PaginatedChatGetEvent) {
       yield* getPaginatedChat(
-          token: event.token, userId: event.userId, pageNo: event.pageNo);
+          token: event.token, pageNo: event.pageNo, chatId: event.chatId);
     }
   }
 
   Stream<PaginatedchatState> getPaginatedChat(
       {required String token,
-      required String userId,
-      required int pageNo}) async* {
+      // required String userId,
+      required int pageNo, required String chatId}) async* {
     yield PaginatedChatLoading();
     final dataResponse =
-        await _productData.getChatScreenData(token, userId, pageNo);
+        await _productData.getChatScreenData(token,chatId, pageNo);
     if (dataResponse.messages != null) {
       yield PaginatedChatSuccess(chatData: dataResponse);
     } else {

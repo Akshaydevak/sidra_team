@@ -4,6 +4,7 @@ import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummychatscreen.dart';
+import 'package:cluster/presentation/dashboard_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -23,6 +24,7 @@ class _LoginDemoState extends State<LoginDemo> {
   void initState() {
     BlocProvider.of<DummyLoginBloc>(context)
         .add(TokenCreationCommunicationEvent());
+
     super.initState();
   }
 
@@ -32,6 +34,7 @@ class _LoginDemoState extends State<LoginDemo> {
   TextEditingController signupusername = TextEditingController();
   TextEditingController signupPassword = TextEditingController();
   String? dummyToken;
+
   @override
   Widget build(BuildContext context) {
     print("build");
@@ -43,11 +46,19 @@ class _LoginDemoState extends State<LoginDemo> {
           if (state is TokenCreationCommunicationLoading) {
             customCupertinoLoading();
           } else if (state is TokenCreationCommunicationSuccess) {
+            // PersistentNavBarNavigator.pushNewScreen(
+            //   context,
+            //   screen: CommunicationModule(
+            //     token: state.token,
+            //   ),
+            //   withNavBar: true, // OPTIONAL VALUE. True by default.
+            //   pageTransitionAnimation: PageTransitionAnimation.fade,
+            // );
+          }
+          else if (state is TokenCreationCommunicationFailed) {
             PersistentNavBarNavigator.pushNewScreen(
               context,
-              screen: CommunicationModule(
-                token: state.token,
-              ),
+              screen: HomeScreen(),
               withNavBar: true, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
             );
@@ -55,14 +66,14 @@ class _LoginDemoState extends State<LoginDemo> {
         },
         child: Center(
           child: SizedBox(
-
+        
             width: MediaQuery.of(context).size.width / 8,
-            child: const LoadingIndicator(
+            child:const LoadingIndicator(
                 indicatorType: Indicator.ballPulse,
                 colors: [ColorPalette.primary],
                 strokeWidth: 0.1,
                 backgroundColor: Colors.transparent,
-                pathBackgroundColor: Colors.black),
+                pathBackgroundColor: Colors.black)
           ),
         ),
       ),

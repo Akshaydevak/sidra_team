@@ -8,9 +8,10 @@ abstract class PaginatedchatEvent extends Equatable {
 }
 
 class PaginatedChatGetEvent extends PaginatedchatEvent {
-  final String userId;
+  // final String userId;
+  final String chatId;
   final String token;
   final int pageNo;
   const PaginatedChatGetEvent(
-      {required this.userId, required this.token, required this.pageNo});
+      {required this.token, required this.pageNo, required this.chatId});
 }

@@ -1,4 +1,5 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/empty_page_communication.dart';
@@ -42,7 +43,7 @@ class _DashBoardState extends State<DashBoard> {
   List<Widget> _buildScreens() {
     return [
       const HomeScreen(),
-      const EmptyPageCommunication(),
+      CommunicationModule(),
        const TaskAndOperation(),
       const NewProfileScreen(),
       // const ProfileScreen(),

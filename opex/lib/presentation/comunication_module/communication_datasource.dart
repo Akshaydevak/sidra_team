@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cluster/core/utils/data_response.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/communication_urls.dart';
+import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
+import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http_parser/http_parser.dart';
@@ -12,9 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CommunicationDatasource {
   Dio client = Dio();
-  Future<List<UserModelInventory>> getSearchedUsers(
+  Future<List<GetEmployeeList>> getSearchedUsers(
       String searchQuery, String token) async {
-    List<UserModelInventory> searchedUserList = [];
+    List<GetEmployeeList> searchedUserList = [];
     
     final response = await client.get(
       CommunicationUrls.searchUser + searchQuery,
@@ -27,46 +29,52 @@ class CommunicationDatasource {
       ),
     );
     (response.data['data']['results'] as List).forEach((element) {
-      searchedUserList.add(UserModelInventory.fromJson(element));
+      searchedUserList.add(GetEmployeeList.fromJson(element));
     });
     return searchedUserList;
   }
 
-  Future<List<UserModelInventory>> getAllRegisteredUsers(String? token) async {
-    List<UserModelInventory> allRegisteredUsers = [];
+  Future<List<GetEmployeeList>> getAllRegisteredUsers(String? token) async {
+    List<GetEmployeeList> allRegisteredUsers = [];
    
-
+   
     final response = await client.get(
-      CommunicationUrls.getAllRegisteredUsersInInventory,
+      "https://api-task-and-operation.hilalcart.com/task-manage/list-user",
       options: Options(
         validateStatus: (status) => true,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'token ${authentication.authenticatedUser.token}',
+          'Authorization': '${authentication.authenticatedUser.token}',
         },
       ),
     );
+     print("auth ${authentication.authenticatedUser.token}");
     print("got the response ${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
-      allRegisteredUsers.add(UserModelInventory.fromJson(element));
+      allRegisteredUsers.add(GetEmployeeList.fromJson(element));
     });
-    print("got the final ${allRegisteredUsers}");
+    // print("got the final ${allRegisteredUsers}");
     return allRegisteredUsers;
   }
 
-  Future<DoubleResponse> createGroupData(
+  Future<GroupList> createGroupData(
       {required String token,
       required String groupPicUrl,
-      required List<UserModelInventory>? userIdList,
+      required List<GetEmployeeList>? userIdList,
       required String groupName}) async {
+        print("asdd${userIdList![0].userCode}");
+
+        GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
     for (var i = 0; i < userIdList!.length; i++) {
+    print("${userIdList[i].userCode}");
       map.add({
-        "fname": userIdList[i].name,
-        "lname": userIdList[i].lastName,
-        "email": userIdList[i].mail,
-        "photo": userIdList[i].photo
+        "fname": userIdList[i].fname,
+        "lname": userIdList[i].lname,
+        "email": userIdList[i].email,
+        "photo": userIdList[i].profile,
+        "user_code":userIdList[i].code
       });
     }
     final response = await client.post(
@@ -80,8 +88,11 @@ class CommunicationDatasource {
         },
       ),
     );
-    return DoubleResponse(
-        response.data['status'] == 'success', response.data['message']);
+    print("create a grp ${response.data}");
+    grpuserlist = GroupList.fromJson(response.data);
+    return grpuserlist;
+  //   DoubleResponse(
+  //       response.data['status'] == 'success', response.data['chatid']);
   }
 
   Future<DoubleResponse> groupLeaveData(
@@ -103,18 +114,13 @@ class CommunicationDatasource {
     return DoubleResponse(
         response.data['status'] == 'success', response.data['message']);
   }
-
-  Future<DoubleResponse> addAFriendUser(String token, String fname,
-      String lname, String mail, String photo) async {
-    // print("token is ${token}");
-    // print("fname is ${fname}");
-    // print("lname is ${lname}");
-    // print("email is ${mail}");
-    // print("photo is ${photo}");
-
+  Future<DoubleResponse> addanGroupMember(
+      {required String chatId, required String userId, required String token}) async {
+    print("at datasource");
+    print("....$chatId...$userId");
     final response = await client.post(
-      CommunicationUrls.addAFriendUser,
-      data: {"fname": fname, "lname": lname, "email": mail, "photo": photo},
+      CommunicationUrls.addGroupMember+chatId,
+      data: {"userId": userId},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -127,6 +133,55 @@ class CommunicationDatasource {
     return DoubleResponse(
         response.data['status'] == 'success', response.data['message']);
   }
+  Future<DoubleResponse> deleteGrpMembers(
+      {required String chatId, required String userId, required String token}) async {
+    print("at datasource");
+    print("....$chatId  $userId");
+    final response = await client.delete(
+      CommunicationUrls.deleteGroupMember+"$chatId/$userId",
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print("response at datasource ${response.data}");
+    return DoubleResponse(
+        response.data['status'] == 'success', response.data['message']);
+  }
+
+  Future<CommunicationUserModel> addAFriendUser(String token, String fname,
+      String lname, String mail, String photo,String usercode) async {
+        
+        CommunicationUserModel chatListData1 = CommunicationUserModel();
+    print("token is ${token}");
+    print("fname is ${fname}");
+    print("lname is ${lname}");
+    print("email is ${mail}");
+    print("photo is ${photo}");
+    print("photo is ${usercode}");
+    print(token);
+    final response = await client.post(
+      CommunicationUrls.addAFriendUser,
+      data: {"fname": fname, "lname": lname, "email": mail, "photo": photo,"code":usercode},
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print(response.data);
+    if(response.data['status']=="success"){
+    chatListData1 = CommunicationUserModel.fromJson(response.data['data']);
+    }else{
+       chatListData1 = CommunicationUserModel.fromJson(response.data['data']);
+    }
+    return chatListData1;
+  }
 
   Future<List<CommunicationUserModel>> getChatListData(String token) async {
     List<CommunicationUserModel> chatListData = [];
@@ -138,7 +193,8 @@ class CommunicationDatasource {
             'Authorization': 'Bearer $token',
           },
         ));
-
+      print(response.data);
+      // if(response.data)
     (response.data['data'] as List).forEach((element) {
       chatListData.add(CommunicationUserModel.fromJson(element));
     });
@@ -158,6 +214,7 @@ class CommunicationDatasource {
                 'Authorization': 'Bearer $token',
               },
             ));
+            print("kngwlk... ${response.data}");
     (response.data['data'] as List).forEach((element) {
       chatListData.add(CommunicationUserModel.fromJson(element));
     });
@@ -165,12 +222,12 @@ class CommunicationDatasource {
   }
 
   Future<ChatMessagaeData> getChatScreenData(
-      String token, String userId, int pageNo) async {
-    ChatMessagaeData chatScreenData;
+      String token,String chatId,int pageNo) async {
+    ChatMessagaeData chatScreenData =ChatMessagaeData();
     // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
-        "${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo",
+        "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
         options: Options(
           validateStatus: (status) => true,
           headers: {
@@ -180,13 +237,15 @@ class CommunicationDatasource {
           },
         ));
     print("got it ${response.data}");
-    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);
+    if(response.data['status']=="success"){
+    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
     return chatScreenData;
   }
 
   Future<ProfileGetModel> getGroupProfileGetData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;
+    print("profile get api ${CommunicationUrls.getGroupProfileDetailsUrl + chatId}");
     final response =
         await client.get(CommunicationUrls.getGroupProfileDetailsUrl + chatId,
             options: Options(
@@ -196,6 +255,7 @@ class CommunicationDatasource {
                 'Authorization': 'Bearer $token',
               },
             ));
+            print("profile get ${response.data}");
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
@@ -203,8 +263,9 @@ class CommunicationDatasource {
   Future<ProfileGetModel> getGroupAttachmentsData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;
+    print("get attachment ${CommunicationUrls.getGroupAttachmentsInProfileUrl+chatId }");
     final response = await client.get(
-        CommunicationUrls.getGroupAttachmentsInProfileUrl + chatId,
+        CommunicationUrls.getGroupAttachmentsInProfileUrl+chatId,
         options: Options(
           headers: {
             'Content-Type': 'application/json',

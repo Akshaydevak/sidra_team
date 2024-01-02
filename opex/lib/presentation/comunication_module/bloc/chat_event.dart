@@ -8,8 +8,9 @@ abstract class ChatEvent extends Equatable {
 }
 
 class ChatScreenGetEvent extends ChatEvent {
-  final String userId;
+  // final String userId;
+  final String chatId;
   final String token;
   final int pageNo;
-  const ChatScreenGetEvent({required this.userId, required this.token,required this.pageNo});
+  const ChatScreenGetEvent({required this.token,required this.pageNo,required this.chatId});
 }

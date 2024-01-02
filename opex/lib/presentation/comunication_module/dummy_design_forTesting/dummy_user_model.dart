@@ -33,3 +33,23 @@ class MessageFormat extends Equatable {
       _$MessageFormatFromJson(json);
   Map<String, dynamic> toJson() => _$MessageFormatToJson(this);
 }
+
+
+// @JsonSerializable()
+// class UserDummyList extends Equatable {
+//   @JsonKey(name: "id")
+//   final String? id;
+//   @JsonKey(name: "username")
+//   final String? username;
+//   @JsonKey(name: "email")
+//   final String? email;
+//   @JsonKey(name: "photo")
+//   final String? photo;
+//   const UserDummyList({this.id,this.username, this.email, this.photo});
+//   @override
+//   List<Object> get props => [];
+
+//   factory UserDummyList.fromJson(Map<String, dynamic> json) =>
+//       _$UserDummyListFromJson(json);
+//   Map<String, dynamic> toJson() => _$UserDummyListToJson(this);
+// }

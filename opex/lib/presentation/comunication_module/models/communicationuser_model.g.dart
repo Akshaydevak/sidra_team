@@ -125,19 +125,19 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
 UserModelInventory _$UserModelInventoryFromJson(Map<String, dynamic> json) =>
     UserModelInventory(
       id: json['id'] as int?,
-      mail: json['primary_mail'] as String?,
-      name: json['fname'] as String?,
-      lastName: json['lname'] as String?,
-      photo: json['profile_pic'] as String?,
+      mail: json['email'] as String?,
+      name: json['first_name'] as String?,
+      lastName: json['last_name'] as String?,
+      photo: json['role'] as String?,
     );
 
 Map<String, dynamic> _$UserModelInventoryToJson(UserModelInventory instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'primary_mail': instance.mail,
-      'fname': instance.name,
-      'lname': instance.lastName,
-      'profile_pic': instance.photo,
+      'email': instance.mail,
+      'first_name': instance.name,
+      'last_name': instance.lastName,
+      'role': instance.photo,
     };
 
 ProfileGetModel _$ProfileGetModelFromJson(Map<String, dynamic> json) =>
