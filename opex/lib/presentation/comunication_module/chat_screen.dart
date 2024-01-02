@@ -33,7 +33,6 @@ import 'package:voice_message_package/voice_message_package.dart';
 import 'chat_screen/chat_appbar.dart';
 import 'unread.dart';
 import 'globals.dart';
-
 class ChatScreen extends StatefulWidget {
   final bool  isGroup;
   final bool chat;
@@ -65,6 +64,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen>
     with SingleTickerProviderStateMixin {
   final _audioRecorder = Record();
+AudioPlayer? player = AudioPlayer();
 
   bool isMount = true;
   bool isSecondMount = true;
@@ -126,7 +126,6 @@ class _ChatScreenState extends State<ChatScreen>
      
          widget.socket!.on("msg.seen", (data) {
           print("enter message $data");
-          seenTimestamp=data['timestamp'];
           
          } );
          
@@ -168,20 +167,50 @@ class _ChatScreenState extends State<ChatScreen>
         }
       });
       widget.socket?.on("latest.message", (data)async{
-        print("total res listened  ${data}");
-         
+        // print("total res listened  ${data}");
+         print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
         messageList.add(ChatModel(
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
             fromuserid: data['fromuserid'])); 
-          // updateMessageSeenStatus();
-          if(widget.loginUserId==data['fromuserid']){
-          _incrementUnreadMessageCount();
-          }
-          else{
-            print("mmm. no");
-          }
+            if(data['fromuserid'] != widget.loginUserId){
+              print("other msg");
+               player!.setAsset('asset/response.mp3').then((value) {
+                return {  
+              player!.playerStateStream.listen((state) {
+                  if (state.playing) {
+                  setState(() {
+                    print("audio,,,,");
+                  });
+                  } 
+                  else
+                  switch (state.processingState) {
+                  case ProcessingState.idle:
+                  break;
+                  case ProcessingState.loading:
+                  break;
+                  case ProcessingState.buffering:
+                  break;
+                  case ProcessingState.ready:
+                  setState(() {
+                  });
+                  break;
+                  case ProcessingState.completed:
+                  setState(() {
+                  });
+                  break;
+                  }
+                  }),
+                  player!.play(),
+                };
+              });
+            }
+            else{
+              print("my msg");
+            }
+        
+         
         if (isMount) {
           setState(() {
 
@@ -376,15 +405,6 @@ class _ChatScreenState extends State<ChatScreen>
   }
    
 
-  _incrementUnreadMessageCount() async {
-    await UnreadMessagesManager.incrementUnreadMessageCount(widget.communicationUserModel?.chatid??"");
-    // _loadUnreadMessageCount();
-  }
-
-  _resetUnreadMessageCount() async {
-    await UnreadMessagesManager.resetUnreadMessageCount(widget.communicationUserModel?.chatid??"");
-    // _loadUnreadMessageCount();
-  }
   void updateMessageSeenStatus() {
     print("seeeen daaaata");
     bool hasMatch = false;
@@ -454,7 +474,6 @@ class _ChatScreenState extends State<ChatScreen>
               }
                
               messageList = messageList.reversed.toList();
-              _resetUnreadMessageCount();
               ScrollService.scrollToEnd(
             scrollController: _controller, reversed: false);
                
@@ -476,7 +495,6 @@ class _ChatScreenState extends State<ChatScreen>
               }
               ScrollService.scrollToEnd(
             scrollController: _controller, reversed:true);
-              //  updateMessageSeenStatus();
             }
           },
         ),
@@ -942,7 +960,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                               8),
                                                       color: Colors.white),
                                                   child: SvgPicture.string(
-                                                      TaskSvg().docIcon2),
+                                                      TaskSvg().docIcon),
                                                 ),
                                                 const SizedBox(
                                                   width: 5,
@@ -1012,7 +1030,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                 }
                                               },
                                               child: SvgPicture.string(
-                                                  TaskSvg().dwnldIcon)),
+                                                  TaskSvg().downloadIcon)),
                                         ],
                                       ),
                                     } else ...{
@@ -1084,21 +1102,31 @@ class _ChatScreenState extends State<ChatScreen>
                                     }
                                   } else ...{
                                     if(messageList[index].type=="notify")...{
-                                              Container(
-                                                width: w/1.15,
-                                                child: Text(
-                                              messageList[index]
-                                                      .message??
-                                                  "",
-                                                  maxLines: 3,
-                                                  softWrap: true,
-                                                  textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                color: Color(0xff151522),
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                              )
+                                             Padding(
+                                     padding: const EdgeInsets.only(left: 25,right: 25,top: 10,bottom: 10),
+                                     child: Center(
+                                       child: Container(
+                                         padding: EdgeInsets.only(top:10,bottom:10,right: 10,left: 10),
+                                         
+                                         decoration: BoxDecoration(
+                                           borderRadius: BorderRadius.circular(20),
+                                           color: Color.fromARGB(184, 197, 194, 194)
+                                         ),
+                                         child: Text(
+                                                   messageList[index]
+                                                           .message??
+                                                       "",
+                                                       // textAlign: TextAlign.center,
+                                                       softWrap: true,
+                                                       maxLines: 3,
+                                                   style: const TextStyle(
+                                                     color: Color(0xff151522),
+                                                     fontSize: 12,
+                                                   ),
+                                                 ),
+                                       ),
+                                     ),
+                                   ) 
                                               
                                              } else...{
                                     Row(
@@ -1303,7 +1331,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                           child:
                                                               SvgPicture.string(
                                                                   TaskSvg()
-                                                                      .docIcon2),
+                                                                      .docIcon),
                                                         ),
                                                         const SizedBox(
                                                           width: 5,
@@ -1497,20 +1525,30 @@ class _ChatScreenState extends State<ChatScreen>
                                 
                                 else ...{
                                   if(messageList[index].type=="notify")...{
-                                   Container(
-                                    width: w,
-                                    child: Text(
-                                              messageList[index]
-                                                      .message??
-                                                  "",
-                                                  textAlign: TextAlign.center,
-                                                  softWrap: true,
-                                                  maxLines: 3,
-                                              style: const TextStyle(
-                                                color: Color(0xff151522),
-                                                fontSize: 12,
-                                              ),
-                                            ),
+                                   Padding(
+                                     padding: const EdgeInsets.only(left: 25,right: 25,top: 10,bottom: 10),
+                                     child: Center(
+                                       child: Container(
+                                         padding: EdgeInsets.only(top:10,bottom:10,right: 10,left: 10),
+                                         
+                                         decoration: BoxDecoration(
+                                           borderRadius: BorderRadius.circular(20),
+                                           color: Color.fromARGB(184, 197, 194, 194)
+                                         ),
+                                         child: Text(
+                                                   messageList[index]
+                                                           .message??
+                                                       "",
+                                                       // textAlign: TextAlign.center,
+                                                       softWrap: true,
+                                                       maxLines: 3,
+                                                   style: const TextStyle(
+                                                     color: Color(0xff151522),
+                                                     fontSize: 12,
+                                                   ),
+                                                 ),
+                                       ),
+                                     ),
                                    )  
                                     }
                                  else if (messageList[index].type == "image") ...{
@@ -1608,6 +1646,7 @@ class _ChatScreenState extends State<ChatScreen>
                                             )))
                                   } else if (messageList[index].type ==
                                       "audio") ...{
+                                        
                                     VoiceMessage(
                                       audioSrc:
                                           messageList[index].message ?? "",
@@ -1637,7 +1676,7 @@ class _ChatScreenState extends State<ChatScreen>
                                               }
                                             },
                                             child: SvgPicture.string(
-                                                TaskSvg().dwnldIcon,)),
+                                                TaskSvg().downloadIcon,)),
                                                  const SizedBox(
                                           width: 5,
                                         ),
@@ -1658,7 +1697,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                 width: 34,
                                                 height: 36,
                                                 child: SvgPicture.string(
-                                                    TaskSvg().docIcon2,color: Colors.white,),
+                                                    TaskSvg().docIcon,color: Colors.white,),
                                               ),
                                               const SizedBox(
                                                 width: 5,
@@ -2017,7 +2056,45 @@ class _ChatScreenState extends State<ChatScreen>
                                         // margin: const EdgeInsets.only(left: 16, right: 16),
     
                                         child: GestureDetector(
-                                            onTap: () {
+                                            onTap: () async{
+                                              print("sending....");
+                                              player!.setAsset('asset/send.mp3').then((value) {
+                                                return {  
+                                              player!.playerStateStream.listen((state) {
+                                                  if (state.playing) {
+                                                  setState(() {
+                                                    print("audio,,,,");
+                                                  });
+                                                  } 
+                                                  else
+                                                  switch (state.processingState) {
+                                                  case ProcessingState.idle:
+                                                  break;
+                                                  case ProcessingState.loading:
+                                                  break;
+                                                  case ProcessingState.buffering:
+                                                  break;
+                                                  case ProcessingState.ready:
+                                                  setState(() {
+                                                  });
+                                                  break;
+                                                  case ProcessingState.completed:
+                                                  setState(() {
+                                                  });
+                                                  break;
+                                                  }
+                                                  }),
+                                                  player!.play(),
+                                                };
+                                              });
+                                                  // timer2 =
+                                                  // Timer.periodic(new Duration(seconds: 1), (timer) {
+                                                  // setState(() {
+                                                  // _progress += .05;
+                                                  // });
+                                                  // })
+                                                
+                                               
                                                 
                                               HapticFeedback.heavyImpact();
                                               if (widget.isGroup == false) {
@@ -2103,14 +2180,14 @@ class _ChatScreenState extends State<ChatScreen>
                                                   child: SvgPicture.string(
                                                       width: w /25,
                                                       // height:28,
-                                                      TaskSvg().mic),
+                                                      TaskSvg().micIcon),
                                                 ),
                                             ],
                                           )
                                           : SvgPicture.string(
                                               // height: 51,
                                               width: w / 8.5,
-                                              TaskSvg().micIcon2),
+                                              TaskSvg().micIcon),
                                     )
                                   },
                                 ],
@@ -2365,7 +2442,7 @@ class ScrollService {
         reversed
             ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
       );
     });

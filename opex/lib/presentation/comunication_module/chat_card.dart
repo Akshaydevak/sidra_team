@@ -47,17 +47,14 @@ int unreadCount=0;
 @override
   void initState() {
     super.initState();
-    //   inputDate = widget.communicationUserModel?.latestMessagecreated.toString()??"";
-    // DateTime dateTime = DateTime.parse(inputDate);
-    //  formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-    // _loadUnreadMessageCount();
+      
+    _loadUnreadMessageCount();
   }
  _loadUnreadMessageCount() async {
-    int count = await UnreadMessagesManager.getUnreadMessageCount(widget.communicationUserModel?.chatid??"");
-    setState(() {
-      unreadCount = count;
-      print("unreadMessageCount $unreadCount");
-    });
+   inputDate = widget.communicationUserModel?.latestMessagecreated.toString()??"";
+    DateTime dateTime = DateTime.parse(inputDate);
+     formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
+  
   }
   @override
   Widget build(BuildContext context) {
@@ -118,14 +115,14 @@ int unreadCount=0;
                       widget.communicationUserModel?.photo==null||
                       widget.communicationUserModel!.photo!.isEmpty 
                       ?TextAvatar(
-               shape: Shape.Circular,
-               size: 48,
-               numberLetters: 2,
-               fontSize: w/22,
-               textColor: Colors.white,
-               fontWeight: FontWeight.w500,
-               text:"${widget.communicationUserModel?.name.toString().toUpperCase()}" ,
-             )
+                          shape: Shape.Circular,
+                          size: 48,
+                          numberLetters: 2,
+                          fontSize: w/22,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          text:"${widget.communicationUserModel?.name.toString().toUpperCase()}" ,
+                        )
                       : 
                    CircleAvatar(
                         radius: 24,
@@ -425,9 +422,9 @@ int unreadCount=0;
                                       //  ),
                                        
                                         Text(
-                                            widget.communicationUserModel
-                                                    ?.latestMessagecreated ??
-                                                "",
+                                            // widget.communicationUserModel
+                                            //         ?.latestMessagecreated ??
+                                                "$formattedDate",
                                                 softWrap: true,
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.roboto(

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cluster/core/color_palatte.dart';
-import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
@@ -78,7 +77,7 @@ class _DashBoardState extends State<DashBoard> {
     return [
       const HomeScreen(),
       CommunicationModule(),
-      const TaskAndOperation(),
+       const TaskAndOperation(),
       const NewProfileScreen(),
     ];
   }

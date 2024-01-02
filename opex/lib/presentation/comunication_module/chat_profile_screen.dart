@@ -543,7 +543,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        const MediaList(),
+                                        // const MediaList(),
                                         Container(
                                           padding: const EdgeInsets.only(
                                               left: 10,
@@ -811,7 +811,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Container(
+                                          Container(       
                                             padding: const EdgeInsets.only(
                                                 left: 16, top: 25),
                                             child: Text(
@@ -929,7 +929,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Container(
+                                        Container(  //perosnal chat when attachment empty
                                           padding: const EdgeInsets.only(
                                               left: 16, top: 25),
                                           child: Text(

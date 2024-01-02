@@ -2,6 +2,7 @@ import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat-profile_screengrp.dart';
+import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -16,7 +17,6 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import 'package:socket_io_client/socket_io_client.dart';
 
-import '../chat_profile_screen.dart';
 
 class ChatAppBar extends StatefulWidget {
   final UserDummyList? communicationUserModel;
@@ -123,6 +123,37 @@ class _ChatAppBarState extends State<ChatAppBar> {
               ),
               GestureDetector(
                 onTap: () {
+                  if(widget.isGroup==false){
+                     PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: ChatProfileScreen(
+                      chat: widget.chat,
+                      token: widget.token,
+                      roomId: widget.roomId,
+                      socket: widget.socket,
+                      isGroup: widget.communicationUserModel?.isgrp ?? false,
+                      communicationUserModel:widget.communicationUserModel,
+                      communicationuser: widget.communicationuser,
+                    ),
+                    withNavBar: true, // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+                   }  else{
+                     PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: ChatProfileScreen2(
+                      chat: widget.isgrp,
+                      token: widget.token,
+                      roomId: widget.roomId,
+                      socket: widget.socket,
+                      isGroup: true,
+                      communicationUserModel:widget.communicationUserModel,
+                      communicationuser: widget.grpuser,
+                    ),
+                    withNavBar: true, // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+                   }
                 },
                 child: widget.communicationUserModel?.photo==null||
                       widget.communicationUserModel!.photo!.isEmpty 

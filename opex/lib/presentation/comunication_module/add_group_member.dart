@@ -1,5 +1,6 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
@@ -220,54 +221,54 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen:CreateChatGroup(token: widget.token,),//NewGroup(token: widget.token),
-                          withNavBar: false, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(16),
-                        width: w,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromARGB(255, 240, 242, 245),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 37.14,
-                              height: 37.14,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: ColorPalette.primary,
-                              ),
-                              alignment: Alignment.center,
-                              child: SvgPicture.string(
-                                CommunicationSvg().groupIcon,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Create new group",
-                              style: GoogleFonts.roboto(
-                                color: ColorPalette.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     PersistentNavBarNavigator.pushNewScreen(
+                    //       context,
+                    //       screen:CreateChatGroup(token: widget.token,),//NewGroup(token: widget.token),
+                    //       withNavBar: false, // OPTIONAL VALUE. True by default.
+                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     margin: const EdgeInsets.all(16),
+                    //     padding: const EdgeInsets.all(16),
+                    //     width: w,
+                    //     height: 70,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       color: Color.fromARGB(255, 240, 242, 245),
+                    //     ),
+                    //     child: Row(
+                    //       children: [
+                    //         Container(
+                    //           width: 37.14,
+                    //           height: 37.14,
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(50),
+                    //             color: ColorPalette.primary,
+                    //           ),
+                    //           alignment: Alignment.center,
+                    //           child: SvgPicture.string(
+                    //             CommunicationSvg().groupIcon,
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         const SizedBox(
+                    //           width: 10,
+                    //         ),
+                    //         Text(
+                    //           "Create new group",
+                    //           style: GoogleFonts.roboto(
+                    //             color: ColorPalette.black,
+                    //             fontSize: 18,
+                    //             fontWeight: FontWeight.w500,
+                    //           ),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     changeUi
                         ? BlocBuilder<CommunicationBloc, CommunicationState>(
                             builder: (context, state) {
@@ -460,7 +461,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                      
                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                    widget.socket!.emit("group.message",{
-                                                    "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname} ${state.registeresUsers[index].lname} is added to group"
+                                                    "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
                                                   });
 
                                                 widget.socket!.on("userAlreadyInGroup", (data) {
