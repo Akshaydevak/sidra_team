@@ -19,6 +19,7 @@ import '../task_svg.dart';
 import '../task_title.dart';
 import 'evaluation_card.dart';
 import 'evaluation_first_page.dart';
+import 'group_evaluation.dart';
 
 class EvaluationUserListByTLs extends StatefulWidget {
   const EvaluationUserListByTLs({super.key});
@@ -73,31 +74,6 @@ class _EvaluationUserListByTLsState extends State<EvaluationUserListByTLs> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
 
-                          Row(
-                            children: [
-                              Container(
-                                height: 50,
-                                width: w1/1.35,
-                                child: SearchCard(
-                                  hint: "Search Users..!",
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(color: Color(0xffE6ECF0))
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 12,vertical: 10),
-                                child:   SvgPicture.string(
-                                  TaskSvg().filter,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 15,),
                           Container(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: ListView.separated(
@@ -114,16 +90,13 @@ class _EvaluationUserListByTLsState extends State<EvaluationUserListByTLs> {
                                     onTap: (){
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
-                                        screen: EvaluationFirstPage(),
+                                        // screen: EvaluationFirstPage(),
+                                        screen: GroupEvaluation(),
                                         withNavBar: false, // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation: PageTransitionAnimation.fade,
                                       );
                                     },
-                                    child: UserCardEvaluationTLs(
-                                      onTap: (){
-                                        // _showModalBottomSheetNew(context,false);
-                                      },
-                                    ),
+                                    child: EvaluationGroupCard(),
                                   );
                                 },
                                 itemCount: 6),

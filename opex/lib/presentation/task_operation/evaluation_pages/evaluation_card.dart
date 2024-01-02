@@ -1,14 +1,18 @@
+import 'package:avatar_stack/avatar_stack.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../common_widgets/gradient_button.dart';
+import '../task_svg.dart';
 
 class UserCardEvaluation extends StatelessWidget {
-  const UserCardEvaluation({super.key, this.onTap});
+  const UserCardEvaluation({super.key, this.onTap,this.evaluted=false});
 
   final VoidCallback? onTap;
+  final bool? evaluted;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,23 @@ class UserCardEvaluation extends StatelessWidget {
             ),
           ),
           Spacer(),
+          evaluted==true?Row(
+            children: [
+              Text("Done",
+              style: GoogleFonts.roboto(
+                fontSize: w/28,
+                color: Colors.green,
+                fontWeight: FontWeight.w500
+              ),),
+              SizedBox(width: 5,),
+              SvgPicture.string(
+                TaskSvg().tickIcon,
+                color: Colors.green,
+                width: 15,
+                height: 15,
+              ),
+            ],
+          ):
           Container(
             width: w1 > 700?w1/5:w1 / 4,
             height: w1 > 700?35:30,
@@ -226,6 +247,62 @@ class UserReviewCard extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class EvaluationGroupCard extends StatefulWidget {
+  const EvaluationGroupCard({super.key});
+
+  @override
+  State<EvaluationGroupCard> createState() => _EvaluationGroupCardState();
+}
+
+class _EvaluationGroupCardState extends State<EvaluationGroupCard> {
+  @override
+  Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
+    var h = MediaQuery.of(context).size.height;
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Color(0xffE6ECF0))),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Review within 2 Weeeks"),
+          SizedBox(
+            width: 5,
+          ),
+          Text(
+            "Lorem ipsum dolor sit amet, consecte turadi piscing elit, seddo eiuste?",
+            style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w500, fontSize: w / 24),
+          ),
+          SizedBox(height: 15,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AvatarStack(
+                height: 25,width: 80,
+                avatars: [
+                  for (var n = 0; n < 10; n++)
+                    NetworkImage('https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg'),
+                ],
+              ),
+              Text("2 pending..",
+              style: GoogleFonts.roboto(
+                color: Colors.red
+              ),),
+            ],
+          ),
+
         ],
       ),
     );

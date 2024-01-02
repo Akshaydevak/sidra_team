@@ -24,15 +24,15 @@ import 'package:socket_io_client/socket_io_client.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 
-class ChatProfileScreen extends StatefulWidget {
+class ChatProfileScreen2 extends StatefulWidget {
   bool isGroup;
   final UserDummyList? communicationUserModel;
-  final CommunicationUserModel? communicationuser;
+  final GroupList? communicationuser;
   final String? token;
   final Socket? socket;
   final String? roomId;
   final bool chat;
-  ChatProfileScreen(
+  ChatProfileScreen2(
       {Key? key,
       this.isGroup = false,
       this.communicationuser,
@@ -44,10 +44,10 @@ class ChatProfileScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<ChatProfileScreen> createState() => _ChatProfileScreenState();
+  State<ChatProfileScreen2> createState() => _ChatProfileScreen2State();
 }
 
-class _ChatProfileScreenState extends State<ChatProfileScreen> {
+class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isMute = false;
   List<GroupUserList> grpmember=[];
   bool isM=true;
@@ -56,7 +56,7 @@ class _ChatProfileScreenState extends State<ChatProfileScreen> {
   void initState() {
 
  widget.socket!.emit("group.members", 
-     widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.id);
+     widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
      
     widget.socket!.on("groupmembers.result", (data){ 
       print("group members: $data");
@@ -84,7 +84,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
 
   @override
   Widget build(BuildContext context) {
-    print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.id}");
+    print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.chatid}");
     var w = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
         providers: [
@@ -97,7 +97,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           BlocProvider(
             create: (context) => AttachmentBloc()
               ..add(GroupProfileAttachmentsGet(
-                  chatId: widget.chat==false? widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.id??"",
+                  chatId: widget.chat==false? widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.chatid??"",
                   token: widget.token ?? "")),
           )
         ],
@@ -132,7 +132,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
            
-        widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,uid});
+        widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                      widget.socket!.on("groupmembers.result", (data) => print("update"));
        
                     showSnackBar(context,
@@ -189,7 +189,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                fontSize: w/11,
                textColor: Colors.white,
                fontWeight: FontWeight.w500,
-               text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.name.toString().toUpperCase()}" ,
+               text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
              ):
                     
                     CircleAvatar(
@@ -197,10 +197,10 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                         backgroundColor: Colors.grey,
                         backgroundImage: NetworkImage(
                           widget.isGroup?
-                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.photoUrl ?? "":
+                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? "":
                           //  "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}"
                           // "${widget.communicationUserModel?.photo}"
-                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.photoUrl ?? ""
+                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? ""
                           ,
                           
                         )),
@@ -210,7 +210,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   widget.communicationUserModel?.isgrp == false
                       ? Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.users![0].name ?? "",
+                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -218,7 +218,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                           ),
                         )
                       : Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.users![0].name ?? "",
+                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -405,7 +405,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                   );
                                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                                    widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                     widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,uid});
+                                                                     widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                                                                     showSnackBar(context, message: data, color: Colors.black);
                                                                   } );
                                                                   widget.socket!.emit("group.message",{
@@ -665,7 +665,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         );
                                                           widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                           widget.socket!.on("userRemovedFromGroup", (data) {
-                                                            widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,uid});
+                                                            widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                                                           showSnackBar(context, message: data, color: Colors.black);
                                                         } );
                                                         widget.socket!.emit("group.message",{

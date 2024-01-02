@@ -1,7 +1,6 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/inventory/search_order_view.dart';
-import 'package:cluster/presentation/self_checkout/self_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';

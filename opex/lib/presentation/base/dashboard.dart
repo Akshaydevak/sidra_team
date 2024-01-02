@@ -5,7 +5,6 @@ import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
-import 'package:cluster/presentation/empty_page_communication.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
@@ -22,7 +21,6 @@ import '../dashboard_screen/cart_screen/cart_svg.dart';
 import '../dashboard_screen/home_screen.dart';
 
 import '../dashboard_screen/profile/profile_screen.dart';
-import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dymmy_login_page.dart';
 
 import 'icon_constants.dart';
 import 'internet_not_connected.dart';
@@ -56,29 +54,31 @@ class _DashBoardState extends State<DashBoard> {
 
     return _updateConnectionStatus(result);
   }
+
   @override
   void initState() {
-   _controller=PersistentTabController(initialIndex:
-   widget.index??0);
+    _controller = PersistentTabController(initialIndex: widget.index ?? 0);
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     super.initState();
   }
+
   int newIndex = 0;
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-   PersistentTabController _controller =
+  PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     setState(() {
       _connectionStatus = result;
     });
   }
+
   List<Widget> _buildScreens() {
     return [
       const HomeScreen(),
-       LoginDemo(),
-       const TaskAndOperation(),
+      CommunicationModule(),
+      const TaskAndOperation(),
       const NewProfileScreen(),
     ];
   }
@@ -92,9 +92,9 @@ class _DashBoardState extends State<DashBoard> {
           ),
           inactiveIcon: SvgPicture.string(IconConstants().homeIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary:  Color(0xff222222),
+          activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
-      PersistentBottomNavBarItem( 
+      PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().chatIcon,
             color: Color(0xff222222),
@@ -106,18 +106,16 @@ class _DashBoardState extends State<DashBoard> {
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().taskIcon,
-            color:  Color(0xff222222),
+            color: Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().taskIcon,
               color: ColorPalette.inactiveGrey),
-          activeColorPrimary:  Color(0xff222222),
+          activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
       PersistentBottomNavBarItem(
-
           icon: SvgPicture.string(
             IconConstants().profileIcon,
-            
-                      color:  Color(0xff222222),
+            color: Color(0xff222222),
           ),
           inactiveIcon: SvgPicture.string(IconConstants().profileIcon,
               color: ColorPalette.inactiveGrey),
@@ -148,14 +146,10 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    double w1 = MediaQuery.of(context).size.width ;
-    double w = w1> 700
-        ? 400
-        : w1;
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaleFactor: 1.0
-      ),
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Scaffold(
         // appBar: PreferredSize(
         //   preferredSize: Size.zero,
@@ -187,28 +181,37 @@ class _DashBoardState extends State<DashBoard> {
                         CartSvg().cartEmptyIcon,
                         fit: BoxFit.contain,
                       ),
-                      SizedBox(height: 20,),
-                      Text("Network missing",style: GoogleFonts.roboto(
-                          fontSize: w/24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black
-                      ),),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Network missing",
+                        style: GoogleFonts.roboto(
+                            fontSize: w / 24,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Text("You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
+                        child: Text(
+                          "You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.roboto(
-                              fontSize: w/28,
+                              fontSize: w / 28,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xff6D6D6D)
-                          ),),
+                              color: Color(0xff6D6D6D)),
+                        ),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(
+                        height: 30,
+                      ),
                       Container(
-                        width: w1/3.5,
+                        width: w1 / 3.5,
                         child: GradientButton(
-                          border: 30,
+                            border: 30,
                             onPressed: () {
                               _connectivitySubscription = _connectivity
                                   .onConnectivityChanged
@@ -217,9 +220,9 @@ class _DashBoardState extends State<DashBoard> {
                                 context,
                                 screen: DashBoard(),
                                 withNavBar:
-                                false, // OPTIONAL VALUE. True by default.
+                                    false, // OPTIONAL VALUE. True by default.
                                 pageTransitionAnimation:
-                                PageTransitionAnimation.fade,
+                                    PageTransitionAnimation.fade,
                               );
                               setState(() {});
                             },
@@ -235,21 +238,26 @@ class _DashBoardState extends State<DashBoard> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.refresh,color: Colors.white,),
-                                SizedBox(width: 5,),
+                                Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
                                 Text(
                                   "Retry",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.roboto(
                                     color: Colors.white,
-                                    fontSize: w/24,
+                                    fontSize: w / 24,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
                             )),
-
-                      )],
+                      )
+                    ],
                   ),
                 )
               ]))
@@ -259,19 +267,15 @@ class _DashBoardState extends State<DashBoard> {
                   content: Text('Tap back again to leave'),
                 ),
                 child: PersistentTabView(
-
                   context,
-
                   padding: const NavBarPadding.only(left: 10, right: 10),
                   controller: _controller,
                   onItemSelected: (value) {
                     newIndex = _controller.index;
                     if (newIndex == 0 || newIndex == 3) {
                       setState(() {});
-                    }
-                    else if(newIndex==2){
-   context.read<ProfileBloc>().add(GetProfileEvent());
-
+                    } else if (newIndex == 2) {
+                      context.read<ProfileBloc>().add(GetProfileEvent());
                     }
                   },
                   screens: _buildScreens(),
@@ -282,11 +286,13 @@ class _DashBoardState extends State<DashBoard> {
                   handleAndroidBackButtonPress: true,
                   resizeToAvoidBottomInset: true,
                   stateManagement: false,
-                  decoration:  NavBarDecoration( boxShadow: [BoxShadow(
-        color: Colors.grey.shade200.withOpacity(0.8),
-        blurRadius: 2.0,
-        spreadRadius: 1, //New
-      )]),
+                  decoration: NavBarDecoration(boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200.withOpacity(0.8),
+                      blurRadius: 2.0,
+                      spreadRadius: 1, //New
+                    )
+                  ]),
                   popAllScreensOnTapOfSelectedTab: true,
                   popActionScreens: PopActionScreensType.all,
                   itemAnimationProperties: const ItemAnimationProperties(

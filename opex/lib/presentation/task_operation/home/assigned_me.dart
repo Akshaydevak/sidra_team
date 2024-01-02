@@ -328,10 +328,6 @@ class _CardExpanedState extends State<CardExpaned> {
                             ),
                           ),
                         ),
-
-                        // GestureDetector(
-                        //   onTap: widget.onTap,
-                        //     child: Icon(Icons.arrow_drop_down))
                       ],
                     ),
                     const SizedBox(
@@ -367,7 +363,7 @@ class _CardExpanedState extends State<CardExpaned> {
                           widget.assignedMe?.priority=="Medium"?Color(0xffF18F1C):
                           null,
                         ),
-                        SizedBox(width: 5,),
+                        SizedBox(width: 5),
                         Text("${widget.assignedMe?.priority} Priority"??"",style: TextStyle(fontSize: w/24,fontWeight: FontWeight.w500),),
 
                       ],

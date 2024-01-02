@@ -37,6 +37,11 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(
             label: "Notifications",
+            isBack: false,
+            onTap: (){
+              context.read<TaskBloc>().add(const GetNotificationListEvent("", "", ""));
+              Navigator.pop(context);
+            },
             isAction: false,),
         ),
         body: ScrollConfiguration(

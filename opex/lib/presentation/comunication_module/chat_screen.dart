@@ -1,13 +1,16 @@
 import 'dart:math';
 import 'dart:convert';
 import 'dart:io';
+import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/audio_state.dart';
 import 'package:cluster/presentation/comunication_module/bloc/attachment_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
+import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/videoplayerscreen.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
@@ -28,22 +31,32 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:video_player/video_player.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 import 'chat_screen/chat_appbar.dart';
+import 'unread.dart';
 import 'globals.dart';
 
 class ChatScreen extends StatefulWidget {
-  final bool isGroup;
+  final bool  isGroup;
+  final bool chat;
   final Socket? socket;
   final String? token;
   final String? loginUserId;
-  final CommunicationUserModel? communicationUserModel;
-
+  final UserDummyList? communicationUserModel;
+  final CommunicationUserModel? communicationuser;
+  final GroupList? grpuser;
+  final bool isg;
+  // final Function(bool val)? refresh;
   ChatScreen(
       {Key? key,
       this.socket,
       this.loginUserId,
       this.token,
       this.isGroup = false,
-      this.communicationUserModel})
+      this.isg=false,
+      this.chat=false,
+      this.communicationUserModel,
+      this.communicationuser,
+      this.grpuser
+      })
       : super(key: key);
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -64,6 +77,8 @@ class _ChatScreenState extends State<ChatScreen>
   int pageNo = 1;
   List<ChatModel> messageList = [];
   List<FromUser> seenUsersList = [];
+  List<UserSeenList> enter=[];
+  List msgfr=[];
   FromUser? groupTypingUser;
   bool typing = false;
   FilePickerResult? result;
@@ -71,6 +86,12 @@ class _ChatScreenState extends State<ChatScreen>
   bool micLongPress = false;
   bool voiceCancelled = false;
   bool _playAudio = false;
+  var username;
+  List seenuser=[];
+  var unread=0;
+  int unreadMessageCount = 0;
+  bool isload=false;
+  SharedPreferences? pref;
   AnimationController? _animationController;
   //Mic Animation
   Animation<double>? _micTranslateTop;
@@ -88,52 +109,88 @@ class _ChatScreenState extends State<ChatScreen>
   Animation<double>? _trashCoverRotationSecond;
   Animation<double>? _trashCoverTranslateRight;
   Animation<double>? trashContainerWithCoverTranslateDown;
+  String seenTimestamp="";
 
   @override
   void initState() {
-    super.initState();
-
-    print("room id listens atleast");
-    widget.socket?.emit("join.chat", widget.communicationUserModel?.id);
+    
+    print("room id listens atleast ${widget.loginUserId}");
+    widget.socket?.emit("join.chat", {
+      widget.chat==false && widget.isg==false
+    ? widget.communicationUserModel?.chatid:
+    widget.chat==true&& widget.isg==false?widget.communicationuser?.id: widget.grpuser?.chatid});
+    
     widget.socket?.on("room.id", (data) {
       print("room id from socket ${data}");
       roomId = data;
+     
+         widget.socket!.on("msg.seen", (data) {
+          print("enter message $data");
+          seenTimestamp=data['timestamp'];
+          
+         } );
+         
+      widget.socket!.emit("get.clients",roomId);
+      
+      widget.socket!.on("active.length", (data) {
+         print("ACTIVE length $data");
+         activeUsersLength=data;
+
+      } );
+         
       widget.socket?.emit("check", roomId);
       if (widget.isGroup == true) {
         widget.socket?.emit("group.message.seen", roomId);
         widget.socket?.emit("total.in.group", roomId);
       }
     });
+   
     widget.socket?.on("check.result", (data) {
       print("data for check ${data}");
     });
+    
 
     if (widget.isGroup == false) {
+      print("hello $roomId");
+      
+         
       widget.socket?.on("typing", (data) {
         typing = true;
         if (isSecondMount) {
           setState(() {});
         }
       });
+    
       widget.socket?.on("stopped", (data) {
         typing = false;
         if (isThirdMount) {
           setState(() {});
         }
       });
-      widget.socket?.on("latest.message", (data) {
-        print("total res listened ${data}");
+      widget.socket?.on("latest.message", (data)async{
+        print("total res listened  ${data}");
+         
         messageList.add(ChatModel(
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
-            fromuserid: data['fromuserid']));
+            fromuserid: data['fromuserid'])); 
+          // updateMessageSeenStatus();
+          if(widget.loginUserId==data['fromuserid']){
+          _incrementUnreadMessageCount();
+          }
+          else{
+            print("mmm. no");
+          }
         if (isMount) {
-          setState(() {});
+          setState(() {
+
+          });
         }
         ScrollService.scrollToEnd(
             scrollController: _controller, reversed: false);
       });
+          
     } else {
       widget.socket?.on("group.typing", (data) {
         groupTypingUser = FromUser(
@@ -142,12 +199,14 @@ class _ChatScreenState extends State<ChatScreen>
           setState(() {});
         }
       });
+     
       widget.socket?.on("group.stopped", (data) {
         groupTypingUser = null;
         if (isThirdMount) {
           setState(() {});
         }
       });
+      // widget.socket?.on("memberAddedToGroup", (data) => null)
       // widget.socket?.on("msg.seen.by", (data) {
       //   print("total seen users ${data}");
       //   seenUsersList.clear();
@@ -168,8 +227,9 @@ class _ChatScreenState extends State<ChatScreen>
           setState(() {});
         }
       });
+    
       widget.socket?.on("group.latest.message", (data) {
-        print("total ser listened ${data}");
+        print("total ser listened ${widget.loginUserId} ...${data}");
 
         messageList.add(ChatModel(
             message: data['message'],
@@ -181,6 +241,8 @@ class _ChatScreenState extends State<ChatScreen>
                 name: data['fromUser']['name'],
                 photo: data['fromUser']['photo'])));
 
+              
+                
         if (isMount) {
           setState(() {});
         }
@@ -188,6 +250,7 @@ class _ChatScreenState extends State<ChatScreen>
         ScrollService.scrollToEnd(
             scrollController: _controller, reversed: false);
       });
+          
     }
     print(file);
     widget.socket?.on("image.download", (data) {
@@ -230,7 +293,7 @@ class _ChatScreenState extends State<ChatScreen>
           curve: Curves.easeInOut,
         )));
     _trashContainerWithCoverTrasnlateTop =
-        Tween(begin: 30.0, end: -25.0).animate(CurvedAnimation(
+        Tween(begin: 40.0, end: -25.0).animate(CurvedAnimation(
             parent: _animationController!,
             curve: const Interval(
               0.45,
@@ -268,21 +331,86 @@ class _ChatScreenState extends State<ChatScreen>
         CurvedAnimation(
             parent: _animationController!,
             curve: const Interval(0.95, 1.0, curve: Curves.easeInOut)));
-    trashContainerWithCoverTranslateDown = Tween(begin: 0.0, end: 55.0).animate(
+    trashContainerWithCoverTranslateDown = Tween(begin: 2.0, end: 55.0).animate(
         CurvedAnimation(
             parent: _animationController!,
             curve: const Interval(0.95, 1.0, curve: Curves.easeInOut)));
+
+          
+
+            super.initState();
   }
 
   void sendMessage(String message, String chatId) {
+    
     widget.socket?.emit(
         "new.message", {"type": "text", "chatid": chatId, "content": message});
+      
+            widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+
+
+            print("uodate.chat.list");
   }
 
   void sendGroupMessage(String message, String chatId) {
     widget.socket?.emit("group.message",
         {"type": "text", "chatid": chatId, "content": message});
+       
+        widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+       
+             widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) => print(data));
+                      widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        setState(() {
+          
+        });
+      } );
   }
+   
+
+  _incrementUnreadMessageCount() async {
+    await UnreadMessagesManager.incrementUnreadMessageCount(widget.communicationUserModel?.chatid??"");
+    // _loadUnreadMessageCount();
+  }
+
+  _resetUnreadMessageCount() async {
+    await UnreadMessagesManager.resetUnreadMessageCount(widget.communicationUserModel?.chatid??"");
+    // _loadUnreadMessageCount();
+  }
+  void updateMessageSeenStatus() {
+    print("seeeen daaaata");
+    bool hasMatch = false;
+    // if(activeUsersLength!=2){
+      for (int i = 0; i < messageList.length; i++) {
+        if (messageList[i].fromuserid == widget.loginUserId) {
+         unread ++;// Exit the inner loop once a match is found
+        }    
+     }
+    print("rrrrrr $unread");
+  //   if (!hasMatch) {
+  //     unread --;
+  //     print("unread messages $unread");
+  //   }else{
+  //    unread++;
+  //    print("rrrrrr $unread");
+  //  }
+    // }
+    // else {
+    //   unread=0;
+    //   print("rrrrrr $unread");
+    // }
+    
+}
+
+
 
   @override
   void dispose() {
@@ -311,22 +439,44 @@ class _ChatScreenState extends State<ChatScreen>
             print("the message state //");
             if (state is ChatScreenGetLoading) {
             } else if (state is ChatScreenGetSuccess) {
+
               for (int i = 0; i < state.chatData.messages!.length; i++) {
-                messageList.add(state.chatData.messages![i]);
+              
+              //  if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null)
+              //  {
+                 messageList.add(state.chatData.messages![i]);
+              //  }
+              //  else if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt != null){
+                
+              //     messageList.add(state.chatData.messages![i]);
+              //  }
+             
               }
+               
               messageList = messageList.reversed.toList();
+              _resetUnreadMessageCount();
+              ScrollService.scrollToEnd(
+            scrollController: _controller, reversed: false);
+               
               setState(() {});
             }
+            
           },
         ),
         BlocListener<PaginatedchatBloc, PaginatedchatState>(
           listener: (context, state) {
             if (state is PaginatedChatLoading) {
+                
             } else if (state is PaginatedChatSuccess) {
+             
               for (int i = 0; i < state.chatData.messages!.length; i++) {
                 messageList.insertAll(0, [state.chatData.messages![i]]);
+           
                 setState(() {});
               }
+              ScrollService.scrollToEnd(
+            scrollController: _controller, reversed:true);
+              //  updateMessageSeenStatus();
             }
           },
         ),
@@ -338,15 +488,35 @@ class _ChatScreenState extends State<ChatScreen>
             if (widget.isGroup != true) {
               widget.socket?.emit("new.message", {
                 "type": "image",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid":widget.chat==false?widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+    
+      } );
             } else {
               widget.socket?.emit("group.message", {
                 "type": "image",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid":widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+       
+      } );
             }
             Navigator.of(context).pop(true);
           } else if (state is UploadPictureFailed) {
@@ -357,15 +527,35 @@ class _ChatScreenState extends State<ChatScreen>
             if (widget.isGroup != true) {
               widget.socket?.emit("new.message", {
                 "type": "video",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.chat==false?widget.communicationUserModel?.chatid : widget.communicationuser?.id,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+       
+      } );
             } else {
               widget.socket?.emit("group.message", {
                 "type": "video",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid":widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+       
+      } );
             }
             Navigator.of(context).pop(true);
           } else if (state is UploadVideoFailed) {
@@ -376,15 +566,35 @@ class _ChatScreenState extends State<ChatScreen>
             if (widget.isGroup != true) {
               widget.socket?.emit("new.message", {
                 "type": "file",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        
+      } );
             } else {
               widget.socket?.emit("group.message", {
                 "type": "file",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        
+      } );
             }
             Navigator.of(context).pop(true);
           } else if (state is UploadAudioLoading) {
@@ -393,15 +603,35 @@ class _ChatScreenState extends State<ChatScreen>
             if (widget.isGroup != true) {
               widget.socket?.emit("new.message", {
                 "type": "audio",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        
+      } );
             } else {
               widget.socket?.emit("group.message", {
                 "type": "audio",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        
+      } );
             }
             Navigator.of(context).pop(true);
           } else if (state is UploadAudioFailed) {
@@ -412,15 +642,35 @@ class _ChatScreenState extends State<ChatScreen>
             if (widget.isGroup != true) {
               widget.socket?.emit("new.message", {
                 "type": "audio",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+        
+      } );
             } else {
               widget.socket?.emit("group.message", {
                 "type": "audio",
-                "chatid": widget.communicationUserModel?.id,
+                "chatid": widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
                 "content": state.upload
               });
+              
+              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+              widget.socket!.emit("update.list",{
+      
+                        print("update")
+                      });
+                      widget.socket!.on("friends.update", (data) {
+        print(data);
+      
+      } );
             }
           } else if (state is UploadLiveAudioFailed) {
             print("live audio failed");
@@ -445,6 +695,7 @@ class _ChatScreenState extends State<ChatScreen>
           child: Column(
             children: [
               ChatAppBar(
+                chat: widget.chat,
                 isGroup: widget.isGroup,
                 roomId: roomId,
                 socket: widget.socket,
@@ -452,7 +703,11 @@ class _ChatScreenState extends State<ChatScreen>
                 typing: typing,
                 groupTypingUser: groupTypingUser,
                 communicationUserModel: widget.communicationUserModel,
+                communicationuser: widget.communicationuser,
+                isgrp: widget.isg,
+                grpuser: widget.grpuser,
               ),
+              SizedBox(height:10,),
               messageList.isEmpty
                   ? Expanded(
                       // height: h / 1.5,
@@ -484,21 +739,40 @@ class _ChatScreenState extends State<ChatScreen>
                           if (metrics.atEdge) {
                             bool isTop = metrics.pixels == 0;
                             if (isTop &&
-                                _controller.position.userScrollDirection ==
+                                _controller.position.userScrollDirection 
+                                ==
                                     ScrollDirection.forward) {
+                                      
                               pageNo++;
+                              if(widget.isGroup==false){
                               BlocProvider.of<PaginatedchatBloc>(context).add(
                                   PaginatedChatGetEvent(
                                       token: widget.token ?? "",
-                                      userId:
-                                          widget.communicationUserModel?.id ??
-                                              "",
+                                      chatId: widget.chat==false?
+                                          widget.communicationUserModel?.chatid ??
+                                              "": widget.communicationuser?.id??"",
+                                          // userId:  widget.chat==false?
+                                          // widget.communicationUserModel?.id ??
+                                          //     "":widget.communicationuser?.id??"",
                                       pageNo: pageNo));
+                              }else{
+                                 BlocProvider.of<PaginatedchatBloc>(context).add(
+                                  PaginatedChatGetEvent(
+                                      token: widget.token ?? "",
+                                      chatId: widget.isg==false?
+                                          widget.communicationUserModel?.chatid ??
+                                              "": widget.grpuser?.chatid??"",
+                                          // userId:  widget.chat==false?
+                                          // widget.communicationUserModel?.id ??
+                                          //     "":widget.communicationuser?.id??"",
+                                      pageNo: pageNo));
+                              }
+                                    
                             } else {
                               print('At the bottom');
                             }
                           }
-                          return true;
+                          return false;
                         },
                         child: ListView.separated(
                           reverse: false,
@@ -522,8 +796,8 @@ class _ChatScreenState extends State<ChatScreen>
                               children: [
                                 if (messageList[index].fromuserid !=
                                     widget.loginUserId) ...{
-                                  if (widget.isGroup == false) ...{
-                                    if (messageList[index].type == "image") ...{
+                                  if (widget.isGroup == false ) ...{
+                                    if (messageList[index].type == "image")...{
                                       InkWell(
                                           onTap: () {
                                             Navigator.push(context,
@@ -547,7 +821,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                   bottomRight:
                                                       Radius.circular(10),
                                                 ),
-                                                color: ColorPalette.primary,
+                                                color: Colors.white,
                                               ),
                                               alignment: Alignment.topLeft,
                                               child: Column(
@@ -610,7 +884,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                         style: const TextStyle(
                                                             fontSize: 13,
                                                             color:
-                                                                Colors.white),
+                                                                Color(0xFF6D6D6D)),
                                                       ),
                                                     ],
                                                   ),
@@ -630,7 +904,7 @@ class _ChatScreenState extends State<ChatScreen>
                                     } else if (messageList[index].type ==
                                         "video") ...{
                                       VideoPlayerScreen(
-                                        autoplay: false,
+                                        autoplay: false, 
                                         looping: false,
                                         alignmentGeometry: Alignment.topLeft,
                                         videoPlayerController:
@@ -765,7 +1039,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                       Radius.circular(10),
                                                 ),
                                               ),
-                                              color: ColorPalette.primary,
+                                              color: Colors.white,
                                               // margin: const EdgeInsets.symmetric(
                                               //     horizontal: 15, vertical: 5),
                                               child: Stack(
@@ -774,17 +1048,18 @@ class _ChatScreenState extends State<ChatScreen>
                                                     padding:
                                                         const EdgeInsets.only(
                                                       left: 10,
-                                                      right: 30,
-                                                      top: 5,
-                                                      bottom: 20,
+                                                      right: 10,
+                                                      top: 10,
+                                                      bottom: 10,
                                                     ),
                                                     child: Text(
                                                       messageList[index]
                                                               .message ??
                                                           "",
+                                                          textAlign: TextAlign.center,
                                                       style: const TextStyle(
                                                           fontSize: 16,
-                                                          color: Colors.white),
+                                                          color: Colors.black),
                                                     ),
                                                   ),
                                                 ],
@@ -808,6 +1083,24 @@ class _ChatScreenState extends State<ChatScreen>
                                       ])
                                     }
                                   } else ...{
+                                    if(messageList[index].type=="notify")...{
+                                              Container(
+                                                width: w/1.15,
+                                                child: Text(
+                                              messageList[index]
+                                                      .message??
+                                                  "",
+                                                  maxLines: 3,
+                                                  softWrap: true,
+                                                  textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: Color(0xff151522),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                              )
+                                              
+                                             } else...{
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -839,7 +1132,8 @@ class _ChatScreenState extends State<ChatScreen>
                                                 fontSize: 12,
                                               ),
                                             ),
-                                            if (messageList[index].type ==
+                                            
+                                           if (messageList[index].type ==
                                                 "image") ...{
                                               InkWell(
                                                   onTap: () {
@@ -1156,9 +1450,9 @@ class _ChatScreenState extends State<ChatScreen>
                                                                 const EdgeInsets
                                                                     .only(
                                                               left: 10,
-                                                              right: 30,
-                                                              top: 5,
-                                                              bottom: 20,
+                                                              right: 10,
+                                                              top: 10,
+                                                              bottom: 10,
                                                             ),
                                                             child: Text(
                                                               messageList[index]
@@ -1198,8 +1492,28 @@ class _ChatScreenState extends State<ChatScreen>
                                       ],
                                     )
                                   }
-                                } else ...{
-                                  if (messageList[index].type == "image") ...{
+                                  }
+                                } 
+                                
+                                else ...{
+                                  if(messageList[index].type=="notify")...{
+                                   Container(
+                                    width: w,
+                                    child: Text(
+                                              messageList[index]
+                                                      .message??
+                                                  "",
+                                                  textAlign: TextAlign.center,
+                                                  softWrap: true,
+                                                  maxLines: 3,
+                                              style: const TextStyle(
+                                                color: Color(0xff151522),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                   )  
+                                    }
+                                 else if (messageList[index].type == "image") ...{
                                     InkWell(
                                         onTap: () {
                                           Navigator.push(context,
@@ -1294,7 +1608,6 @@ class _ChatScreenState extends State<ChatScreen>
                                             )))
                                   } else if (messageList[index].type ==
                                       "audio") ...{
-
                                     VoiceMessage(
                                       audioSrc:
                                           messageList[index].message ?? "",
@@ -1324,7 +1637,7 @@ class _ChatScreenState extends State<ChatScreen>
                                               }
                                             },
                                             child: SvgPicture.string(
-                                                TaskSvg().dwnldIcon)),
+                                                TaskSvg().dwnldIcon,)),
                                                  const SizedBox(
                                           width: 5,
                                         ),
@@ -1337,7 +1650,7 @@ class _ChatScreenState extends State<ChatScreen>
                                             bottomLeft: Radius.circular(10),
                                             bottomRight: Radius.circular(0),
                                           ),
-                                                    color: Colors.white),
+                                                    color: ColorPalette.primary),
                                           child: Row(
                                             children: [
                                               SizedBox(width: 8,),
@@ -1345,7 +1658,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                 width: 34,
                                                 height: 36,
                                                 child: SvgPicture.string(
-                                                    TaskSvg().docIcon2),
+                                                    TaskSvg().docIcon2,color: Colors.white,),
                                               ),
                                               const SizedBox(
                                                 width: 5,
@@ -1363,7 +1676,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                       offset: Offset(1, 1),
                                                     ),
                                                   ],
-                                                  color: Colors.white,
+                                                  color: ColorPalette.primary,
                                                 ),
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -1379,7 +1692,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                               .message ??
                                                           "",
                                                       style:GoogleFonts.roboto (textStyle: TextStyle(
-                                                        color: Colors.black,
+                                                        color: Colors.white,
                                                         fontSize:10,
                                                       ),)
                                                     ),
@@ -1460,9 +1773,9 @@ class _ChatScreenState extends State<ChatScreen>
                                                     padding:
                                                         const EdgeInsets.only(
                                                       left: 10,
-                                                      right: 30,
-                                                      top: 5,
-                                                      bottom: 20,
+                                                      right: 10,
+                                                      top: 10,
+                                                      bottom: 10,
                                                     ),
                                                     child: Text(
                                                       messageList[index]
@@ -1538,11 +1851,11 @@ class _ChatScreenState extends State<ChatScreen>
                                   NetworkImage(groupTypingUser?.photo ?? ""),
                               radius: 12,
                             )),
-
+    
                         Image.asset(
                           "asset/typinggif.gif",
-                          height: 70.0,
-                          width: 70.0,
+                          height: 50.0,
+                          width: 50.0,
                         )
                         // Text(
                         //   "${groupTypingUser?.name} typing",
@@ -1559,8 +1872,8 @@ class _ChatScreenState extends State<ChatScreen>
                           children: [
                             Image.asset(
                               "asset/typinggif.gif",
-                              height: 100.0,
-                              width: 100.0,
+                              height: 50.0,
+                              width: 50.0,
                             ),
                           ],
                         )
@@ -1575,7 +1888,7 @@ class _ChatScreenState extends State<ChatScreen>
                     child: Row(
                       children: [
                         Container(
-                          width: w / 1.1,
+                          width: w / 1.09,
                           // height: 54,
                           // padding: const EdgeInsets.only(left: 16, right: 16),
                           // decoration: BoxDecoration(
@@ -1599,7 +1912,7 @@ class _ChatScreenState extends State<ChatScreen>
                               Stack(
                                 children: [
                                   SizedBox(
-                                    width: w / 1.32,
+                                    width: w / 1.27,
                                     child: TextFormField(
                                       style: const TextStyle(
                                         // height: 1.6,
@@ -1614,6 +1927,8 @@ class _ChatScreenState extends State<ChatScreen>
                                           } else {
                                             widget.socket?.emit(
                                                 "stopped.typing", roomId);
+
+                                               
                                           }
                                         } else if (widget.isGroup == true) {
                                           if (val.length > 0) {
@@ -1630,7 +1945,7 @@ class _ChatScreenState extends State<ChatScreen>
                                       scrollPadding: EdgeInsets.only(
                                           bottom: MediaQuery.of(context)
                                               .viewInsets
-                                              .bottom),
+                                              .top),
                                       controller: typedMessageController,
                                       cursorColor: Colors.black,
                                       decoration: InputDecoration(
@@ -1700,31 +2015,34 @@ class _ChatScreenState extends State<ChatScreen>
                                       .text.isNotEmpty) ...{
                                     Container(
                                         // margin: const EdgeInsets.only(left: 16, right: 16),
-
+    
                                         child: GestureDetector(
                                             onTap: () {
+                                                
                                               HapticFeedback.heavyImpact();
                                               if (widget.isGroup == false) {
-                                                sendMessage(
+                                                      sendMessage(
                                                     typedMessageController.text,
-                                                    widget.communicationUserModel
-                                                            ?.id ??
-                                                        "");
+                                                   widget.chat==false? widget.communicationUserModel
+                                                            ?.chatid ??
+                                                        "":widget.communicationuser?.id??"");
                                                 widget.socket?.emit(
-                                                    "stopped.typing", roomId);
+                                                    "stopped.typing", roomId);    
+                                                    
                                               } else {
                                                 sendGroupMessage(
                                                     typedMessageController.text,
-                                                    widget.communicationUserModel
-                                                            ?.id ??
-                                                        "");
+                                                    widget.isg==false? widget.communicationUserModel
+                                                            ?.chatid ??
+                                                        "":widget.grpuser?.chatid??"");
                                                 widget.socket?.emit(
                                                     "group.stopped.typing",
                                                     roomId);
                                                 seenUsersList.clear();
                                               }
-
+    
                                               typedMessageController.clear();
+                                              
                                             },
                                             child: SvgPicture.string(
                                                 height: 30,
@@ -1758,14 +2076,14 @@ class _ChatScreenState extends State<ChatScreen>
                                         }
                                         setState(() {});
                                       },
-                                      onLongPressStart: (details) async {
+                                      onLongPressStart:  (details) async {
                                         HapticFeedback.heavyImpact();
                                         micLongPress = true;
                                         try {
                                           if (await _audioRecorder
                                               .hasPermission()) {
                                             await _audioRecorder.start();
-
+    
                                             bool isRecording =
                                                 await _audioRecorder
                                                     .isRecording();
@@ -1780,18 +2098,18 @@ class _ChatScreenState extends State<ChatScreen>
                                             children: [
                                               SizedBox(width: 4,),
                                               CircleAvatar(
-                                                  radius: 28,
+                                                  radius: w/18,
                                                   backgroundColor: Color(0xFF2871AF),
                                                   child: SvgPicture.string(
-                                                      width: w / 8,
-                                                      height:28,
+                                                      width: w /25,
+                                                      // height:28,
                                                       TaskSvg().mic),
                                                 ),
                                             ],
                                           )
                                           : SvgPicture.string(
-                                              height: 51,
-                                              width: w / 12,
+                                              // height: 51,
+                                              width: w / 8.5,
                                               TaskSvg().micIcon2),
                                     )
                                   },
@@ -1948,14 +2266,14 @@ class _ChatScreenState extends State<ChatScreen>
                       text: "Document",
                       color: const Color(0xFF62A5A3)),
                 ),
-                iconCreation(
-                    icon: Icons.location_pin,
-                    text: "Location",
-                    color: Colors.blue),
-                iconCreation(
-                    icon: Icons.all_inbox,
-                    text: "Task/Job",
-                    color: const Color(0xFF519BE0)),
+                // iconCreation(
+                //     icon: Icons.location_pin,
+                //     text: "Location",
+                //     color: Colors.blue),
+                // iconCreation(
+                //     icon: Icons.all_inbox,
+                //     text: "Task/Job",
+                //     color: const Color(0xFF519BE0)),
               ],
             ),
           ],
@@ -2044,8 +2362,8 @@ class ScrollService {
       {required ScrollController scrollController, reversed = false}) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollController.animateTo(
-        // reversed
-        //     ? scrollController.position.minScrollExtent
+        reversed
+            ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,

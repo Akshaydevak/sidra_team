@@ -25,6 +25,7 @@ import '../../task_operation/profile_user_list.dart';
 import '../../task_operation/task_title/new_job_list.dart';
 import '../home_screen/home_svg.dart';
 import 'help_screen.dart';
+import 'my_profile_details.dart';
 
 class NewProfileScreen extends StatefulWidget {
   const NewProfileScreen({super.key});
@@ -380,6 +381,42 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               SizedBox(
                                 height: 20,
                               ),
+                              Container(
+                                padding: EdgeInsets.only(right: 15),
+                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: (){
+                                        PersistentNavBarNavigator
+                                            .pushNewScreen(
+                                          context,
+                                          screen:  MyProfileDetailsScreen(),
+                                          withNavBar: false,
+                                          // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation:
+                                          PageTransitionAnimation.fade,
+                                        );
+                                      },
+                                      child: ProfileMenuCard(
+                                        iconSvg: AppsSvg().profileIconSvg, title: "Profile Details",
+                                        // suffixIcon: Text("English",
+                                        //   style: GoogleFonts.roboto(
+                                        //     fontSize: w/24,
+                                        //     color: Color(0xff555555),
+                                        //   ),)
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(height: 10,),
                               authentication.isAssociateAdmin?Container(): Container(
                                 padding: EdgeInsets.only(right: 15),
                                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
