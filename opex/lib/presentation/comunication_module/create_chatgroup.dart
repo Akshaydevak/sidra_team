@@ -1,5 +1,6 @@
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
@@ -169,32 +170,26 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
               
       
         widget.socket!.emit("group.message",{
-        "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy}"
+        "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy.toString().toTitleCase()}\n ${state.list.addedUsers?.join(',').toString().toTitleCase()} are added to the group"
       });
-      for(int i=0;i<userList.length;i++){
-        widget.socket!.emit("group.message",{
-        "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${userlist[i].name.toString().toTitleCase()}"
-      });
-      }
-      
       BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
             token: widget.token ?? "",
             // userId: widget.communicationUserModel?.id ?? "",
             chatId:state.list.chatid??"",
             pageNo: 1));
-                  PersistentNavBarNavigator.pushNewScreen(
-                        context,
-                        screen: ChatScreen(
-                          token: widget.token,
-                          loginUserId: widget.loginUserId,
-                          socket: widget.socket,
-                          isGroup: true,
-                          isg: true,
-                          grpuser: state.list,
-                        ),
-                    withNavBar: false, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+      PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: ChatScreen(
+              token: widget.token,
+              loginUserId: widget.loginUserId,
+              socket: widget.socket,
+              isGroup: true,
+              isg: true,
+              grpuser: state.list,
+            ),
+        withNavBar: false, // OPTIONAL VALUE. True by default.
+        pageTransitionAnimation: PageTransitionAnimation.fade,
+      );
               //   Fluttertoast.showToast(
               //       msg: 'Successfully Created Group',
               //       toastLength: Toast.LENGTH_SHORT,
@@ -318,7 +313,14 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                         if (state is GetAllRegisteredUsersSuccess) {
 
                           print("Success shifu");
-
+                              print("sjsd ${authentication.authenticatedUser.code}");
+                              for(int i=0;i<state.registeresUsers.length;){
+                                // print();
+                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                        state.registeresUsers.removeAt(i);
+                                        }
+                                  i++;
+                              }
                           return SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
