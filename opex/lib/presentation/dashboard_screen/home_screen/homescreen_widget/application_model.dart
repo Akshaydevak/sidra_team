@@ -16,18 +16,18 @@ List<ApplicationModel> applicationList = [
       image:
           "https://rawabihypermarket.com/wp-content/uploads/2021/07/r1.jpg",
       subTitle: "New add",
-      url: "https://youtu.be/JznIwGjczCg?si=busBQ2dCFS6M5uU-"),
+      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
   ApplicationModel(
       title:
           'ലോകത്തെ ആദ്യ കുടുംബ കേന്ദ്രീകൃത ഹൈപ്പർമാർക്കറ്റുമായി അൽറവാബി ഗ്രൂപ്പ് ഓഫ് കമ്പനീസ്',
       image:
           "https://menafn.com/updates/pr/2023-03/11/GT_2c0d9image_story.jpeg",
       subTitle: "Task and operation",
-      url: "https://youtu.be/pRc92jBKroY?si=eHf6bwcCLjOOTUzV"),
+      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
   ApplicationModel(
       title: 'Rawabi Hypermarket Al Murrah',
       image: "https://alrawabigroup.com/uploads/media/news215549.jpg",
       subTitle: "Task and operation",
-      url: "https://youtu.be/CTpZBJS9B6M?si=e8SN8RBIVSn_8sIF"),
+      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
 
 ];

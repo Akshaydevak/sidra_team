@@ -4,8 +4,10 @@ import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'evaluation_card.dart';
+import 'evaluation_read_ceo_page.dart';
 
 class EvaluationUserListToCEO extends StatefulWidget {
   const EvaluationUserListToCEO({super.key});
@@ -168,6 +170,12 @@ class _EvaluationUserListToCEOState extends State<EvaluationUserListToCEO> {
                             itemBuilder: (BuildContext context, int i) {
                               return GestureDetector(
                                 onTap: (){
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: EvaluatioReadPageCeo(),
+                                    withNavBar: false, // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                                  );
 
                                 },
                                 child: UserReviewCard(
