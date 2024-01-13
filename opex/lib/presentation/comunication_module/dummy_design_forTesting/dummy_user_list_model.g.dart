@@ -22,6 +22,7 @@ UserDummyList _$UserDummyListFromJson(Map<String, dynamic> json) =>
       isDeleted: json['isDeleted'] as bool?,
       deletedAt: json['deletedAt'] as String?,
       createdBy: json['createdBy'] as String?,
+      unreadMessages: json['unreadMessages'] as int?,
     );
 
 Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
@@ -40,6 +41,7 @@ Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
       'isDeleted': instance.isDeleted,
       'deletedAt': instance.deletedAt,
       'createdBy': instance.createdBy,
+      'unreadMessages': instance.unreadMessages,
     };
 
 GroupUserList _$GroupUserListFromJson(Map<String, dynamic> json) =>
@@ -67,6 +69,7 @@ GroupList _$GroupListFromJson(Map<String, dynamic> json) => GroupList(
       gname: json['groupName'] as String?,
       gphoto: json['groupPhotoUrl'] as String?,
       createdBy: json['createdBy'] as String?,
+      addedUsers: json['addedUsers'] as List<dynamic>?,
     );
 
 Map<String, dynamic> _$GroupListToJson(GroupList instance) => <String, dynamic>{
@@ -76,6 +79,7 @@ Map<String, dynamic> _$GroupListToJson(GroupList instance) => <String, dynamic>{
       'groupName': instance.gname,
       'groupPhotoUrl': instance.gphoto,
       'createdBy': instance.createdBy,
+      'addedUsers': instance.addedUsers,
     };
 
 UserSeenList _$UserSeenListFromJson(Map<String, dynamic> json) => UserSeenList(

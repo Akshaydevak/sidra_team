@@ -2,6 +2,7 @@ import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
@@ -184,35 +185,35 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                 backgroundColor: Colors.white,
                 title: Container(
                   height: 44,
-                  child: TextFormField(
-                    onChanged: (val) {
-                      if (val.isNotEmpty) {
-                        changeUi = true;
-                        setState(() {});
-                        BlocProvider.of<CommunicationBloc>(context).add(
-                            GetSearchedUserEvent(
-                                searchQuery: val, token: widget.token ?? ""));
-                      }else{
-                        changeUi=false;
-                      }
-                    },
-                    textAlign: TextAlign.justify,
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffe6ecf0),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xfff8f7f5),
-                        hintText: "Search ...",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                            ),
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
+                  // child: TextFormField(
+                  //   onChanged: (val) {
+                  //     if (val.isNotEmpty) {
+                  //       changeUi = true;
+                  //       setState(() {});
+                  //       BlocProvider.of<CommunicationBloc>(context).add(
+                  //           GetSearchedUserEvent(
+                  //               searchQuery: val, token: widget.token ?? ""));
+                  //     }else{
+                  //       changeUi=false;
+                  //     }
+                  //   },
+                  //   textAlign: TextAlign.justify,
+                  //   decoration: InputDecoration(
+                  //       enabledBorder: OutlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //           color: Color(0xffe6ecf0),
+                  //         ),
+                  //       ),
+                  //       filled: true,
+                  //       fillColor: const Color(0xfff8f7f5),
+                  //       hintText: "Search ...",
+                  //       hintStyle: TextStyle(color: Colors.grey),
+                  //       border: OutlineInputBorder(
+                  //           borderSide: BorderSide(
+                  //             color: Colors.transparent,
+                  //           ),
+                  //           borderRadius: BorderRadius.circular(10))),
+                  // ),
                 )),
             body: ScrollConfiguration(
               behavior: NoGlow(),
@@ -425,6 +426,14 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                               if (state is GetAllRegisteredUsersLoading) {
                                 return customCupertinoLoading();
                               } else if (state is GetAllRegisteredUsersSuccess) {
+                                print("sjsd ${authentication.authenticatedUser.code}");
+                              for(int i=0;i<state.registeresUsers.length;){
+                                // print();
+                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                        state.registeresUsers.removeAt(i);
+                                        }
+                                  i++;
+                              }
                                 return Column(
                                   children: [
                                     Align(
@@ -458,11 +467,11 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                       "userCode": "${state.registeresUsers[index].userCode}",
                                                      "chatId": widget.chatid.toString() });
                                                    print("hjkl");
-                                                     
-                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                   widget.socket!.emit("group.message",{
+                                                     widget.socket!.emit("group.message",{
                                                     "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
                                                   });
+                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                  
 
                                                 widget.socket!.on("userAlreadyInGroup", (data) {
                                                   showSnackBar(context,
@@ -471,7 +480,8 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                 });
                                                 
                                                  widget.socket!.on("userAddedToGroup", (data) {     
-                                                  print("user $data");
+                                                  // print("user $data");
+                                                   
                                                    showSnackBar(context,
                                                   message: "User Add To Group Successfully", color: ColorPalette.primary);
                                                   

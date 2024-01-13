@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,8 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
+import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';
 import 'dashboard.dart';
@@ -18,14 +20,19 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(
         const Duration(seconds: 2),
-        () => Navigator.pushReplacement(
+        () { 
+         context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     // HomePage()
                     authentication.isAuthenticated
                         ? const DashBoard()
-                        : const OnBoarding())));
+                        : const OnBoarding())
+                        );}
+                        );
+                        
   }
 
   @override
