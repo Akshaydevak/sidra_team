@@ -50,6 +50,7 @@ import 'home/model/joblist_model.dart';
 
 import 'home/my_jobs.dart';
 import 'home_card.dart';
+import 'organisation_pages/organisation_chart_screen.dart';
 
 class TaskAndOperation extends StatefulWidget {
   const TaskAndOperation({Key? key}) : super(key: key);
@@ -868,56 +869,69 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                       ),
                                     ),
                                     SizedBox(height: 20,),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.only(left: 10,right: 15),
-                                    //   child: Row(
-                                    //     mainAxisAlignment:
-                                    //     MainAxisAlignment.spaceBetween,
-                                    //     children: [
-                                    //       GestureDetector(
-                                    //           onTap: () {
-                                    //             PersistentNavBarNavigator.pushNewScreen(
-                                    //               context,
-                                    //               screen: EvaluationUserListing(),
-                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
-                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
-                                    //             );
-                                    //           },
-                                    //           child: FourCard(
-                                    //             label: "Evaluate(HR)",
-                                    //             svg: TaskSvg().reporterSvg,
-                                    //           )),
-                                    //       GestureDetector(
-                                    //           onTap: () {
-                                    //             PersistentNavBarNavigator.pushNewScreen(
-                                    //               context,
-                                    //               screen: EvaluationUserListByTLs(),
-                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
-                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
-                                    //             );
-                                    //           },
-                                    //           child: FourCard(
-                                    //             label: "Evaluate(TL's)",
-                                    //             svg: TaskSvg().reporterSvg,
-                                    //           )),
-                                    //       GestureDetector(
-                                    //           onTap: () {
-                                    //             PersistentNavBarNavigator.pushNewScreen(
-                                    //               context,
-                                    //               screen: EvaluationUserListToCEO(),
-                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
-                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
-                                    //             );
-                                    //           },
-                                    //           child: FourCard(
-                                    //             label: "Evaluate(CEO)",
-                                    //             svg: TaskSvg().reporterSvg,
-                                    //           )),
-                                    //
-                                    //
-                                    //     ],
-                                    //   ),
-                                    // ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10,right: 15),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListing(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate\n(HR)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListByTLs(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate\n(TL's)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: EvaluationUserListToCEO(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Evaluate\n(CEO)",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+                                          GestureDetector(
+                                              onTap: () {
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: OrganisationChartScreen(),
+                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
+                                                );
+                                              },
+                                              child: FourCard(
+                                                label: "Organisation",
+                                                svg: TaskSvg().reporterSvg,
+                                              )),
+
+
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 )
                                 : Row(

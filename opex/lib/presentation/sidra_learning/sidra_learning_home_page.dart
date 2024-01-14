@@ -1,8 +1,10 @@
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
+import 'package:cluster/presentation/sidra_learning/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -137,7 +139,15 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                           onTap: (){
-                            _launchUrl(applicationList[index].url);
+                            // _launchUrl(applicationList[index].url);
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: VideoPlayerWidget(url: applicationList[index].url),
+                              withNavBar:
+                              false, // OPTIONAL VALUE. True by default.
+                              pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                            );
+
                           },
                           child: ThumbnailCard(thumbNail: applicationList[index],
                           share: (){

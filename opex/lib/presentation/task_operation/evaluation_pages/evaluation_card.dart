@@ -184,71 +184,110 @@ class UserReviewCard extends StatelessWidget {
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     var h = MediaQuery.of(context).size.height;
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Color(0xffE6ECF0))),
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-                "https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg"),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "John wick",
-                  style: GoogleFonts.roboto(
-                      fontWeight: FontWeight.w500, fontSize: w / 24),
-                ),
-                Text(
-                  "jhonwick@rgcdynamics.com",
-                  style: GoogleFonts.roboto(fontSize: w / 26),
-                ),
-                SizedBox(height: 5,),
-                RatingBar.builder(
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,itemSize: 20,
-                  // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.green,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-                SizedBox(height: 10,),
-                Row(
+    return Stack(
+      children: [
+       
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Color(0xffE6ECF0))),
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                    "https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg"),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("96 Points",
-                    style: GoogleFonts.roboto(
-                      fontWeight: FontWeight.w500,
-                      fontSize: w/26
-                    ),),
-                    Text(" | "),
-                    Text("Outstanding Performance",
+                    Text(
+                      "John wick",
                       style: GoogleFonts.roboto(
+                          fontWeight: FontWeight.w500, fontSize: w / 24),
+                    ),
+                    Text(
+                      "jhonwick@rgcdynamics.com",
+                      style: GoogleFonts.roboto(fontSize: w / 26),
+                    ),
+                    SizedBox(height: 5,),
+                    RatingBar.builder(
+                      initialRating: 3,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,itemSize: 20,
+                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.green,
+                      ),
+                      onRatingUpdate: (rating) {
+                        print(rating);
+                      },
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Text("96 Points",
+                        style: GoogleFonts.roboto(
                           fontWeight: FontWeight.w500,
                           fontSize: w/26
-                      ),),
+                        ),),
+                        Text(" | "),
+                        Text("Outstanding Performance",
+                          style: GoogleFonts.roboto(
+                              fontWeight: FontWeight.w500,
+                              fontSize: w/26
+                          ),),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          right: 10,
+            top: 20,
+            child:  Container(
+              height: 27,width: 65,
+              child: GradientButton(
+                  onPressed: () {
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: DashBoard(),
+                    //   withNavBar: true,
+                    //   // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
+                    //OtpScreen
+                  },
+                  gradient: const LinearGradient(
+                    colors: [
+                      ColorPalette.primary, ColorPalette.primary
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  color:  Colors.transparent,
+                  child: Text(
+                    "Action",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: w/26,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+            ),)
+      ],
     );
   }
 }
