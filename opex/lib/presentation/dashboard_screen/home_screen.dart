@@ -19,13 +19,9 @@ import '../../common_widgets/headline_text.dart';
 import '../../common_widgets/no_glow.dart';
 import '../mpos/mpos_homepage.dart';
 import '../order_app/screens/order_home_page.dart';
-import '../sales_app/sales_dashboard.dart';
-import '../seller_app/seller_homepage.dart';
 import '../sidra_learning/sidra_learning_home_page.dart';
-import '../task_operation/home/bloc/job_bloc.dart';
 import 'home_screen/homescreen_widget/appbar.dart';
 import 'home_screen/homescreen_widget/apps_svg.dart';
-
 import 'home_screen/homescreen_widget/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -294,13 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       case 8:
         onTap = () {
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: const SalesDashboard(),
-            withNavBar: true,
-            // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+
         };
         break;
       case 9:
