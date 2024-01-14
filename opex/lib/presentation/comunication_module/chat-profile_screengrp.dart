@@ -115,7 +115,8 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: CommunicationModule(
-              // token: widget.token ?? "",
+              // token: widget.token ?? ""
+              socket: widget.socket,
             ),
             withNavBar: true, // OPTIONAL VALUE. True by default.
             pageTransitionAnimation: PageTransitionAnimation.fade,

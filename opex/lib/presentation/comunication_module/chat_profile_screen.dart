@@ -25,13 +25,6 @@ import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 
 class ChatProfileScreen extends StatefulWidget {
-  bool isGroup;
-  final UserDummyList? communicationUserModel;
-  final CommunicationUserModel? communicationuser;
-  final String? token;
-  final Socket? socket;
-  final String? roomId;
-  final bool chat;
   ChatProfileScreen(
       {Key? key,
       this.isGroup = false,
@@ -43,15 +36,24 @@ class ChatProfileScreen extends StatefulWidget {
       required this.token})
       : super(key: key);
 
+  final bool chat;
+  final UserDummyList? communicationUserModel;
+  final CommunicationUserModel? communicationuser;
+  bool isGroup;
+  final String? roomId;
+  final Socket? socket;
+  final String? token;
+
   @override
   State<ChatProfileScreen> createState() => _ChatProfileScreenState();
 }
 
 class _ChatProfileScreenState extends State<ChatProfileScreen> {
-  bool isMute = false;
   List<GroupUserList> grpmember=[];
   bool isM=true;
+  bool isMute = false;
   String uid='';
+
     @override
   void initState() {
 
@@ -115,6 +117,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
             context,
             screen: CommunicationModule(
               // token: widget.token ?? "",
+              socket: widget.socket,
             ),
             withNavBar: true, // OPTIONAL VALUE. True by default.
             pageTransitionAnimation: PageTransitionAnimation.fade,

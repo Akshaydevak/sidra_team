@@ -32,7 +32,9 @@ class UserDummyList extends Equatable {
   final String? deletedAt;
   @JsonKey(name: "createdBy")
   final String? createdBy;
-  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy});
+  @JsonKey(name: "unreadMessages")
+  final int? unreadMessages;
+  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy,this.unreadMessages});
   @override
   List<Object> get props => [];
 
@@ -77,8 +79,10 @@ class GroupList extends Equatable {
   final String? gphoto;
   @JsonKey(name: "createdBy")
   final String? createdBy;
+  @JsonKey(name: "addedUsers")
+  final List<dynamic>? addedUsers;
   
-  const GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy});
+  GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy,this.addedUsers});
   @override
   List<Object> get props => [];
 
