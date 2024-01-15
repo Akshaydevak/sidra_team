@@ -289,6 +289,8 @@ class UserMete extends Equatable {
   final String? roleName;
   @JsonKey(name: 'official_role')
   final int? roleId;
+  @JsonKey(name: 'profile_pic')
+  final String? profile;
   @JsonKey(name: 'additional_roles_list')
   final List<String>?roleList;
   @JsonKey(name: 'additional_roles')
@@ -297,7 +299,7 @@ class UserMete extends Equatable {
 
 
   const UserMete( {
-    this.roleName, this.roleList,
+    this.roleName, this.roleList,this.profile,
     this.roleId, this.roleListId,
   });
   @override

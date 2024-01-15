@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -6,10 +8,13 @@ import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_a
 import 'package:cluster/presentation/task_operation/create/create_svg.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -25,6 +30,7 @@ import '../../dashboard_screen/home_screen/home_svg.dart';
 import '../../mpos/search_card.dart';
 import '../../order_app/order_svg.dart';
 import '../../promotion_app/dropdown_card.dart';
+import '../../promotion_app/promotion_svg.dart';
 import '../employee_model/employee_model.dart';
 import '../home/bloc/job_bloc.dart';
 
@@ -38,225 +44,215 @@ class CreateUser extends StatefulWidget {
 
 class _CreateUserState extends State<CreateUser> {
   int selectIndex = 0;
-  List<RoleModelList> roleList=[];
-  List<String> genderList=[];
-  List<String> userTypeList=[];
-  List<int> passIdList=[];
-  List<String> passNameList=[];
-  String departmentCode='';
-  TextEditingController designationTitle=TextEditingController();
-  TextEditingController designationDescription=TextEditingController();
-  refresh(){
+  List<RoleModelList> roleList = [];
+  List<String> genderList = [];
+  List<String> userTypeList = [];
+  List<int> passIdList = [];
+  List<String> passNameList = [];
+  String departmentCode = '';
+  TextEditingController designationTitle = TextEditingController();
+  TextEditingController designationDescription = TextEditingController();
+  refresh() {
     print("department code here $departmentCode");
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   List<String> gender = ["Male", "Female", "Other"];
   String? selectedGender;
   String? selGender;
-  TextEditingController fNameController=TextEditingController();
-  TextEditingController lNameController=TextEditingController();
-  TextEditingController emailController=TextEditingController();
-  TextEditingController mobileController=TextEditingController();
-  TextEditingController nationalityController=TextEditingController();
-  TextEditingController passwordController=TextEditingController();
-  String designationCode='';
-  String departmentName='';
-  String businessunitName='';
-  String businessunitCode='';
-  String officialRoleName='';
-  String designationName='';
-  String departmentCodeUser='';
-  String contactNumber='';
-  String userRoleName='Normal User';
-  int officialId=0;
-  int select=0;
-  void onselct(index){
+  final picker = ImagePicker();
+  File? cropImage;
+  bool _cropped = false;
+  TextEditingController fNameController = TextEditingController();
+  TextEditingController lNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController nationalityController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  String designationCode = '';
+  String departmentName = '';
+  String businessunitName = '';
+  String businessunitCode = '';
+  String officialRoleName = '';
+  String designationName = '';
+  String departmentCodeUser = '';
+  String contactNumber = '';
+  String userRoleName = 'Normal User';
+  int officialId = 0;
+  int select = 0;
+  void onselct(index) {
     setState(() {
-      select=index;
+      select = index;
       print("seler$select");
     });
   }
+
   @override
   void initState() {
     context.read<EmployeeBloc>().add(const GetReadTypeEvent());
-    context.read<SellerAdminBloc>()
-        .add(const AdditionalRoleListEvent('',"", ""));
+    context
+        .read<SellerAdminBloc>()
+        .add(const AdditionalRoleListEvent('', "", ""));
     context.read<SellerAdminBloc>().add(const CountryListEvent());
 
     super.initState();
   }
+
   String? drop;
   GetEmployeeList? readEmployee;
-  List<CountryStateModel>? countryList=[];
+  String imageUrl='';
+  dynamic imageId = 0;
+  List<CountryStateModel>? countryList = [];
   @override
   Widget build(BuildContext context) {
-    double w1 = MediaQuery.of(context).size.width ;
-    double w = w1> 700
-        ? 400
-        : w1;
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
     return MultiBlocListener(
       listeners: [
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if(state is GetReadTypeLoading){
-
-            }
-            if(state is GetReadTypeSuccess){
-              userTypeList=state.readType.userRole??[];
-              userRoleName=state.readType.userRole?[0]??"";
-              genderList=state.readType.gender??[];
-              print("user type List$userTypeList");
+            if (state is PicSuccess) {
+              print("Inside Success${state.data}\t${state.url}");
               setState(() {
-
+                // picModel.replaceRange(indexImage, indexImage+1,
+                //      [PicModel(data: state.data,url: state.url)]);
+                imageId = state.data;
+                imageUrl = state.url;
+                // isUpoloading = false;
               });
+              // print("pic model length${picModel.length}");
+            }
+          },
+        ),
+        BlocListener<EmployeeBloc, EmployeeState>(
+          listener: (context, state) {
+            if (state is GetReadTypeSuccess) {
+              userTypeList = state.readType.userRole ?? [];
+              userRoleName = state.readType.userRole?[0] ?? "";
+              genderList = state.readType.gender ?? [];
+              print("user type List$userTypeList");
+              setState(() {});
             }
           },
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
             print("state group$state");
-            if(state is GetEmployeeReadLoading){
-
-            }
-            if(state is GetEmployeeReadSuccess){
+            if (state is GetEmployeeReadLoading) {}
+            if (state is GetEmployeeReadSuccess) {
               readEmployee = state.getEmployee;
-              drop ?? (drop=readEmployee?.country?.toUpperCase());
-              if(readEmployee?.gender=='M'){
-                selectedGender='Male';
-                selGender='M';
-              }
-              else if(readEmployee?.gender=='F'){
-                selectedGender='Female';
-                selGender='F';
-              }
-              else{
-                selectedGender='Other';selGender='O';
-
+              drop ?? (drop = readEmployee?.country?.toUpperCase());
+              if (readEmployee?.gender == 'M') {
+                selectedGender = 'Male';
+                selGender = 'M';
+              } else if (readEmployee?.gender == 'F') {
+                selectedGender = 'Female';
+                selGender = 'F';
+              } else {
+                selectedGender = 'Other';
+                selGender = 'O';
               }
               // selGender ?? (drop=readEmployee?.gender);
               // dropState ?? (dropState=sellerRead?.state.toString().toTitleCase());
 
-              fNameController.text=state.getEmployee.fname??"";
-              lNameController.text=state.getEmployee.lname??"";
+              fNameController.text = state.getEmployee.fname ?? "";
+              lNameController.text = state.getEmployee.lname ?? "";
               // selectedGender=state.getEmployee.gender??"";
-              mobileController.text=state.getEmployee.primaryMobile??"";
-              contactNumber=state.getEmployee.primaryMobile??"";
-              emailController.text=state.getEmployee.email??"";
-              designationName=state.getEmployee?.designation??"";
-              userRoleName=state.getEmployee?.role??"";
-              officialRoleName=state.getEmployee?.userMete?.roleName??"";
-              departmentName=state.getEmployee?.departmentCode??"";
-              designationName=state.getEmployee?.designation??"";
-              for(var i=0;i<state.getEmployee.userMete!.roleList!.length;i++){
-                passNameList.add(state.getEmployee?.userMete!.roleList?[i]??"");
-
+              mobileController.text = state.getEmployee.primaryMobile ?? "";
+              contactNumber = state.getEmployee.primaryMobile ?? "";
+              emailController.text = state.getEmployee.email ?? "";
+              designationName = state.getEmployee?.designation ?? "";
+              userRoleName = state.getEmployee?.role ?? "";
+              officialRoleName = state.getEmployee?.userMete?.roleName ?? "";
+              departmentName = state.getEmployee?.departmentCode ?? "";
+              designationName = state.getEmployee?.designation ?? "";
+              imageId=state.getEmployee?.userMete?.profile??"";
+              imageUrl=state.getEmployee?.userMete?.profile??"";
+              for (var i = 0;
+                  i < state.getEmployee.userMete!.roleList!.length;
+                  i++) {
+                passNameList
+                    .add(state.getEmployee?.userMete!.roleList?[i] ?? "");
               }
 
-
-              setState(() {
-
-              });
-            }
-
-          },
-        ),
-        BlocListener<SellerAdminBloc, SellerAdminState>(
-          listener: (context, state) {
-            if(state is AdditionalRoleListLoading){
-
-            }
-            if(state is AdditionalRoleListSuccess){
-              roleList=state.role??[];
-              setState(() {
-
-              });
+              setState(() {});
             }
           },
         ),
         BlocListener<SellerAdminBloc, SellerAdminState>(
           listener: (context, state) {
-            if(state is GetCountryListLoading){
-
-            }
-            if(state is GetCountryListSuccess){
-              countryList=state.country;
-              setState(() {
-
-              });
+            if (state is AdditionalRoleListLoading) {}
+            if (state is AdditionalRoleListSuccess) {
+              roleList = state.role ?? [];
+              setState(() {});
             }
           },
         ),
         BlocListener<SellerAdminBloc, SellerAdminState>(
           listener: (context, state) {
-            if(state is CreateDesignationLoading){
-
+            if (state is GetCountryListLoading) {}
+            if (state is GetCountryListSuccess) {
+              countryList = state.country;
+              setState(() {});
             }
-            if(state is CreateDesignationSuccess){
+          },
+        ),
+        BlocListener<SellerAdminBloc, SellerAdminState>(
+          listener: (context, state) {
+            if (state is CreateDesignationLoading) {}
+            if (state is CreateDesignationSuccess) {
               Navigator.pop(context);
             }
           },
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if(state is EmployeeLoading){
+            if (state is EmployeeLoading) {
               showSnackBar(context,
-                  message: "User Creation Loading",
-                  color: ColorPalette.green);
+                  message: "User Creation Loading", color: ColorPalette.green);
             }
-            if(state is EmployeeSuccess){
+            if (state is EmployeeSuccess) {
               showSnackBar(context,
-                  message:state.user??"",
-                  color: ColorPalette.green);
+                  message: state.user ?? "", color: ColorPalette.green);
               Navigator.pop(context);
-              context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
+              context.read<JobBloc>().add(GetEmployeeListEvent('', '', ''));
             }
-            if(state is EmployeeFailed){
-
+            if (state is EmployeeFailed) {
               showSnackBar(context,
-                  message: state.error,
-                  color: ColorPalette.green);
-
+                  message: state.error, color: ColorPalette.green);
             }
           },
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if(state is UpdateEmployeeLoading){
+            if (state is UpdateEmployeeLoading) {
               showSnackBar(context,
-                  message: "User Updation Loading",
-                  color: ColorPalette.green);
+                  message: "User Updation Loading", color: ColorPalette.green);
             }
-            if(state is UpdateEmployeeSuccess){
+            if (state is UpdateEmployeeSuccess) {
               showSnackBar(context,
-                  message:state.user,
-                  color: ColorPalette.green);
+                  message: state.user, color: ColorPalette.green);
               Navigator.pop(context);
-              context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
+              context.read<JobBloc>().add(GetEmployeeListEvent('', '', ''));
             }
-            if(state is UpdateEmployeeFailed){
-
+            if (state is UpdateEmployeeFailed) {
               showSnackBar(context,
-                  message: state.error,
-                  color: ColorPalette.green);
-
+                  message: state.error, color: ColorPalette.green);
             }
           },
         ),
-
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70),
           child: BackAppBar(
-            label: "New User",
-            isAction: false,
-            isBack: false,
-            onTap: (){
-              Navigator.pop(context);
-            }),
+              label: "New User",
+              isAction: false,
+              isBack: false,
+              onTap: () {
+                Navigator.pop(context);
+              }),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -266,68 +262,193 @@ class _CreateUserState extends State<CreateUser> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 BlocBuilder<EmployeeBloc, EmployeeState>(
-  builder: (context, state) {
-    if(state is GetReadTypeLoading){
-      return customCupertinoLoading();
-    }
-    if(state is GetReadTypeSuccess){
-      userTypeList=state.readType.userRole??[];
-      return SizedBox(
-          width: w,
-          height: 20,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(right: 0, left: 0),
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: userTypeList.length,
-            itemBuilder: (BuildContext context, int i) {
-              return GestureDetector(
-                  onTap: () {
-                    onselct(i);
-                    userRoleName=userTypeList[i];
-                    setState(() {
-
-                    });
+                  builder: (context, state) {
+                    if (state is GetReadTypeLoading) {
+                      return customCupertinoLoading();
+                    }
+                    if (state is GetReadTypeSuccess) {
+                      userTypeList = state.readType.userRole ?? [];
+                      return SizedBox(
+                          width: w,
+                          height: 20,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.only(right: 0, left: 0),
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: userTypeList.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              return GestureDetector(
+                                  onTap: () {
+                                    onselct(i);
+                                    userRoleName = userTypeList[i];
+                                    setState(() {});
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.string(select == i
+                                          ? HomeSvg().radioButtonActive
+                                          : CreateSvg().radioInActiveButton),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        userTypeList[i] == "Staff"
+                                            ? "Normal User"
+                                            : userTypeList[i] ==
+                                                    "Associative Admin"
+                                                ? "Associative Admin"
+                                                : userTypeList[i] == "Admin"
+                                                    ? "Admin"
+                                                    : "",
+                                        style: select == i
+                                            ? GoogleFonts.roboto(
+                                                color: ColorPalette.black,
+                                                fontSize: w / 23,
+                                                fontWeight: FontWeight.w500,
+                                              )
+                                            : GoogleFonts.roboto(
+                                                color: ColorPalette.black,
+                                                fontSize: w / 23,
+                                              ),
+                                      ),
+                                    ],
+                                  ));
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return SizedBox(
+                                width: 16,
+                              );
+                            },
+                          ));
+                    }
+                    return Container();
                   },
-                  child: Row(
-                    children: [
-                      SvgPicture.string(select == i ? HomeSvg()
-                          .radioButtonActive :  CreateSvg().radioInActiveButton),
-                      SizedBox(width: 5,),
-
-                      Text(
-                        userTypeList[i]=="Staff"?"Normal User":
-                        userTypeList[i]=="Associative Admin"?"Associative Admin":
-                        userTypeList[i]=="Admin"?"Admin":"",
-                        style: select == i
-                            ? GoogleFonts.roboto(
-                          color: ColorPalette.black,
-                          fontSize: w/23,
-                          fontWeight:
-                          FontWeight.w500,
-                        )
-                            : GoogleFonts.roboto(
-                          color: ColorPalette.black,
-                          fontSize: w/23,
-                        ),
-                      ),
-                    ],
-
-                  ));
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                width: 16,
-              );
-            },
-          ));
-    }
-    return Container();
-  },
-),
+                ),
                 const SizedBox(
                   height: 25,
+                ),
+                Center(
+                  child: Container(
+                    height: 170,
+                    width: 150,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5)),
+                    child: imageUrl == ""
+                        ? SvgPicture.string(TaskSvg().noImage)
+                        : Container(
+                      padding: EdgeInsets.all(1),
+                      // alignment: Alignment.center,
+                      decoration: ShapeDecoration(
+                          color: Color(0xFFF7F7F7),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                width: 0.50,
+                                color: Color(0xFFCBCED0)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              imageUrl != ""
+                                  ? imageUrl
+                                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf1P_4ikSWJtFvk7JqNq-n0e2KNnqqlYgNrw&usqp=CAU",
+                            ),
+                          )),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: w1 / 3,
+                      height: 32,
+                      decoration: ShapeDecoration(
+                        color: Color(0x4CD9D9D9),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              width: 1, color: Color(0xFFE1E4E6)),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: GestureDetector(
+                          onTap: () {
+                            imageUrl='';
+                            imageId=0;
+                            getImage(ImageSource.camera);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                size: 17,
+                                color: Color(0xff6D6D6D),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Use Camera",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontSize: w / 30,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      width: w1 / 3,
+                      height: 32,
+                      decoration: ShapeDecoration(
+                        color: Color(0x4CD9D9D9),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              width: 1, color: Color(0xFFE1E4E6)),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: GestureDetector(
+                          onTap: () {
+                            imageUrl='';
+                            imageId=0;
+                            getImage(ImageSource.gallery);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.photo,
+                                size: 17,
+                                color: Color(0xff6D6D6D),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Use Gallery",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontSize: w / 30,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
                 ),
                 TextFormReusable(
                   label: "First Name",
@@ -341,7 +462,8 @@ class _CreateUserState extends State<CreateUser> {
                 TextFormReusable(
                   label: "Last Name",
                   hint: "eg.joseph",
-                  controller: lNameController,isMandatory: true,
+                  controller: lNameController,
+                  isMandatory: true,
                 ),
                 const SizedBox(
                   height: 16,
@@ -370,8 +492,7 @@ class _CreateUserState extends State<CreateUser> {
                       child: Text(
                         " *",
                         style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.w900),
+                            color: Colors.red, fontWeight: FontWeight.w900),
                       ),
                     )
                   ],
@@ -390,10 +511,10 @@ class _CreateUserState extends State<CreateUser> {
                   },
                   decoration: InputDecoration(
                     hintText: "eg.8606200441",
-                    hintStyle:
-                    GoogleFonts.roboto(color: Colors.grey, fontSize: w/24),
-                    contentPadding:
-                    const EdgeInsets.only(left: 10, top: 10, bottom: 10,right: 10),
+                    hintStyle: GoogleFonts.roboto(
+                        color: Colors.grey, fontSize: w / 24),
+                    contentPadding: const EdgeInsets.only(
+                        left: 10, top: 10, bottom: 10, right: 10),
                     border: const OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xffe6ecf0)),
                     ),
@@ -402,7 +523,7 @@ class _CreateUserState extends State<CreateUser> {
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderSide:
-                      BorderSide(color: Color(0xffe6ecf0), width: 1.0),
+                          BorderSide(color: Color(0xffe6ecf0), width: 1.0),
                     ),
                     errorBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 1.0),
@@ -426,26 +547,22 @@ class _CreateUserState extends State<CreateUser> {
                 ),
 
                 Column(
-                  mainAxisAlignment:
-                  MainAxisAlignment.start,
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Text(
                           "Gender",
                           style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
+                              color: Colors.black, fontWeight: FontWeight.w500),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(
                             " *",
                             style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w900),
+                                color: Colors.red, fontWeight: FontWeight.w900),
                           ),
                         )
                       ],
@@ -454,49 +571,38 @@ class _CreateUserState extends State<CreateUser> {
                       height: 5,
                     ),
                     Container(
-                      width: w1 ,
+                      width: w1,
                       // padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       //height: 20.0,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.0),
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
                       decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.circular(5),
-                        border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1),
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Color(0xffe6ecf0), width: 1),
                       ),
                       child: DropdownButton(
                           isExpanded: true,
-                          icon: Icon(Icons
-                              .keyboard_arrow_down_outlined),
+                          icon: Icon(Icons.keyboard_arrow_down_outlined),
                           underline: Container(),
-                          items:
-                          gender.map((String item) {
+                          items: gender.map((String item) {
                             return DropdownMenuItem(
                               enabled: true,
                               value: item,
                               child: Text(item,
-                                  style: TextStyle(
-                                      color: Colors
-                                          .black)),
+                                  style: TextStyle(color: Colors.black)),
                             );
                           }).toList(),
                           value: selectedGender,
                           onChanged: (dynamic value) {
-                            print(
-                                "selecteddd geneer $selectedGender");
+                            print("selecteddd geneer $selectedGender");
                             setState(() {
                               print(value);
                               selectedGender = value;
                               print(selectedGender);
                               if (value == "Male") {
                                 selGender = "M";
-                              } else if (value ==
-                                  "Female") {
+                              } else if (value == "Female") {
                                 selGender = "F";
-                              } else if (value ==
-                                  "Other") {
+                              } else if (value == "Other") {
                                 selGender = "N";
                               }
                               // Gender = value;
@@ -505,8 +611,7 @@ class _CreateUserState extends State<CreateUser> {
                           hint: Text(
                             "Gender",
                             style: GoogleFonts.roboto(
-                                color: Colors.grey,
-                                fontSize: 14),
+                                color: Colors.grey, fontSize: 14),
                           )),
                     ),
                   ],
@@ -532,15 +637,15 @@ class _CreateUserState extends State<CreateUser> {
                           child: Text(
                             " *",
                             style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w900),
+                                color: Colors.red, fontWeight: FontWeight.w900),
                           ),
                         )
                       ],
                     ),
                     Container(
-                        width: w1 ,
-                        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                        width: w1,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
@@ -562,21 +667,18 @@ class _CreateUserState extends State<CreateUser> {
                               color: Color(0x7f666161)),
                           elevation: 1,
                           underline: Container(),
-                          hint: Text("Country",
-                            style: GoogleFonts.roboto(
-                                color: Color(0x66151522)
-                            ),),
+                          hint: Text(
+                            "Country",
+                            style: GoogleFonts.roboto(color: Color(0x66151522)),
+                          ),
                           value: drop,
                           items: countryList?.map((CountryStateModel items) {
                             return DropdownMenuItem(
-
                               alignment: Alignment.centerLeft,
                               enabled: true,
                               value: items.code,
-                              onTap: (){
-
-                              },
-                              child: Text(items.name??"",
+                              onTap: () {},
+                              child: Text(items.name ?? "",
                                   style: GoogleFonts.poppins(
                                       color: ColorPalette.black)),
                             );
@@ -599,15 +701,19 @@ class _CreateUserState extends State<CreateUser> {
                         )),
                   ],
                 ),
-                widget.edit==true?Container(): SizedBox(
-                  height: 16,
-                ),
-                widget.edit==true?Container():TextFormReusable(
-                  label: "Password",
-                  hint: "eg.12548RE5",
-                  isMandatory: true,
-                  controller: passwordController,
-                ),
+                widget.edit == true
+                    ? Container()
+                    : SizedBox(
+                        height: 16,
+                      ),
+                widget.edit == true
+                    ? Container()
+                    : TextFormReusable(
+                        label: "Password",
+                        hint: "eg.12548RE5",
+                        isMandatory: true,
+                        controller: passwordController,
+                      ),
                 // const SizedBox(
                 //   height: 16,
                 // ),
@@ -630,34 +736,40 @@ class _CreateUserState extends State<CreateUser> {
                 const SizedBox(
                   height: 16,
                 ),
-                widget.edit==true?ReadDropDownCard(
-                  label: "Department",
-                  selValue: departmentName==""?"Select":departmentName,
-                  onTap: (){
-                    context.read<SellerAdminBloc>()
-                        .add(const DepartmentListEvent('',"", ""));
-                    _showModalBottomDepartment(departmentName, onCallBack: (bool val){
-                      print("clllling back hereeee");
-                      setState(() {
-
-                      });((){});
-                    });
-                  },
-                ):DropDownCard(
-                  label: "Department",
-                  isMandatory: true,
-                  selValue: departmentName==""?"Select":departmentName,
-                  onTap: (){
-                    context.read<SellerAdminBloc>()
-                        .add(const DepartmentListEvent('',"", ""));
-                    _showModalBottomDepartment(departmentName, onCallBack: (bool val){
-                      print("clllling back hereeee");
-                      setState(() {
-
-                      });((){});
-                    });
-                  },
-                ),
+                widget.edit == true
+                    ? ReadDropDownCard(
+                        label: "Department",
+                        selValue:
+                            departmentName == "" ? "Select" : departmentName,
+                        onTap: () {
+                          context
+                              .read<SellerAdminBloc>()
+                              .add(const DepartmentListEvent('', "", ""));
+                          _showModalBottomDepartment(departmentName,
+                              onCallBack: (bool val) {
+                            print("clllling back hereeee");
+                            setState(() {});
+                            (() {});
+                          });
+                        },
+                      )
+                    : DropDownCard(
+                        label: "Department",
+                        isMandatory: true,
+                        selValue:
+                            departmentName == "" ? "Select" : departmentName,
+                        onTap: () {
+                          context
+                              .read<SellerAdminBloc>()
+                              .add(const DepartmentListEvent('', "", ""));
+                          _showModalBottomDepartment(departmentName,
+                              onCallBack: (bool val) {
+                            print("clllling back hereeee");
+                            setState(() {});
+                            (() {});
+                          });
+                        },
+                      ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -685,124 +797,140 @@ class _CreateUserState extends State<CreateUser> {
                 DropDownCard(
                   label: "Additional Role",
                   isMandatory: true,
-                  selValue: passNameList.isNotEmpty?"Additional Role Selected":"Select",
-                  onTap: (){
-
+                  selValue: passNameList.isNotEmpty
+                      ? "Additional Role Selected"
+                      : "Select",
+                  onTap: () {
                     _showModalBottomAdditionalRole();
                   },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                widget.edit==true?ReadDropDownCard(
-                  label: "Designation",
-                  selValue: designationName==""?"Select":designationName,
-                  onTap: (){
-
-                    context.read<SellerAdminBloc>()
-                        .add( DesignationListEvent(authentication.authenticatedUser.legalEntity,'',"", ""));
-                    _showModalBottomDesignation(designationName);
-                  },
-                ):DropDownCard(
-                  label: "Designation",
-                  isMandatory: true,
-                  selValue: designationName==""?"Select":designationName,
-                  onTap: (){
-
-                    context.read<SellerAdminBloc>()
-                        .add( DesignationListEvent(authentication.authenticatedUser.legalEntity,'',"", ""));
-                    _showModalBottomDesignation(designationName);
-                  },
+                widget.edit == true
+                    ? ReadDropDownCard(
+                        label: "Designation",
+                        selValue:
+                            designationName == "" ? "Select" : designationName,
+                        onTap: () {
+                          context.read<SellerAdminBloc>().add(
+                              DesignationListEvent(
+                                  authentication.authenticatedUser.legalEntity,
+                                  '',
+                                  "",
+                                  ""));
+                          _showModalBottomDesignation(designationName);
+                        },
+                      )
+                    : DropDownCard(
+                        label: "Designation",
+                        isMandatory: true,
+                        selValue:
+                            designationName == "" ? "Select" : designationName,
+                        onTap: () {
+                          context.read<SellerAdminBloc>().add(
+                              DesignationListEvent(
+                                  authentication.authenticatedUser.legalEntity,
+                                  '',
+                                  "",
+                                  ""));
+                          _showModalBottomDesignation(designationName);
+                        },
+                      ),
+                const SizedBox(
+                  height: 30,
                 ),
-                const SizedBox(height: 30,),
-                widget.edit==true?
-                GradientButton(
-                    color: ColorPalette.primary,
-                    onPressed: () {
-                      print("mob${mobileController.text}");
-                      print("mob${readEmployee?.id}");
-                      context.read<EmployeeBloc>()
-                          .add( UpdateEmployeeEvent(
-                          contact:contactNumber,
-                          officialRole: readEmployee?.userMete?.roleId??0,
-                          roleName: officialRoleName,
-                          nationality: drop??"",
-                          lastName: lNameController.text,
-                          gender: selGender??"",
-                          firstName: fNameController.text,
-                          emailID: emailController.text,
-                          designationCode: readEmployee?.designation??"",
-                          orgCode: authentication.authenticatedUser.organisationCode??"",
-                          additionalRole: readEmployee?.userMete?.roleListId??[],
-                          roleNameList: readEmployee?.userMete?.roleList??[],
-                          depatCode: readEmployee?.departmentCode??"",
-                          userRole: userRoleName,
-                          netCode: readEmployee?.netCode??"",
-                        id: readEmployee?.id??0,
-                        isActive: true
-
-                      ));
-                    },
-                    gradient: const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          ColorPalette.primary,
-                          ColorPalette.primary
-                        ]
-                    ),
-                    child: Text(
-                      "Update User",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: w/20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )):
-                GradientButton(
-                    color: ColorPalette.primary,
-                    onPressed: () {
-                      print("mob${mobileController.text}");
-                      print("mob$contactNumber");
-                      context.read<EmployeeBloc>()
-                          .add( RegisterEmployeeEvent(
-                          contact:contactNumber,
-                          password: passwordController.text,
-                          officialRole: officialId,
-                          roleName: officialRoleName,
-                          nationality: drop??"",
-                          lastName: lNameController.text,
-                          gender: selGender??"",
-                          firstName: fNameController.text,
-                          emailID: emailController.text,
-                          designationCode: designationCode,
-                          orgCode: authentication.authenticatedUser.organisationCode??"",
-                          additionalRole: passIdList,
-                          roleNameList: passNameList,
-                          depatCode: departmentCodeUser,
-                        userRole: userRoleName,
-                        netCode: authentication.authenticatedUser.legalEntity??""
-
-                      ));
-                    },
-                    gradient: const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          ColorPalette.primary,
-                          ColorPalette.primary
-                        ]
-                    ),
-                    child: Text(
-                      "Add New User",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: w/20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
+                widget.edit == true
+                    ? GradientButton(
+                        color: ColorPalette.primary,
+                        onPressed: () {
+                          print("mob${mobileController.text}");
+                          print("mob${readEmployee?.id}");
+                          context.read<EmployeeBloc>().add(UpdateEmployeeEvent(
+                              contact: contactNumber,
+                              profileImg: imageId,
+                              officialRole: readEmployee?.userMete?.roleId ?? 0,
+                              roleName: officialRoleName,
+                              nationality: drop ?? "",
+                              lastName: lNameController.text,
+                              gender: selGender ?? "",
+                              firstName: fNameController.text,
+                              emailID: emailController.text,
+                              designationCode: readEmployee?.designation ?? "",
+                              orgCode: authentication
+                                      .authenticatedUser.organisationCode ??
+                                  "",
+                              additionalRole:
+                                  readEmployee?.userMete?.roleListId ?? [],
+                              roleNameList:
+                                  readEmployee?.userMete?.roleList ?? [],
+                              depatCode: readEmployee?.departmentCode ?? "",
+                              userRole: userRoleName,
+                              netCode: readEmployee?.netCode ?? "",
+                              id: readEmployee?.id ?? 0,
+                              isActive: true));
+                        },
+                        gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              ColorPalette.primary,
+                              ColorPalette.primary
+                            ]),
+                        child: Text(
+                          "Update User",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: w / 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ))
+                    : GradientButton(
+                        color: ColorPalette.primary,
+                        onPressed: () {
+                          print("mob${mobileController.text}");
+                          print("mob$contactNumber");
+                          context.read<EmployeeBloc>().add(
+                              RegisterEmployeeEvent(
+                                profilePic: imageId,
+                                  contact: contactNumber,
+                                  password: passwordController.text,
+                                  officialRole: officialId,
+                                  roleName: officialRoleName,
+                                  nationality: drop ?? "",
+                                  lastName: lNameController.text,
+                                  gender: selGender ?? "",
+                                  firstName: fNameController.text,
+                                  emailID: emailController.text,
+                                  designationCode: designationCode,
+                                  orgCode: authentication
+                                          .authenticatedUser.organisationCode ??
+                                      "",
+                                  additionalRole: passIdList,
+                                  roleNameList: passNameList,
+                                  depatCode: departmentCodeUser,
+                                  userRole: userRoleName,
+                                  netCode: authentication
+                                          .authenticatedUser.legalEntity ??
+                                      ""));
+                        },
+                        gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              ColorPalette.primary,
+                              ColorPalette.primary
+                            ]),
+                        child: Text(
+                          "Add New User",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: w / 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
               ],
             ),
           ),
@@ -810,6 +938,7 @@ class _CreateUserState extends State<CreateUser> {
       ),
     );
   }
+
   _showModalBottomOfficialRole(String? offerPeriodNameNew) {
     void onselect(int index) {
       setState(() {
@@ -826,10 +955,8 @@ class _CreateUserState extends State<CreateUser> {
         isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -875,105 +1002,131 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/1.5,
+                          height: h / 1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
-                                    BlocBuilder<SellerAdminBloc, SellerAdminState>(
+                                    BlocBuilder<SellerAdminBloc,
+                                        SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is OfficialRoleListLoading) {
                                           return LottieLoader();
                                         }
                                         if (state is OfficialRoleListSuccess) {
                                           return Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               ListView.separated(
                                                 primary: true,
                                                 shrinkWrap: true,
                                                 itemCount: state.role!.length,
                                                 physics:
-                                                const NeverScrollableScrollPhysics(),
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) =>
                                                     GestureDetector(
-                                                      onTap: () {
-                                                        onselect(index);
-                                                        setState(() {});
-                                                        officialId=state.role?[index].id??0;
-                                                        officialRoleName=state.role?[index].role??"";
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Row(
+                                                  onTap: () {
+                                                    onselect(index);
+                                                    setState(() {});
+                                                    officialId =
+                                                        state.role?[index].id ??
+                                                            0;
+                                                    officialRoleName = state
+                                                            .role?[index]
+                                                            .role ??
+                                                        "";
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Row(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  onselect(index);
-                                                                  setState(() {});
-                                                                  officialId=state.role?[index].id??0;
-                                                                  officialRoleName=state.role?[index].role??"";
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                child: Container(
-                                                                  padding:
-                                                                  const EdgeInsets.only(
-                                                                    // left: 8,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              onselect(index);
+                                                              setState(() {});
+                                                              officialId = state
+                                                                      .role?[
+                                                                          index]
+                                                                      .id ??
+                                                                  0;
+                                                              officialRoleName =
+                                                                  state.role?[index]
+                                                                          .role ??
+                                                                      "";
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      // left: 8,
                                                                       bottom: 5,
                                                                       top: 5,
                                                                       right: 8),
-                                                                  child: SvgPicture.string(state
-                                                                      .role?[index]
-                                                                      .role ==
+                                                              child: SvgPicture.string(state
+                                                                          .role?[
+                                                                              index]
+                                                                          .role ==
                                                                       offerPeriodNameNew
                                                                   // selectIndex == index
-                                                                      ? HomeSvg()
+                                                                  ? HomeSvg()
                                                                       .radioButtonActive
-                                                                      : HomeSvg()
+                                                                  : HomeSvg()
                                                                       .radioInActive),
-                                                                ),
-                                                              ),
-
-                                                              SizedBox(
-                                                                // padding: const EdgeInsets.only(bottom: 5),
-                                                                width: w/1.5,
-                                                                child: Text(
-                                                                  state.role?[index]
-                                                                      .role.toString().toTitleCase() ??
-                                                                      "",
-                                                                  style: GoogleFonts.roboto(
-                                                                    color: Colors.black,
-                                                                    fontSize: w / 24,
-                                                                    // fontWeight: FontWeight.w500,
-                                                                  ),overflow: TextOverflow.ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
+                                                            ),
                                                           ),
-                                                          const Spacer(),
-
+                                                          SizedBox(
+                                                            // padding: const EdgeInsets.only(bottom: 5),
+                                                            width: w / 1.5,
+                                                            child: Text(
+                                                              state.role?[index]
+                                                                      .role
+                                                                      .toString()
+                                                                      .toTitleCase() ??
+                                                                  "",
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize:
+                                                                    w / 24,
+                                                                // fontWeight: FontWeight.w500,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                    ),
-                                                separatorBuilder: (context, index) =>
-                                                    Container(
-                                                      color: ColorPalette.divider,
-                                                      height: 1,
-                                                      margin: const EdgeInsets.only(top: 3,bottom: 3),
-                                                      width: w,
-                                                    ),
+                                                      const Spacer(),
+                                                    ],
+                                                  ),
+                                                ),
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        Container(
+                                                  color: ColorPalette.divider,
+                                                  height: 1,
+                                                  margin: const EdgeInsets.only(
+                                                      top: 3, bottom: 3),
+                                                  width: w,
+                                                ),
                                               ),
                                               SizedBox(
-                                                height: h/40,
+                                                height: h / 40,
                                               ),
                                               // Row(
                                               //   mainAxisAlignment:
@@ -1047,11 +1200,11 @@ class _CreateUserState extends State<CreateUser> {
                       left: 0,
                       right: 0,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
-
                               Navigator.pop(context);
                             },
                             gradient: const LinearGradient(
@@ -1070,7 +1223,8 @@ class _CreateUserState extends State<CreateUser> {
                                 fontWeight: FontWeight.w600,
                               ),
                             )),
-                      ),)
+                      ),
+                    )
                   ],
                 ),
               );
@@ -1090,10 +1244,8 @@ class _CreateUserState extends State<CreateUser> {
         context: context,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -1138,13 +1290,14 @@ class _CreateUserState extends State<CreateUser> {
                           height: h / 40,
                         ),
                         SizedBox(
-                          height: h/1.5,
+                          height: h / 1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1153,33 +1306,43 @@ class _CreateUserState extends State<CreateUser> {
                                       primary: true,
                                       shrinkWrap: true,
                                       itemCount: roleList.length,
-                                      physics: const NeverScrollableScrollPhysics(),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) => Row(
                                         children: [
-                                          widget.edit==true?Container(
-                                              child: SvgPicture.string(
-                                                  OrderSvg().checkBoxActiveIcon)):
-                                          CustomCheckBox(
-                                            key: UniqueKey(),
-                                            value: passNameList.contains(roleList[index].role),
-                                            onChange: (p0) {
-                                              if (p0) {
-                                                passIdList.add(roleList[index].id ?? 0);
-                                                passNameList.add(roleList[index].role??"");
-
-                                              } else {
-                                                passIdList.remove(
-                                                    roleList[index].id ?? 0);
-                                                passNameList.remove(roleList[index].role??"");
-
-                                              }
-                                              print("fsd$passNameList");
-                                              refresh();
-                                            },
-                                            text: roleList[index].role??"",
-
-
-                                          ),
+                                          widget.edit == true
+                                              ? Container(
+                                                  child: SvgPicture.string(
+                                                      OrderSvg()
+                                                          .checkBoxActiveIcon))
+                                              : CustomCheckBox(
+                                                  key: UniqueKey(),
+                                                  value: passNameList.contains(
+                                                      roleList[index].role),
+                                                  onChange: (p0) {
+                                                    if (p0) {
+                                                      passIdList.add(
+                                                          roleList[index].id ??
+                                                              0);
+                                                      passNameList.add(
+                                                          roleList[index]
+                                                                  .role ??
+                                                              "");
+                                                    } else {
+                                                      passIdList.remove(
+                                                          roleList[index].id ??
+                                                              0);
+                                                      passNameList.remove(
+                                                          roleList[index]
+                                                                  .role ??
+                                                              "");
+                                                    }
+                                                    print("fsd$passNameList");
+                                                    refresh();
+                                                  },
+                                                  text: roleList[index].role ??
+                                                      "",
+                                                ),
 
                                           // Text(
                                           //   roleList[index].role??"",
@@ -1193,11 +1356,11 @@ class _CreateUserState extends State<CreateUser> {
                                       ),
                                       separatorBuilder: (context, index) =>
                                           Container(
-                                            color: ColorPalette.divider,
-                                            height: 1,
-                                            margin: const EdgeInsets.only(top: 10),
-                                            width: w,
-                                          ),
+                                        color: ColorPalette.divider,
+                                        height: 1,
+                                        margin: const EdgeInsets.only(top: 10),
+                                        width: w,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1212,7 +1375,8 @@ class _CreateUserState extends State<CreateUser> {
                       left: 0,
                       right: 0,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
@@ -1245,7 +1409,8 @@ class _CreateUserState extends State<CreateUser> {
         });
   }
 
-  _showModalBottomDepartment(String? offerPeriodNameNew, {required Function(bool val) onCallBack}) {
+  _showModalBottomDepartment(String? offerPeriodNameNew,
+      {required Function(bool val) onCallBack}) {
     void onselect(int index) {
       setState(() {
         selectIndex = index;
@@ -1261,14 +1426,12 @@ class _CreateUserState extends State<CreateUser> {
         isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
-                height: h / 1.3  ,
+                height: h / 1.3,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                     color: Colors.white,
@@ -1310,13 +1473,14 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/1.5,
+                          height: h / 1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1331,88 +1495,112 @@ class _CreateUserState extends State<CreateUser> {
                                     //     )
                                     // ),
                                     // SizedBox(height: 15,),
-                                    BlocBuilder<SellerAdminBloc, SellerAdminState>(
+                                    BlocBuilder<SellerAdminBloc,
+                                        SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is DepartmentListLoading) {
                                           return LottieLoader();
                                         }
                                         if (state is DepartmentListSuccess) {
                                           return Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               ListView.separated(
                                                 primary: true,
                                                 shrinkWrap: true,
-                                                itemCount: state.department!.length,
+                                                itemCount:
+                                                    state.department!.length,
                                                 physics:
-                                                const NeverScrollableScrollPhysics(),
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) =>
                                                     GestureDetector(
-                                                      onTap: () {
-                                                        onselect(index);
-                                                        setState(() {});
-                                                        departmentCode=state.department?[index].opCode??"";
-                                                        departmentCodeUser=state.department?[index].opCode??"";
-                                                        departmentName=state.department?[index].name??"";
-                                                        onCallBack!(true);
-                                                        refresh();
-                                                        Navigator.pop(context);
-
-                                                      },
-                                                      child: Row(
+                                                  onTap: () {
+                                                    onselect(index);
+                                                    setState(() {});
+                                                    departmentCode = state
+                                                            .department?[index]
+                                                            .opCode ??
+                                                        "";
+                                                    departmentCodeUser = state
+                                                            .department?[index]
+                                                            .opCode ??
+                                                        "";
+                                                    departmentName = state
+                                                            .department?[index]
+                                                            .name ??
+                                                        "";
+                                                    onCallBack!(true);
+                                                    refresh();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Row(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                padding:
-                                                                const EdgeInsets.only(
-                                                                  // left: 8,
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    // left: 8,
                                                                     bottom: 5,
                                                                     top: 5,
                                                                     right: 8),
-                                                                child: SvgPicture.string(state
-                                                                    .department?[index]
-                                                                    .name ==
+                                                            child: SvgPicture.string(state
+                                                                        .department?[
+                                                                            index]
+                                                                        .name ==
                                                                     offerPeriodNameNew
                                                                 // selectIndex == index
-                                                                    ? HomeSvg()
+                                                                ? HomeSvg()
                                                                     .radioButtonActive
-                                                                    : HomeSvg()
+                                                                : HomeSvg()
                                                                     .radioInActive),
-                                                              ),
-
-                                                              SizedBox(
-                                                                // padding: const EdgeInsets.only(bottom: 5),
-                                                                width: w/1.5,
-                                                                child: Text(
-                                                                  state.department?[index]
-                                                                      .name.toString().toTitleCase() ??
-                                                                      "",
-                                                                  style: GoogleFonts.roboto(
-                                                                    color: Colors.black,
-                                                                    fontSize: w / 24,
-                                                                    // fontWeight: FontWeight.w500,
-                                                                  ),overflow: TextOverflow.ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
                                                           ),
-                                                          const Spacer(),
-
+                                                          SizedBox(
+                                                            // padding: const EdgeInsets.only(bottom: 5),
+                                                            width: w / 1.5,
+                                                            child: Text(
+                                                              state
+                                                                      .department?[
+                                                                          index]
+                                                                      .name
+                                                                      .toString()
+                                                                      .toTitleCase() ??
+                                                                  "",
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize:
+                                                                    w / 24,
+                                                                // fontWeight: FontWeight.w500,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                    ),
-                                                separatorBuilder: (context, index) =>
-                                                    Container(
-                                                      color: ColorPalette.divider,
-                                                      height: 1,
-                                                      margin: const EdgeInsets.only(top: 3,bottom: 3),
-                                                      width: w,
-                                                    ),
+                                                      const Spacer(),
+                                                    ],
+                                                  ),
+                                                ),
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        Container(
+                                                  color: ColorPalette.divider,
+                                                  height: 1,
+                                                  margin: const EdgeInsets.only(
+                                                      top: 3, bottom: 3),
+                                                  width: w,
+                                                ),
                                               ),
                                               SizedBox(
-                                                height: h/40,
+                                                height: h / 40,
                                               ),
                                               // Row(
                                               //   mainAxisAlignment:
@@ -1459,7 +1647,7 @@ class _CreateUserState extends State<CreateUser> {
                                               //   ],
                                               // ),
                                               SizedBox(
-                                                height: h/10,
+                                                height: h / 10,
                                               ),
                                             ],
                                           );
@@ -1514,7 +1702,8 @@ class _CreateUserState extends State<CreateUser> {
         });
   }
 
-  _showModalBottomBusinessCodeList(String? offerPeriodNameNew, {required Function(bool val) onCallBack}) {
+  _showModalBottomBusinessCodeList(String? offerPeriodNameNew,
+      {required Function(bool val) onCallBack}) {
     void onselect(int index) {
       setState(() {
         selectIndex = index;
@@ -1529,10 +1718,8 @@ class _CreateUserState extends State<CreateUser> {
         context: context,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -1578,114 +1765,142 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/2.5,
+                          height: h / 2.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: w1 / 1.1,
+                                    SizedBox(
+                                        width: w1 / 1.1,
                                         child: SearchCard(
                                           hint: "Search Department",
-                                          onchange: (aa){
-                                            context.read<SellerAdminBloc>()
-                                                .add( DepartmentListEvent(aa,"", ""));
+                                          onchange: (aa) {
+                                            context.read<SellerAdminBloc>().add(
+                                                DepartmentListEvent(
+                                                    aa, "", ""));
                                           },
-                                        )
-                                    ),
-                                    BlocBuilder<SellerAdminBloc, SellerAdminState>(
+                                        )),
+                                    BlocBuilder<SellerAdminBloc,
+                                        SellerAdminState>(
                                       builder: (context, state) {
-                                        if (state is BusinessOutletListLoading) {
+                                        if (state
+                                            is BusinessOutletListLoading) {
                                           return Container(
                                               height: 200,
                                               width: w,
                                               alignment: Alignment.center,
-                                              child: LoadingAnimationWidget.threeRotatingDots(
+                                              child: LoadingAnimationWidget
+                                                  .threeRotatingDots(
                                                 color: Colors.red,
                                                 size: 30,
                                               ));
                                         }
-                                        if (state is BusinessOutletListSuccess) {
+                                        if (state
+                                            is BusinessOutletListSuccess) {
                                           return Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               ListView.separated(
                                                 primary: true,
                                                 shrinkWrap: true,
-                                                itemCount: state.category!.length,
+                                                itemCount:
+                                                    state.category!.length,
                                                 physics:
-                                                const NeverScrollableScrollPhysics(),
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) =>
                                                     GestureDetector(
-                                                      onTap: () {
-                                                        onselect(index);
-                                                        setState(() {});
-                                                        businessunitCode=state.category?[index].businessUnitCode??"";
-                                                        businessunitName=state.category?[index].name??"";
-                                                        onCallBack!(true);
-                                                        refresh();
-                                                        Navigator.pop(context);
-
-                                                      },
-                                                      child: Row(
+                                                  onTap: () {
+                                                    onselect(index);
+                                                    setState(() {});
+                                                    businessunitCode = state
+                                                            .category?[index]
+                                                            .businessUnitCode ??
+                                                        "";
+                                                    businessunitName = state
+                                                            .category?[index]
+                                                            .name ??
+                                                        "";
+                                                    onCallBack!(true);
+                                                    refresh();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Row(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                padding:
-                                                                const EdgeInsets.only(
-                                                                  // left: 8,
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    // left: 8,
                                                                     bottom: 5,
                                                                     top: 5,
                                                                     right: 8),
-                                                                child: SvgPicture.string(state
-                                                                    .category?[index]
-                                                                    .name ==
+                                                            child: SvgPicture.string(state
+                                                                        .category?[
+                                                                            index]
+                                                                        .name ==
                                                                     offerPeriodNameNew
                                                                 // selectIndex == index
-                                                                    ? HomeSvg()
+                                                                ? HomeSvg()
                                                                     .radioButtonActive
-                                                                    : HomeSvg()
+                                                                : HomeSvg()
                                                                     .radioInActive),
-                                                              ),
-
-                                                              SizedBox(
-                                                                // padding: const EdgeInsets.only(bottom: 5),
-                                                                width: w/1.5,
-                                                                child: Text(
-                                                                  state.category?[index]
-                                                                      .name.toString().toTitleCase() ??
-                                                                      "",
-                                                                  style: GoogleFonts.roboto(
-                                                                    color: Colors.black,
-                                                                    fontSize: w / 22,
-                                                                    fontWeight: FontWeight.w500,
-                                                                  ),overflow: TextOverflow.ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
                                                           ),
-                                                          const Spacer(),
-
+                                                          SizedBox(
+                                                            // padding: const EdgeInsets.only(bottom: 5),
+                                                            width: w / 1.5,
+                                                            child: Text(
+                                                              state
+                                                                      .category?[
+                                                                          index]
+                                                                      .name
+                                                                      .toString()
+                                                                      .toTitleCase() ??
+                                                                  "",
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize:
+                                                                    w / 22,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                    ),
-                                                separatorBuilder: (context, index) =>
-                                                    Container(
-                                                      color: ColorPalette.divider,
-                                                      height: 1,
-                                                      margin: const EdgeInsets.only(top: 3,bottom: 3),
-                                                      width: w,
-                                                    ),
+                                                      const Spacer(),
+                                                    ],
+                                                  ),
+                                                ),
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        Container(
+                                                  color: ColorPalette.divider,
+                                                  height: 1,
+                                                  margin: const EdgeInsets.only(
+                                                      top: 3, bottom: 3),
+                                                  width: w,
+                                                ),
                                               ),
                                               SizedBox(
-                                                height: h/40,
+                                                height: h / 40,
                                               ),
                                               // Row(
                                               //   mainAxisAlignment:
@@ -1732,7 +1947,7 @@ class _CreateUserState extends State<CreateUser> {
                                               //   ],
                                               // ),
                                               SizedBox(
-                                                height: h/10,
+                                                height: h / 10,
                                               ),
                                             ],
                                           );
@@ -1756,7 +1971,8 @@ class _CreateUserState extends State<CreateUser> {
                       left: 0,
                       right: 0,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
@@ -1778,7 +1994,8 @@ class _CreateUserState extends State<CreateUser> {
                                 fontWeight: FontWeight.w600,
                               ),
                             )),
-                      ),)
+                      ),
+                    )
                   ],
                 ),
               );
@@ -1803,10 +2020,8 @@ class _CreateUserState extends State<CreateUser> {
         isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Container(
@@ -1852,119 +2067,142 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/1.5,
+                          height: h / 1.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
-                                    BlocBuilder<SellerAdminBloc, SellerAdminState>(
+                                    BlocBuilder<SellerAdminBloc,
+                                        SellerAdminState>(
                                       builder: (context, state) {
                                         if (state is DesignationListLoading) {
                                           return LottieLoader();
                                         }
                                         if (state is DesignationListSuccess) {
                                           return Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               ListView.separated(
                                                 primary: true,
                                                 shrinkWrap: true,
-                                                itemCount: state.designation!.length,
+                                                itemCount:
+                                                    state.designation!.length,
                                                 physics:
-                                                const NeverScrollableScrollPhysics(),
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) =>
                                                     GestureDetector(
-                                                      onTap: () {
-                                                        onselect(index);
-                                                        setState(() {});
-                                                        designationCode=state.designation?[index].code??"";
-                                                        designationName=state.designation?[index].title??"";
-                                                        // offerperiodId =
-                                                        //     state.offerPeriod.data[index].id ??
-                                                        //         0;
-                                                        // offerPeriodName = state.offerPeriod
-                                                        //     .data[index].title ??
-                                                        //     "";
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Row(
+                                                  onTap: () {
+                                                    onselect(index);
+                                                    setState(() {});
+                                                    designationCode = state
+                                                            .designation?[index]
+                                                            .code ??
+                                                        "";
+                                                    designationName = state
+                                                            .designation?[index]
+                                                            .title ??
+                                                        "";
+                                                    // offerperiodId =
+                                                    //     state.offerPeriod.data[index].id ??
+                                                    //         0;
+                                                    // offerPeriodName = state.offerPeriod
+                                                    //     .data[index].title ??
+                                                    //     "";
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Row(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  onselect(index);
-                                                                  setState(() {});
-                                                                  // offerperiodId = state
-                                                                  //     .offerPeriod
-                                                                  //     .data[index]
-                                                                  //     .id ??
-                                                                  //     0;
-                                                                  // offerPeriodName = state
-                                                                  //     .offerPeriod
-                                                                  //     .data[index]
-                                                                  //     .title ??
-                                                                  //     "";
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                child: Container(
-                                                                  padding:
-                                                                  const EdgeInsets.only(
-                                                                    // left: 8,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              onselect(index);
+                                                              setState(() {});
+                                                              // offerperiodId = state
+                                                              //     .offerPeriod
+                                                              //     .data[index]
+                                                              //     .id ??
+                                                              //     0;
+                                                              // offerPeriodName = state
+                                                              //     .offerPeriod
+                                                              //     .data[index]
+                                                              //     .title ??
+                                                              //     "";
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      // left: 8,
                                                                       bottom: 5,
                                                                       top: 5,
                                                                       right: 8),
-                                                                  child: SvgPicture.string(state
-                                                                      .designation?[index]
-                                                                      .name ==
+                                                              child: SvgPicture.string(state
+                                                                          .designation?[
+                                                                              index]
+                                                                          .name ==
                                                                       offerPeriodNameNew
                                                                   // selectIndex == index
-                                                                      ? HomeSvg()
+                                                                  ? HomeSvg()
                                                                       .radioButtonActive
-                                                                      : HomeSvg()
+                                                                  : HomeSvg()
                                                                       .radioInActive),
-                                                                ),
-                                                              ),
-
-                                                              SizedBox(
-                                                                // padding: const EdgeInsets.only(bottom: 5),
-                                                                width: w/1.5,
-                                                                child: Text(
-                                                                  state.designation?[index]
-                                                                      .title.toString().toTitleCase() ??
-                                                                      "",
-                                                                  style: GoogleFonts.roboto(
-                                                                    color: Colors.black,
-                                                                    fontSize: w / 24,
-                                                                    // fontWeight: FontWeight.w500,
-                                                                  ),overflow: TextOverflow.ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
+                                                            ),
                                                           ),
-                                                          const Spacer(),
-
+                                                          SizedBox(
+                                                            // padding: const EdgeInsets.only(bottom: 5),
+                                                            width: w / 1.5,
+                                                            child: Text(
+                                                              state
+                                                                      .designation?[
+                                                                          index]
+                                                                      .title
+                                                                      .toString()
+                                                                      .toTitleCase() ??
+                                                                  "",
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize:
+                                                                    w / 24,
+                                                                // fontWeight: FontWeight.w500,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                    ),
-                                                separatorBuilder: (context, index) =>
-                                                    Container(
-                                                      color: ColorPalette.divider,
-                                                      height: 1,
-                                                      margin: const EdgeInsets.only(top: 3,bottom: 3),
-                                                      width: w,
-                                                    ),
+                                                      const Spacer(),
+                                                    ],
+                                                  ),
+                                                ),
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        Container(
+                                                  color: ColorPalette.divider,
+                                                  height: 1,
+                                                  margin: const EdgeInsets.only(
+                                                      top: 3, bottom: 3),
+                                                  width: w,
+                                                ),
                                               ),
                                               SizedBox(
-                                                height: h/40,
+                                                height: h / 40,
                                               ),
                                               // Row(
                                               //   mainAxisAlignment:
@@ -2078,14 +2316,11 @@ class _CreateUserState extends State<CreateUser> {
         isScrollControlled: true,
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width ;
-          double w = w1> 700
-              ? 400
-              : w1;
+          double w1 = MediaQuery.of(context).size.width;
+          double w = w1 > 700 ? 400 : w1;
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setStateHere) {
               print("department code here 111 $departmentCode");
-
 
               return Container(
                 height: h / 2,
@@ -2130,12 +2365,13 @@ class _CreateUserState extends State<CreateUser> {
                         ),
                         // SizedBox(height: 10,),
                         SizedBox(
-                          height: h/2.5,
+                          height: h / 2.5,
                           child: ScrollConfiguration(
                             behavior: NoGlow(),
                             child: SingleChildScrollView(
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 15, right: 15),
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2159,20 +2395,21 @@ class _CreateUserState extends State<CreateUser> {
                                     DropDownCard(
                                       label: "Department",
                                       selValue: departmentName,
-                                      onTap: (){
-                                        context.read<SellerAdminBloc>()
-                                            .add(const DepartmentListEvent('',"", ""));
-                                        _showModalBottomDepartment(departmentName,onCallBack: (bool val){
+                                      onTap: () {
+                                        context.read<SellerAdminBloc>().add(
+                                            const DepartmentListEvent(
+                                                '', "", ""));
+                                        _showModalBottomDepartment(
+                                            departmentName,
+                                            onCallBack: (bool val) {
                                           print("clllling back hereeee");
-                                          setStateHere((){});
-                                        }
-                                        );
+                                          setStateHere(() {});
+                                        });
                                       },
                                     ),
                                     const SizedBox(
                                       height: 16,
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -2186,7 +2423,8 @@ class _CreateUserState extends State<CreateUser> {
                       left: 0,
                       right: 0,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
                         child: GradientButton(
                             color: ColorPalette.primary,
                             onPressed: () {
@@ -2214,12 +2452,111 @@ class _CreateUserState extends State<CreateUser> {
                                 fontWeight: FontWeight.w600,
                               ),
                             )),
-                      ),)
+                      ),
+                    )
                   ],
                 ),
               );
             },
           );
         });
+  }
+
+  Future<void> getImage(source) async {
+    try {
+      // final pickedFile = await FilePicker.platform.pickFiles(type: FileType.custom,
+      //   allowedExtensions: ['jpg', ],);
+      // // print("pickk pathhhhhhh${pickedFile?.}");
+      // // Variable.imageTyp=pickedFile?.files.first.name??"";
+      // Uint8List? bytes;
+
+
+      final pickedFile = await picker.pickImage(
+        source: source,
+        // imageQuality: 20,
+
+        // maxHeight: 2000, maxWidth: 2000,
+      );
+
+      if (pickedFile != null) {
+        // Check if the image needs to be cropped
+        final  croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: CropAspectRatio(
+              ratioX: 1, ratioY: 1), // Adjust aspect ratio if needed
+          compressFormat: ImageCompressFormat.png, // Adjust format if needed
+          cropStyle: CropStyle
+              .rectangle, // Adjust crop style as needed (e.g., rectangle, circle)
+          compressQuality: 100,
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: Colors.white,
+              toolbarWidgetColor: Colors.black,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: false,
+              statusBarColor: Colors.white,
+            ),
+
+
+            WebUiSettings(
+              context: context,
+              presentStyle: CropperPresentStyle.dialog,
+              boundary: CroppieBoundary(
+                width: 420,
+                height: 420,
+              ),
+              viewPort: CroppieViewPort(
+                  width: 420,
+                  height: 420,
+                  type: 'circle'
+              ),
+              enableExif: true,
+              enableZoom: true,
+              showZoomer: true,
+            )
+
+
+
+          ],
+
+          // Adjust compress quality if needed (0 - 100)
+          // iosUiSettings: IOSUiSettings(),
+        );
+        print("croped file$croppedFile");
+
+
+        if (croppedFile != null) {
+          // try {
+          //   Uint8List uint8List = await croppedFileToUint8List(croppedFile);
+          //   print("searching uni$uint8List");
+          //   // Now you have the Uint8List representation of the cropped file.
+          //   BlocProvider.of<InventoryBloc>(context).add(PicEvent(bytes: imageBytes!,));
+          // } catch (error) {
+          //   print('Error: $error');
+          // }
+          // Convert CroppedFile to File
+          final File file = File(croppedFile.path);
+          print("croppedFile.openRead()${file}");
+
+
+
+          // Do something with the File, e.g., update your UI
+          setState(() {
+            cropImage = file;
+            _cropped = true;
+          });
+
+
+          // Uint8List imageBytes = await croppedFile.readAsBytes();
+          // Variable.imageTyp=pickedFile?.name??"";
+
+          BlocProvider.of<EmployeeBloc>(context)
+              .add(PostImageAllEvent(file!));
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

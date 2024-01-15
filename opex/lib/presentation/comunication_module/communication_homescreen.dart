@@ -857,8 +857,8 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     token = pref!.getString("token");
     print("tooken ${token}");
   IO.Socket socket = IO.io(
-        // 'https://api-communication-application.hilalcart.com/home',
-        "http://192.168.1.16:5500/home",
+        'https://api-communication-application.hilalcart.com/home',
+        // "http://192.168.1.16:5500/home",
         // 'https://baf9-103-179-197-125.ngrok-free.app/',
         // OptionBuilder().setTransports(['websocket']).setQuery({
         //   'transports': ['websocket', 'polling'],

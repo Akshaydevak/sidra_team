@@ -65,7 +65,6 @@ dependencies:
   getwidget:
   intl: ^0.17.0
   file_picker:
-  image_picker: ^0.8.6+1
   share_plus: ^6.3.0
   carousel_indicator:
   syncfusion_flutter_charts:
@@ -75,7 +74,6 @@ dependencies:
   syncfusion_flutter_datepicker :
   socket_io_client: 
   flutter_ringtone_player: ^3.2.0
-  advance_image_picker: ^0.1.7+1
   just_audio: ^0.9.11
   font_awesome_flutter: ^9.1.0
   permission_handler: ^8.1.6
@@ -101,7 +99,8 @@ dependencies:
   avatar_stack: ^1.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  
+  image_cropper: ^4.0.0
+  image_picker: ^0.8.6+1
 
 dev_dependencies:
   flutter_test:

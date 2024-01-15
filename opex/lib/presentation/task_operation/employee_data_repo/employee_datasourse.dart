@@ -30,7 +30,8 @@ class EmployeeDataSource {
     required String userRole,
     required List<int> additionalRole,
     required List<String> roleNameList,
-    required String roleName
+    required String roleName,
+    required dynamic profilePic,
   }) async {
     print("ffff${ClusterUrls.userCreateUrl}");
     final response = await client.post(
@@ -52,6 +53,7 @@ class EmployeeDataSource {
         "network_code":netCode,
         "official_role_name":roleName,
         "additional_roles_list":roleNameList,
+        "profile_pic":profilePic,
       },
       options: Options(
         headers: {
@@ -259,6 +261,7 @@ print(groupRead.userId);
     required String roleName,
     required bool isActive,
     required int id,
+    required dynamic profilePic,
   }) async {
     print("Update JOB:${ClusterUrls.updateEmployeeUrl+id.toString()}");
     print("NAMESS${firstName}");
@@ -290,6 +293,7 @@ print(groupRead.userId);
         "official_role_name":roleName,
         "additional_roles_list":roleNameList,
         "is_active":isActive,
+        "profile_pic":profilePic,
 
       },
       options: Options(

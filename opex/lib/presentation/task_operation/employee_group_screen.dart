@@ -290,6 +290,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                               );
                             },
                             itemCount: state.assignMeList!.length),
+
                       ),
                     ],
                   );
@@ -472,6 +473,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                         if(employee?.role=="Staff"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                            profileImg: readEmployee?.userMete?.profile,
                                               contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
@@ -495,6 +497,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              profileImg: readEmployee?.userMete?.profile,
                                               contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",

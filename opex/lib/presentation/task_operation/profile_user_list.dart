@@ -369,6 +369,7 @@ class _ProfileUserListState extends State<ProfileUserList> {
                                         if(employee?.role=="Staff"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              profileImg: readEmployee?.userMete?.profile,
                                               contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
@@ -386,12 +387,12 @@ class _ProfileUserListState extends State<ProfileUserList> {
                                               netCode: readEmployee?.netCode??"",
                                               id: readEmployee?.id??0,
                                               isActive: true
-
                                           ));
                                         }
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              profileImg: readEmployee?.userMete?.profile,
                                               contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
