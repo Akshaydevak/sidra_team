@@ -203,6 +203,7 @@ UserMete _$UserMeteFromJson(Map<String, dynamic> json) => UserMete(
       roleList: (json['additional_roles_list'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      profile: json['profile_pic'] as String?,
       roleId: json['official_role'] as int?,
       roleListId: (json['additional_roles'] as List<dynamic>?)
           ?.map((e) => e as int)
@@ -212,6 +213,7 @@ UserMete _$UserMeteFromJson(Map<String, dynamic> json) => UserMete(
 Map<String, dynamic> _$UserMeteToJson(UserMete instance) => <String, dynamic>{
       'official_role_name': instance.roleName,
       'official_role': instance.roleId,
+      'profile_pic': instance.profile,
       'additional_roles_list': instance.roleList,
       'additional_roles': instance.roleListId,
     };
