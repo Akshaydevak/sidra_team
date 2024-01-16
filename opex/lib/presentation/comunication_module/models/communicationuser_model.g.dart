@@ -57,11 +57,13 @@ Map<String, dynamic> _$ChatMessagaeDataToJson(ChatMessagaeData instance) =>
 ChatUser _$ChatUserFromJson(Map<String, dynamic> json) => ChatUser(
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
+      unreadMessages: json['unreadMessages'] as int?,
     );
 
 Map<String, dynamic> _$ChatUserToJson(ChatUser instance) => <String, dynamic>{
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
+      'unreadMessages': instance.unreadMessages,
     };
 
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
@@ -75,6 +77,8 @@ ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       time: json['time'] as String?,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
+      seenBy:
+          (json['seenBy'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
@@ -86,6 +90,7 @@ Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
       'fromUser': instance.fromUser,
+      'seenBy': instance.seenBy,
     };
 
 FromUser _$FromUserFromJson(Map<String, dynamic> json) => FromUser(

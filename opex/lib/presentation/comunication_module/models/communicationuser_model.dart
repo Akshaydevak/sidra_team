@@ -64,7 +64,9 @@ class   ChatUser extends Equatable {
   final String? createdAt;
   @JsonKey(name: "updatedAt")
   final String? updatedAt;
-  const ChatUser({this.createdAt, this.updatedAt});
+  @JsonKey(name: "unreadMessages")
+  final int? unreadMessages;
+  const ChatUser({this.createdAt, this.updatedAt, this.unreadMessages});
   @override
   List<Object> get props => [];
   factory ChatUser.fromJson(Map<String, dynamic> json) =>
@@ -90,6 +92,8 @@ class ChatModel extends Equatable {
   final String? updatedAt;
   @JsonKey(name: "fromUser")
   final FromUser? fromUser;
+  @JsonKey(name: "seenBy")
+  final List<String>? seenBy;
 
   const ChatModel(
       {this.type,
@@ -99,7 +103,8 @@ class ChatModel extends Equatable {
       this.fromuserid,
       this.time,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.seenBy});
   @override
   List<Object> get props => [];
   factory ChatModel.fromJson(Map<String, dynamic> json) =>

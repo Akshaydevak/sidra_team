@@ -77,7 +77,8 @@ AudioPlayer? player = AudioPlayer();
   bool isFourthMount = true;
   bool isFifthMount = true;
   bool issixthMount = true;
-  int? activeUsersLength=0;
+  bool isseventhMount = true;
+  int activeUsersLength=0;
   String? roomId;
   final ScrollController _controller = ScrollController();
    TextEditingController typedMessageController = TextEditingController();
@@ -85,7 +86,7 @@ AudioPlayer? player = AudioPlayer();
   // Queue<ChatModel> messageQueue = Queue();
   List <ChatModel> messageList = [];
   List<FromUser> seenUsersList = [];
-  List<UserSeenList> enter=[];
+  List<messageSeenList> enter=[];
   List msgfr=[];
   FromUser? groupTypingUser;
   bool typing = false;
@@ -97,9 +98,11 @@ AudioPlayer? player = AudioPlayer();
   var username;
   bool isenter=false;
   List seenuser=[];
-  int? unreadMessageCount;
+  int unreadMessageCount=0;
   int sendMessageCount=0;
   bool isload=false;
+  List<GroupUserList> grpmember=[];
+  List unseenuser=[];
   // int messageListLimit = 26;
   SharedPreferences? pref;
   AnimationController? _animationController;
@@ -129,16 +132,30 @@ AudioPlayer? player = AudioPlayer();
     ? widget.communicationUserModel?.chatid:
     widget.chat==true&& widget.isg==false?widget.communicationuser?.id: widget.grpuser?.chatid});
     widget.socket!.emit("update.list",{
-                        print("update")
+                        print("update ")
                       });
-      if(widget.communicationUserModel!.unreadMessages !=0){
+    if(widget.isGroup ==false){
+       if(widget.communicationUserModel?.unreadMessages != 0 || widget.communicationuser?.users?[0].chatUser?.unreadMessages != 0) {
         print("unreaded messages....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()});
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
+    }
+    }else{
+        print("unreaded messages....");
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.isg==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
        
-                      }
+    
+    }
+     
       widget.socket!.on("unread.update1", (data) {
       print("my msg updatess $data");
-      saveUnreadMessageCount(0,widget.communicationUserModel?.chatid??"");
+      String? chatid= widget.chat==false && widget.isg==false
+    ? "${widget.communicationUserModel?.chatid}":
+    widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
+    print(chatid);
+      saveUnreadMessageCount(0,chatid);
       print("my msg updatess share");
     } );
     
@@ -153,6 +170,31 @@ AudioPlayer? player = AudioPlayer();
               setState(() {
               });
          } );
+         widget.socket?.emit("check", roomId);
+      if (widget.isGroup == true) {
+        // widget.socket?.emit("group.message.seen", roomId);
+        // widget.socket?.emit("total.in.group", roomId);
+         widget.socket!.emit("group.members", 
+     widget.chat==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
+     
+    widget.socket!.on("groupmembers.result", (data){ 
+      print("group members1: $data");
+      grpmember.clear();
+    (data as List).forEach((element) {
+    grpmember.add(GroupUserList.fromJson(element));
+   
+      });
+ print(grpmember.length);
+ if(this.mounted){
+    setState(() {
+      
+    });
+ }
+    });
+      } else{
+        
+     
+      }
          if(isFifthMount){
             widget.socket!.off("get.clients");
         widget.socket!.emit("get.clients",roomId);
@@ -172,23 +214,20 @@ AudioPlayer? player = AudioPlayer();
       //  }
        );
          }
-       
-        
-        
-         
-      widget.socket?.emit("check", roomId);
-      if (widget.isGroup == true) {
-        widget.socket?.emit("group.message.seen", roomId);
-        widget.socket?.emit("total.in.group", roomId);
-      } else{
-        
-     
-      }
-    });
+ if(isseventhMount){    
+widget.socket?.emit("group.message.seen",roomId);
+
+   widget.socket?.on("msg.seen.by",activeuserlist);
    
+    
+      } 
+      
+          
     widget.socket?.on("check.result", (data) {
       print("data for check ${data}");
     });
+    });
+  
     
 
     if (widget.isGroup == false) {
@@ -289,8 +328,12 @@ AudioPlayer? player = AudioPlayer();
             scrollController: _controller, reversed: false);
       });
           widget.socket!.on("unread.update", (data) {
+            String? chatid= widget.chat==false
+    ? "${widget.communicationUserModel?.chatid}":
+   "${widget.communicationuser?.id}";
+            
       print("my msg update $data");
-      saveUnreadMessageCount(data,widget.communicationUserModel?.chatid??"");
+      saveUnreadMessageCount(data,chatid);
     } );
 widget.socket!.emit("update.list",{
                         print("update")
@@ -348,9 +391,7 @@ widget.socket!.emit("update.list",{
               print("...msglist${messageList.length}");
               //  if(isenter==true){
               // unreadMessageCount = 0;
-              setState(() {
-                
-              });
+              
               if(data['fromuserid'] != widget.loginUserId){   
                   print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");  
               print("other msg");
@@ -395,7 +436,38 @@ widget.socket!.emit("update.list",{
             //   print("my msg count ");
               
             // }
-                
+               print("activeUsersLength $activeUsersLength");
+
+            if(activeUsersLength < grpmember.length){
+                unseenuser.clear();
+              for (int i = 0; i < grpmember.length; i++) {
+                bool isUserIdInEnterList = false;
+
+                for (int j = 0; j < enter.length; j++) {
+                  if (grpmember[i].id == enter[j].userid) {
+                    isUserIdInEnterList = true;
+                    break;
+                  }
+                }
+
+                if (!isUserIdInEnterList) {
+                  unseenuser.add(grpmember[i].id);
+                  print("fchgjh ${grpmember[i].id} $unseenuser");
+                }
+                setState(() {
+                  
+                });
+              }
+               print("fchgjh $unreadMessageCount");
+                unreadMessageCount =1; 
+            }
+            else if(activeUsersLength == grpmember.length){
+              unreadMessageCount=0;
+              print("lenght 2");
+            }
+             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
+             widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+            print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} "); 
         if (isMount) {
           setState(() {});
         }
@@ -403,7 +475,16 @@ widget.socket!.emit("update.list",{
         ScrollService.scrollToEnd(
             scrollController: _controller, reversed: false);
       });
-          
+        widget.socket!.on("unread.update", (data) {
+            String? chatid= widget.isg==false
+    ? "${widget.communicationUserModel?.chatid}":
+   "${widget.grpuser?.chatid}";            
+      print("my msg update $data");
+      // saveUnreadMessageCount(data,chatid);
+    } );
+widget.socket!.emit("update.list",{
+                        print("update")
+                      });  
     }
     print(file);
     widget.socket?.on("image.download", (data) {
@@ -489,7 +570,7 @@ widget.socket!.emit("update.list",{
             parent: _animationController!,
             curve: const Interval(0.95, 1.0, curve: Curves.easeInOut)));
 
-     
+    print("777777777777") ;
 loadUnreadMessageCount();
 
 
@@ -498,10 +579,18 @@ loadUnreadMessageCount();
   }
  
   Future<void> loadUnreadMessageCount() async {
+    String? chatid= widget.chat==false && widget.isg==false
+    ? "${widget.communicationUserModel?.chatid}":
+    widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
      pref = await SharedPreferences.getInstance();
     setState(() {
-      print("my msg update count1 ${widget.communicationUserModel?.chatid} ${pref!.getInt(widget.communicationUserModel?.chatid??"")}");
-      sendMessageCount = pref!.getInt(widget.communicationUserModel?.chatid??"") ??0;
+      print("my msg update count1 ${chatid} ${pref!.getInt(widget.communicationUserModel?.chatid??"")}");
+      if(widget.isGroup==false){
+      sendMessageCount = pref!.getInt(chatid) ??0;
+      }
+      else{
+        unreadMessageCount = 0;
+      }
       print("my msg update count1 $sendMessageCount");
     });
   }
@@ -519,16 +608,28 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
   saveactiveusers(data);
   loadactiveusers();
   print("ACTIVE length sharedpref");
+  String? chatid= widget.chat==false && widget.isg==false
+    ? "${widget.communicationUserModel?.chatid}":
+    widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
               sendMessageCount=0;
-              saveUnreadMessageCount(0,widget.communicationUserModel?.chatid??"");
+              saveUnreadMessageCount(0,chatid);
             }
+}
+  void activeuserlist(data) {
+   print("active userss $data");
+   enter.clear();
+    (data as List).forEach((element) {   
+    enter.add(messageSeenList.fromJson(element));
+      });
+    print("active userss ${enter.length}");
 }
 
     Future<void> loadactiveusers() async {
+     
      pref = await SharedPreferences.getInstance();
     setState(() {
-      activeUsersLength = pref!.getInt('activeuser');
+      activeUsersLength = pref!.getInt('activeuser')??0;
       print("ACTIVE length sharepref$activeUsersLength");
     });
   }
@@ -552,7 +653,7 @@ Future<void> saveactiveusers(int count) async {
     widget.socket?.emit("group.message",
         {"type": "text", "chatid": chatId, "content": message});
        
-        widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+        widget.socket?.on("update.chat.list", (data) => print("fxgf1  $data"));
        
              widget.socket!.emit("update.list",{
       
@@ -578,10 +679,12 @@ Future<void> saveactiveusers(int count) async {
     isThirdMount = false;
     isFourthMount = false;
     isFifthMount = false;
+    isseventhMount=false;
     widget.socket!.off("get.clients");
     widget.socket!.off("active.length",handleActiveLength);
     _animationController?.dispose();
     widget.socket!.off('latest.message');
+    widget.socket!.off('group.latest.message');
     super.dispose();
   }
 
@@ -869,6 +972,7 @@ Future<void> saveactiveusers(int count) async {
                   roomId: roomId,
                   socket: widget.socket,
                   token: widget.token,
+                  loginUserId: widget.loginUserId,
                   typing: typing,
                   groupTypingUser: groupTypingUser,
                   communicationUserModel: widget.communicationUserModel,
@@ -1252,7 +1356,7 @@ Future<void> saveactiveusers(int count) async {
                                                       ),
                                                     ),
                                                      Positioned(
-                                                             left: 5,
+                                                             right: 5,
                                                              bottom: 5,
                                                              child: Text(
                                                             formattedTime,
@@ -1692,7 +1796,7 @@ Future<void> saveactiveusers(int count) async {
                                                       ),
                                                     ),
                                                      Positioned(
-                                                             left: 6,
+                                                             right: 6,
                                                              bottom: 5,
                                                              child: Text(
                                                               formattedTime,
@@ -2051,13 +2155,31 @@ Future<void> saveactiveusers(int count) async {
                                                      Positioned(
                                                              right: 5,
                                                              bottom: 5,
-                                                             child: Text(
-                                                              formattedTime,
-                                                              style: const TextStyle(
-                                                                fontSize: 8,
-                                                                color: Color.fromARGB(255, 211, 209, 209),
-                                                              ),
-                                                                                                                        ),
+                                                             child: Row(
+                                                               children: [
+                                                                 Text(
+                                                                  formattedTime,
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color.fromARGB(255, 211, 209, 209),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(width: 5,),
+                                                                if(activeUsersLength == 2)...{
+                                                                  Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                }
+                                                                else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                  SizedBox()
+                                                                }
+                                                                else...{
+                                                                  messageList[index].seenBy!.isEmpty?
+                                                                  SizedBox():
+                                                                Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+
+                                                                }
+                                                                
+                                                               ],
+                                                             ),
                                                            ),
                                                   ],
                                                 ),
@@ -2114,34 +2236,37 @@ Future<void> saveactiveusers(int count) async {
                       )
                     : Container(),
                 groupTypingUser != null
-                    ? Column( 
-                        children: [
-                          CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 14,
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(groupTypingUser?.photo ?? ""),
-                                radius: 12,
-                              )),
-            
-                          Image.asset(
-                            "asset/typinggif.gif",
-                            height: 50.0,
-                            width: 50.0,
-                          ),
-                          // Text(
-                          //   "${groupTypingUser?.name} typing",
-                          //   style: const TextStyle(
-                          //     color: Color(0xff151522),
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                        ],
-                      )
+                    ? Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Column( crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 14,
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(groupTypingUser?.photo ?? ""),
+                                  radius: 12,
+                                )),
+                                  
+                            Image.asset(
+                              "asset/typinggif.gif",
+                              height: 50.0,
+                              width: 50.0,
+                            ),
+                            // Text(
+                            //   "${groupTypingUser?.name} typing",
+                            //   style: const TextStyle(
+                            //     color: Color(0xff151522),
+                            //     fontSize: 16,
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                    )
                     : typing == true
                         ? Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Image.asset(
                                 "asset/typinggif.gif",

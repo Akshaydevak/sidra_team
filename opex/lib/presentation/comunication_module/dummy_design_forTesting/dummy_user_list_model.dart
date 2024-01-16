@@ -109,3 +109,20 @@ class UserSeenList extends Equatable {
       _$UserSeenListFromJson(json);
   Map<String, dynamic> toJson () => _$UserSeenListToJson(this);
 }
+
+@JsonSerializable()
+class messageSeenList extends Equatable {
+  @JsonKey(name: "id")
+  final String? userid;
+  @JsonKey(name: "username")
+  final String? username;
+
+  
+  const messageSeenList({this.userid,this.username});
+  @override
+  List<Object> get props => [];
+
+  factory messageSeenList.fromJson(Map<String, dynamic> json) =>
+      _$messageSeenListFromJson(json);
+  Map<String, dynamic> toJson () => _$messageSeenListToJson(this);
+}
