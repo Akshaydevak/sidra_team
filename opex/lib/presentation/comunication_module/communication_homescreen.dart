@@ -863,6 +863,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     token = pref!.getString("token");
     loginuserId=pref!.getString("loginuserid");
     print("tooken ${token}");
+<<<<<<< HEAD
   // IO.Socket socket = IO.io(
   //       'https://api-communication-application.hilalcart.com/home',
   //       // "http://192.168.1.20:5500/home",
@@ -880,6 +881,23 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     
     
     // socket.connect();
+=======
+  IO.Socket socket = IO.io(
+        'https://api-communication-application.hilalcart.com/home',
+        // "http://192.168.1.16:5500/home",
+        // 'https://baf9-103-179-197-125.ngrok-free.app/',
+        // OptionBuilder().setTransports(['websocket']).setQuery({
+        //   'transports': ['websocket', 'polling'],
+        //   'auth': {'token': token.toString()},
+        //   'autoConnect': false,
+        // }).build());
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'auth': {'token': token.toString()},
+          'autoConnect': false,
+        });
+    socket.connect();
+>>>>>>> e25ad7f (profile pic added in user creation)
     setState(() {
       print("ccccconneccct");
     });
