@@ -51,8 +51,9 @@ class MyApp extends StatelessWidget {
           return InternetConnectionChecker().onStatusChange;
         },
         child: FlutterSizer(builder: (context, orientation, screenType) {
-          return MultiBlocProvider(
+          return MultiProvider(
             providers: [
+              ChangeNotifierProvider(create: ((context) => )),
               BlocProvider(
                 create: (context) => JobBloc(),
               ),

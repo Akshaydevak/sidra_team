@@ -11,6 +11,7 @@ import 'package:cluster/presentation/comunication_module/create_chatgroup.dart';
 import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/comunication_module/newgroup.dart';
+import 'package:cluster/presentation/mpos/search_card.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -135,44 +136,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
               statusBarColor: Colors.white, // Status bar
             ),
             backgroundColor: Colors.white,
-            title: Container(
-              height: 44,
-              child: TextFormField(
-                onChanged: (val) {
-                  print("sruthy $ValueKey");
-                  context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(val.toString()));
-               
-          setState(() {
-            
-          });
-                  // if (val.isNotEmpty) {
-                  //   changeUi = true;
-                  //   setState(() {});
-                  //   BlocProvider.of<CommunicationBloc>(context).add(
-                  //       GetSearchedUserEvent(
-                  //           searchQuery: val, token: widget.token ?? ""));
-                  // }else{
-                  //   changeUi=false;
-                  // }
-                },
-                textAlign: TextAlign.justify,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xffe6ecf0),
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xfff8f7f5),
-                    hintText: "Search ...",
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                        ),
-                        borderRadius: BorderRadius.circular(10))),
-              ),
-            )
+            title: Text("New Message",style:  TextStyle(color: Colors.black,fontSize: w/22))
             ),
         body: ScrollConfiguration(
           behavior: NoGlow(),
@@ -229,6 +193,54 @@ BlocProvider.of<CommunicationBloc>(context).add(
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SearchCard(hint: "Search User ...",
+                    onchange: (val){
+                    context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(val.toString()));
+                    setState(() {
+                      
+                    });
+                  }),
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(15),
+                //   child: TextFormField(
+                //   onChanged: (val) {
+                //     print("sruthy $ValueKey");
+                //     context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(val.toString()));
+                                 
+                //             setState(() {
+                              
+                //             });
+                //     // if (val.isNotEmpty) {
+                //     //   changeUi = true;
+                //     //   setState(() {});
+                //     //   BlocProvider.of<CommunicationBloc>(context).add(
+                //     //       GetSearchedUserEvent(
+                //     //           searchQuery: val, token: widget.token ?? ""));
+                //     // }else{
+                //     //   changeUi=false;
+                //     // }
+                //   },
+                //   textAlign: TextAlign.justify,
+                //   decoration: InputDecoration(
+                //       enabledBorder: OutlineInputBorder(
+                //         borderSide: BorderSide(
+                //           color: Color(0xffe6ecf0),
+                //         ),
+                //       ),
+                //       filled: true,
+                //       fillColor: const Color(0xfff8f7f5),
+                //       hintText: "Search ...",
+                //       hintStyle: TextStyle(color: Colors.grey),
+                //       border: OutlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.transparent,
+                //           ),
+                //           borderRadius: BorderRadius.circular(10))),
+                //                 ),
+                // ),
                  BlocBuilder<GroupBloc, GroupState>(
                         builder: (context, state) {
                           
