@@ -1,6 +1,7 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/splash.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 
 import 'package:cluster/presentation/logistic_app/bloc/bloc/logistics_orders_bloc.dart';
@@ -53,7 +54,7 @@ class MyApp extends StatelessWidget {
         child: FlutterSizer(builder: (context, orientation, screenType) {
           return MultiProvider(
             providers: [
-              ChangeNotifierProvider(create: ((context) => )),
+              ChangeNotifierProvider(create: ((context) => scoketProvider() )),
               BlocProvider(
                 create: (context) => JobBloc(),
               ),
@@ -113,3 +114,5 @@ class MyApp extends StatelessWidget {
         }));
   }
 }
+
+
