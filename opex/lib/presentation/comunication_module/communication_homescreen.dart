@@ -864,6 +864,9 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     loginuserId=pref!.getString("loginuserid");
     print("tooken ${token}");
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2291f45 (socket update)
   // IO.Socket socket = IO.io(
   //       'https://api-communication-application.hilalcart.com/home',
   //       // "http://192.168.1.20:5500/home",
@@ -881,6 +884,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     
     
     // socket.connect();
+<<<<<<< HEAD
 =======
   IO.Socket socket = IO.io(
         'https://api-communication-application.hilalcart.com/home',
@@ -898,6 +902,8 @@ class _CommunicationModuleState extends State<CommunicationModule> {
         });
     socket.connect();
 >>>>>>> e25ad7f (profile pic added in user creation)
+=======
+>>>>>>> 2291f45 (socket update)
     setState(() {
       print("ccccconneccct");
     });
