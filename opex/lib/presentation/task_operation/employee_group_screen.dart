@@ -87,6 +87,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
         ? 400
         : w1;
     var h=MediaQuery.of(context).size.height;
+    var w22=MediaQuery.of(context).size.width/656;
+    
     return MultiBlocListener(
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
