@@ -12,7 +12,7 @@ class CommunicationUserModel extends Equatable {
   final String? email;
   @JsonKey(name: "password")
   final String? password;
-    @JsonKey(name: "photoUrl")
+  @JsonKey(name: "photoUrl")
   final String? photoUrl;
   @JsonKey(name: "createdBy")
   final String? createdBy;
@@ -29,16 +29,16 @@ class CommunicationUserModel extends Equatable {
 
   const CommunicationUserModel(
       {this.id,
-      this.name,
-      this.photoUrl,
-      this.createdBy,
-      this.users,
-      this.email,
-      this.isGroupChat,
-      this.password,
-      this.createdAt,
-      this.messages,
-      this.updatedAt});
+        this.name,
+        this.photoUrl,
+        this.createdBy,
+        this.users,
+        this.email,
+        this.isGroupChat,
+        this.password,
+        this.createdAt,
+        this.messages,
+        this.updatedAt});
   @override
   List<Object> get props => [];
   factory CommunicationUserModel.fromJson(Map<String, dynamic> json) =>
@@ -64,7 +64,13 @@ class   ChatUser extends Equatable {
   final String? createdAt;
   @JsonKey(name: "updatedAt")
   final String? updatedAt;
-  const ChatUser({this.createdAt, this.updatedAt});
+  @JsonKey(name: "unreadMessages")
+  final int? unreadMessages;
+  @JsonKey(name:"isDeleted")
+  final bool? isDeleted;
+  @JsonKey(name:"deletedAt")
+  final String? deletedAt;
+  const ChatUser({this.createdAt, this.updatedAt, this.unreadMessages,this.isDeleted,this.deletedAt});
   @override
   List<Object> get props => [];
   factory ChatUser.fromJson(Map<String, dynamic> json) =>
@@ -90,16 +96,19 @@ class ChatModel extends Equatable {
   final String? updatedAt;
   @JsonKey(name: "fromUser")
   final FromUser? fromUser;
+  @JsonKey(name: "seenBy")
+  final List<String>? seenBy;
 
   const ChatModel(
       {this.type,
-      this.message,
-      this.chatid,
-      this.fromUser,
-      this.fromuserid,
-      this.time,
-      this.createdAt,
-      this.updatedAt});
+        this.message,
+        this.chatid,
+        this.fromUser,
+        this.fromuserid,
+        this.time,
+        this.createdAt,
+        this.updatedAt,
+        this.seenBy});
   @override
   List<Object> get props => [];
   factory ChatModel.fromJson(Map<String, dynamic> json) =>
@@ -142,12 +151,12 @@ class UserModel extends Equatable {
 
   const UserModel(
       {this.id,
-      this.name,
-      this.photo,
-      this.chatUser,
-      this.email,
-      this.password,
-      this.connected});
+        this.name,
+        this.photo,
+        this.chatUser,
+        this.email,
+        this.password,
+        this.connected});
   @override
   List<Object> get props => [];
   factory UserModel.fromJson(Map<String, dynamic> json) =>

@@ -143,6 +143,10 @@ class GetUserList extends Equatable {
   final String? code;
   @JsonKey(name: 'user_code')
   final String? userCode;
+  @JsonKey(name: 'first_name')
+  final String? fName;
+  @JsonKey(name: 'last_name')
+  final String? lName;
   @JsonKey(name: 'is_active',defaultValue: false)
   final bool? isActive;
   @JsonKey(name: 'email')
@@ -154,6 +158,8 @@ class GetUserList extends Equatable {
 
   const GetUserList({
     this.email,
+    this.lName,
+    this.fName,
     this.userId,
     this.isActive,
     this.userCode,
@@ -308,4 +314,57 @@ class UserMete extends Equatable {
       _$UserMeteFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserMeteToJson(this);
+}
+
+
+@JsonSerializable()
+class CommunicationTaskGroup extends Equatable {
+
+  @JsonKey(name: 'task_name')
+  final String? taskName;
+  @JsonKey(name: 'task_code')
+  final String? taskCode;
+  @JsonKey(name: 'createdBy')
+  final String? createdBy;
+  @JsonKey(name: 'friends')
+  final List<FriendListModel>?friendList;
+
+
+
+  const CommunicationTaskGroup( {
+    this.createdBy, this.friendList,this.taskCode,
+    this.taskName,
+  });
+  @override
+  List<Object> get props => [];
+  factory CommunicationTaskGroup.fromJson(Map<String, dynamic> json) =>
+      _$CommunicationTaskGroupFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CommunicationTaskGroupToJson(this);
+}
+
+@JsonSerializable()
+class FriendListModel extends Equatable {
+
+  @JsonKey(name: 'user_code')
+  final String? userCode;
+  @JsonKey(name: 'fname')
+  final String? fName;
+  @JsonKey(name: 'lname')
+  final String? lName;
+  @JsonKey(name: 'email')
+  final String? email;
+
+
+
+  const FriendListModel( {
+    this.email, this.fName,this.lName,
+    this.userCode,
+  });
+  @override
+  List<Object> get props => [];
+  factory FriendListModel.fromJson(Map<String, dynamic> json) =>
+      _$FriendListModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FriendListModelToJson(this);
 }

@@ -1,6 +1,8 @@
+import 'package:cluster/common_widgets/api_firebase.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/splash.dart';
+import 'package:cluster/presentation/comunication_module/socketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 
 import 'package:cluster/presentation/order_app/bloc/order_status_bloc/order_status_bloc.dart';
@@ -8,15 +10,18 @@ import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_a
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
 import 'presentation/comunication_module/bloc/attachment_bloc.dart';
 import 'presentation/comunication_module/bloc/chat_bloc.dart';
 import 'presentation/comunication_module/bloc/communication_bloc.dart';
@@ -24,17 +29,41 @@ import 'presentation/comunication_module/bloc/paginatedchat_bloc.dart';
 import 'presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
 import 'presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'presentation/order_app/bloc/order_bloc/order_list_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-main() async{
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await authentication.init();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // await FireBaseApi().initNotification();
+  AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'sidra_channel', // id
+      'sidra_bazar', // title
+
+      description: 'This channel is used for important notifications.',
+      importance: Importance.high,
+      enableVibration: true,
+      playSound: true);
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // FlutterTts ftts = FlutterTts();
+
+
   @override
   Widget build(BuildContext context) {
     print("..........${authentication.authenticatedUser.token}");
@@ -44,14 +73,14 @@ class MyApp extends StatelessWidget {
     ));
 
     return StreamProvider<InternetConnectionStatus>(
-
         initialData: InternetConnectionStatus.connected,
         create: (_) {
           return InternetConnectionChecker().onStatusChange;
         },
         child: FlutterSizer(builder: (context, orientation, screenType) {
-          return MultiBlocProvider(
+          return MultiProvider(
             providers: [
+              ChangeNotifierProvider(create: ((context) => scoketProvider() )),
               BlocProvider(
                 create: (context) => JobBloc(),
               ),
@@ -70,7 +99,7 @@ class MyApp extends StatelessWidget {
               BlocProvider(
                 create: (context) => AuthBloc(),
               ),
-               BlocProvider(
+              BlocProvider(
                 create: (context) => DummyLoginBloc(),
               ),
               BlocProvider(
@@ -90,7 +119,8 @@ class MyApp extends StatelessWidget {
               ),
               BlocProvider(
                 create: (context) => AttachmentBloc(),
-              ), BlocProvider(
+              ),
+              BlocProvider(
                 create: (context) => ProfileBloc(),
               ),
             ],
@@ -101,7 +131,7 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.blue,
               ),
 
-              home:  SplashScreen(),
+              home: SplashScreen(),
               // home:  HomeApp(),
             ),
           );

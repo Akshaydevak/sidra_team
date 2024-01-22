@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "793852669363",
+    "project_id": "sidrateams-d9972",
+    "storage_bucket": "sidrateams-d9972.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793852669363:android:07b4a38a8e5bc9acccafc6",
+        "android_client_info": {
+          "package_name": "com.rgcopex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2Tq8ecfn6G0i28R_HkDPDT38f0chQFuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

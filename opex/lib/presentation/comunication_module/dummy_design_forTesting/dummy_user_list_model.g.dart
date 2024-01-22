@@ -94,3 +94,15 @@ Map<String, dynamic> _$UserSeenListToJson(UserSeenList instance) =>
       'timestamp': instance.timestamp,
       'messagesCount': instance.messageCount,
     };
+
+messageSeenList _$messageSeenListFromJson(Map<String, dynamic> json) =>
+    messageSeenList(
+      userid: json['id'] as String?,
+      username: json['username'] as String?,
+    );
+
+Map<String, dynamic> _$messageSeenListToJson(messageSeenList instance) =>
+    <String, dynamic>{
+      'id': instance.userid,
+      'username': instance.username,
+    };
