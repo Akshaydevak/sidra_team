@@ -85,7 +85,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
 
   @override
   Widget build(BuildContext context) {
-    print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.chatid}");
+    // print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.chatid}");
     var w = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
         providers: [
@@ -307,6 +307,10 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 GestureDetector(
                                                   onTap: (){
                                                     print(widget.token);
+                                                     BlocProvider.of<
+                                                      GroupBloc>(context).add(
+                                                        GetAllRegisteredUsersEvent("")
+                                                      );
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
@@ -587,6 +591,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                               GestureDetector(
                                                 onTap: (){
                                                   print(widget.token);
+                                                  context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(""));
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,

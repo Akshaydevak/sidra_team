@@ -85,8 +85,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
           //           token: widget.token ?? "",
           //           chatFilter: "chats"
           //         ));                 
-          showSnackBar(context,
-              message: "Add Friend Successfully", color: Colors.green);
+         
           //           getlist(email1);
         } else if(state is AddAFriendUserFailed) {
           showSnackBar(context, message: state.error, color: Colors.red);
@@ -345,8 +344,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                       .fname ??
                                                   "",
                                               photo: state
-                                                      .registeresUsers[index]
-                                                      .profile ??
+                                                      .registeresUsers[index].userMete
+                                                      ?.profile ??
                                                   "",
                                               lname: state
                                                       .registeresUsers[index]
@@ -371,55 +370,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                 pageTransitionAnimation:
                                                     PageTransitionAnimation.fade,
                                               ):null;
-                                            });
-                                           
-                                               
-                                            //       setState(() {
-                                            //               bool val=false;
-                                            //           int id=0;
-                                            //           print(chatlist.length);
-                                            //             for(int i=0; i<=chatlist.length;i++){
-                                                         
-                                            //               for(int j=0; j<=chatlist[i].users!.length;j++){
-                                                           
-                                            //                 print(chatlist[i].users?[j].email);
-                                                            
-                                            //                 if(email1==chatlist[i].users?[j].email){
-                                                          
-                                            //               BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
-                                            //                 token: widget.token ?? "",
-                                            //                 userId: chatlist[i].id ?? "",
-                                            //                 pageNo: 1));
-                                            //               PersistentNavBarNavigator.pushNewScreen(
-                                            //               context,
-                                            //               screen: ChatScreen(
-                                            //                 token: widget.token,
-                                            //                 loginUserId:widget.loginUserId,
-                                            //                 socket:widget.socket,
-                                            //                 isGroup:false,
-                                            //                 chat: true,
-                                            //                 communicationUserModel:chatlist[i],
-                                            //               ),
-                                            //               withNavBar:
-                                            //                   false, // OPTIONAL VALUE. True by default.
-                                            //               pageTransitionAnimation:
-                                            //                   PageTransitionAnimation.fade,
-                                            //             );
-      
-                                            //       }else{
-                                            //         // val=false;
-                                            //         print("helloooooo");
-                                            
-                                            // j++;
-                                            //   }
-                                            //               }
-                                            //             }
-                                            // });
-      
-                                            
-                                            
+                                            }); 
                                           },
-                                          child: EmployeeCard(employeeList: state.registeresUsers[index],)
+                                          child: EmployeeCard(employeeList: state.registeresUsers[index],isCommunicate:true,)
                                           // Container(
                                           //   padding:
                                           //       const EdgeInsets.symmetric(

@@ -68,7 +68,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
 
     context.read<GroupBloc>().add(
       GetAllRegisteredUsersEvent(
-      widget.token ?? "") 
+       "") 
     );
     super.initState();
   }

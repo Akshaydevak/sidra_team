@@ -66,7 +66,11 @@ class   ChatUser extends Equatable {
   final String? updatedAt;
   @JsonKey(name: "unreadMessages")
   final int? unreadMessages;
-  const ChatUser({this.createdAt, this.updatedAt, this.unreadMessages});
+  @JsonKey(name:"isDeleted")
+  final bool? isDeleted;
+  @JsonKey(name:"deletedAt")
+  final String? deletedAt;
+  const ChatUser({this.createdAt, this.updatedAt, this.unreadMessages,this.isDeleted,this.deletedAt});
   @override
   List<Object> get props => [];
   factory ChatUser.fromJson(Map<String, dynamic> json) =>

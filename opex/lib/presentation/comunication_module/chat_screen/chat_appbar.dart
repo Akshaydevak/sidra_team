@@ -254,7 +254,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   Navigator.pop(context);
                      }else{
                       
-                  Navigator.pop(context);
                   widget.socket!.emit("update.list",{
                         print("update")
                       });

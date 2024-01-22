@@ -309,6 +309,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 GestureDetector(
                                                   onTap: (){
                                                     print(widget.token);
+                                                    context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(""));
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
@@ -589,6 +590,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                               GestureDetector(
                                                 onTap: (){
                                                   print(widget.token);
+                                                  context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(""));
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,

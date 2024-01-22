@@ -58,12 +58,16 @@ ChatUser _$ChatUserFromJson(Map<String, dynamic> json) => ChatUser(
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
       unreadMessages: json['unreadMessages'] as int?,
+      isDeleted: json['isDeleted'] as bool?,
+      deletedAt: json['deletedAt'] as String?,
     );
 
 Map<String, dynamic> _$ChatUserToJson(ChatUser instance) => <String, dynamic>{
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
       'unreadMessages': instance.unreadMessages,
+      'isDeleted': instance.isDeleted,
+      'deletedAt': instance.deletedAt,
     };
 
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
