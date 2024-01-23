@@ -5,7 +5,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../common_widgets/custom_checkbox.dart';
 import '../../../common_widgets/gradient_button.dart';
+import '../employee_model/employee_model.dart';
 import '../task_svg.dart';
 
 class UserCardEvaluation extends StatelessWidget {
@@ -184,71 +186,101 @@ class UserReviewCard extends StatelessWidget {
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     var h = MediaQuery.of(context).size.height;
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Color(0xffE6ECF0))),
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-                "https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg"),
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "John wick",
-                  style: GoogleFonts.roboto(
-                      fontWeight: FontWeight.w500, fontSize: w / 24),
-                ),
-                Text(
-                  "jhonwick@rgcdynamics.com",
-                  style: GoogleFonts.roboto(fontSize: w / 26),
-                ),
-                SizedBox(height: 5,),
-                RatingBar.builder(
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,itemSize: 20,
-                  // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.green,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-                SizedBox(height: 10,),
-                Row(
+    return Stack(
+      children: [
+       
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Color(0xffE6ECF0))),
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                    "https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg"),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("96 Points",
-                    style: GoogleFonts.roboto(
-                      fontWeight: FontWeight.w500,
-                      fontSize: w/26
-                    ),),
-                    Text(" | "),
-                    Text("Outstanding Performance",
+                    Text(
+                      "John wick",
                       style: GoogleFonts.roboto(
+                          fontWeight: FontWeight.w500, fontSize: w / 24),
+                    ),
+                    Text(
+                      "jhonwick@rgcdynamics.com",
+                      style: GoogleFonts.roboto(fontSize: w / 26),
+                    ),
+                    SizedBox(height: 5,),
+                    RatingBar.builder(
+                      initialRating: 3,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,itemSize: 20,
+                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.green,
+                      ),
+                      onRatingUpdate: (rating) {
+                        print(rating);
+                      },
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Text("96 Points",
+                        style: GoogleFonts.roboto(
                           fontWeight: FontWeight.w500,
                           fontSize: w/26
-                      ),),
+                        ),),
+                        Text(" | "),
+                        Text("Outstanding Performance",
+                          style: GoogleFonts.roboto(
+                              fontWeight: FontWeight.w500,
+                              fontSize: w/26
+                          ),),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          right: 10,
+            top: 20,
+            child:  Container(
+              height: 27,width: 65,
+              child: GradientButton(
+                  onPressed: onTap,
+                  gradient: const LinearGradient(
+                    colors: [
+                      ColorPalette.primary, ColorPalette.primary
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  color:  Colors.transparent,
+                  child: Text(
+                    "Action",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: w/26,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+            ),)
+      ],
     );
   }
 }
@@ -308,3 +340,73 @@ class _EvaluationGroupCardState extends State<EvaluationGroupCard> {
     );
   }
 }
+
+
+
+
+class ShareCard extends StatefulWidget {
+  final bool value;
+  final String text;
+  final String svg;
+  final String color;
+  final Function(bool)? onChange;
+
+  const ShareCard({Key? key,this.value = false, this.onChange, required this.text, required this.svg, required this.color,}) : super(key: key);
+
+  @override
+  State<ShareCard> createState() => _ShareCardState();
+}
+
+class _ShareCardState extends State<ShareCard> {
+  bool val=false;
+  bool onChange = false;
+
+  @override
+  Widget build(BuildContext context) {
+    print("fasss$val");
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
+    if (!onChange) val = widget.value;
+    onChange = false;
+    return InkWell(
+      onTap: () {
+        val = !val;
+        if (widget.onChange != null) widget.onChange!(val);
+        onChange = true;
+        setState(() {});
+      },
+      child:    Container(
+        padding: EdgeInsets.symmetric(vertical: 15),
+        width: 80,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: val==true?ColorPalette.primary:Color(0xffe6ecf0), width: 1, ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x05000000),
+              blurRadius: 8,
+              offset: Offset(1, 1),
+            ),
+          ],
+          color: val==true?ColorPalette.cardBackground:Color(int.tryParse(widget.color)??0),
+        ),
+        child: Column(
+          children: [
+
+            SvgPicture.string(widget.svg,height: 20,width: 20,),
+            SizedBox(height: 5,),
+            Text(widget.text,
+            style: GoogleFonts.roboto(
+              fontWeight: FontWeight.w500,
+              fontSize: w/28
+            ),)
+          ],
+        ),
+      ),
+    );
+  }
+}
+

@@ -27,6 +27,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
       reviewCount: json['review_count'] as int?,
+      groupId: json['group_id'] as int?,
       assignNameCard: json['assigning_name'] as String?,
       topic: json['topic'] as String?,
       imgCount: json['image_count'] as int?,
@@ -97,6 +98,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'job_description': instance.jobDiscription,
       'name': instance.name,
       'report_id': instance.reportId,
+      'group_id': instance.groupId,
       'currency_code': instance.currency,
       'is_notify': instance.isNotify,
       'assigned_to': instance.assignToEmail,

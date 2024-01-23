@@ -19,12 +19,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../common_widgets/custom_radio_button.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/loading.dart';
 import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
+import '../comunication_module/chat_screen.dart';
+import '../comunication_module/socketconnection.dart';
 import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
@@ -33,6 +37,7 @@ import 'create/model/task_models.dart';
 import 'create/single_row.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_bloc/employee_bloc.dart';
+import 'employee_model/employee_model.dart';
 import 'home/bloc/job_bloc.dart';
 import 'home/comments_screen.dart';
 import 'home/model/joblist_model.dart';
@@ -112,6 +117,7 @@ class _TaskTitleState extends State<TaskTitle> {
   GetTaskList? getTaskRead;
   @override
   void initState() {
+    getSocket();
     context.read<JobBloc>().add(GetStatusListEvent());
     context.read<TaskBloc>().add(GetTopicListEvent());
     super.initState();
@@ -120,6 +126,7 @@ class _TaskTitleState extends State<TaskTitle> {
   void refresh() {
     setState(() {});
   }
+  String communicationGroupId='';
 
   int tappedTile = 0;
   List<StatusListing> statusList = [];
@@ -145,8 +152,22 @@ class _TaskTitleState extends State<TaskTitle> {
   TextEditingController replayRejectNotes = TextEditingController();
   int topicId = 0;
   bool _isLoading = true;
+  List<FriendListModel>? userList=[];
+  GetTaskGroupList? readGroup;
+  SharedPreferences? pref;
+  String? token;
+  String? loginuserId;
+  IO.Socket? socketCon;
+  getSocket()async{
+    pref=await SharedPreferences.getInstance();
+    token = pref!.getString("token");
+    loginuserId=pref!.getString("loginuserid");
+  }
+
   @override
   Widget build(BuildContext context) {
+    final socketpro =context.watch<scoketProvider>();
+    socketCon =socketpro.socket;
     double w1 = MediaQuery.of(context).size.width ;
     double w = w1> 700
         ? 400
@@ -178,9 +199,10 @@ class _TaskTitleState extends State<TaskTitle> {
         listeners: [
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is GetTaskReadLoading) {}
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
+                context.read<EmployeeBloc>().add(
+                    GetGroupTReadEvent(getTaskRead?.groupId?? 0));
                 var date = getTaskRead?.endDate;
                 var date2 = getTaskRead?.startDate;
                 var dateTime = DateTime.parse("$date");
@@ -232,12 +254,66 @@ class _TaskTitleState extends State<TaskTitle> {
               }
             },
           ),
+
+          BlocListener<EmployeeBloc, EmployeeState>(
+            listener: (context, state) {
+              print("state group$state");
+              if(state is GetReadGroupLoading){
+
+              }
+              if(state is GetReadGroupSuccess){
+                readGroup=state.getGroupRead;
+
+
+                for(var i=0;i<state.getGroupRead.userList!.length;i++){
+
+                  userList?.add(
+                      FriendListModel(
+                          userCode: state.getGroupRead.userList?[i].code??"",
+                          email: state.getGroupRead.userList?[i].email,
+                        fName: state.getGroupRead.userList?[i].fName,
+                        lName: state.getGroupRead?.userList?[i].lName
+                      ));
+
+                }
+                CommunicationTaskGroup? chat;
+                chat=CommunicationTaskGroup(
+                  createdBy: getTaskRead?.createdPersonCode,
+                  friendList: userList,
+                  taskCode: getTaskRead?.taskCode,
+                  taskName: getTaskRead?.taskName
+                );
+                context.read<EmployeeBloc>().add(
+                    CreateTaskGroupCommunicationEvent(chat));
+
+                setState(() {
+
+                });
+              }
+
+            },
+          ),
+          BlocListener<EmployeeBloc, EmployeeState>(
+            listener: (context, state) {
+              print("Communication Chat$state");
+
+
+              if (state is TaskGroupCreationSuccess) {
+                communicationGroupId=state.message;
+                print("chat group id........$communicationGroupId");
+                setState(() {
+
+                });
+
+
+                setState(() {});
+              }
+            },
+          ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
               print("Status Of$state");
-              if (state is GetStatusListLoading) {
-                customCupertinoLoading();
-              }
+
               if (state is GetStatusListSuccess) {
                 statusList.clear();
                 // statusList = state.statusList;
@@ -1988,15 +2064,30 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
+
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
-                                        screen: CommentsScreen(
-                                          taskId: getTaskRead?.id,
+
+                                        screen: ChatScreen(
+                                          token: token,
+                                          loginUserId: loginuserId,
+                                          socket: socketCon,
+                                          chatid: communicationGroupId,
+                                          isGroup: true,
+                                          // communicationUserModel: widget.communicationUserModel,
                                         ),
-                                        withNavBar: true,
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
+                                        withNavBar: false, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation: PageTransitionAnimation.fade,
                                       );
+                                      // PersistentNavBarNavigator.pushNewScreen(
+                                      //   context,
+                                      //   screen: CommentsScreen(
+                                      //     taskId: getTaskRead?.id,
+                                      //   ),
+                                      //   withNavBar: true,
+                                      //   pageTransitionAnimation:
+                                      //       PageTransitionAnimation.fade,
+                                      // );
                                     },
                                     child: Container(
                                       width: w1,

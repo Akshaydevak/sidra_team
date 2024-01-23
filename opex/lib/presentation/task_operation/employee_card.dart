@@ -49,7 +49,7 @@ class EmployeeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
-             // employeeList?.profile==""?
+             employeeList?.userMete?.profile==null?
              TextAvatar(
                shape: Shape.Circular,
                size: 40,
@@ -58,12 +58,12 @@ class EmployeeCard extends StatelessWidget {
                textColor: Colors.white,
                fontWeight: FontWeight.w500,
                text:"${employeeList?.fname.toString().toUpperCase()} ${employeeList?.lname.toString().toUpperCase()}" ,
+             )
+                 :
+             CircleAvatar(
+               radius: 20,
+               backgroundImage: NetworkImage(employeeList?.userMete?.profile??"",),
              ),
-             //     :
-             // CircleAvatar(
-             //   radius: 20,
-             //   backgroundImage: NetworkImage(employeeList?.profile??"",),
-             // ),
              SizedBox(width: 8,),
              SizedBox(
                width: w1>700?w1/1.15:w1/1.4,

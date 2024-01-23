@@ -16,7 +16,7 @@ class UserDummyList extends Equatable {
   final String? chatid;
   @JsonKey(name: "isGroupChat")
   final bool? isgrp;
-   @JsonKey(name: "groupname")
+  @JsonKey(name: "groupname")
   final String? isgrpname;
   @JsonKey(name: "groupId")
   final String? isgrpid;
@@ -32,7 +32,9 @@ class UserDummyList extends Equatable {
   final String? deletedAt;
   @JsonKey(name: "createdBy")
   final String? createdBy;
-  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy});
+  @JsonKey(name: "unreadMessages")
+  final int? unreadMessages;
+  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy,this.unreadMessages});
   @override
   List<Object> get props => [];
 
@@ -53,7 +55,7 @@ class GroupUserList extends Equatable {
   final String? photo;
   @JsonKey(name: "createdBy")
   final String? createdBy;
-  
+
   const GroupUserList({this.id,this.name,this.photo,this.connect,this.createdBy});
   @override
   List<Object> get props => [];
@@ -77,8 +79,10 @@ class GroupList extends Equatable {
   final String? gphoto;
   @JsonKey(name: "createdBy")
   final String? createdBy;
-  
-  const GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy});
+  @JsonKey(name: "addedUsers")
+  final List<dynamic>? addedUsers;
+
+  GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy,this.addedUsers});
   @override
   List<Object> get props => [];
 
@@ -96,7 +100,7 @@ class UserSeenList extends Equatable {
   @JsonKey(name: "messagesCount")
   final String? messageCount;
 
-  
+
   const UserSeenList({this.username,this.timestamp,this.messageCount});
   @override
   List<Object> get props => [];
@@ -104,4 +108,21 @@ class UserSeenList extends Equatable {
   factory UserSeenList.fromJson(Map<String, dynamic> json) =>
       _$UserSeenListFromJson(json);
   Map<String, dynamic> toJson () => _$UserSeenListToJson(this);
+}
+
+@JsonSerializable()
+class messageSeenList extends Equatable {
+  @JsonKey(name: "id")
+  final String? userid;
+  @JsonKey(name: "username")
+  final String? username;
+
+
+  const messageSeenList({this.userid,this.username});
+  @override
+  List<Object> get props => [];
+
+  factory messageSeenList.fromJson(Map<String, dynamic> json) =>
+      _$messageSeenListFromJson(json);
+  Map<String, dynamic> toJson () => _$messageSeenListToJson(this);
 }

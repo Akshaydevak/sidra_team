@@ -1,14 +1,17 @@
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
+import 'package:cluster/presentation/sidra_learning/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/application_model.dart';
+import 'button_seek.dart';
 import 'learning_cards.dart';
 
 class SidraLearningHomePage extends StatefulWidget {
@@ -25,6 +28,12 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
     "https://www.dochipo.com/wp-content/uploads/2022/08/YouTube-Thumbnail-_-Education-scaled.jpg",
     "https://www.adobe.com/express/create/thumbnail/media_17d5e64dbfdcfa68951114825e4c1a99f31cc9996.jpeg?width=750&format=jpeg&optimize=medium",
     "https://www.dochipo.com/wp-content/uploads/2022/08/YouTube-Thumbnail-_-Education-4-scaled.jpg"
+  ];
+  List<String> listVideo=[
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
   ];
 
 
@@ -137,7 +146,15 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                           onTap: (){
-                            _launchUrl(applicationList[index].url);
+                            // _launchUrl(applicationList[index].url);
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: VideoPlayerWidget(videoUrls: listVideo),
+                              withNavBar:
+                              false, // OPTIONAL VALUE. True by default.
+                              pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                            );
+
                           },
                           child: ThumbnailCard(thumbNail: applicationList[index],
                           share: (){

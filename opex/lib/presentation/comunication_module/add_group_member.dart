@@ -1,6 +1,8 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
@@ -183,35 +185,35 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                 backgroundColor: Colors.white,
                 title: Container(
                   height: 44,
-                  child: TextFormField(
-                    onChanged: (val) {
-                      if (val.isNotEmpty) {
-                        changeUi = true;
-                        setState(() {});
-                        BlocProvider.of<CommunicationBloc>(context).add(
-                            GetSearchedUserEvent(
-                                searchQuery: val, token: widget.token ?? ""));
-                      }else{
-                        changeUi=false;
-                      }
-                    },
-                    textAlign: TextAlign.justify,
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffe6ecf0),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xfff8f7f5),
-                        hintText: "Search ...",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                            ),
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
+                  // child: TextFormField(
+                  //   onChanged: (val) {
+                  //     if (val.isNotEmpty) {
+                  //       changeUi = true;
+                  //       setState(() {});
+                  //       BlocProvider.of<CommunicationBloc>(context).add(
+                  //           GetSearchedUserEvent(
+                  //               searchQuery: val, token: widget.token ?? ""));
+                  //     }else{
+                  //       changeUi=false;
+                  //     }
+                  //   },
+                  //   textAlign: TextAlign.justify,
+                  //   decoration: InputDecoration(
+                  //       enabledBorder: OutlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //           color: Color(0xffe6ecf0),
+                  //         ),
+                  //       ),
+                  //       filled: true,
+                  //       fillColor: const Color(0xfff8f7f5),
+                  //       hintText: "Search ...",
+                  //       hintStyle: TextStyle(color: Colors.grey),
+                  //       border: OutlineInputBorder(
+                  //           borderSide: BorderSide(
+                  //             color: Colors.transparent,
+                  //           ),
+                  //           borderRadius: BorderRadius.circular(10))),
+                  // ),
                 )),
             body: ScrollConfiguration(
               behavior: NoGlow(),
@@ -220,54 +222,54 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen:CreateChatGroup(token: widget.token,),//NewGroup(token: widget.token),
-                          withNavBar: false, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(16),
-                        width: w,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromARGB(255, 240, 242, 245),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 37.14,
-                              height: 37.14,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: ColorPalette.primary,
-                              ),
-                              alignment: Alignment.center,
-                              child: SvgPicture.string(
-                                CommunicationSvg().groupIcon,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Create new group",
-                              style: GoogleFonts.roboto(
-                                color: ColorPalette.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     PersistentNavBarNavigator.pushNewScreen(
+                    //       context,
+                    //       screen:CreateChatGroup(token: widget.token,),//NewGroup(token: widget.token),
+                    //       withNavBar: false, // OPTIONAL VALUE. True by default.
+                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     margin: const EdgeInsets.all(16),
+                    //     padding: const EdgeInsets.all(16),
+                    //     width: w,
+                    //     height: 70,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       color: Color.fromARGB(255, 240, 242, 245),
+                    //     ),
+                    //     child: Row(
+                    //       children: [
+                    //         Container(
+                    //           width: 37.14,
+                    //           height: 37.14,
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(50),
+                    //             color: ColorPalette.primary,
+                    //           ),
+                    //           alignment: Alignment.center,
+                    //           child: SvgPicture.string(
+                    //             CommunicationSvg().groupIcon,
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         const SizedBox(
+                    //           width: 10,
+                    //         ),
+                    //         Text(
+                    //           "Create new group",
+                    //           style: GoogleFonts.roboto(
+                    //             color: ColorPalette.black,
+                    //             fontSize: 18,
+                    //             fontWeight: FontWeight.w500,
+                    //           ),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     changeUi
                         ? BlocBuilder<CommunicationBloc, CommunicationState>(
                             builder: (context, state) {
@@ -424,6 +426,14 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                               if (state is GetAllRegisteredUsersLoading) {
                                 return customCupertinoLoading();
                               } else if (state is GetAllRegisteredUsersSuccess) {
+                                print("sjsd ${authentication.authenticatedUser.code}");
+                              for(int i=0;i<state.registeresUsers.length;){
+                                // print();
+                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                        state.registeresUsers.removeAt(i);
+                                        }
+                                  i++;
+                              }
                                 return Column(
                                   children: [
                                     Align(
@@ -457,11 +467,11 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                       "userCode": "${state.registeresUsers[index].userCode}",
                                                      "chatId": widget.chatid.toString() });
                                                    print("hjkl");
-                                                     
-                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                   widget.socket!.emit("group.message",{
-                                                    "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname} ${state.registeresUsers[index].lname} is added to group"
+                                                     widget.socket!.emit("group.message",{
+                                                    "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
                                                   });
+                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                  
 
                                                 widget.socket!.on("userAlreadyInGroup", (data) {
                                                   showSnackBar(context,
@@ -470,7 +480,8 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                 });
                                                 
                                                  widget.socket!.on("userAddedToGroup", (data) {     
-                                                  print("user $data");
+                                                  // print("user $data");
+                                                   
                                                    showSnackBar(context,
                                                   message: "User Add To Group Successfully", color: ColorPalette.primary);
                                                   

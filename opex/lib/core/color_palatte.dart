@@ -4,6 +4,8 @@ class ColorPalette{
   static const Color secondary = Color(0xffFD5762);
   static const Color cardBackground = Color(0xffe6ecf0);
   static const Color inactiveGrey = Color(0xFFD3D3D3);
+  static const Color fillGrey = Color(0xFFF7F7F7);
+  static const Color borderGrey = Color(0xFFD9D9D9);
   static const Color black = Color(0xFF323232);
   static const Color subtextGrey = Color(0xFF676767);
   static const Color green = Color(0xFF3ABA6F);

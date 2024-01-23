@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
@@ -42,11 +43,7 @@ class _CreateAGroupState extends State<CreateAGroup> {
   // var _tabTextIconIndexSelected = 0;
   @override
   void initState() {
-    //  BlocProvider.of<CommunicationBloc>(context).add(
-    //       GetChatListEvent(
-    //         token: widget.token ?? "",
-    //         // chatFilter: "chats"
-    //       ));
+  
 BlocProvider.of<CommunicationBloc>(context).add(
           GetFilterdChatListEvent(
             token: widget.token ?? "",
@@ -57,13 +54,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
     // TODO: implement initState
     super.initState();
   }
- boolgetlist(){
-    BlocProvider.of<CommunicationBloc>(context).add(
-          GetFilterdChatListEvent(
-            token: widget.token ?? "",
-            chatFilter: "chats"
-          ));
-  }
+
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -237,8 +228,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                       ? BlocBuilder<CommunicationBloc, CommunicationState>(
                           builder: (context, state) {
                           if (state is GetSearchedUsersLoading) {
-                            boolgetlist();
+                         
                           } else if (state is GetSearchedUsersSuccess) {
+                            
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -390,6 +382,14 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             if (state is GetAllRegisteredUsersLoading) {
                               return customCupertinoLoading();
                             } else if (state is GetAllRegisteredUsersSuccess) {
+                              print("sjsd ${authentication.authenticatedUser.code}");
+                              for(int i=0;i<state.registeresUsers.length;){
+                                // print();
+                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                        state.registeresUsers.removeAt(i);
+                                        }
+                                  i++;
+                              }
                               return Column(
                                 children: [
                                   Align(
@@ -411,7 +411,10 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                       padding:EdgeInsets.only(left: 16,right: 16) ,
                                       physics: NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
-                                      itemBuilder: (context, index) => InkWell(
+                                       itemCount: state.registeresUsers.length,
+                                      itemBuilder: (context, index) {
+                                        
+                                       return InkWell(
                                             onTap: () {
                                                
                                               email1=state.registeresUsers[index].email!;
@@ -639,12 +642,13 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                             //     ],
                                             //   ),
                                             // ),
-                                          ),
+                                          );
+                            },
                                       separatorBuilder: (context, index) =>
                                           const SizedBox(
                                             height:5,
                                           ),
-                                      itemCount: state.registeresUsers.length),
+                                     ),
                                   SizedBox(
                                     height: 50,
                                   )

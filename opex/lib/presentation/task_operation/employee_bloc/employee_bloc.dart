@@ -20,6 +20,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     if (event is RegisterEmployeeEvent) {
       yield* _mapEmployeeStateToState(
         email: event.emailID.trim(),
+        profilePic: event.profilePic,
         orgCode: event.orgCode.trim(),
         departCode: event.depatCode.trim(),
         firstName: event.firstName.trim(),
@@ -50,6 +51,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
      if (event is UpdateEmployeeEvent) {
       yield* updateEmployeeState(
         roleName: event.roleName,
+        profilePic: event.profileImg,
         roleNameList: event.roleNameList,
         id: event.id,
         additionalRole: event.additionalRole,
@@ -113,6 +115,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
           otp: event.otp
       );
     }
+    if (event is CreateTaskGroupCommunicationEvent) {
+      yield* createTaskGroupCommunication(
+          taskGroup: event.communicationTaskGroup
+      );
+    }
+    else if (event is FcmTokenRegisterEvent) {
+      yield* fcmRegister(fcmToken: event.fcmToken);
+    }
   }
   Stream<EmployeeState> _mapEmployeeStateToState(
       {
@@ -131,13 +141,15 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         required String userRole,
         required List<int> additionalRole,
         required List<String> roleNameList,
-        required String roleName
+        required String roleName,
+        required dynamic profilePic,
       }) async* {
     yield EmployeeLoading();
 
     final dataResponse = await _employeeRepo.employeeCreate(
       email: email,
       departCode: departCode,
+      profilePic: profilePic,
       gender: gender,
       orgCode: orgCode,
       designationCode:designationCode,
@@ -295,12 +307,12 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         required List<String> roleNameList,
         required String roleName,
         required bool isActive,
-        required int id,
+        required int id, required dynamic profilePic,
       }) async* {
     yield UpdateEmployeeLoading();
 
     final dataResponse = await _employeeRepo.updateEmployee(
-      email: email,
+      email: email,profilePic: profilePic,
       isActive: isActive,
       departCode: departCode,
       gender: gender,
@@ -407,6 +419,36 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield ChangePasswordFailed(
         message: dataResponse.error ?? "",
       );
+    }
+  }
+
+
+  Stream<EmployeeState> createTaskGroupCommunication({
+    required CommunicationTaskGroup taskGroup,
+  }) async* {
+    yield TaskGroupCreationLoading();
+
+    final dataResponse = await _employeeRepo.createTaskGroupCommunication(
+      taskGroup: taskGroup
+    );
+    if (dataResponse.data) {
+      yield TaskGroupCreationSuccess(
+          message: dataResponse.error??""
+      );
+    } else {
+      yield TaskGroupCreationFailed(
+        message: dataResponse.error ?? "",
+      );
+    }
+  }
+
+  Stream<EmployeeState> fcmRegister({required String fcmToken}) async* {
+    yield FcmLoading();
+    final dataResponse = await _employeeDataSource.fcmRegister(fcmToken: fcmToken);
+    if (dataResponse == "success") {
+      yield FcmSuccess();
+    } else {
+      yield FcmFailed();
     }
   }
 

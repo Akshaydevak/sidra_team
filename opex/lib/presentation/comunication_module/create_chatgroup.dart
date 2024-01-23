@@ -1,4 +1,6 @@
+import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
@@ -165,96 +167,36 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                 // taskgroup = state.group;
                 Navigator.pop(context);
                 Navigator.pop(context);
-              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                 widget.socket!.emit("update.list",{
+              
       
-                        print("update")
-                      });
-                      widget.socket!.on("friends.update", (data) {
-        print("90909009 $data");
-         widget.socket!.on('friends.list',(data){
-       print("hello11");
-                  print("Friends list... $data");
-                //   ulist = UserDummyList.fromJson(data);
-                // userlist.add(ulist!);
-                userlist.clear();
-                  (data as List).forEach((element) {
-                    
-                  userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
-                   });
-                  // if(mounted){
-                     print("hgfjh");
-                    setState(() {
-                     
-                       
-                  });
-              });
-        setState(() {
-          
-        });
-      } );
-      widget.socket!.emit("group.message",{
-        "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy}"
+        widget.socket!.emit("group.message",{
+        "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy.toString().toTitleCase()}\n ${state.list.addedUsers?.join(',').toString().toTitleCase()} are added to the group"
       });
-      
       BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
             token: widget.token ?? "",
             // userId: widget.communicationUserModel?.id ?? "",
             chatId:state.list.chatid??"",
             pageNo: 1));
-      // for(int i=0; i<=userlist.length;i++){
-      //                 if(state.successMessage == userlist[i].chatid){
-      //                   print("fbnm");
-                        PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: ChatScreen(
-                                token: widget.token,
-                                loginUserId: widget.loginUserId,
-                                socket: widget.socket,
-                                isGroup: true,
-                                isg: true,
-                                grpuser: state.list,
-                              ),
-                    withNavBar: false, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
-                  // break;
-                  //     }
-                  //   }
-                Fluttertoast.showToast(
-                    msg: 'Successfully Created Group',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.black,
-                    textColor: Colors.white);
+      PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: ChatScreen(
+              token: widget.token,
+              loginUserId: widget.loginUserId,
+              socket: widget.socket,
+              isGroup: true,
+              isg: true,
+              grpuser: state.list,
+            ),
+        withNavBar: false, // OPTIONAL VALUE. True by default.
+        pageTransitionAnimation: PageTransitionAnimation.fade,
+      );
+              //   Fluttertoast.showToast(
+              //       msg: 'Successfully Created Group',
+              //       toastLength: Toast.LENGTH_SHORT,
+              //       gravity: ToastGravity.BOTTOM,
+              //       backgroundColor: Colors.black,
+              //       textColor: Colors.white);
                     
-        //            PersistentNavBarNavigator.pushNewScreen(
-        //             context,
-        //             screen: ChatScreen(
-        //               token: widget.token,
-        //               loginUserId: widget.loginUserId,
-        //               socket: widget.socket,
-        //               isGroup: true,
-        //               communicationUserModel: userlist[i],
-        //             ),
-        //   withNavBar: false, // OPTIONAL VALUE. True by default.
-        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-        // );
-                // Navigator.pop(context);
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>CommunicationModule()));
-                // PersistentNavBarNavigator.pushNewScreen(
-                //   context,
-                //   screen: CommunicationModule(
-                //     // token: widget.token??"",
-                //   ),
-                //   withNavBar: true,
-                //   // OPTIONAL VALUE. True by default.
-                //   pageTransitionAnimation:
-                //   PageTransitionAnimation.fade,
-                // );
               }
             },
 ),
@@ -371,7 +313,14 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                         if (state is GetAllRegisteredUsersSuccess) {
 
                           print("Success shifu");
-
+                              print("sjsd ${authentication.authenticatedUser.code}");
+                              for(int i=0;i<state.registeresUsers.length;){
+                                // print();
+                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                        state.registeresUsers.removeAt(i);
+                                        }
+                                  i++;
+                              }
                           return SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -446,24 +395,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
               child: isValid==true?
               GradientButton(
                   onPressed: () {
-      //               widget.socket!.emit("update.list",{
-      
-      //                   print("update")
-      //                 });
-      //                 widget.socket!.on("friends.update", (data) {
-      //   print(data);
-      //   setState(() {
-          
-      //   });
-      // } );
-                    // widget.edit?
-                    // BlocProvider.of<EmployeeBloc>(context).add(
-                    //     UpdateGroupEvent(
-                    //         groupName: groupName.text,
-                    //         discription: discription.text,
-                    //         userList: userList??[],
-                    //         isActive: true,
-                    //         id: readGroup?.id??0)):
+   
                     BlocProvider.of<GroupBloc>(context).add(
                         CreateGroupEvent(
                             groupName: groupName.text,

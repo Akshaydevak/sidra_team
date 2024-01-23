@@ -101,6 +101,8 @@ Map<String, dynamic> _$GetTaskGroupListToJson(GetTaskGroupList instance) =>
 
 GetUserList _$GetUserListFromJson(Map<String, dynamic> json) => GetUserList(
       email: json['email'] as String?,
+      lName: json['last_name'] as String?,
+      fName: json['first_name'] as String?,
       userId: json['user_id'] as int?,
       isActive: json['is_active'] as bool? ?? false,
       userCode: json['user_code'] as String?,
@@ -114,6 +116,8 @@ Map<String, dynamic> _$GetUserListToJson(GetUserList instance) =>
       'user_id': instance.userId,
       'code': instance.code,
       'user_code': instance.userCode,
+      'first_name': instance.fName,
+      'last_name': instance.lName,
       'is_active': instance.isActive,
       'email': instance.email,
       'role': instance.role,
@@ -203,6 +207,7 @@ UserMete _$UserMeteFromJson(Map<String, dynamic> json) => UserMete(
       roleList: (json['additional_roles_list'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      profile: json['profile_pic'] as String?,
       roleId: json['official_role'] as int?,
       roleListId: (json['additional_roles'] as List<dynamic>?)
           ?.map((e) => e as int)
@@ -212,6 +217,43 @@ UserMete _$UserMeteFromJson(Map<String, dynamic> json) => UserMete(
 Map<String, dynamic> _$UserMeteToJson(UserMete instance) => <String, dynamic>{
       'official_role_name': instance.roleName,
       'official_role': instance.roleId,
+      'profile_pic': instance.profile,
       'additional_roles_list': instance.roleList,
       'additional_roles': instance.roleListId,
+    };
+
+CommunicationTaskGroup _$CommunicationTaskGroupFromJson(
+        Map<String, dynamic> json) =>
+    CommunicationTaskGroup(
+      createdBy: json['createdBy'] as String?,
+      friendList: (json['friends'] as List<dynamic>?)
+          ?.map((e) => FriendListModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      taskCode: json['task_code'] as String?,
+      taskName: json['task_name'] as String?,
+    );
+
+Map<String, dynamic> _$CommunicationTaskGroupToJson(
+        CommunicationTaskGroup instance) =>
+    <String, dynamic>{
+      'task_name': instance.taskName,
+      'task_code': instance.taskCode,
+      'createdBy': instance.createdBy,
+      'friends': instance.friendList,
+    };
+
+FriendListModel _$FriendListModelFromJson(Map<String, dynamic> json) =>
+    FriendListModel(
+      email: json['email'] as String?,
+      fName: json['fname'] as String?,
+      lName: json['lname'] as String?,
+      userCode: json['user_code'] as String?,
+    );
+
+Map<String, dynamic> _$FriendListModelToJson(FriendListModel instance) =>
+    <String, dynamic>{
+      'user_code': instance.userCode,
+      'fname': instance.fName,
+      'lname': instance.lName,
+      'email': instance.email,
     };

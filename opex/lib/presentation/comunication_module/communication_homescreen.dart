@@ -798,10 +798,11 @@ import 'unread.dart';
 import 'package:http/http.dart' as http;
  
 class CommunicationModule extends StatefulWidget {
-  // final String token;
+  // final String? token;
+  final Socket? socket;
   const CommunicationModule({
-    Key? key
-    // required this.token,
+    Key? key,
+     this.socket,
   }) : super(key: key);
  
   @override
@@ -821,7 +822,8 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   IO.Socket? socketCon;
   String? loginuserId;
  bool isload=false;
- String token="";
+ String? token="";
+ SharedPreferences? pref;
   Future<void> _getData() async {
     print("hi");
     final response = await client.get(CommunicationUrls.getChatList,
@@ -845,299 +847,35 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   }
  
   @override
-  void initState(){
- BlocProvider.of<DummyLoginBloc>(context)
-        .add(TokenCreationCommunicationEvent());
-//     IO.Socket socket = IO.io(
-//         'https://api-communication-application.hilalcart.com/home',
-//         // "http://192.168.1.12:5500/home",
-//         // 'https://baf9-103-179-197-125.ngrok-free.app/',
-//         // OptionBuilder().setTransports(['websocket']).setQuery({
-//         //   'transports': ['websocket', 'polling'],
-//         //   'auth': {'token': widget.token},
-//         //   'autoConnect': false,
-//         // }).build());
-//         <String, dynamic>{
-//           'transports': ['websocket', 'polling'],
-//           'auth': {'token': widget.token.toString()},
-//           'autoConnect': false,
-//         });
-//     socket.connect();
-//     // Handle socket events
-//     socket.on('connect', (_) => print('connect success: ${socket.id}'));
- 
-//   socket.on('user.connected', (data) {
-//     print("...user.connected : $data");
-    
-//     // ulist = UserDummyList.fromJson(data['user']);
-//     // userlist.add(ulist!);
-//     //     (data['user'] as List).forEach((element) {
-//     //   ulist!.add(UserDummyList.fromJson(element));
-//     // });
-//     // print("userlist : ${ulist!.id}");
-//   });
- 
-//   socket.on('user.id', (data) {
-//     print("!!!!!!!!user.id : $data");
-//   });
- 
-//     socket.on('online', (data) {
-//       print("online anutto ${data}");
-//       onlineUsers.add(data['id']);
-//       // if (isHomeMount) {
-//       setState(() {});
-//       // }
-//       print("online anutto users data ${onlineUsers}");
-//     });
-//     print(onlineUsers);
-//     socket.on('offline', (data) {
-//       // print("online anutto poyetto  ${data}");
-//       onlineUsers.remove(data['id']);
-//       // if (isHomeMount) {
-//       setState(() {});
-//       // }
-//     });
-//     socket.on('user.id', (data) {
-//       loginuserId = data;
-//       print("vgyvgvh$loginuserId");
-//       setState(() {});
-//     });
-//     socket.on("latest.message", (data){
-//       print("latest message $data");
-//       socket.emit("update.list",{
-      
-//                         print("update")
-//                       });
-//     socket.on("friends.update", (data) {
-//         print(data);
-        
-//         socket.on('friends.list',(data){
-//        print("hello");
-//                   print("Friends list $data");
-//                 //   ulist = UserDummyList.fromJson(data);
-//                 // userlist.add(ulist!);
-//                 userlist.clear();
-//                   (data as List).forEach((element) {
-                    
-//                   userlist.add(UserDummyList.fromJson(element));
-//                   setState(() {
-                    
-//                   });
-//                    });
-//                   // if(mounted){
-//                      print("hgfjh");
-//                     setState(() {
-//                       if(userlist.isNotEmpty){
-//                           isload=true;
-//                       }else{
-//                         isload=false;
-//                       }
-                       
-//                   });
-//                   // }
-               
-//                 // userlist=userlist.toSet().toList();
-               
-//                 // print("mkkk ${userlist}");
-//               });
-//         setState(() {
-          
-//         });
-//       } );
-//   });
- 
-// socket.emit("update.list",{
-      
-//                         print("update")
-//                       });
-//     socket.on("friends.update", (data) {
-//         print(data);
-        
-//         socket.on('friends.list',(data){
-//        print("hello");
-//                   print("Friends list $data");
-//                 //   ulist = UserDummyList.fromJson(data);
-//                 // userlist.add(ulist!);
-//                 userlist.clear();
-//                   (data as List).forEach((element) {
-                    
-//                   userlist.add(UserDummyList.fromJson(element));
-//                   setState(() {
-                    
-//                   });
-//                    });
-//                   // if(mounted){
-//                      print("hgfjh");
-//                     setState(() {
-//                       if(userlist.isNotEmpty){
-//                           isload=true;
-//                       }else{
-//                         isload=false;
-//                       }
-                       
-//                   });
-//                   // }
-               
-//                 // userlist=userlist.toSet().toList();
-               
-//                 // print("mkkk ${userlist}");
-//               });
-//         setState(() {
-          
-//         });
-//       } );
-    
-//     socket.on('friends.list',(data){
-//        print("hello");
-//                   print("Friends list $data");
-//                 //   ulist = UserDummyList.fromJson(data);
-//                 // userlist.add(ulist!);
-//                 userlist.clear();
-//                   (data as List).forEach((element) {
-                    
-//                   userlist.add(UserDummyList.fromJson(element));
-//                   setState(() {
-                    
-//                   });
-//                    });
-//                   // if(mounted){
-//                      print("hgfjh");
-//                      socket.on("update.chat.list", (data) => print("fhxr  $data"));
-//                     setState(() {
-                      
-//                       if(userlist.isNotEmpty){
-
-//                       isload=true;
-//                       isloop=true;
-                          
-//                       }else{
-//                         isload=false;
-//                         isloop=false;
-//                       }
-                       
-//                   });
-//                   // }
-                   
-    
-                
-                    
-                
-                  
-                  
-               
-//                 // userlist=userlist.toSet().toList();
-               
-//                 // print("mkkk ${userlist}");
-//               });
-
-//         socket.on("latest.notification",(data){
-
-//           print("ltest msfg : $data");
-//           showSnackBar(context,
-//               message: data, color: ColorPalette.primary);
-//            socket.on("friends.update", (data) {
-//         print(data);
-//         socket.on('friends.list',(data){
-//        print("hello");
-//                   print("Friends list $data");
-//                 //   ulist = UserDummyList.fromJson(data);
-//                 // userlist.add(ulist!);
-//                 userlist.clear();
-//                   (data as List).forEach((element) {
-                    
-//                   userlist.add(UserDummyList.fromJson(element));
-//                   setState(() {
-                    
-//                   });
-//                    });
-//                   // if(mounted){
-//                      print("hgfjh");
-//                     setState(() {
-//                       if(userlist.isNotEmpty){
-//                           isload=true;
-//                       }else{
-//                         isload=false;
-//                       }
-                       
-//                   });
-//                   // }
-               
-//                 // userlist=userlist.toSet().toList();
-               
-//                 // print("mkkk ${userlist}");
-//               });
-//         setState(() {
-          
-//         });
-//       } );
-//         });
-//     // socket.on('move.chat.to.top', (data) {
-//     //   // print("online anutto poyetto  ${data}");
-//     //   onlineUsers.remove(data['id']);
-//     //   // if (isHomeMount) {
-//     //   setState(() {});
-//     //   // }
-//     // });
-//     // socket.on("latest.message", (data) => print("homescreen latest message $data"));
-//     // socket.on('latest.message', (data) => streamSocket.addResponse);
-//     // socket.onDisconnect((_) => print('disconnect happened'));
- 
-//     socketCon = socket;
-//     // socket.disconnect();
-    // BlocProvider.of<CommunicationBloc>(context)
-    //     .add(GetChatListEvent(token: widget.token));
-    // _getData();
+  void initState()  {
+    getsocketconnect();
+   
     super.initState();
   }
- 
-  @override
-  void dispose() {
-    isMount = false;
-    super.dispose();
-  }
- 
-  TextEditingController searchController = TextEditingController();
-  // bool isrefresh= false;
-  // void refresh(bool val){
-  //   isrefresh=val;
-  //   setState(() {
-  //    socketCon!.emit("update.list",{
-  //                       print("update")
-  //                     });
-  //   });
-  // }
- 
-  @override
-  Widget build(BuildContext context) {
-    print("builddd");
-    var w = MediaQuery.of(context).size.width;
-    return BlocListener<DummyLoginBloc,DummyLoginState>(
-      listener: (context, state) {
-         if (state is TokenCreationCommunicationLoading) {
-            customCupertinoLoading();
-          } else if (state is TokenCreationCommunicationSuccess) {
-            token=state.token;
-           
-           setState(() {
-             
-           });
-    IO.Socket socket = IO.io(
+  Future<void> getsocketconnect() async {
+    pref=await SharedPreferences.getInstance();
+    token = pref!.getString("token");
+    print("tooken ${token}");
+  IO.Socket socket = IO.io(
         'https://api-communication-application.hilalcart.com/home',
         // "http://192.168.1.16:5500/home",
         // 'https://baf9-103-179-197-125.ngrok-free.app/',
         // OptionBuilder().setTransports(['websocket']).setQuery({
         //   'transports': ['websocket', 'polling'],
-        //   'auth': {'token': widget.token},
+        //   'auth': {'token': token.toString()},
         //   'autoConnect': false,
         // }).build());
         <String, dynamic>{
-          'transports': ['websocket', 'polling'],
-          'auth': {'token': state.token.toString()},
+          'transports': ['websocket'],
+          'auth': {'token': token.toString()},
           'autoConnect': false,
         });
     socket.connect();
+    setState(() {
+      print("ccccconneccct");
+    });
     // Handle socket events
-    socket.on('connect', (_) => print('connect success: ${socket.id}'));
+    socket.on('connect', (_) => print('connectt success: ${socket.id}'));
  
   socket.on('user.id', (data) {
     print("!!!!!!!!user.id : $data");
@@ -1164,18 +902,31 @@ class _CommunicationModuleState extends State<CommunicationModule> {
       print("vgyvgvh$loginuserId");
       setState(() {});
     });
+    
+    socket.emit("update.list",{
+      
+                        print("update")
+
+                        
+                      });
    
-    socket.on("update.chat.list", (data) {
+   socket.on("update.chat.list", (data) {
       print("updata.chat.list $data");
+       
+    print("friends..chatlist");
       socket.emit("update.list",{
       
                         print("update")
+                        
                       });
-    socket.on("friends.update", (data) {
-        print(data);
-        
-        socket.on('friends.list',(data){
+  //  socket.on("friends.update", (data) {
+  //       print(data);
+  //       print("upppppdate,,,,,");
+         setState(() {
+       socket.on('friends.list',(data){
+       
        print("hello");
+       print("upppppdate,,,,,");
                   print("Friends list $data");
                 //   ulist = UserDummyList.fromJson(data);
                 // userlist.add(ulist!);
@@ -1204,12 +955,14 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                 // userlist=userlist.toSet().toList();
                
                 // print("mkkk ${userlist}");
-              });
-        setState(() {
+              // });
+              print("upppppdate,,,,,1");
+       
           
         });
+          });
       } );
-    });
+   
     socket.on('friends.list',(data){
        print("hello");
                   print("Friends list $data");
@@ -1245,50 +998,8 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                
                 // print("mkkk ${userlist}");
               });
+   
 
-        socket.on("latest.notification",(data){
-
-          print("ltest msfg : $data");
-          showSnackBar(context,
-              message: data, color: ColorPalette.primary);
-           socket.on("friends.update", (data) {
-        print(data);
-        socket.on('friends.list',(data){
-       print("hello");
-                  print("Friends list $data");
-                //   ulist = UserDummyList.fromJson(data);
-                // userlist.add(ulist!);
-                userlist.clear();
-                  (data as List).forEach((element) {
-                    
-                  userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
-                   });
-                  // if(mounted){
-                     print("hgfjh");
-                    setState(() {
-                      if(userlist.isNotEmpty){
-                          isload=true;
-                          isloop=true;
-                      }else{
-                        isload=false;
-                        isloop=true;
-                      }
-                       
-                  });
-                  // }
-               
-                // userlist=userlist.toSet().toList();
-               
-                // print("mkkk ${userlist}");
-              });
-        setState(() {
-          
-        });
-      } );
-        });
     // socket.on('move.chat.to.top', (data) {
     //   // print("online anutto poyetto  ${data}");
     //   onlineUsers.remove(data['id']);
@@ -1302,449 +1013,457 @@ class _CommunicationModuleState extends State<CommunicationModule> {
 
     socketCon = socket;
     // socket.disconnect();
-          }
-          else if (state is TokenCreationCommunicationFailed) {
-            
+setState(() {
+  
+});
+  }
+
+  @override
+  void dispose() {
+    isMount = false;
+    super.dispose();
+  }
+ 
+  TextEditingController searchController = TextEditingController();
+  // bool isrefresh= false;
+  // void refresh(bool val){
+  //   isrefresh=val;
+  //   setState(() {
+  //    socketCon!.emit("update.list",{
+  //                       print("update")
+  //                     });
+  //   });
+  // }
+ 
+  @override
+  Widget build(BuildContext context) {
+    print("builddd");
+    var w = MediaQuery.of(context).size.width;
+    return Scaffold(
+        backgroundColor: Colors.white,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Color(0xFF2871AF),
+          tooltip: "Create group",
+          onPressed: () {
             PersistentNavBarNavigator.pushNewScreen(
               context,
-              screen: HomeScreen(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
+              screen: CreateAGroup(
+                token: token,
+                loginUserId: loginuserId,
+                socket: socketCon,
+              ),
+              withNavBar: false, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
             );
-          }
-        // TODO: implement listener
-      },
-      child: Scaffold(
-          backgroundColor: Colors.white,
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Color(0xFF2871AF),
-            tooltip: "Create group",
-            onPressed: () {
-              PersistentNavBarNavigator.pushNewScreen(
-                context,
-                screen: CreateAGroup(
-                  token: token,
-                  loginUserId: loginuserId,
-                  socket: socketCon,
+          },
+          child: const Icon(Icons.add,size: 32,color: Colors.white,),
+        ),
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(60),
+            child: Column(
+              children: [
+                AppBar(
+                  systemOverlayStyle: const SystemUiOverlayStyle(
+                    systemNavigationBarColor: Colors.white, // Navigation bar
+                    statusBarColor: Colors.white, // Status bar
+                  ),
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  centerTitle: false,
+      
+                  title: Text(
+                    "Communication",
+                    style:  TextStyle(color: Colors.black,fontSize: w/22),
+                  ),
+                  titleSpacing: 10,
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: SvgPicture.string(
+                      AppsSvg().appbarIcon,
+                    ),
+                  ),
+                  leadingWidth: 28,
+                  // actions: [
+                  //   // Padding(
+                  //   //   padding: const EdgeInsets.only(top: 12,left: 16),
+                  //   //   child: InkWell(
+                  //   //     onTap: (){},
+                  //   //     //   if(activeTextfield==true){
+                  //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
+                  //   //     //       mobile: mobileController.text,
+                  //   //     //       lname: "",
+                  //   //     //       fname: nameController.text,
+                  //   //     //       dob: "",
+                  //   //     //       email: emailController.text,
+                  //   //     //
+                  //   //     //     ));
+                  //   //     //   }
+                  //   //     //   else{
+                  //   //     //
+                  //   //     //   }
+                  //   //     //   myfocus.unfocus();
+                  //   //     //   myfocus1.unfocus();
+                  //   //     //   myfocus2.unfocus();
+                  //   //     //   activeTextfield=false;
+                  //   //     // },
+                  //   //     child: Text(
+                  //   //       "Save",
+                  //   //       style: GoogleFonts.roboto(
+                  //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
+                  //   //         fontSize: 18,
+                  //   //         fontWeight: FontWeight.w500,
+                  //   //         height: 1.56,
+                  //   //       ),
+                  //   //     ),
+                  //   //   ),
+                  //   // ),
+                  //
+                  //
+                  //   // SvgPicture.string(HomeSvg().msgIcon),
+                  //   //         const SizedBox(
+                  //   //           width: 16,
+                  //   //         ),
+                  //   //         GestureDetector(
+                  //   //           onTap: widget.onTap,
+                  //   //             child: SvgPicture.string(HomeSvg().addIcon)),
+                  //
+                  //   const SizedBox(
+                  //     width: 16,
+                  //   )
+                  // ],
                 ),
-                withNavBar: false, // OPTIONAL VALUE. True by default.
-                pageTransitionAnimation: PageTransitionAnimation.fade,
-              );
-            },
-            child: const Icon(Icons.add,size: 32,color: Colors.white,),
-          ),
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(60),
-              child: Column(
-                children: [
-                  AppBar(
-                    systemOverlayStyle: const SystemUiOverlayStyle(
-                      systemNavigationBarColor: Colors.white, // Navigation bar
-                      statusBarColor: Colors.white, // Status bar
-                    ),
-                    elevation: 0,
-                    backgroundColor: Colors.white,
-                    centerTitle: false,
-        
-                    title: Text(
-                      "Communication",
-                      style:  TextStyle(color: Colors.black,fontSize: w/22),
-                    ),
-                    titleSpacing: 10,
-                    leading: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: SvgPicture.string(
-                        AppsSvg().appbarIcon,
-                      ),
-                    ),
-                    leadingWidth: 28,
-                    // actions: [
-                    //   // Padding(
-                    //   //   padding: const EdgeInsets.only(top: 12,left: 16),
-                    //   //   child: InkWell(
-                    //   //     onTap: (){},
-                    //   //     //   if(activeTextfield==true){
-                    //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
-                    //   //     //       mobile: mobileController.text,
-                    //   //     //       lname: "",
-                    //   //     //       fname: nameController.text,
-                    //   //     //       dob: "",
-                    //   //     //       email: emailController.text,
-                    //   //     //
-                    //   //     //     ));
-                    //   //     //   }
-                    //   //     //   else{
-                    //   //     //
-                    //   //     //   }
-                    //   //     //   myfocus.unfocus();
-                    //   //     //   myfocus1.unfocus();
-                    //   //     //   myfocus2.unfocus();
-                    //   //     //   activeTextfield=false;
-                    //   //     // },
-                    //   //     child: Text(
-                    //   //       "Save",
-                    //   //       style: GoogleFonts.roboto(
-                    //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
-                    //   //         fontSize: 18,
-                    //   //         fontWeight: FontWeight.w500,
-                    //   //         height: 1.56,
-                    //   //       ),
-                    //   //     ),
-                    //   //   ),
-                    //   // ),
-                    //
-                    //
-                    //   // SvgPicture.string(HomeSvg().msgIcon),
-                    //   //         const SizedBox(
-                    //   //           width: 16,
-                    //   //         ),
-                    //   //         GestureDetector(
-                    //   //           onTap: widget.onTap,
-                    //   //             child: SvgPicture.string(HomeSvg().addIcon)),
-                    //
-                    //   const SizedBox(
-                    //     width: 16,
-                    //   )
-                    // ],
+                Container(
+                  width: w,
+                  height: 1.50,
+                  decoration: const BoxDecoration(
+                    color: Color(0xb2e6e6e6),
                   ),
-                  Container(
-                    width: w,
-                    height: 1.50,
-                    decoration: const BoxDecoration(
-                      color: Color(0xb2e6e6e6),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          // body: SafeArea(
-          //   child: SingleChildScrollView(
-          //     child: Column(
-          //       children: [
-                  // AppBarCommunication(token: widget.token),
-          //         Container(
-          //           width: w,
-          //           height: 1.50,
-          //           decoration: BoxDecoration(
-          //             border: Border.all(
-          //               color: const Color(0xb2e6e6e6),
-          //               width: 0.50,
-          //             ),
-          //           ),
-          //         ),
-          //         const SizedBox(
-          //           height: 16,
-          //         ),
-          //         const PinnedProfile(),
-          //         const SizedBox(
-          //           height: 16,
-          //           child: Divider(
-          //             thickness:4,
-          //             color: Color(0x33D3D3D3),
-          //             ),
-          //         ),
-          //         Container(
-          //           width: w,
-          //           padding: const EdgeInsets.only(left: 8),
-          //           child: Row(
-          //             children: [
-          //               // Container(
-          //               //   width: 36,
-          //               //   height: 36,
-          //               //   decoration: BoxDecoration(
-          //               //     borderRadius: BorderRadius.circular(10),
-          //               //     border: Border.all(
-          //               //       color: const Color(0x4ca9a8a8),
-          //               //       width: 1,
-          //               //     ),
-          //               //     color: const Color(0xfff8f7f5),
-          //               //   ),
-          //               //   child: const Icon(Icons.add),
-          //               // ),
-                       
-          //               ChatTypeList(
-          //                 token: widget.token,
-          //               )
-          //             ],
-          //           ),
-          //         ),
-          //          const SizedBox(
-          //           height: 16,
-          //         ),
-          //         Container(
-          //           width: w,
-          //           padding: const EdgeInsets.only(top:16,right:5,left:10,bottom: 10),
-          //           child: Column(
-          //             mainAxisAlignment: MainAxisAlignment.start,
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               BlocBuilder<CommunicationBloc, CommunicationState>(
-          //                 builder: (context, state) {
-          //                   if (state is GetChatListLoading) {
-          //                     return customCupertinoLoading();
-          //                   } else if (state is GetChatListSuccess) {
-          //                     return Column(
-          //                       children: [
-          //                         Align(
-          //                           alignment: Alignment.centerLeft,
-          //                           child: Text(
-          //                             "Recent Chat",
-          //                             style: GoogleFonts.roboto(
-          //                               color: const Color(0xff151522),
-          //                               fontSize: 18,
-          //                               fontWeight: FontWeight.w500,
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         const SizedBox(
-          //                           height: 20,
-          //                         ),
-          //                         ListView.separated(
-          //                             shrinkWrap: true,
-          //                             primary: false,
-          //                             itemBuilder: (context, index) {
-          //                               if (index == 0) {
-         
-          //                                 return
-          //                                 ChatCard(
-          //                                   onlineUsers: onlineUsers,
-          //                                   loginUserId: loginuserId,
-          //                                   token: widget.token,
-          //                                   socket: socketCon,
-          //                                   communicationUserModel:
-          //                                       state.chatList[index],
-          //                                   isGroup:
-          //                                       state.chatList[index].isGroupChat ??
-          //                                           false,
-          //                                 );
-          //                               }
-          //                               return ChatCard(
-          //                                 onlineUsers: onlineUsers,
-          //                                 loginUserId: loginuserId,
-          //                                 socket: socketCon,
-          //                                 isGroup:
-          //                                     state.chatList[index].isGroupChat ??
-          //                                         false,
-          //                                 token: widget.token,
-          //                                 communicationUserModel:
-          //                                     state.chatList[index],
-          //                               );
-          //                             },
-          //                             separatorBuilder: (context, index) =>
-          //                                 Container(
-          //                                   height: 22,
-          //                                 ),
-          //                             itemCount: state.chatList.length),
-          //                       ],
-          //                     );
-          //                   } else if (state is GetChatListFailed) {}
-          //                   return SizedBox(
-          //                     height: MediaQuery.of(context).size.height / 2,
-          //                     child: Column(
-          //                       // crossAxisAlignment: CrossAxisAlignment.center,
-          //                       mainAxisAlignment: MainAxisAlignment.center,
-          //                       children: [
-          //                         const Center(
-          //                           child: SizedBox(
-          //                             // width: 197,
-          //                             // height: 23,
-          //                             child: Text(
-          //                               "You have’nt chat yet",
-          //                               style: TextStyle(
-          //                                 color: Color(0xff151522),
-          //                                 fontSize: 19,
-          //                                 fontFamily: "Roboto",
-          //                                 fontWeight: FontWeight.w500,
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         const SizedBox(
-          //                           height: 20,
-          //                         ),
-          //                         InkWell(
-          //                           onTap: () {
-          //                             PersistentNavBarNavigator.pushNewScreen(
-          //                               context,
-          //                               screen: CmtnSearch(token: widget.token),
-          //                               withNavBar:
-          //                                   true, // OPTIONAL VALUE. True by default.
-          //                               pageTransitionAnimation:
-          //                                   PageTransitionAnimation.fade,
-          //                             );
-          //                           },
-          //                           child: Center(
-          //                             child: Container(
-          //                               width: 150,
-          //                               height: 50,
-          //                               child: Center(
-          //                                   child: Text(
-          //                                 "Start Chatting",
-          //                                 style:GoogleFonts.roboto(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500),)
-          //                               )),
-          //                               decoration: BoxDecoration(
-          //                                 borderRadius: BorderRadius.circular(8),
-          //                                 color: const Color(0xFF2871AF),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   );
-          //                 },
-          //               ),
-          //               // ChatCard(isGroup: true,),
-          //               // SizedBox(
-          //               //   height: 16,
-          //               // ),
-          //               // ChatCard(),
-          //               // SizedBox(
-          //               //   height: 16,
-          //               // ),
-          //               // ChatCard(),
-          //               // SizedBox(
-          //               //   height: 16,
-          //               // ),
-          //               // ChatCard(),
-          //               // SizedBox(
-          //               //   height: 16,
-          //               // ),
-          //               // ChatCard(),
-          //               // SizedBox(
-          //               //   height: 16,
-          //               // ),
-          //               //  ChatCard(),
-          //             ],
-          //           ),
-          //         )
-          //       ],
-          //     ),
-          //   ),
-          // ),
-           body:  
-                                      // SizedBox(height: 10,),
-                                      // Text("Recent Chat"),
-                         isloop==true?         SingleChildScrollView(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child:isload==true? SizedBox(
-                                            // height: MediaQuery.of(context).size.height*1,
-                                            child: Column(
-                                              children: [
-                                                // AppBarCommunication(token: widget.token),
-                                                // SizedBox(height: 10,),
-                                                // ChatTypeList(
-                                                //   token:token,
-                                                // ),
-                                                SizedBox(height: 10,),
-                                                Align(
-                                                                        alignment: Alignment.centerLeft,
-                                                                        child: Text(
-                                                                          "Recent Chat",
-                                                                          style: GoogleFonts.roboto(
-                                          color: const Color(0xff151522),
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                                                          ),
+          ),
+        // body: SafeArea(
+        //   child: SingleChildScrollView(
+        //     child: Column(
+        //       children: [
+                // AppBarCommunication(token: widget.token),
+        //         Container(
+        //           width: w,
+        //           height: 1.50,
+        //           decoration: BoxDecoration(
+        //             border: Border.all(
+        //               color: const Color(0xb2e6e6e6),
+        //               width: 0.50,
+        //             ),
+        //           ),
+        //         ),
+        //         const SizedBox(
+        //           height: 16,
+        //         ),
+        //         const PinnedProfile(),
+        //         const SizedBox(
+        //           height: 16,
+        //           child: Divider(
+        //             thickness:4,
+        //             color: Color(0x33D3D3D3),
+        //             ),
+        //         ),
+        //         Container(
+        //           width: w,
+        //           padding: const EdgeInsets.only(left: 8),
+        //           child: Row(
+        //             children: [
+        //               // Container(
+        //               //   width: 36,
+        //               //   height: 36,
+        //               //   decoration: BoxDecoration(
+        //               //     borderRadius: BorderRadius.circular(10),
+        //               //     border: Border.all(
+        //               //       color: const Color(0x4ca9a8a8),
+        //               //       width: 1,
+        //               //     ),
+        //               //     color: const Color(0xfff8f7f5),
+        //               //   ),
+        //               //   child: const Icon(Icons.add),
+        //               // ),
+                     
+        //               ChatTypeList(
+        //                 token: widget.token,
+        //               )
+        //             ],
+        //           ),
+        //         ),
+        //          const SizedBox(
+        //           height: 16,
+        //         ),
+        //         Container(
+        //           width: w,
+        //           padding: const EdgeInsets.only(top:16,right:5,left:10,bottom: 10),
+        //           child: Column(
+        //             mainAxisAlignment: MainAxisAlignment.start,
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             children: [
+        //               BlocBuilder<CommunicationBloc, CommunicationState>(
+        //                 builder: (context, state) {
+        //                   if (state is GetChatListLoading) {
+        //                     return customCupertinoLoading();
+        //                   } else if (state is GetChatListSuccess) {
+        //                     return Column(
+        //                       children: [
+        //                         Align(
+        //                           alignment: Alignment.centerLeft,
+        //                           child: Text(
+        //                             "Recent Chat",
+        //                             style: GoogleFonts.roboto(
+        //                               color: const Color(0xff151522),
+        //                               fontSize: 18,
+        //                               fontWeight: FontWeight.w500,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         const SizedBox(
+        //                           height: 20,
+        //                         ),
+        //                         ListView.separated(
+        //                             shrinkWrap: true,
+        //                             primary: false,
+        //                             itemBuilder: (context, index) {
+        //                               if (index == 0) {
+       
+        //                                 return
+        //                                 ChatCard(
+        //                                   onlineUsers: onlineUsers,
+        //                                   loginUserId: loginuserId,
+        //                                   token: widget.token,
+        //                                   socket: socketCon,
+        //                                   communicationUserModel:
+        //                                       state.chatList[index],
+        //                                   isGroup:
+        //                                       state.chatList[index].isGroupChat ??
+        //                                           false,
+        //                                 );
+        //                               }
+        //                               return ChatCard(
+        //                                 onlineUsers: onlineUsers,
+        //                                 loginUserId: loginuserId,
+        //                                 socket: socketCon,
+        //                                 isGroup:
+        //                                     state.chatList[index].isGroupChat ??
+        //                                         false,
+        //                                 token: widget.token,
+        //                                 communicationUserModel:
+        //                                     state.chatList[index],
+        //                               );
+        //                             },
+        //                             separatorBuilder: (context, index) =>
+        //                                 Container(
+        //                                   height: 22,
+        //                                 ),
+        //                             itemCount: state.chatList.length),
+        //                       ],
+        //                     );
+        //                   } else if (state is GetChatListFailed) {}
+        //                   return SizedBox(
+        //                     height: MediaQuery.of(context).size.height / 2,
+        //                     child: Column(
+        //                       // crossAxisAlignment: CrossAxisAlignment.center,
+        //                       mainAxisAlignment: MainAxisAlignment.center,
+        //                       children: [
+        //                         const Center(
+        //                           child: SizedBox(
+        //                             // width: 197,
+        //                             // height: 23,
+        //                             child: Text(
+        //                               "You have’nt chat yet",
+        //                               style: TextStyle(
+        //                                 color: Color(0xff151522),
+        //                                 fontSize: 19,
+        //                                 fontFamily: "Roboto",
+        //                                 fontWeight: FontWeight.w500,
+        //                               ),
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         const SizedBox(
+        //                           height: 20,
+        //                         ),
+        //                         InkWell(
+        //                           onTap: () {
+        //                             PersistentNavBarNavigator.pushNewScreen(
+        //                               context,
+        //                               screen: CmtnSearch(token: widget.token),
+        //                               withNavBar:
+        //                                   true, // OPTIONAL VALUE. True by default.
+        //                               pageTransitionAnimation:
+        //                                   PageTransitionAnimation.fade,
+        //                             );
+        //                           },
+        //                           child: Center(
+        //                             child: Container(
+        //                               width: 150,
+        //                               height: 50,
+        //                               child: Center(
+        //                                   child: Text(
+        //                                 "Start Chatting",
+        //                                 style:GoogleFonts.roboto(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500),)
+        //                               )),
+        //                               decoration: BoxDecoration(
+        //                                 borderRadius: BorderRadius.circular(8),
+        //                                 color: const Color(0xFF2871AF),
+        //                               ),
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   );
+        //                 },
+        //               ),
+        //               // ChatCard(isGroup: true,),
+        //               // SizedBox(
+        //               //   height: 16,
+        //               // ),
+        //               // ChatCard(),
+        //               // SizedBox(
+        //               //   height: 16,
+        //               // ),
+        //               // ChatCard(),
+        //               // SizedBox(
+        //               //   height: 16,
+        //               // ),
+        //               // ChatCard(),
+        //               // SizedBox(
+        //               //   height: 16,
+        //               // ),
+        //               // ChatCard(),
+        //               // SizedBox(
+        //               //   height: 16,
+        //               // ),
+        //               //  ChatCard(),
+        //             ],
+        //           ),
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // ),
+         body:  
+                         isloop==false?LottieLoader():           // SizedBox(height: 10,),
+                                    // Text("Recent Chat"),
+                               SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top:10,left:10,bottom:10,right:5),
+                                        child:isload==true? SizedBox(
+                                          // height: MediaQuery.of(context).size.height*1,
+                                          child: Column(
+                                            children: [
+                                              // AppBarCommunication(token: widget.token),
+                                              // SizedBox(height: 10,),
+                                              // ChatTypeList(
+                                              //   token:token,
+                                              // ),
+                                              SizedBox(height: 10,),
+                                              Align(
+                                                                      alignment: Alignment.centerLeft,
+                                                                      child: Text(
+                                                                        "Recent Chat",
+                                                                        style: GoogleFonts.roboto(
+                                        color: const Color(0xff151522),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
                                                                         ),
                                                                       ),
-                                                                      const SizedBox(
-                                                                        height: 20,
-                                                                      ),
-                                                ListView.separated(
-                                                  physics: NeverScrollableScrollPhysics(),
-                                                  // padding: EdgeInsets.all(10),
-                                                  itemCount:userlist.length,
-                                                  shrinkWrap: true,
-                                                  itemBuilder:(context, index) {
-                                                    return //userlist[index].latestMessage!=null?
-                                                    ChatCard(
-                                                      onlineUsers: onlineUsers,
-                                                      loginUserId: loginuserId,
-                                                      token: token,
-                                                      socket: socketCon,
-                                                      communicationUserModel:
-                                                          userlist[index],
-                                                      isGroup:
-                                                        userlist[index].isgrp ?? true
-                                                    );
-                                                      
-                                                                     
-                                                      }
-                                                      ,
-                                                      separatorBuilder: ( context,index)=>
-                                                      //userlist[index].latestMessage!=null?
-                                                      SizedBox(height:15,)//:SizedBox()
-                                                      ),
-                                              ],
-                                            ),
-                                          ):SizedBox(
-                              height: MediaQuery.of(context).size.height / 2,
-                              child: Column(
-                                // crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Center(
-                                    child: SizedBox(
-                                      // width: 197,
-                                      // height: 23,
-                                      child: Text(
-                                        "You have’nt chat yet",
-                                        style: TextStyle(
-                                          color: Color(0xff151522),
-                                          fontSize: 19,
-                                          fontFamily: "Roboto",
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 20,
+                                                                    ),
+                                              ListView.separated(
+                                                physics: NeverScrollableScrollPhysics(),
+                                                // padding: EdgeInsets.all(10),
+                                                itemCount:userlist.length,
+                                                shrinkWrap: true,
+                                                itemBuilder:(context, index) {
+                                                  return //userlist[index].latestMessage!=null?
+                                                  ChatCard(
+                                                    onlineUsers: onlineUsers,
+                                                    loginUserId: loginuserId,
+                                                    token: token,
+                                                    socket: socketCon,
+                                                    communicationUserModel:
+                                                        userlist[index],
+                                                    isGroup:
+                                                      userlist[index].isgrp ?? true
+                                                  );
+                                                    }
+                                                    ,
+                                                    separatorBuilder: ( context,index)=>
+                                                    //userlist[index].latestMessage!=null?
+                                                    SizedBox(height:15,)//:SizedBox()
+                                                    ),
+                                            ],
+                                          ),
+                                        ):SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: Column(
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Center(
+                                  child: SizedBox(
+                                    // width: 197,
+                                    // height: 23,
+                                    child: Text(
+                                      "You have’nt chat yet",
+                                      style: TextStyle(
+                                        color: Color(0xff151522),
+                                        fontSize: 19,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen: CreateAGroup(
-                                          token: token,
-                                          loginUserId: loginuserId,
-                                          socket: socketCon,
-                                        ),
-                                        withNavBar:
-                                            true, // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: Center(
-                                      child: Container(
-                                        width: 150,
-                                        height: 50,
-                                        child: Center(
-                                            child: Text(
-                                          "Start Chatting",
-                                          style:GoogleFonts.roboto(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500),)
-                                        )),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          color: const Color(0xFF2871AF),
-                                        ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    PersistentNavBarNavigator.pushNewScreen(
+                                      context,
+                                      screen: CreateAGroup(
+                                        token: token,
+                                        loginUserId: loginuserId,
+                                        socket: socketCon,
+                                      ),
+                                      withNavBar:
+                                          true, // OPTIONAL VALUE. True by default.
+                                      pageTransitionAnimation:
+                                          PageTransitionAnimation.fade,
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Container(
+                                      width: 150,
+                                      height: 50,
+                                      child: Center(
+                                          child: Text(
+                                        "Start Chatting",
+                                        style:GoogleFonts.roboto(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500),)
+                                      )),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: const Color(0xFF2871AF),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                                        ),
-                                      )
-                                      : Center(
-          child: LottieLoader(),
-        ),
-        ),
-    );
+                          ),
+                                      ),
+                                    )
+      );
   }
 }
  

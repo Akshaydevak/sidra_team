@@ -2,6 +2,7 @@ import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat-profile_screengrp.dart';
+import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -13,10 +14,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:socket_io_client/socket_io_client.dart';
 
-import '../chat_profile_screen.dart';
 
 class ChatAppBar extends StatefulWidget {
   final UserDummyList? communicationUserModel;
@@ -30,6 +31,7 @@ class ChatAppBar extends StatefulWidget {
   final String? roomId;
   final bool? isGroup;
   final GroupList? grpuser;
+  // final VoidCallback ontap;
 ChatAppBar(
       {Key? key,
       this.communicationUserModel,
@@ -42,7 +44,9 @@ ChatAppBar(
       this.roomId,
       this.chat=false,
       this.isgrp=false,
-      this.groupTypingUser})
+      this.groupTypingUser
+      // required this.ontap
+      })
       : super(key: key);
 
   @override
@@ -50,8 +54,35 @@ ChatAppBar(
 }
 
 class _ChatAppBarState extends State<ChatAppBar> {
-
+  bool mounted=true;
+  SharedPreferences? pref;
   List<UserSeenList>left=[];
+  Future<void> saveactiveusers(int count) async {
+  print("my msg update count $count");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('activeuser', count);
+  }
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+   Future<void> saveUnreadMessageCount(int count,String chatt) async {
+  setState(() {
+     print("my msg update counta $count $chatt");
+    
+  });
+   pref = await SharedPreferences.getInstance();
+    await pref!.setInt(chatt, count);
+ 
+  }
+  @override
+  void dispose() {
+    widget.socket!.off('active.length');
+    mounted=false;
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -66,20 +97,45 @@ class _ChatAppBarState extends State<ChatAppBar> {
           Row(
             children: [
               GestureDetector(
-                  onTap: () {
+                  onTap:() {
                     if(widget.isGroup==false){
                      if( widget.chat==false){
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
-                      widget.socket!.emit("leave.chat",widget.roomId);
-                  widget.socket!.on("left.room", (data) {print("room left $data");
+                      // widget.socket!.on("user.left", (data) => print("user left the room1 $data"));
+                      widget.socket!.emit("leave.chat",{
+                        "room": widget.roomId??"",
+                        "userid":widget.communicationUserModel?.id??""
+                      }
+                       );
+                       print("user left too");
+                      widget.socket!.on("user.left", (data) {
+                      print("user left the room1 $data");
+                      if(data["userid"] == widget.communicationUserModel?.id){
+                        print("user left the room1 ${data["chatid"]}");
+                        saveUnreadMessageCount(0,data["chatid"]);
+                      }else{
+                        print("same user id");
+                      }
+                    
+                    } );
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                    
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",widget.roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                    List count=[];
-                    count.add( data["messagesCount"]);
-                    
-                    print("messagecounts ${data['messagesCount']}");
+                  
                     
                    } );
                   });
@@ -116,13 +172,44 @@ class _ChatAppBarState extends State<ChatAppBar> {
             //   pageTransitionAnimation: PageTransitionAnimation.fade,
             // );
                     }
-                  },
+                 },
                   child: const Icon(Icons.arrow_back,color: Colors.white,size:28,)),
               const SizedBox(
                 width: 5,
               ),
               GestureDetector(
                 onTap: () {
+                  if(widget.isGroup==false){
+                     PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: ChatProfileScreen(
+                      chat: widget.chat,
+                      token: widget.token,
+                      roomId: widget.roomId,
+                      socket: widget.socket,
+                      isGroup: widget.communicationUserModel?.isgrp ?? false,
+                      communicationUserModel:widget.communicationUserModel,
+                      communicationuser: widget.communicationuser,
+                    ),
+                    withNavBar: true, // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+                   }  else{
+                     PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: ChatProfileScreen2(
+                      chat: widget.isgrp,
+                      token: widget.token,
+                      roomId: widget.roomId,
+                      socket: widget.socket,
+                      isGroup: true,
+                      communicationUserModel:widget.communicationUserModel,
+                      communicationuser: widget.grpuser,
+                    ),
+                    withNavBar: true, // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+                   }
                 },
                 child: widget.communicationUserModel?.photo==null||
                       widget.communicationUserModel!.photo!.isEmpty 
@@ -191,7 +278,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    widget.communicationUserModel?.isgrp == false
+                    widget.isGroup == false
                         ? Container(
                             // color: Colors.green,
                             width: w / 1.9,

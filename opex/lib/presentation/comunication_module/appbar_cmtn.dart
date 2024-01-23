@@ -107,7 +107,7 @@ class _AppBarCommunicationState extends State<AppBarCommunication> {
                   GestureDetector(
                       onTap: () {},
                       child: SvgPicture.string(
-                        HomeSvg().addIcon2,
+                        HomeSvg().addIcon,
                         color: Colors.black,
                         height: h/45,
                         // width: 19,

@@ -240,3 +240,34 @@ class ChangePasswordFailed extends EmployeeState {
   @override
   List<Object> get props => [message];
 }
+
+
+class TaskGroupCreationLoading extends EmployeeState {}
+
+class TaskGroupCreationSuccess extends EmployeeState {
+  final String message;
+  const TaskGroupCreationSuccess({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
+class TaskGroupCreationFailed extends EmployeeState {
+  final String message;
+
+  const TaskGroupCreationFailed({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}
+
+
+class FcmLoading extends EmployeeState {}
+
+class FcmSuccess extends EmployeeState {}
+
+class FcmFailed extends EmployeeState {}

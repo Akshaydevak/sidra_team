@@ -30,7 +30,8 @@ class EmployeeDataSource {
     required String userRole,
     required List<int> additionalRole,
     required List<String> roleNameList,
-    required String roleName
+    required String roleName,
+    required dynamic profilePic,
   }) async {
     print("ffff${ClusterUrls.userCreateUrl}");
     final response = await client.post(
@@ -52,6 +53,7 @@ class EmployeeDataSource {
         "network_code":netCode,
         "official_role_name":roleName,
         "additional_roles_list":roleNameList,
+        "profile_pic":profilePic,
       },
       options: Options(
         headers: {
@@ -259,6 +261,7 @@ print(groupRead.userId);
     required String roleName,
     required bool isActive,
     required int id,
+    required dynamic profilePic,
   }) async {
     print("Update JOB:${ClusterUrls.updateEmployeeUrl+id.toString()}");
     print("NAMESS${firstName}");
@@ -290,6 +293,7 @@ print(groupRead.userId);
         "official_role_name":roleName,
         "additional_roles_list":roleNameList,
         "is_active":isActive,
+        "profile_pic":profilePic,
 
       },
       options: Options(
@@ -478,4 +482,59 @@ print(groupRead.userId);
     }
   }
 
+
+  //taskGroupCommu
+  Future<DataResponse> createTaskGroupCommunication({
+    required CommunicationTaskGroup taskGroup,
+      }) async {
+    print("communucation Group${taskGroup.taskName}");
+    print("communucation Group${taskGroup.taskCode}");
+    print("communucation Group${taskGroup.createdBy}");
+    print("communucation Group${taskGroup.friendList!.length}");
+    print("communucation Group${authentication.authenticatedUser.token}");
+
+
+    final response = await client.post(
+      "https://api-communication-application.hilalcart.com/api/group/create-group",
+      data: taskGroup,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // 'Authorization': 'token ${authentication.authenticatedUser.token}'
+        },
+      ),
+    );
+
+    print("change response$response");
+    if (response.data['status'] == 'success') {
+      return DataResponse(
+          data: response.data["status"] == "success",
+          error: response.data['groupid']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
+  }
+
+  Future<String> fcmRegister({required String fcmToken}) async {
+    String statusCode;
+    print("delete group${ClusterUrls.registerFCMUrl}");
+    final response = await client.post(
+      ClusterUrls.registerFCMUrl,
+      data: {
+        "device_token":fcmToken
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print("fcm response${response.data}");
+    statusCode = (response.data['message']);
+    print("statusCode${response.data}");
+    return statusCode;
+  }
 }

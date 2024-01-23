@@ -24,8 +24,10 @@ class RegisterEmployeeEvent extends EmployeeEvent {
   final String? gender;
   final List<String> roleNameList;
   final String roleName;
+  final dynamic profilePic;
   RegisterEmployeeEvent({
     required this.emailID,
+    required this.profilePic,
     required this.designationCode,
     required this.gender,
     required this.orgCode,
@@ -155,9 +157,11 @@ class UpdateEmployeeEvent extends EmployeeEvent {
   final String roleName;
   final bool isActive;
   final int id;
+  final dynamic profileImg;
   const UpdateEmployeeEvent(
       {
         required this.emailID,
+        required this.profileImg,
         required this.netCode, required this.nationality,
   required this.officialRole, required this.userRole, required this.additionalRole,
         required this.designationCode,
@@ -208,4 +212,13 @@ class ChangePasswordEvent extends EmployeeEvent {
   List<Object> get props => [
     newPass,
   ];
+}
+class CreateTaskGroupCommunicationEvent extends EmployeeEvent {
+  final CommunicationTaskGroup communicationTaskGroup;
+  const CreateTaskGroupCommunicationEvent(this.communicationTaskGroup);
+}
+
+class FcmTokenRegisterEvent extends EmployeeEvent {
+  final String fcmToken;
+  const FcmTokenRegisterEvent(this.fcmToken);
 }
