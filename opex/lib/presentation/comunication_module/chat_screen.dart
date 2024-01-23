@@ -1140,6 +1140,7 @@ Future<void> saveactiveusers(int count) async {
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
+          print(data);
          
         } );
               }
