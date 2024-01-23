@@ -1,114 +1,124 @@
-import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
-import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
+import 'package:appinio_video_player/appinio_video_player.dart';
+
+import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
-  final String url;
+  final List<String> videoUrls;
+  final int initialIndex;
 
-  VideoPlayerWidget({Key? key, required this.url}) : super(key: key);
+  VideoPlayerWidget({Key? key, required this.videoUrls, this.initialIndex = 0})
+      : super(key: key);
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  late ChewieController _chewieController;
-  Duration _currentPosition = Duration.zero;
+  late VideoPlayerController _videoPlayerController;
+  late CustomVideoPlayerController _customVideoPlayerController;
+  final CustomVideoPlayerSettings _customVideoPlayerSettings =
+  const CustomVideoPlayerSettings(
+    showSeekButtons: true,
+    customAspectRatio: 16 / 9,
+  );
+
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.url);
-    _chewieController = ChewieController(
-      videoPlayerController: _controller,
-      materialProgressColors: ChewieProgressColors(
-        playedColor: ColorPalette.primary,
-        handleColor: ColorPalette.primary,
-        backgroundColor: Colors.grey,
-        bufferedColor: Colors.grey[300]!,
-      ),
-      additionalOptions: (context) {
-        return <OptionItem>[
-          OptionItem(
-            onTap: () => debugPrint('My option works!'),
-            iconData: Icons.chat,
-            title: 'My localized title',
-          ),
-          OptionItem(
-            onTap: () =>
-                debugPrint('Another option that works!'),
-            iconData: Icons.chat,
-            title: 'Another localized title',
-          ),
-        ];
-      },
-      autoPlay: true,
-      looping: false,
-      allowMuting: false, // Hide volume button
-      allowFullScreen: true,
-      aspectRatio: 16 / 9, // Set the aspect ratio to 16:9
-      showControls: true, // Hide play and stop buttons
-      autoInitialize: true, // Automatically initializes the video player
-      placeholder: Container(
-        color: Colors.black,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      // Other customization options...
-    );
+    _initializePlayer();
+  }
 
-    _controller.addListener(() {
-      setState(() {
-        _currentPosition = _controller.value.position;
+  void _initializePlayer() {
+    _videoPlayerController = VideoPlayerController.network(
+      widget.videoUrls[currentIndex],
+    )
+      ..initialize().then((value) {
+        setState(() {});
+        _videoPlayerController.play();
+      })
+      ..addListener(() {
+        if (_videoPlayerController.value.isBuffering) {
+          // Handle buffering state, e.g., show a loading indicator
+        }
       });
-    });
+
+    _customVideoPlayerController = CustomVideoPlayerController(
+      prevTap: _playPrevious,nextTap: _playNext,
+      context: context,
+      videoPlayerController: _videoPlayerController,
+      customVideoPlayerSettings: _customVideoPlayerSettings,
+    );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _chewieController.dispose();
+    _customVideoPlayerController.dispose();
+    _videoPlayerController.dispose();
     super.dispose();
   }
 
-  String formatDuration(Duration duration) =>
-      '${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+  void _playNext() {
+    if (currentIndex < widget.videoUrls.length - 1) {
+      currentIndex++;
+      _videoPlayerController.pause();
+      _videoPlayerController.dispose();
+      _initializePlayer();
+    }
+  }
+
+  void _playPrevious() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      _videoPlayerController.pause();
+      _videoPlayerController.dispose();
+      _initializePlayer();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onDoubleTap: _handleDoubleTap,
-          child: Chewie(
-            controller: _chewieController,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: BackAppBar(
+          label: "Sidra Learning",
+          isAction: false,
+          onTap: () {},
+          // action: Row(
+          //   children: [
+          //     IconButton(
+          //       icon: Icon(Icons.skip_previous),
+          //       onPressed: _playPrevious,
+          //     ),
+          //     IconButton(
+          //       icon: Icon(Icons.skip_next),
+          //       onPressed: _playNext,
+          //     ),
+          //   ],
+          // ),
+        ),
+      ),
+      body: SafeArea(
+        child: Container(
+          child: Column(
+            children: [
+              _videoPlayerController.value.isBuffering
+                  ? CircularProgressIndicator(color: Colors.deepOrange,)
+                  : Container(),
+              CustomVideoPlayer(
+                nextTap: _playNext,
+                prevTap: _playPrevious,
+                customVideoPlayerController: _customVideoPlayerController,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
-  }
-
-  void _handleDoubleTap() {
-    final currentPosition = _controller.value.position;
-    final duration = _controller.value.duration;
-
-    // Define the seeking duration
-    final seekDuration = Duration(seconds: 10);
-
-    // Determine if the double-tap is on the left or right side of the video
-    final doubleTapPosition = MediaQuery.of(context).size.width / 2;
-
-    if (currentPosition + seekDuration < duration && _controller.value.isPlaying) {
-      // Seek forward if double-tap is on the right side
-      if (currentPosition.inMilliseconds / duration.inMilliseconds < doubleTapPosition) {
-        _controller.seekTo(currentPosition + seekDuration);
-      } else {
-        // Seek backward if double-tap is on the left side
-        _controller.seekTo(currentPosition - seekDuration);
-      }
-    }
   }
 }

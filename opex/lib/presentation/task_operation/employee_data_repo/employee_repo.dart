@@ -264,5 +264,20 @@ class EmployeeRepo {
     }
   }
 
+  //group
+  Future<DataResponse> createTaskGroupCommunication({
+    required CommunicationTaskGroup taskGroup,
+  }) async {
+
+    final restAPIresponse = await _dataSource.createTaskGroupCommunication(
+        taskGroup: taskGroup
+    );
+    if (restAPIresponse.data) {
+      return DataResponse(error: restAPIresponse.error,data: true);
+    } else {
+      return DataResponse(error: restAPIresponse.error ?? "",data: false);
+    }
+  }
+
 
 }
