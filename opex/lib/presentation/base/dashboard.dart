@@ -179,6 +179,7 @@ class _DashBoardState extends State<DashBoard> {
       },
       child: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+
         child: Scaffold(
           // appBar: PreferredSize(
           //   preferredSize: Size.zero,
@@ -307,7 +308,7 @@ class _DashBoardState extends State<DashBoard> {
                       } else if (newIndex == 2) {
                         context.read<ProfileBloc>().add(GetProfileEvent());
                       }
-                      
+
                     },
                     screens: _buildScreens(),
                     items: _navBarsItems(),
