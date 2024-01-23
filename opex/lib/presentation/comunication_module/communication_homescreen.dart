@@ -1086,6 +1086,7 @@ setState(() {
             child: Column(
               children: [
                 AppBar(
+                  surfaceTintColor: Colors.white,
                   systemOverlayStyle: const SystemUiOverlayStyle(
                     systemNavigationBarColor: Colors.white, // Navigation bar
                     statusBarColor: Colors.white, // Status bar

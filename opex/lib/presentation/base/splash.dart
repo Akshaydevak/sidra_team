@@ -21,7 +21,8 @@ class SplashScreenState extends State<SplashScreen> {
     Timer(
         const Duration(seconds: 2),
         () { 
-         context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+           authentication.isAuthenticated
+                        ?context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent()):null;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

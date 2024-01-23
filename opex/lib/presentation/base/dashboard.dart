@@ -66,7 +66,7 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     _controller = PersistentTabController(initialIndex: widget.index ?? 0);
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
-   
+  
     super.initState();
   }
 

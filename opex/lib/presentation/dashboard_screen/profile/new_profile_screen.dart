@@ -4,6 +4,7 @@ import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/profile_text_field.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/variables.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_svg.dart';
@@ -787,6 +788,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
+                                                        final socketProvider = context.read<scoketProvider>();
+                                                        socketProvider.disconnect();
                                                         authentication
                                                             .clearAuthenticatedTokens();
 

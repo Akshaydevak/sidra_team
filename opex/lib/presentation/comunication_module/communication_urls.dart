@@ -1,7 +1,7 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
-      // "https://api-communication-application.hilalcart.com/";
-      "http://192.168.1.20:5500/";
+      "https://api-communication-application.hilalcart.com/";
+      // "http://192.168.1.20:5500/";
 
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";
