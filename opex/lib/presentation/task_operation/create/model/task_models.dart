@@ -50,6 +50,8 @@ class GetTaskList extends Equatable {
   final String? name;
   @JsonKey(name: 'report_id')
   final int? reportId;
+  @JsonKey(name: 'group_id')
+  final int? groupId;
   @JsonKey(name: 'currency_code')
   final String? currency;
   @JsonKey(name: 'is_notify',defaultValue: false)
@@ -146,6 +148,7 @@ class GetTaskList extends Equatable {
   const GetTaskList({
     this.name,
     this.reviewCount,
+    this.groupId,
     this.assignNameCard,
     this.topic,
     this.imgCount,

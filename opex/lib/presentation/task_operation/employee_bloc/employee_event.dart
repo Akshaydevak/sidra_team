@@ -213,3 +213,12 @@ class ChangePasswordEvent extends EmployeeEvent {
     newPass,
   ];
 }
+class CreateTaskGroupCommunicationEvent extends EmployeeEvent {
+  final CommunicationTaskGroup communicationTaskGroup;
+  const CreateTaskGroupCommunicationEvent(this.communicationTaskGroup);
+}
+
+class FcmTokenRegisterEvent extends EmployeeEvent {
+  final String fcmToken;
+  const FcmTokenRegisterEvent(this.fcmToken);
+}

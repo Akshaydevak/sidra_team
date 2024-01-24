@@ -868,70 +868,70 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 20,),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10,right: 15),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          GestureDetector(
-                                              onTap: () {
-                                                PersistentNavBarNavigator.pushNewScreen(
-                                                  context,
-                                                  screen: EvaluationUserListing(),
-                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                                );
-                                              },
-                                              child: FourCard(
-                                                label: "Evaluate\n(HR)",
-                                                svg: TaskSvg().reporterSvg,
-                                              )),
-                                          GestureDetector(
-                                              onTap: () {
-                                                PersistentNavBarNavigator.pushNewScreen(
-                                                  context,
-                                                  screen: EvaluationUserListByTLs(),
-                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                                );
-                                              },
-                                              child: FourCard(
-                                                label: "Evaluate\n(TL's)",
-                                                svg: TaskSvg().reporterSvg,
-                                              )),
-                                          GestureDetector(
-                                              onTap: () {
-                                                PersistentNavBarNavigator.pushNewScreen(
-                                                  context,
-                                                  screen: EvaluationUserListToCEO(),
-                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                                );
-                                              },
-                                              child: FourCard(
-                                                label: "Evaluate\n(CEO)",
-                                                svg: TaskSvg().reporterSvg,
-                                              )),
-                                          GestureDetector(
-                                              onTap: () {
-                                                PersistentNavBarNavigator.pushNewScreen(
-                                                  context,
-                                                  screen: OrganisationChartScreen(),
-                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                                );
-                                              },
-                                              child: FourCard(
-                                                label: "Organisation",
-                                                svg: TaskSvg().reporterSvg,
-                                              )),
-
-
-                                        ],
-                                      ),
-                                    ),
+                                    // SizedBox(height: 20,),
+                                    // Padding(
+                                    //   padding: const EdgeInsets.only(left: 10,right: 15),
+                                    //   child: Row(
+                                    //     mainAxisAlignment:
+                                    //     MainAxisAlignment.spaceBetween,
+                                    //     children: [
+                                    //       GestureDetector(
+                                    //           onTap: () {
+                                    //             PersistentNavBarNavigator.pushNewScreen(
+                                    //               context,
+                                    //               screen: EvaluationUserListing(),
+                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
+                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    //             );
+                                    //           },
+                                    //           child: FourCard(
+                                    //             label: "Evaluate\n(HR)",
+                                    //             svg: TaskSvg().reporterSvg,
+                                    //           )),
+                                    //       GestureDetector(
+                                    //           onTap: () {
+                                    //             PersistentNavBarNavigator.pushNewScreen(
+                                    //               context,
+                                    //               screen: EvaluationUserListByTLs(),
+                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
+                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    //             );
+                                    //           },
+                                    //           child: FourCard(
+                                    //             label: "Evaluate\n(TL's)",
+                                    //             svg: TaskSvg().reporterSvg,
+                                    //           )),
+                                    //       GestureDetector(
+                                    //           onTap: () {
+                                    //             PersistentNavBarNavigator.pushNewScreen(
+                                    //               context,
+                                    //               screen: EvaluationUserListToCEO(),
+                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
+                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    //             );
+                                    //           },
+                                    //           child: FourCard(
+                                    //             label: "Evaluate\n(CEO)",
+                                    //             svg: TaskSvg().reporterSvg,
+                                    //           )),
+                                    //       GestureDetector(
+                                    //           onTap: () {
+                                    //             PersistentNavBarNavigator.pushNewScreen(
+                                    //               context,
+                                    //               screen: OrganisationChartScreen(),
+                                    //               withNavBar: false, // OPTIONAL VALUE. True by default.
+                                    //               pageTransitionAnimation: PageTransitionAnimation.fade,
+                                    //             );
+                                    //           },
+                                    //           child: FourCard(
+                                    //             label: "Organisation",
+                                    //             svg: TaskSvg().reporterSvg,
+                                    //           )),
+                                    //
+                                    //
+                                    //     ],
+                                    //   ),
+                                    // ),
                                   ],
                                 )
                                 : Row(

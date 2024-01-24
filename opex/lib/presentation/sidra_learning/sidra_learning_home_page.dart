@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/application_model.dart';
+import 'button_seek.dart';
 import 'learning_cards.dart';
 
 class SidraLearningHomePage extends StatefulWidget {
@@ -27,6 +28,12 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
     "https://www.dochipo.com/wp-content/uploads/2022/08/YouTube-Thumbnail-_-Education-scaled.jpg",
     "https://www.adobe.com/express/create/thumbnail/media_17d5e64dbfdcfa68951114825e4c1a99f31cc9996.jpeg?width=750&format=jpeg&optimize=medium",
     "https://www.dochipo.com/wp-content/uploads/2022/08/YouTube-Thumbnail-_-Education-4-scaled.jpg"
+  ];
+  List<String> listVideo=[
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
   ];
 
 
@@ -142,7 +149,7 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                             // _launchUrl(applicationList[index].url);
                             PersistentNavBarNavigator.pushNewScreen(
                               context,
-                              screen: VideoPlayerWidget(url: applicationList[index].url),
+                              screen: VideoPlayerWidget(videoUrls: listVideo),
                               withNavBar:
                               false, // OPTIONAL VALUE. True by default.
                               pageTransitionAnimation: PageTransitionAnimation.slideUp,

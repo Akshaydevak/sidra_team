@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen:
-                          // EmptyPageCommunication(), 
+                          // EmptyPageCommunication(),
                           DashBoard(
                             index: 1,
                           ),

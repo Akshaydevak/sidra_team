@@ -482,4 +482,59 @@ print(groupRead.userId);
     }
   }
 
+
+  //taskGroupCommu
+  Future<DataResponse> createTaskGroupCommunication({
+    required CommunicationTaskGroup taskGroup,
+      }) async {
+    print("communucation Group${taskGroup.taskName}");
+    print("communucation Group${taskGroup.taskCode}");
+    print("communucation Group${taskGroup.createdBy}");
+    print("communucation Group${taskGroup.friendList!.length}");
+    print("communucation Group${authentication.authenticatedUser.token}");
+
+
+    final response = await client.post(
+      "https://api-communication-application.hilalcart.com/api/group/create-group",
+      data: taskGroup,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // 'Authorization': 'token ${authentication.authenticatedUser.token}'
+        },
+      ),
+    );
+
+    print("change response$response");
+    if (response.data['status'] == 'success') {
+      return DataResponse(
+          data: response.data["status"] == "success",
+          error: response.data['groupid']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
+  }
+
+  Future<String> fcmRegister({required String fcmToken}) async {
+    String statusCode;
+    print("delete group${ClusterUrls.registerFCMUrl}");
+    final response = await client.post(
+      ClusterUrls.registerFCMUrl,
+      data: {
+        "device_token":fcmToken
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print("fcm response${response.data}");
+    statusCode = (response.data['message']);
+    print("statusCode${response.data}");
+    return statusCode;
+  }
 }

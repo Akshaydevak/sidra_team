@@ -33,9 +33,9 @@ class _AppBarState extends State<AppBarScreen> {
     context.read<TaskBloc>().add(const GetNotificationListEvent("", "", ""));
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     // Transparent status bar
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-    ));
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor: Colors.white,
+    // ));
   }
   List<NotificationList>? notification=[];
   int countNoti=0;
@@ -79,7 +79,7 @@ class _AppBarState extends State<AppBarScreen> {
           AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.white, // Navigation bar
-              statusBarColor: Colors.white, // Status bar
+              statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark,statusBarBrightness: Brightness.light// Status bar
             ),
             elevation: 0,
             backgroundColor: Colors.white,

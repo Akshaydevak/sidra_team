@@ -73,8 +73,10 @@ class ClusterUrls{
   static const notificationListUrl="${taskAndOperationBaseURL}task/list-app-notification";
   static const notificationIconUrl="${taskAndOperationBaseURL}task/new-app-notification";
   static const perfonamceTopperUrl='${taskAndOperationBaseURL}task-manage/best-performer?';
+  static const registerFCMUrl="${taskAndOperationBaseURL}task/push-notify-register";
 
   static const changePawwordUserUrl="https://api-uat-user.sidrabazar.com/user-employeepassword-set/admin";
+
 
 
 }

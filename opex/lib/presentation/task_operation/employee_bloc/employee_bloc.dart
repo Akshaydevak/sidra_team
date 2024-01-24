@@ -115,6 +115,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
           otp: event.otp
       );
     }
+    if (event is CreateTaskGroupCommunicationEvent) {
+      yield* createTaskGroupCommunication(
+          taskGroup: event.communicationTaskGroup
+      );
+    }
+    else if (event is FcmTokenRegisterEvent) {
+      yield* fcmRegister(fcmToken: event.fcmToken);
+    }
   }
   Stream<EmployeeState> _mapEmployeeStateToState(
       {
@@ -411,6 +419,36 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield ChangePasswordFailed(
         message: dataResponse.error ?? "",
       );
+    }
+  }
+
+
+  Stream<EmployeeState> createTaskGroupCommunication({
+    required CommunicationTaskGroup taskGroup,
+  }) async* {
+    yield TaskGroupCreationLoading();
+
+    final dataResponse = await _employeeRepo.createTaskGroupCommunication(
+      taskGroup: taskGroup
+    );
+    if (dataResponse.data) {
+      yield TaskGroupCreationSuccess(
+          message: dataResponse.error??""
+      );
+    } else {
+      yield TaskGroupCreationFailed(
+        message: dataResponse.error ?? "",
+      );
+    }
+  }
+
+  Stream<EmployeeState> fcmRegister({required String fcmToken}) async* {
+    yield FcmLoading();
+    final dataResponse = await _employeeDataSource.fcmRegister(fcmToken: fcmToken);
+    if (dataResponse == "success") {
+      yield FcmSuccess();
+    } else {
+      yield FcmFailed();
     }
   }
 

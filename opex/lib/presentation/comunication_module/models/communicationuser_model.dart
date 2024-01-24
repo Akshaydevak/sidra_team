@@ -12,7 +12,7 @@ class CommunicationUserModel extends Equatable {
   final String? email;
   @JsonKey(name: "password")
   final String? password;
-    @JsonKey(name: "photoUrl")
+  @JsonKey(name: "photoUrl")
   final String? photoUrl;
   @JsonKey(name: "createdBy")
   final String? createdBy;
@@ -29,16 +29,16 @@ class CommunicationUserModel extends Equatable {
 
   const CommunicationUserModel(
       {this.id,
-      this.name,
-      this.photoUrl,
-      this.createdBy,
-      this.users,
-      this.email,
-      this.isGroupChat,
-      this.password,
-      this.createdAt,
-      this.messages,
-      this.updatedAt});
+        this.name,
+        this.photoUrl,
+        this.createdBy,
+        this.users,
+        this.email,
+        this.isGroupChat,
+        this.password,
+        this.createdAt,
+        this.messages,
+        this.updatedAt});
   @override
   List<Object> get props => [];
   factory CommunicationUserModel.fromJson(Map<String, dynamic> json) =>
@@ -151,12 +151,12 @@ class UserModel extends Equatable {
 
   const UserModel(
       {this.id,
-      this.name,
-      this.photo,
-      this.chatUser,
-      this.email,
-      this.password,
-      this.connected});
+        this.name,
+        this.photo,
+        this.chatUser,
+        this.email,
+        this.password,
+        this.connected});
   @override
   List<Object> get props => [];
   factory UserModel.fromJson(Map<String, dynamic> json) =>

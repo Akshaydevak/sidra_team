@@ -16,7 +16,7 @@ class UserDummyList extends Equatable {
   final String? chatid;
   @JsonKey(name: "isGroupChat")
   final bool? isgrp;
-   @JsonKey(name: "groupname")
+  @JsonKey(name: "groupname")
   final String? isgrpname;
   @JsonKey(name: "groupId")
   final String? isgrpid;
@@ -55,7 +55,7 @@ class GroupUserList extends Equatable {
   final String? photo;
   @JsonKey(name: "createdBy")
   final String? createdBy;
-  
+
   const GroupUserList({this.id,this.name,this.photo,this.connect,this.createdBy});
   @override
   List<Object> get props => [];
@@ -81,7 +81,7 @@ class GroupList extends Equatable {
   final String? createdBy;
   @JsonKey(name: "addedUsers")
   final List<dynamic>? addedUsers;
-  
+
   GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy,this.addedUsers});
   @override
   List<Object> get props => [];
@@ -100,7 +100,7 @@ class UserSeenList extends Equatable {
   @JsonKey(name: "messagesCount")
   final String? messageCount;
 
-  
+
   const UserSeenList({this.username,this.timestamp,this.messageCount});
   @override
   List<Object> get props => [];

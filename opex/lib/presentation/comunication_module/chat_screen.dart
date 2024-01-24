@@ -131,7 +131,7 @@ AudioPlayer? player = AudioPlayer();
   @override
   void initState() {
      print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.chatid}");
-    widget.socket?.emit("join.chat", { 
+    widget.socket?.emit("join.chat", {
       widget.chatid!=""?widget.chatid:  
       widget.chat==false && widget.isg==false
     ? widget.communicationUserModel?.chatid:
@@ -151,7 +151,7 @@ AudioPlayer? player = AudioPlayer();
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.chatid!=""?widget.chatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
        
-    
+   
     }
      
       widget.socket!.on("unread.update1", (data) {
@@ -163,7 +163,7 @@ AudioPlayer? player = AudioPlayer();
       saveUnreadMessageCount(0,chatid!);
       print("my msg updatess share");
     } );
-    
+   
     widget.socket?.on("room.id", (data) {
       print("room id from socket ${data}");
       roomId = data;
@@ -179,10 +179,10 @@ AudioPlayer? player = AudioPlayer();
       if (widget.isGroup == true) {
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
-         widget.socket!.emit("group.members", 
+         widget.socket!.emit("group.members",
      widget.isg==false?widget.chatid!=""?widget.chatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
-    widget.socket!.on("groupmembers.result", (data){ 
+    widget.socket!.on("groupmembers.result", (data){
       print("group members1: $data");
       grpmember.clear();
     (data as List).forEach((element) {
@@ -192,12 +192,12 @@ AudioPlayer? player = AudioPlayer();
  print(grpmember.length);
  if(this.mounted){
     setState(() {
-      
+     
     });
  }
     });
       } else{
-        
+       
      
       }
          if(isFifthMount){
@@ -224,16 +224,16 @@ widget.socket?.emit("group.message.seen",roomId);
 
    widget.socket?.on("msg.seen.by",activeuserlist);
    
-    
-      } 
-      
-          
+   
+      }
+     
+         
     widget.socket?.on("check.result", (data) {
       print("data for check ${data}");
     });
     });
-  
-    
+ 
+   
 
     if (widget.isGroup == false) {
       print("hello $roomId");
@@ -244,13 +244,13 @@ widget.socket?.emit("group.message.seen",roomId);
           setState(() {});
         }
       });
-    
+   
       widget.socket?.on("stopped", (data) {
         typing = false;
         if (isThirdMount) {
           setState(() {});
         }
-      }); 
+      });
       widget.socket?.on("latest.message", (data)  {
         print("total res listened  ${data}");
        ScrollService.scrollToEnd(
@@ -259,7 +259,7 @@ widget.socket?.emit("group.message.seen",roomId);
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
-            fromuserid: data['fromuserid']));   
+            fromuserid: data['fromuserid']));  
             print("...msglist${messageList.length}");
             if(isenter==true){
               // unreadMessageCount++;
@@ -273,7 +273,7 @@ widget.socket?.emit("group.message.seen",roomId);
                   setState(() {
                     print("audio,,,,");
                   });
-                  } 
+                  }
                   else
                   switch (state.processingState) {
                   case ProcessingState.idle:
@@ -304,15 +304,15 @@ widget.socket?.emit("group.message.seen",roomId);
               print("my msg");
             }
             }
-            else{ 
+            else{
               print("msg");
-              
+             
             }    
             print("activeUsersLength $activeUsersLength");
 
             if(activeUsersLength == 1){
                print("fchgjh $sendMessageCount");
-                sendMessageCount+=1; 
+                sendMessageCount+=1;
             }
             else{
               sendMessageCount=0;
@@ -321,12 +321,12 @@ widget.socket?.emit("group.message.seen",roomId);
              widget.socket?.emit("unread.messages",{'unreadMessageCount':sendMessageCount,'chatid':widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,'userid':widget.loginUserId.toString()});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $sendMessageCount,'userid':${widget.communicationUserModel?.id} ");
-            
+           
          
          
        if(isMount){
         setState(() {
-          
+         
         });
        }
       ScrollService.scrollToEnd(
@@ -336,19 +336,19 @@ widget.socket?.emit("group.message.seen",roomId);
             String? chatid= widget.chat==false
     ? "${widget.communicationUserModel?.chatid}":
    "${widget.communicationuser?.id}";
-            
+           
       print("my msg update $data");
       saveUnreadMessageCount(data,chatid);
        if(isMount){
         setState(() {
-          
+         
         });
        }
     } );
 widget.socket!.emit("update.list",{
                         print("update")
                       });
-    
+   
     } else {
       widget.socket?.on("group.typing", (data) {
         groupTypingUser = FromUser(
@@ -385,10 +385,10 @@ widget.socket!.emit("update.list",{
           setState(() {});
         }
       });
-    
+   
       widget.socket?.on("group.latest.message", (data) {
         print("total ser listened ${widget.loginUserId} ...${data}");
-        // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}"); 
+        // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
         messageList.add(ChatModel(
             message: data['message'],
             fromuserid: data['fromuserid'],
@@ -401,8 +401,8 @@ widget.socket!.emit("update.list",{
               print("...msglist${messageList.length}");
               //  if(isenter==true){
               // unreadMessageCount = 0;
-              
-              if(data['fromuserid'] != widget.loginUserId){   
+             
+              if(data['fromuserid'] != widget.loginUserId){  
                   print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");  
               print("other msg");
                player!.setAsset('asset/response.mp3').then((value) {
@@ -413,7 +413,7 @@ widget.socket!.emit("update.list",{
                     print("audio,,,,");
                    
                   });
-                  } 
+                  }
                   else
                   switch (state.processingState) {
                   case ProcessingState.idle:
@@ -442,9 +442,9 @@ widget.socket!.emit("update.list",{
               print("my msg");
             }
             // }else{
-            // //   unreadMessageCount ++; 
+            // //   unreadMessageCount ++;
             //   print("my msg count ");
-              
+             
             // }
                print("activeUsersLength $activeUsersLength");
 
@@ -465,11 +465,11 @@ widget.socket!.emit("update.list",{
                   print("fchgjh ${grpmember[i].id} $unseenuser");
                 }
                 setState(() {
-                  
+                 
                 });
               }
                print("fchgjh $unreadMessageCount");
-                unreadMessageCount =1; 
+                unreadMessageCount =1;
             }
             else if(activeUsersLength == grpmember.length){
               unreadMessageCount=0;
@@ -477,7 +477,7 @@ widget.socket!.emit("update.list",{
             }
              widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.chatid!=""?widget.chatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-            print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} "); 
+            print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
         if (isMount) {
           setState(() {});
         }
@@ -494,7 +494,7 @@ widget.socket!.emit("update.list",{
       // saveUnreadMessageCount(data,chatid);
        if(isMount){
         setState(() {
-          
+         
         });
        }
     } );
@@ -613,7 +613,7 @@ loadUnreadMessageCount();
 Future<void> saveUnreadMessageCount(int count,String chatt) async {
   setState(() {
      print("my msg update counta $count $chatt");
-    
+   
   });
    pref = await SharedPreferences.getInstance();
     await pref!.setInt(chatt, count);
@@ -635,7 +635,7 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
   void activeuserlist(data) {
    print("active userss $data");
    enter.clear();
-    (data as List).forEach((element) {   
+    (data as List).forEach((element) {  
     enter.add(messageSeenList.fromJson(element));
       });
     print("active userss ${enter.length}");
@@ -655,10 +655,10 @@ Future<void> saveactiveusers(int count) async {
     await pref!.setInt('activeuser', count);
   }
   void sendMessage(String message, String chatId) {
-    
+   
     widget.socket?.emit(
         "new.message", {"type": "text", "chatid": chatId, "content": message});
-      
+     
             widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
 
 
@@ -672,18 +672,18 @@ Future<void> saveactiveusers(int count) async {
         widget.socket?.on("update.chat.list", (data) => print("fxgf1  $data"));
        
              widget.socket!.emit("update.list",{
-      
+     
                         print("update")
                       });
                       widget.socket!.on("friends.update", (data) => print(data));
                       widget.socket!.emit("update.list",{
-      
+     
                         print("update")
                       });
                       widget.socket!.on("friends.update", (data) {
         print(data);
         setState(() {
-          
+         
         });
       } );
   }
@@ -693,7 +693,7 @@ Future<void> saveactiveusers(int count) async {
     await pref!.setInt(chatt,0);
      setState(() {
      print("my msg update counta $count $chatt");
-    
+   
   });
  
   }
@@ -730,7 +730,7 @@ Future<void> saveactiveusers(int count) async {
     // setState(() {});
     //     }
     //         }
-          
+         
     //       }else if(widget.communicationUserModel?.isDeleted == true && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==true && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
     //         messageList.clear();
     //       }
@@ -740,7 +740,7 @@ Future<void> saveactiveusers(int count) async {
     // messageList.insert(0, messages[i]);
     // setState(() {});
     //       }
-    
+   
 //     ScrollService.scrollToEnd(scrollController: _controller, reversed: true);
 //   }
 // }
@@ -784,11 +784,11 @@ Future<void> saveactiveusers(int count) async {
                       }
                        );
                        print("user left too");
-                      
+                     
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                    
+                   
                     if(mounted){
                     widget.socket!.off("get.clients");
                      widget.socket!.emit("get.clients",roomId);
@@ -800,26 +800,26 @@ Future<void> saveactiveusers(int count) async {
                     }
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                  
-                    
+                 
+                   
                    } );
                   });
                         widget.socket!.off("user.left");
                         widget.socket!.on("user.left", (data){
                           print("user left");
-                          
+                         
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
                               saveUnreadMessageCount1(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
                           setState(() {
-                            
+                           
                           });
                         }else{
                           print("same user id");
                         }
                         });
-                    
+                   
                   Navigator.pop(context);
                      }else{
                        BlocProvider.of<CommunicationBloc>(context).add(
@@ -837,11 +837,11 @@ Future<void> saveactiveusers(int count) async {
                       }
                        );
                        print("user left too");
-                      
+                     
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                    
+                   
                     if(mounted){
                     widget.socket!.off("get.clients");
                      widget.socket!.emit("get.clients",roomId);
@@ -853,20 +853,20 @@ Future<void> saveactiveusers(int count) async {
                     }
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                  
-                    
+                 
+                   
                    } );
                   });
                         widget.socket!.off("user.left");
                         widget.socket!.on("user.left", (data){
                           print("user left");
-                          
+                         
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
                               saveUnreadMessageCount1(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
                           setState(() {
-                            
+                           
                           });
                         }else{
                           print("same user id");
@@ -874,7 +874,7 @@ Future<void> saveactiveusers(int count) async {
                         });
                   Navigator.pop(context);
                      }
-                    
+                   
                     }
                     else{
                       if( widget.isg==false){
@@ -887,11 +887,11 @@ Future<void> saveactiveusers(int count) async {
                       }
                        );
                        print("user left too");
-                      
+                     
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                    
+                   
                     if(mounted){
                     widget.socket!.off("get.clients");
                      widget.socket!.emit("get.clients",roomId);
@@ -905,32 +905,32 @@ Future<void> saveactiveusers(int count) async {
                       widget.socket?.emit("group.message.seen",roomId);
                     widget.socket?.on("msg.seen.by", (data) =>print("active userss $data"));
                     }
-                    
+                   
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                  
-                    
+                 
+                   
                    } );
                   });
                         widget.socket!.off("user.left");
                         widget.socket!.on("user.left", (data){
                           print("user left");
-                          
+                         
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
                               saveUnreadMessageCount1(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
                           setState(() {
-                            
+                           
                           });
                         }else{
                           print("same user id");
                         }
                         });
-                    
+                   
                   Navigator.pop(context);
                      }else{
-                      
+                     
                   Navigator.pop(context);
                   widget.socket!.emit("update.list",{
                         print("update")
@@ -941,11 +941,11 @@ Future<void> saveactiveusers(int count) async {
                       }
                        );
                        print("user left too");
-                      
+                     
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                    
+                   
                     if(mounted){
                     widget.socket!.off("get.clients");
                      widget.socket!.emit("get.clients",roomId);
@@ -957,20 +957,20 @@ Future<void> saveactiveusers(int count) async {
                     }
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                  
-                    
+                 
+                   
                    } );
                   });
                         widget.socket!.off("user.left");
                         widget.socket!.on("user.left", (data){
                           print("user left");
-                          
+                         
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
                               saveUnreadMessageCount1(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
                           setState(() {
-                            
+                           
                           });
                         }else{
                           print("same user id");
@@ -994,9 +994,9 @@ Future<void> saveactiveusers(int count) async {
               print("the message state //");
               if (state is ChatScreenGetLoading) {
               } else if (state is ChatScreenGetSuccess) {
-                
+               
                 for (int i = 0; i < state.chatData.messages!.length; i++) {
-                
+               
                  if(widget.communicationUserModel?.isDeleted  == false && widget.communicationUserModel?.deletedAt == null||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
                  {
                    messageList.add(state.chatData.messages![i]);
@@ -1005,7 +1005,7 @@ Future<void> saveactiveusers(int count) async {
                   String? timestamp = widget.communicationUserModel!.deletedAt.toString();
                   DateTime dateTime = DateTime.parse(timestamp);
                   int formattedTime = dateTime.millisecondsSinceEpoch;              // Combine hours and minutes into a single integer
-                
+               
 
                 if( state.chatData.messages?[i].createdAt == null )
                   {
@@ -1024,7 +1024,7 @@ Future<void> saveactiveusers(int count) async {
                 }else if(widget.communicationUserModel?.isDeleted == true && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==true && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
                   messageList.clear();
                 }
-                
+               
                 else{
                   messageList.add(state.chatData.messages![i]);
                 }
@@ -1044,17 +1044,17 @@ Future<void> saveactiveusers(int count) async {
               else if (state is ChatScreenGetFailed){
                
                 setState(() {
-                  
+                 
                 });
-              } 
-      
-              
+              }
+     
+             
             },
           ),
           BlocListener<PaginatedchatBloc, PaginatedchatState>(
             listener: (context, state) {
               if (state is PaginatedChatLoading) {
-                  
+                 
               } else if (state is PaginatedChatSuccess) {
               //  _insertMessagesWithDelay(state.chatData.messages!);
           for (int i = 0; i < state.chatData.messages!.length; i++) {
@@ -1062,8 +1062,7 @@ Future<void> saveactiveusers(int count) async {
                if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null || widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
             {
              messageList.insertAll(0, [state.chatData.messages![i]]);
-             
-            
+           
     setState(() {});
             }
             else if(widget.communicationUserModel?.isDeleted == false && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
@@ -1074,7 +1073,7 @@ Future<void> saveactiveusers(int count) async {
           if( state.chatData.messages![i].createdAt == null )
             {
               messageList.insertAll(0, [state.chatData.messages![i]]);
-              
+             
     setState(() {});
             }
             else {
@@ -1087,7 +1086,7 @@ Future<void> saveactiveusers(int count) async {
     setState(() {});
         }
             }
-          
+         
           }else if(widget.communicationUserModel?.isDeleted == true && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==true && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
             messageList.clear();
           }
@@ -1097,7 +1096,7 @@ Future<void> saveactiveusers(int count) async {
     setState(() {});
           }
                 }
-              
+             
                   setState(() {});
                   // messageList = messageList.reversed.toList();
                 ScrollService.scrollToEnd(
@@ -1117,15 +1116,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.chat==false?widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-      
+     
         } );
               } else {
                 widget.socket?.emit("group.message", {
@@ -1133,14 +1132,13 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
-          print(data);
           print(data);
          
         } );
@@ -1157,10 +1155,10 @@ Future<void> saveactiveusers(int count) async {
                   "chatid": widget.chat==false?widget.communicationUserModel?.chatid : widget.communicationuser?.id,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
@@ -1173,10 +1171,10 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.chatid!=""?widget.chatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
@@ -1196,15 +1194,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.chatid!=""?widget.chatid:  widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-          
+         
         } );
               } else {
                 widget.socket?.emit("group.message", {
@@ -1212,15 +1210,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.chatid!=""?widget.chatid:  widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-          
+         
         } );
               }
               Navigator.of(context).pop(true);
@@ -1233,15 +1231,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-          
+         
         } );
               } else {
                 widget.socket?.emit("group.message", {
@@ -1249,15 +1247,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":  widget.chatid!=""?widget.chatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-          
+         
         } );
               }
               Navigator.of(context).pop(true);
@@ -1272,15 +1270,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-          
+         
         } );
               } else {
                 widget.socket?.emit("group.message", {
@@ -1288,15 +1286,15 @@ Future<void> saveactiveusers(int count) async {
                   "chatid":widget.chatid!=""?widget.chatid:  widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
                   "content": state.upload
                 });
-                
+               
                 widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                 widget.socket!.emit("update.list",{
-        
+       
                           print("update")
                         });
                         widget.socket!.on("friends.update", (data) {
           print(data);
-        
+       
         } );
               }
             } else if (state is UploadLiveAudioFailed) {
@@ -1336,7 +1334,7 @@ Future<void> saveactiveusers(int count) async {
                     communicationuser: widget.communicationuser,
                     isgrp: widget.isg,
                     grpuser: widget.grpuser,
-                    
+                   
                   ),
                   SizedBox(height:3),
               messageList.isEmpty
@@ -1370,7 +1368,7 @@ Future<void> saveactiveusers(int count) async {
                               if (metrics.atEdge) {
                                 bool isTop = metrics.pixels == 0;
                                 if (isTop &&
-                                    _controller.position.userScrollDirection 
+                                    _controller.position.userScrollDirection
                                     ==
                                         ScrollDirection.forward) {
                                      
@@ -1398,7 +1396,7 @@ Future<void> saveactiveusers(int count) async {
                                               //     "":widget.communicationuser?.id??"",
                                           pageNo: pageNo));
                                   }
-                                        
+                                       
                                 } else {
                                   print('At the bottom');
                                 }
@@ -1408,7 +1406,7 @@ Future<void> saveactiveusers(int count) async {
                             child: ListView.separated(
                               reverse: false,
                               // shrinkWrap: true,
-                              controller: _controller, 
+                              controller: _controller,
                               padding: const EdgeInsets.only(left: 8, right: 8),
                               physics: const AlwaysScrollableScrollPhysics(),
                               itemCount: messageList.length,
@@ -1546,7 +1544,7 @@ Future<void> saveactiveusers(int count) async {
                                                             // messageList[index]
                                                             //         .createdAt ??
                                                             //     "",//:
-                                                                
+                                                               
                                                                 formattedTime,
                                                             style: const TextStyle(
                                                                 fontSize: 13,
@@ -1572,7 +1570,7 @@ Future<void> saveactiveusers(int count) async {
                                         } else if (messageList[index].type ==
                                             "video") ...{
                                           VideoPlayerScreen(
-                                            autoplay: false, 
+                                            autoplay: false,
                                             looping: false,
                                             me: false,
                                             alignmentGeometry: Alignment.topLeft,
@@ -1715,7 +1713,7 @@ Future<void> saveactiveusers(int count) async {
                                                   color: Colors.white,
                                                   // margin: const EdgeInsets.symmetric(
                                                   //     horizontal: 15, vertical: 5),
-                                                  child: Stack( 
+                                                  child: Stack(
                                                     // mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       Padding(
@@ -1739,7 +1737,7 @@ Future<void> saveactiveusers(int count) async {
                                                                 color: Colors.black),
                                                             ),
                                                             SizedBox(height: 5,),
-                                                            
+                                                           
                                                           ],
                                                         ),
                                                       ),
@@ -1801,8 +1799,8 @@ Future<void> saveactiveusers(int count) async {
                                              ),
                                            ),
                                          ),
-                                       ) 
-                                                  
+                                       )
+                                                 
                                                  } else...{
                                         Row(
                                           crossAxisAlignment:
@@ -1841,7 +1839,7 @@ Future<void> saveactiveusers(int count) async {
                                                     fontSize: 12,
                                                   ),
                                                 ),
-                                                
+                                               
                                                if (messageList[index].type ==
                                                     "image") ...{
                                                   InkWell(
@@ -2155,7 +2153,7 @@ Future<void> saveactiveusers(int count) async {
                                                         //         .symmetric(
                                                         //     horizontal: 15,
                                                         //     vertical: 5),
-                                                        child:  Stack( 
+                                                        child:  Stack(
                                                     // mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       Padding(
@@ -2180,7 +2178,7 @@ Future<void> saveactiveusers(int count) async {
                                                                 color: Colors.black),
                                                             ),
                                                             SizedBox(height: 5,),
-                                                            
+                                                           
                                                           ],
                                                         ),
                                                       ),
@@ -2225,8 +2223,8 @@ Future<void> saveactiveusers(int count) async {
                                         )
                                       }
                                       }
-                                    } 
-                                    
+                                    }
+                                   
                                     else ...{
                                       if(messageList[index].type=="notify")...{
                                        Padding(
@@ -2365,7 +2363,7 @@ Future<void> saveactiveusers(int count) async {
                                           "file") ...{
                                         Column(
                                           children: [
-                                      
+                                     
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
@@ -2453,7 +2451,7 @@ Future<void> saveactiveusers(int count) async {
                                                   ),
                                                 ],
                                               ),
-                                            ), 
+                                            ),
                                           ],
                                         ),
                                         SizedBox(height: 5,),
@@ -2514,7 +2512,7 @@ Future<void> saveactiveusers(int count) async {
                                                   //     const EdgeInsets.symmetric(
                                                   //         horizontal: 10,
                                                   //         vertical: 5),
-                                                  child:  Stack( 
+                                                  child:  Stack(
                                                     // mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       Padding(
@@ -2538,7 +2536,7 @@ Future<void> saveactiveusers(int count) async {
                                                                 color: Color.fromARGB(255, 255, 255, 255)),
                                                             ),
                                                             SizedBox(height: 5,),
-                                                            
+                                                           
                                                           ],
                                                         ),
                                                       ),
@@ -2565,9 +2563,9 @@ Future<void> saveactiveusers(int count) async {
                                                                     messageList[index].seenBy!.isEmpty?
                                                                     SizedBox():
                                                                   Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
-                                      
+                                     
                                                                   }
-                                                                  
+                                                                 
                                                                  ],
                                                                ),
                                                              ),
@@ -2638,7 +2636,7 @@ Future<void> saveactiveusers(int count) async {
                                         NetworkImage(groupTypingUser?.photo ?? ""),
                                     radius: 12,
                                   )),
-                                    
+                                   
                               Image.asset(
                                 "asset/typinggif.gif",
                                 height: 50.0,
@@ -2804,7 +2802,7 @@ Future<void> saveactiveusers(int count) async {
                                           .text.isNotEmpty) ...{
                                         Container(
                                             // margin: const EdgeInsets.only(left: 16, right: 16),
-              
+             
                                             child: GestureDetector(
                                                 onTap: () async{
                                                   print("sending....");
@@ -2815,7 +2813,7 @@ Future<void> saveactiveusers(int count) async {
                                                           setState(() {
                                                             print("audio,,,,");
                                                           });
-                                                          } 
+                                                          }
                                                           else
                                                           switch (state.processingState) {
                                                           case ProcessingState.idle:
@@ -2846,7 +2844,7 @@ Future<void> saveactiveusers(int count) async {
                                                             "":widget.communicationuser?.id??"");
                                                     widget.socket?.emit(
                                                         "stopped.typing", roomId);    
-                                                        
+                                                       
                                                   } else {
                                                     sendGroupMessage(
                                                         typedMessageController.text,
@@ -2858,9 +2856,9 @@ Future<void> saveactiveusers(int count) async {
                                                         roomId);
                                                     seenUsersList.clear();
                                                   }
-              
+             
                                                   typedMessageController.clear();
-                                                  
+                                                 
                                                 },
                                                 child: Row(
                                                   children: [
@@ -2907,7 +2905,7 @@ Future<void> saveactiveusers(int count) async {
                                               if (await _audioRecorder
                                                   .hasPermission()) {
                                                 await _audioRecorder.start();
-              
+             
                                                 bool isRecording =
                                                     await _audioRecorder
                                                         .isRecording();
@@ -3184,7 +3182,7 @@ Future<void> saveactiveusers(int count) async {
 }
 
 class ScrollService {
-  
+ 
   static scrollToEnd(
       {required ScrollController scrollController, reversed}) {
         print("print Scrolll.......");
