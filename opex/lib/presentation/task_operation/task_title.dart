@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/order_app/activity_log.dart';
@@ -28,7 +29,6 @@ import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
 import '../comunication_module/chat_screen.dart';
-import '../comunication_module/socketconnection.dart';
 import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';

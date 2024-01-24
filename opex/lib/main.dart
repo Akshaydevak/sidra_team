@@ -2,7 +2,7 @@ import 'package:cluster/common_widgets/api_firebase.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/splash.dart';
-import 'package:cluster/presentation/comunication_module/socketconnection.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 
 import 'package:cluster/presentation/order_app/bloc/order_status_bloc/order_status_bloc.dart';
@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> {
               BlocProvider(
                 create: (context) => AuthBloc(),
               ),
-              BlocProvider(
+               BlocProvider(
                 create: (context) => DummyLoginBloc(),
               ),
               BlocProvider(
@@ -144,3 +144,5 @@ class _MyAppState extends State<MyApp> {
         }));
   }
 }
+
+

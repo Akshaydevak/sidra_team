@@ -39,6 +39,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
 
   Stream<GroupState> getAllRegisteredUsers(String? token) async* {
     yield GetAllRegisteredUsersLoading();
+    print("sruthyy $token");
     final dataResponse = await _productData.getAllRegisteredUsers(token);
     if (dataResponse.isNotEmpty) {
       yield GetAllRegisteredUsersSuccess(registeresUsers: dataResponse);

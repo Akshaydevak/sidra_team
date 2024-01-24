@@ -85,7 +85,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
 
   @override
   Widget build(BuildContext context) {
-    print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.chatid}");
+    // print("chat id ${widget.communicationUserModel?.chatid} ${widget.communicationuser?.chatid}");
     var w = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
         providers: [
@@ -307,6 +307,10 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 GestureDetector(
                                                   onTap: (){
                                                     print(widget.token);
+                                                     BlocProvider.of<
+                                                      GroupBloc>(context).add(
+                                                        GetAllRegisteredUsersEvent("")
+                                                      );
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
@@ -469,23 +473,43 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                   print("hello");
                                                                   uid=grpmember[index].name!;
                                                                  
-                                                                   setState(() {
-
-                                                                  widget.socket!.emit("removeUserFromGroup",
-                                                                  {"userId":grpmember[index].id??"",
-                                                                  "chatId":widget.communicationUserModel!.chatid??""
-                                                                  }
-                                                                  );
-                                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                   widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                     widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                    showSnackBar(context, message: data, color: Colors.black);
-                                                                  } );
-                                                                  widget.socket!.emit("group.message",{
-                                                                    "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is deleted from group"
-                                                                  });
-                                                                   Navigator.pop(context);   
-                                                                    });
+                                                                   showDialog(
+                                                                            context: context, builder: (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                insetPadding: EdgeInsets.symmetric(vertical:20),
+                                                                                content: Text("Delete ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group"),
+                                                                                actions: [
+                                                                                  Row( mainAxisAlignment: MainAxisAlignment.end,
+                                                                                    children: [
+                                                                                      TextButton(onPressed: (){
+                                                                                        Navigator.pop(context);
+                                                                                      }, child: Text("Cancel")),
+                                                                                      TextButton(onPressed: (){
+                                                                                         setState(() {
+                                                                                        widget.socket!.emit("removeUserFromGroup",
+                                                                                    {"userId":grpmember[index].id??"",
+                                                                                    "chatId":widget.communicationUserModel!.chatid??""
+                                                                                    }
+                                                                                    );
+                                                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                    widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                      widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                      showSnackBar(context, message: data, color: Colors.black);
+                                                                                    } );
+                                                                                    widget.socket!.emit("group.message",{
+                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is deleted from group"
+                                                                                    }); 
+                                                                                    Navigator.pop(context);
+                                                                                      });
+                                                                              
+                                                                                      }, child: Text("Delete"))
+                                                                                    ],
+                                                                                  )
+                                                                                ],
+                                                                              );
+                                                                            },
+                                                                            );
+                                                                
                                                                 },
                                                                 child: Container(
                                                                   padding:
@@ -567,6 +591,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                               GestureDetector(
                                                 onTap: (){
                                                   print(widget.token);
+                                                  context.read<GroupBloc>().add(GetAllRegisteredUsersEvent(""));
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
@@ -726,23 +751,43 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                     //     chatId: widget.communicationUserModel!.chatid??"", 
                                                                     //     userId:grpmember[index].id??"")
                                                                     // );
+                                                                    showDialog(
+                                                                            context: context, builder: (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                content: Text("Delete ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group?"),
+                                                                                actions: [
+                                                                                  Row( mainAxisAlignment: MainAxisAlignment.end,
+                                                                                    children: [
+                                                                                      TextButton(onPressed: (){
+                                                                                        Navigator.pop(context);
+                                                                                      }, child: Text("Cancel",style: TextStyle(color: ColorPalette.primary),)),
+                                                                                      TextButton(onPressed: (){
+                                                                                         setState(() {
+                                                                                        widget.socket!.emit("removeUserFromGroup",
+                                                                                    {"userId":grpmember[index].id??"",
+                                                                                    "chatId":widget.communicationUserModel!.chatid??""
+                                                                                    }
+                                                                                    );
+                                                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                    widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                      widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                      showSnackBar(context, message: data, color: Colors.black);
+                                                                                    } );
+                                                                                    widget.socket!.emit("group.message",{
+                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content":"${grpmember[index].name.toString().toTitleCase()} is deleted from group "
+                                                                                    }); 
+                                                                                    Navigator.pop(context);
+                                                                                      });
+
+                                                                                      }, child: Text("Delete",style: TextStyle(color: ColorPalette.primary),))
+                                                                                    ],
+                                                                                  )
+                                                                                ],
+                                                                              );
+                                                                            },
+                                                                            );
                                                                 
-                                                                    setState(() {
-                                                                       widget.socket!.emit("removeUserFromGroup",
-                                                                  {"userId":grpmember[index].id??"",
-                                                                  "chatId":widget.communicationUserModel!.chatid??""
-                                                                  }
-                                                                  );
-                                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                   widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                     widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                    showSnackBar(context, message: data, color: Colors.black);
-                                                                  } );
-                                                                  widget.socket!.emit("group.message",{
-                                                                    "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is deleted from group"
-                                                                  }); 
-                                                                  Navigator.pop(context);
-                                                                    });
+                                                                  
                                                                 },
                                                                 child: Container(
                                                                   padding:
@@ -1081,7 +1126,34 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
     showDialog(
       context: context, builder: (BuildContext context) {
         return AlertDialog(
-          content: Text("Do you want to leave this group"),
+          content: Text("Do you want to leave this group",textAlign: TextAlign.center,),
+          actions: [
+            Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel")),
+                TextButton(onPressed: (){
+                  BlocProvider.of<GroupBloc>(context).add(
+                    GroupLeaveEvent(
+                      roomId: widget.roomId ?? "",
+                      token: widget.token ?? ""
+                    )
+                  );
+
+                }, child: Text("Leave"))
+              ],
+            )
+          ],
+        );
+      },
+      );
+  }
+    alertbox2(){
+    showDialog(
+      context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Remove to leave this group"),
           actions: [
             Row( mainAxisAlignment: MainAxisAlignment.end,
               children: [

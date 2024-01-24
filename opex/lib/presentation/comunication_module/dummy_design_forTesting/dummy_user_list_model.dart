@@ -117,7 +117,7 @@ class messageSeenList extends Equatable {
   @JsonKey(name: "username")
   final String? username;
 
-
+  
   const messageSeenList({this.userid,this.username});
   @override
   List<Object> get props => [];

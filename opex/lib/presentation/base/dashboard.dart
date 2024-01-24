@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
@@ -65,7 +66,7 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     _controller = PersistentTabController(initialIndex: widget.index ?? 0);
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
-   
+  
     super.initState();
   }
 
@@ -157,6 +158,7 @@ class _DashBoardState extends State<DashBoard> {
     double w = w1 > 700 ? 400 : w1;
     return BlocListener<DummyLoginBloc, DummyLoginState>(
       listener: (context, state)  async {
+        final socketProvider = context.read<scoketProvider>();
         if (state is TokenCreationCommunicationLoading) {
         } else if (state is TokenCreationCommunicationSuccess) {
           pref= await SharedPreferences.getInstance();
@@ -165,6 +167,8 @@ class _DashBoardState extends State<DashBoard> {
             print("socket token $token");
                     setState(()  {
                       });
+            
+            socketProvider.connect(state.token.toString());
     
           }
           else if (state is TokenCreationCommunicationFailed) {

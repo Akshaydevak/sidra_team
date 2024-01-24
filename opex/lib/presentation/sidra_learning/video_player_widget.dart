@@ -47,7 +47,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       });
 
     _customVideoPlayerController = CustomVideoPlayerController(
-      prevTap: _playPrevious,nextTap: _playNext,
+      // prevTap: _playPrevious,nextTap: _playNext,
       context: context,
       videoPlayerController: _videoPlayerController,
       customVideoPlayerSettings: _customVideoPlayerSettings,
@@ -111,8 +111,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   ? CircularProgressIndicator(color: Colors.deepOrange,)
                   : Container(),
               CustomVideoPlayer(
-                nextTap: _playNext,
-                prevTap: _playPrevious,
+                // nextTap: _playNext,
+                // prevTap: _playPrevious,
                 customVideoPlayerController: _customVideoPlayerController,
               ),
             ],

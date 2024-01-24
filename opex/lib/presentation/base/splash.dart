@@ -100,7 +100,8 @@ class SplashScreenState extends State<SplashScreen> {
     Timer(
         const Duration(seconds: 2),
         () { 
-         context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+           authentication.isAuthenticated
+                        ?context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent()):null;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -112,6 +113,11 @@ class SplashScreenState extends State<SplashScreen> {
                         );}
                         );
                         
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override

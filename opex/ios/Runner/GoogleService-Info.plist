@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDKbIKPf1JsfTDNSRcOMDQFLEKRtUqDotg</string>
+	<string>AIzaSyC8TlazNLJJp6dTHNVBzEXIZ1WMCyXdfTE</string>
 	<key>GCM_SENDER_ID</key>
-	<string>601256270281</string>
+	<string>793852669363</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.rgcopex</string>
 	<key>PROJECT_ID</key>
-	<string>shifas-noti</string>
+	<string>sidrateams-d9972</string>
 	<key>STORAGE_BUCKET</key>
-	<string>shifas-noti.appspot.com</string>
+	<string>sidrateams-d9972.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:601256270281:ios:66e84140f017c18aafb018</string>
+	<string>1:793852669363:ios:821233131f9a5ab0ccafc6</string>
 </dict>
 </plist>
