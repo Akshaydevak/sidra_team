@@ -1062,6 +1062,7 @@ Future<void> saveactiveusers(int count) async {
                if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null || widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
             {
              messageList.insertAll(0, [state.chatData.messages![i]]);
+             
             
     setState(() {});
             }
