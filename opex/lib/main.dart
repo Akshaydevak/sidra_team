@@ -33,6 +33,10 @@ import 'package:firebase_core/firebase_core.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(MyApp()));
   await authentication.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -67,10 +71,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     print("..........${authentication.authenticatedUser.token}");
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarBrightness: Brightness.dark,
-      statusBarColor: Colors.white,
-    ));
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarBrightness: Brightness.light, // Change to Brightness.light
+    //   statusBarColor: Colors.red,
+    // ));
+
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
 
     return StreamProvider<InternetConnectionStatus>(
         initialData: InternetConnectionStatus.connected,

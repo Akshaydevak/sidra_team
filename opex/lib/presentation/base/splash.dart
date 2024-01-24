@@ -1,6 +1,7 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,8 @@ class SplashScreenState extends State<SplashScreen> {
         ?.createNotificationChannel(channel);
   }
   data() async {
+    await Firebase.initializeApp();
+    print("splash");
     final _firebaseMessaging=FirebaseMessaging.instance;
     await _firebaseMessaging.requestPermission( alert: true,
         announcement: false,
@@ -39,6 +42,7 @@ class SplashScreenState extends State<SplashScreen> {
     print("FCM TOKENE.....$fcmToken");
 
     context.read<EmployeeBloc>().add( FcmTokenRegisterEvent(fcmToken.toString()??""));
+    print("after fcm");
 
   }
 
@@ -47,6 +51,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     data();
+    print("splash init");
     final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
     FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings androidinitializationsettings =
