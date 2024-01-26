@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'package:cluster/presentation/order_app/activity_log.dart';
@@ -28,7 +29,6 @@ import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
 import '../comunication_module/chat_screen.dart';
-import '../comunication_module/socketconnection.dart';
 import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
@@ -115,6 +115,9 @@ class _TaskTitleState extends State<TaskTitle> {
   bool isNotify = false;
   String PriorityLeval = "";
   GetTaskList? getTaskRead;
+  PerfomerModel? reportingPersonModel;
+  PerfomerModel? assignToModel;
+  PerfomerModel? assignByModel;
   @override
   void initState() {
     getSocket();
@@ -201,8 +204,62 @@ class _TaskTitleState extends State<TaskTitle> {
             listener: (context, state) {
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
-                context.read<EmployeeBloc>().add(
-                    GetGroupTReadEvent(getTaskRead?.groupId?? 0));
+                if(getTaskRead?.assigningType=="Individual"){
+
+                    userList?.add(
+                        FriendListModel(
+                            userCode: getTaskRead?.assignToDict?.userCode??"",
+                            email: getTaskRead?.assignToDict?.email,
+                            fName: getTaskRead?.assignToDict?.fName,
+                            lName: getTaskRead?.assignToDict?.lName
+                        ));
+                    if(getTaskRead?.assignByDict?.userCode==getTaskRead?.reportingPersonDict?.userCode){
+                      print("both are same");
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.assignByDict?.userCode??"",
+                              email: getTaskRead?.assignByDict?.email,
+                              fName: getTaskRead?.assignByDict?.fName,
+                              lName: getTaskRead?.assignByDict?.lName
+                          ));
+                    }
+                    else{
+                      print("both are different");
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.assignByDict?.userCode??"",
+                              email: getTaskRead?.assignByDict?.email,
+                              fName: getTaskRead?.assignByDict?.fName,
+                              lName: getTaskRead?.assignByDict?.lName
+                          ));
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.reportingPersonDict?.userCode??"",
+                              email: getTaskRead?.reportingPersonDict?.email,
+                              fName: getTaskRead?.reportingPersonDict?.fName,
+                              lName: getTaskRead?.reportingPersonDict?.lName
+                          ));
+                    }
+
+                    print("user list length${userList!.length}");
+                    for(var i=0;i<userList!.length;i++){
+                      print("user list code${userList?[i].userCode}");
+                    }
+
+                  CommunicationTaskGroup? chat;
+                  chat=CommunicationTaskGroup(
+                      createdBy: getTaskRead?.createdPersonCode,
+                      friendList: userList,
+                      taskCode: getTaskRead?.taskCode,
+                      taskName: getTaskRead?.taskName
+                  );
+                  context.read<EmployeeBloc>().add(
+                      CreateTaskGroupCommunicationEvent(chat));
+                }else{
+                  context.read<EmployeeBloc>().add(
+                      GetGroupTReadEvent(getTaskRead?.groupId?? 0));
+                }
+
                 var date = getTaskRead?.endDate;
                 var date2 = getTaskRead?.startDate;
                 var dateTime = DateTime.parse("$date");

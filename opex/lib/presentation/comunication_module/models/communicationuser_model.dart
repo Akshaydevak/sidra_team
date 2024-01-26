@@ -101,14 +101,14 @@ class ChatModel extends Equatable {
 
   const ChatModel(
       {this.type,
-        this.message,
-        this.chatid,
-        this.fromUser,
-        this.fromuserid,
-        this.time,
-        this.createdAt,
-        this.updatedAt,
-        this.seenBy});
+      this.message,
+      this.chatid,
+      this.fromUser,
+      this.fromuserid,
+      this.time,
+      this.createdAt,
+      this.updatedAt,
+      this.seenBy});
   @override
   List<Object> get props => [];
   factory ChatModel.fromJson(Map<String, dynamic> json) =>

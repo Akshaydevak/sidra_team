@@ -25,6 +25,7 @@ class ChatAppBar extends StatefulWidget {
   final bool? typing;
   final bool chat;
   final bool isgrp;
+  final String? loginUserId;
   final FromUser? groupTypingUser;
   final String? token;
   final Socket? socket;
@@ -37,6 +38,7 @@ ChatAppBar(
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser,
+      this.loginUserId,
       this.typing,
       this.socket,
       this.isGroup,
@@ -55,8 +57,10 @@ ChatAppBar(
 
 class _ChatAppBarState extends State<ChatAppBar> {
   bool mounted=true;
+  bool ismounted=true;
+  bool ismount=true;
   SharedPreferences? pref;
-  List<UserSeenList>left=[];
+  List<messageSeenList>left=[];
   Future<void> saveactiveusers(int count) async {
   print("my msg update count $count");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -67,19 +71,13 @@ class _ChatAppBarState extends State<ChatAppBar> {
     // TODO: implement initState
     super.initState();
   }
-   Future<void> saveUnreadMessageCount(int count,String chatt) async {
-  setState(() {
-     print("my msg update counta $count $chatt");
-    
-  });
-   pref = await SharedPreferences.getInstance();
-    await pref!.setInt(chatt, count);
  
-  }
   @override
   void dispose() {
     widget.socket!.off('active.length');
     mounted=false;
+    ismounted=false;
+    ismount=false;
     // TODO: implement dispose
     super.dispose();
   }
@@ -103,23 +101,13 @@ class _ChatAppBarState extends State<ChatAppBar> {
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
-                      // widget.socket!.on("user.left", (data) => print("user left the room1 $data"));
                       widget.socket!.emit("leave.chat",{
                         "room": widget.roomId??"",
                         "userid":widget.communicationUserModel?.id??""
                       }
                        );
                        print("user left too");
-                      widget.socket!.on("user.left", (data) {
-                      print("user left the room1 $data");
-                      if(data["userid"] == widget.communicationUserModel?.id){
-                        print("user left the room1 ${data["chatid"]}");
-                        saveUnreadMessageCount(0,data["chatid"]);
-                      }else{
-                        print("same user id");
-                      }
-                    
-                    } );
+                      
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
@@ -139,6 +127,22 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     
                    } );
                   });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                          
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount(0,widget.roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                            
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                    
                   Navigator.pop(context);
                      }else{
                        BlocProvider.of<CommunicationBloc>(context).add(
@@ -147,24 +151,155 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     chatFilter: "chats"
                   ));
                   Navigator.pop(context);
-                  widget.socket!.emit("leave.chat",widget.roomId);
-                  widget.socket!.on("left.room", (data) {print("room left $data");
+                  widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": widget.roomId??"",
+                        "userid":widget.communicationuser?.users?[0].id??""
+                      }
+                       );
+                       print("user left too");
+                      
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                    
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",widget.roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
-                    List count=[];
-                    count.add( data["messagesCount"]);
-                    
-                    print("messagecounts ${data['messagesCount']}");
+                  
                     
                    } );
                   });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                          
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount(0,widget.roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                            
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
                   Navigator.pop(context);
                      }
                     
                     }
                     else{
-                      widget.isgrp==false?
-                      Navigator.pop(context):Navigator.pop(context);
+                      if( widget.isgrp==false){
+                       widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": widget.roomId??"",
+                        "userid":widget.communicationUserModel?.id??""
+                      }
+                       );
+                       print("user left too");
+                      
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                    
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",widget.roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
+                    if(ismount){
+                      widget.socket?.emit("group.message.seen",widget.roomId);
+                    widget.socket?.on("msg.seen.by", (data) =>print("active userss $data"));
+                    }
+                    
+                   widget.socket!.on("msg1.seen", (data) {
+                    print("room leave message $data");
+                  
+                    
+                   } );
+                  });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                          
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount(0,widget.roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                            
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                    
+                  Navigator.pop(context);
+                     }else{
+                      
+                  widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": widget.roomId??"",
+                        "userid":widget.loginUserId ??""
+                      }
+                       );
+                       print("user left too");
+                      
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                    
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",widget.roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
+                   widget.socket!.on("msg1.seen", (data) {
+                    print("room leave message $data");
+                  
+                    
+                   } );
+                  });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                          
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount(0,widget.roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                            
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                  Navigator.pop(context);
+                     }
             //           PersistentNavBarNavigator.pushNewScreen(
             //   context,
             //   screen: CommunicationModule(),
@@ -429,5 +564,18 @@ class _ChatAppBarState extends State<ChatAppBar> {
         ],
       ),
     );
+  }
+  void handleActiveLength(data) {
+ 
+}
+    Future<void> saveUnreadMessageCount(int count,String chatt) async {
+ print("inside the funcion");
+   pref = await SharedPreferences.getInstance();
+    await pref!.setInt(chatt,0);
+     setState(() {
+     print("my msg update counta $count $chatt");
+    
+  });
+ 
   }
 }

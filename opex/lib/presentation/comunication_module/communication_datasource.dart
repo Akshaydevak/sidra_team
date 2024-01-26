@@ -36,10 +36,18 @@ class CommunicationDatasource {
 
   Future<List<GetEmployeeList>> getAllRegisteredUsers(String? token) async {
     List<GetEmployeeList> allRegisteredUsers = [];
-   
-   
+   print("sruthyyy $token");
+  String path="https://api-task-and-operation.hilalcart.com/task-manage/list-user";
+  String api="";
+  if(token == "")
+  {
+    api=path;
+  }else{
+    api="${path}?name=$token";
+  }
+  print(" sruthyyyy $api");
     final response = await client.get(
-      "https://api-task-and-operation.hilalcart.com/task-manage/list-user",
+      api,
       options: Options(
         validateStatus: (status) => true,
         headers: {
