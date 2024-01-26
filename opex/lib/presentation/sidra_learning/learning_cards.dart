@@ -46,7 +46,7 @@ class ThumbnailCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8,),
-          Image.network(thumbNail?.image??"",height: 200,fit: BoxFit.cover,width: w1,),
+          Image.asset(thumbNail?.image??"",height: 200,fit: BoxFit.cover,width: w1,),
 
           GestureDetector(
             onTap: share,

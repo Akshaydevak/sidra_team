@@ -30,10 +30,10 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
     "https://www.dochipo.com/wp-content/uploads/2022/08/YouTube-Thumbnail-_-Education-4-scaled.jpg"
   ];
   List<String> listVideo=[
-    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-    "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+    "https://sidra-bazar-uat-products.s3.ap-south-1.amazonaws.com/w_banners/Sidra+Meta+Ad2.mp4",
+    "https://sidra-bazar-uat-products.s3.ap-south-1.amazonaws.com/w_banners/Sidra+GO%26+Business.mp4",
+    // "https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    // "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
   ];
 
 
@@ -54,7 +54,7 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 30,left: 5),
+                  padding: const EdgeInsets.only(top: 30,left: 5,bottom: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -93,48 +93,48 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                     ],
                   ),
                 ),
-                Divider(),
+                Divider(height: 1,color: ColorPalette.borderGrey.withOpacity(0.5),),
               ],
             ),
           ),
 
           content: Column(
             children: [
-              Container(
-                height: 185,
-                width: w1/1.15,
-                color: Colors.white,
-                child: CarouselSlider.builder(
 
-                    slideTransform: DefaultTransform(),
-                     enableAutoSlider: true,unlimitedMode: true,
-                    slideIndicator: CircularSlideIndicator(
-                        padding: EdgeInsets.only(bottom: 0, left: 0),
-                        alignment: Alignment.bottomCenter,
-                        indicatorBorderWidth: 0.2,
-                        indicatorRadius: 3.5,
-                        itemSpacing: 10,
-                        currentIndicatorColor: Color(0xff086DB5),
-                        indicatorBackgroundColor: ColorPalette.cardBackground),
-                    itemCount: bannerList.length,
-                    slideBuilder: (int i) {
-                      return Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            width: w1,
-                            height: 170,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(image: NetworkImage(bannerList[i]),fit: BoxFit.cover),
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.white
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
-              Divider(),
+              // Container(
+              //   height: 185,
+              //   width: w1/1.15,
+              //   color: Colors.white,
+              //   child: CarouselSlider.builder(
+              //       slideTransform: DefaultTransform(),
+              //        enableAutoSlider: true,unlimitedMode: true,
+              //       slideIndicator: CircularSlideIndicator(
+              //           padding: EdgeInsets.only(bottom: 0, left: 0),
+              //           alignment: Alignment.bottomCenter,
+              //           indicatorBorderWidth: 0.2,
+              //           indicatorRadius: 3.5,
+              //           itemSpacing: 10,
+              //           currentIndicatorColor: Color(0xff086DB5),
+              //           indicatorBackgroundColor: ColorPalette.cardBackground),
+              //       itemCount: bannerList.length,
+              //       slideBuilder: (int i) {
+              //         return Column(
+              //           children: [
+              //             Container(
+              //               margin: EdgeInsets.symmetric(horizontal: 5),
+              //               width: w1,
+              //               height: 170,
+              //               decoration: BoxDecoration(
+              //                 image: DecorationImage(image: NetworkImage(bannerList[i]),fit: BoxFit.cover),
+              //                 borderRadius: BorderRadius.circular(4),
+              //                 color: Colors.white
+              //               ),
+              //             ),
+              //           ],
+              //         );
+              //       }),
+              // ),
+              // Divider(),
               SizedBox(height: 15,),
               Container(
                 // color: Colors.blue,
@@ -149,7 +149,8 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                             // _launchUrl(applicationList[index].url);
                             PersistentNavBarNavigator.pushNewScreen(
                               context,
-                              screen: VideoPlayerWidget(videoUrls: listVideo),
+                              screen: VideoPlayerWidget(videoUrls: listVideo,initialIndex: index,
+                              model: applicationList[index]),
                               withNavBar:
                               false, // OPTIONAL VALUE. True by default.
                               pageTransitionAnimation: PageTransitionAnimation.slideUp,
@@ -163,13 +164,13 @@ class _SidraLearningHomePageState extends State<SidraLearningHomePage> {
                     },
                     separatorBuilder: (context, index) => Column(
                       children: [
-                        Divider(height: 1,),
+                        Divider(height: 1,color: ColorPalette.borderGrey.withOpacity(0.5),),
                         SizedBox(height: 15,),
                       ],
                     ),
                     itemCount: applicationList.length),
               ),
-              Divider(height: 1,),
+              Divider(height: 1,color: ColorPalette.borderGrey.withOpacity(0.5),),
               SizedBox(height: 50,),
               Center(
                   child: Row(

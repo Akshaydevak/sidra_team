@@ -1,14 +1,18 @@
+import 'package:cluster/core/color_palatte.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 import 'package:appinio_video_player/appinio_video_player.dart';
 
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import '../dashboard_screen/home_screen/homescreen_widget/application_model.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final List<String> videoUrls;
-  final int initialIndex;
+  late int initialIndex;
+  final ApplicationModel? model;
 
-  VideoPlayerWidget({Key? key, required this.videoUrls, this.initialIndex = 0})
+  VideoPlayerWidget({Key? key, required this.videoUrls, this.initialIndex=0, this.model})
       : super(key: key);
 
   @override
@@ -19,12 +23,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _videoPlayerController;
   late CustomVideoPlayerController _customVideoPlayerController;
   final CustomVideoPlayerSettings _customVideoPlayerSettings =
-  const CustomVideoPlayerSettings(
+      const CustomVideoPlayerSettings(
     showSeekButtons: true,
     customAspectRatio: 16 / 9,
   );
 
-  int currentIndex = 0;
+  // int currentIndex = 0;
 
   @override
   void initState() {
@@ -34,7 +38,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   void _initializePlayer() {
     _videoPlayerController = VideoPlayerController.network(
-      widget.videoUrls[currentIndex],
+      widget.videoUrls[widget.initialIndex],
     )
       ..initialize().then((value) {
         setState(() {});
@@ -47,7 +51,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       });
 
     _customVideoPlayerController = CustomVideoPlayerController(
-      prevTap: _playPrevious,nextTap: _playNext,
+      prevTap: _playPrevious,
+      nextTap: _playNext,
       context: context,
       videoPlayerController: _videoPlayerController,
       customVideoPlayerSettings: _customVideoPlayerSettings,
@@ -62,8 +67,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void _playNext() {
-    if (currentIndex < widget.videoUrls.length - 1) {
-      currentIndex++;
+    if (widget.initialIndex < widget.videoUrls.length - 1) {
+      widget.initialIndex++;
       _videoPlayerController.pause();
       _videoPlayerController.dispose();
       _initializePlayer();
@@ -71,8 +76,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void _playPrevious() {
-    if (currentIndex > 0) {
-      currentIndex--;
+    if (widget.initialIndex > 0) {
+      widget.initialIndex--;
       _videoPlayerController.pause();
       _videoPlayerController.dispose();
       _initializePlayer();
@@ -81,40 +86,70 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h=MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: BackAppBar(
-          label: "Sidra Learning",
+          label: "Back",
           isAction: false,
           onTap: () {},
-          // action: Row(
-          //   children: [
-          //     IconButton(
-          //       icon: Icon(Icons.skip_previous),
-          //       onPressed: _playPrevious,
-          //     ),
-          //     IconButton(
-          //       icon: Icon(Icons.skip_next),
-          //       onPressed: _playNext,
-          //     ),
-          //   ],
-          // ),
         ),
       ),
       body: SafeArea(
         child: Container(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _videoPlayerController.value.isBuffering
-                  ? CircularProgressIndicator(color: Colors.deepOrange,)
-                  : Container(),
-              CustomVideoPlayer(
-                nextTap: _playNext,
-                prevTap: _playPrevious,
-                customVideoPlayerController: _customVideoPlayerController,
-              ),
+              if (!_videoPlayerController.value.isInitialized) ...[
+                AspectRatio(
+                  aspectRatio: _customVideoPlayerSettings.customAspectRatio!,
+                  child: Center(
+                    child: CircularProgressIndicator(color: ColorPalette.primary,strokeWidth: 2),
+                  ),
+                ),
+                // Video player widget
+              ] else
+                Container(
+                  // Your CustomVideoPlayer widget
+                  child: CustomVideoPlayer(
+                    nextTap: _playNext,
+                    prevTap: _playPrevious,
+                    customVideoPlayerController: _customVideoPlayerController,
+                  ),
+                ),
+              Container(
+                width: w1,
+                color: ColorPalette.cardBackground,
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.model?.title??"",
+                      style: GoogleFonts.roboto(
+                        fontSize: w/24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    // Description
+                    Text(
+                      widget.model?.subTitle??"",
+                      style: GoogleFonts.roboto(
+                        fontSize: w/28,
+                        color: ColorPalette.subtextGrey
+                      ),
+                    ),
+                  ],
+                ),
+              )
+
             ],
           ),
         ),
