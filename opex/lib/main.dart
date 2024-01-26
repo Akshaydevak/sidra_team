@@ -72,14 +72,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     print("..........${authentication.authenticatedUser.token}");
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //   statusBarBrightness: Brightness.light, // Change to Brightness.light
-    //   statusBarColor: Colors.red,
-    // ));
-
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
-
-    return StreamProvider<InternetConnectionStatus>(
+      return StreamProvider<InternetConnectionStatus>(
         initialData: InternetConnectionStatus.connected,
         create: (_) {
           return InternetConnectionChecker().onStatusChange;

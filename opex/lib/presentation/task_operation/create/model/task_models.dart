@@ -144,9 +144,18 @@ class GetTaskList extends Equatable {
   final String? locayionUrl;
   @JsonKey(name: "created_by")
   final int? createdBy;
+  @JsonKey(name: "assigned_by_dict")
+  final PerfomerModel? assignByDict;
+  @JsonKey(name: "assigned_to_dict")
+  final PerfomerModel? assignToDict;
+  @JsonKey(name: "reporting_person_dict")
+  final PerfomerModel? reportingPersonDict;
 
   const GetTaskList({
     this.name,
+    this.assignByDict,
+    this.assignToDict,
+    this.reportingPersonDict,
     this.reviewCount,
     this.groupId,
     this.assignNameCard,
@@ -812,11 +821,14 @@ class PerfomerModel extends Equatable {
   final String? lName;
   @JsonKey(name: 'email')
   final String? email;
+  @JsonKey(name: 'user_code')
+  final String? userCode;
   @JsonKey(name: 'highest_average_points')
   final double? points;
 
   const PerfomerModel({
     this.fName,
+    this.userCode,
     this.lName,
   this.email,
   this.points,

@@ -42,7 +42,7 @@ class ChatScreen extends StatefulWidget {
   final bool  isGroup;
   final bool chat;
   final Socket? socket;
-  final String chatid;
+  final String grpchatid;
   final String? token;
   final String? loginUserId;
   final UserDummyList? communicationUserModel;
@@ -58,7 +58,7 @@ class ChatScreen extends StatefulWidget {
       this.isGroup = false,
       this.isg=false,
       this.chat=false,
-      this.chatid="",
+      this.grpchatid="",
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser
@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen>
     with SingleTickerProviderStateMixin {
   final _audioRecorder = Record();
 AudioPlayer? player = AudioPlayer();
-
+bool ismount1=true;
   bool isMount = true;
   bool isSecondMount = true;
   bool isThirdMount = true;
@@ -80,6 +80,7 @@ AudioPlayer? player = AudioPlayer();
   bool isFifthMount = true;
   bool issixthMount = true;
   bool isseventhMount = true;
+  bool iseigthMount = true;
   int activeUsersLength=0;
   String? roomId;
   String msgdate1='';
@@ -132,7 +133,7 @@ AudioPlayer? player = AudioPlayer();
   void initState() {
      print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.chatid}");
     widget.socket?.emit("join.chat", {
-      widget.chatid!=""?widget.chatid:  
+      widget.grpchatid!=""?widget.grpchatid:  
       widget.chat==false && widget.isg==false
     ? widget.communicationUserModel?.chatid:
     widget.chat==true&& widget.isg==false?widget.communicationuser?.id: widget.grpuser?.chatid});
@@ -146,21 +147,19 @@ AudioPlayer? player = AudioPlayer();
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
-    }else{
+    }else if(widget.isGroup==true && widget.chat==""){
         print("unreaded messages....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.chatid!=""?widget.chatid: widget.isg==false
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
-       
-   
     }
      
       widget.socket!.on("unread.update1", (data) {
       print("my msg updatess $data");
-      String? chatid= widget.chatid!=""?widget.chatid: widget.chat==false && widget.isg==false
+      String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.chat==false && widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
     print(chatid);
-      saveUnreadMessageCount(0,chatid!);
+      saveUnreadMessageCount(0,chatid);
       print("my msg updatess share");
     } );
    
@@ -179,24 +178,8 @@ AudioPlayer? player = AudioPlayer();
       if (widget.isGroup == true) {
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
-        
-         widget.socket!.emit("group.members",
-     widget.isg==false?widget.chatid!=""?widget.chatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
-    widget.socket!.on("groupmembers.result", (data){
-      print("group members1: $data");
-      grpmember.clear();
-    (data as List).forEach((element) {
-    grpmember.add(GroupUserList.fromJson(element));
-   
-      });
- print(grpmember.length);
- 
-    setState(() {
-     
-    });
-
-    });
+         
    
       } else{
        
@@ -352,6 +335,12 @@ widget.socket!.emit("update.list",{
                       });
    
     } else {
+        
+widget.socket!.emit("group.members",
+     widget.isg==false?widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
+     
+    widget.socket!.on("groupmembers.result",datagrpmember); 
+
       widget.socket?.on("group.typing", (data) {
         groupTypingUser = FromUser(
             name: data['name'], email: data['email'], photo: data['photo']);
@@ -387,9 +376,9 @@ widget.socket!.emit("update.list",{
           setState(() {});
         }
       });
-   
+     
       widget.socket?.on("group.latest.message", (data) {
-        print("total ser listened ${widget.loginUserId} ...${data}");
+        // print("total ser listened ${widget.loginUserId} ...${data}");
         // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
         messageList.add(ChatModel(
             message: data['message'],
@@ -449,38 +438,15 @@ widget.socket!.emit("update.list",{
              
             // }
                print("activeUsersLength $activeUsersLength");
-
-            if(activeUsersLength < grpmember.length){
-                unseenuser.clear();
-              for (int i = 0; i < grpmember.length; i++) {
-                bool isUserIdInEnterList = false;
-
-                for (int j = 0; j < enter.length; j++) {
-                  if (grpmember[i].id == enter[j].userid) {
-                    isUserIdInEnterList = true;
-                    break;
-                  }
-                }
-
-                if (!isUserIdInEnterList) {
-                  unseenuser.add(grpmember[i].id);
-                  print("fchgjh ${grpmember[i].id} $unseenuser");
-                }
-                setState(() {
-                 
-                });
-              }
-               print("fchgjh $unseenuser");
-                unreadMessageCount =1;
-            }
-            else if(activeUsersLength == grpmember.length){
-              unreadMessageCount=0;
-              print("lenght 2");
-            }
+          if(widget.grpchatid==""){
+            print("fchgjh entered");
+             unseeenList(); 
              print("fchgjh $unseenuser");
-             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.chatid!=""?widget.chatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
+             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
+          }
+            
         if (isMount) {
           setState(() {});
         }
@@ -490,7 +456,7 @@ widget.socket!.emit("update.list",{
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
-            String? chatid= widget.chatid!=""?widget.chatid: widget.isg==false
+            String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
    "${widget.grpuser?.chatid}";            
       print("my msg update $data");
@@ -504,6 +470,8 @@ widget.socket!.emit("update.list",{
 widget.socket!.emit("update.list",{
                         print("update")
                       });  
+
+    
     }
     print(file);
     widget.socket?.on("image.download", (data) {
@@ -591,21 +559,18 @@ widget.socket!.emit("update.list",{
 
     print("777777777777") ;
 loadUnreadMessageCount();
-
-
-
     super.initState();
   }
  
   Future<void> loadUnreadMessageCount() async {
-    String? chatid=widget.chatid!=""?widget.chatid:widget.chat==false && widget.isg==false
+    String? chatid=widget.grpchatid!=""?widget.grpchatid:widget.chat==false && widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
      pref = await SharedPreferences.getInstance();
     setState(() {
       print("my msg update count1 ${chatid} ${pref!.getInt(widget.communicationUserModel?.chatid??"")}");
       if(widget.isGroup==false){
-      sendMessageCount = pref!.getInt(chatid!) ??0;
+      sendMessageCount = pref!.getInt(chatid) ??0;
       }
       else{
         unreadMessageCount = 0;
@@ -627,21 +592,44 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
   saveactiveusers(data);
   loadactiveusers();
   print("ACTIVE length sharedpref");
-  String? chatid=widget.chatid!=""?widget.chatid:  widget.chat==false && widget.isg==false
+  String? chatid=widget.grpchatid!=""?widget.grpchatid:  widget.chat==false && widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
               sendMessageCount=0;
               saveUnreadMessageCount(0,chatid);
             }
+            if(isMount){
+      setState(() {
+        
+      });
+            }
+}
+void datagrpmember(data){
+print("group members1: $data");
+      grpmember.clear();
+    (data as List).forEach((element) {
+    grpmember.add(GroupUserList.fromJson(element));
+   
+      });
+ print(grpmember.length);
+ 
+    setState(() {
+     
+    });
 }
   void activeuserlist(data) {
-   print("active userss $data");
+   print("active usersss $data");
    enter.clear();
     (data as List).forEach((element) {  
     enter.add(messageSeenList.fromJson(element));
       });
-    print("active userss ${enter.length}");
+    print("active userssss ${enter.length}");
+    if(isMount){
+      setState(() {
+        
+      });
+    }
 }
 
     Future<void> loadactiveusers() async {
@@ -670,7 +658,7 @@ Future<void> saveactiveusers(int count) async {
 
   void sendGroupMessage(String message, String chatId) {
     widget.socket?.emit("group.message",
-        {"type": "text", "chatid": chatId, "content": message});
+        {"type": "text","chatid": chatId, "content": message});
        
         widget.socket?.on("update.chat.list", (data) => print("fxgf1  $data"));
        
@@ -678,17 +666,17 @@ Future<void> saveactiveusers(int count) async {
      
                         print("update")
                       });
-                      widget.socket!.on("friends.update", (data) => print(data));
+                      // widget.socket!.on("friends.update", (data) => print(data));
                       widget.socket!.emit("update.list",{
      
                         print("update")
                       });
-                      widget.socket!.on("friends.update", (data) {
-        print(data);
-        setState(() {
+      //                 widget.socket!.on("friends.update", (data) {
+      //   print(data);
+      //   setState(() {
          
-        });
-      } );
+      //   });
+      // } );
   }
    Future<void> saveUnreadMessageCount1(int count,String chatt) async {
  print("inside the funcion");
@@ -699,6 +687,55 @@ Future<void> saveactiveusers(int count) async {
    
   });
  
+  }
+  void unseeenList(){
+    print("fchgjh inside the userlist ${grpmember.length}");
+    if(activeUsersLength < grpmember.length){
+              print("fchgjh checked");
+                unseenuser.clear();
+              for (int i = 0; i < grpmember.length; i++) {
+                bool isUserIdInEnterList = false;
+
+                for (int j = 0; j < enter.length; j++) {
+                  if (grpmember[i].id == enter[j].userid) {
+                    isUserIdInEnterList = true;
+                    break;
+                  }
+                }
+
+                if (!isUserIdInEnterList) {
+                  print("fchgjh added");
+                  unseenuser.add(grpmember[i].id);
+                  print("fchgjh ${grpmember[i].id} $unseenuser");
+                }
+               
+              }
+               print("fchgjh $unseenuser");
+                unreadMessageCount =1;
+            }
+            else {
+              if(activeUsersLength == grpmember.length){
+                print("fchgjh else part");
+               unseenuser.clear();
+              for (int i = 0; i < grpmember.length; i++) {
+                bool isUserIdInEnterList = false;
+                  print("fchgjh else check");
+                for (int j = 0; j < enter.length; j++) {
+                  if (grpmember[i].id == enter[j].userid) {
+                    isUserIdInEnterList = true;
+                    break;
+                  }
+                }
+
+                if (isUserIdInEnterList) {
+                  unseenuser.add(grpmember[i].id);
+                  print("fchgjh ${grpmember[i].id} $unseenuser");
+                }
+              }
+              }
+              unreadMessageCount=0;
+              print("lenght 2");
+            }
   }
   // void _insertMessagesWithDelay(List<ChatModel> messages) async {
   // for (int i = 0; i < messages.length; i++) {
@@ -747,17 +784,18 @@ Future<void> saveactiveusers(int count) async {
 //     ScrollService.scrollToEnd(scrollController: _controller, reversed: true);
 //   }
 // }
-  bool ismount=true;
+  
   @override
   void dispose() {
     _controller.dispose();
     isMount = false;
-    ismount=false;
+    ismount1=false;
     isSecondMount = false;
     isThirdMount = false;
     isFourthMount = false;
     isFifthMount = false;
     isseventhMount=false;
+    iseigthMount=false;
     widget.socket!.off("get.clients");
     widget.socket!.off("active.length",handleActiveLength);
     _animationController?.dispose();
@@ -881,13 +919,13 @@ double currentScrollPosition= 0.0;
                    
                     }
                     else{
-                      if( widget.isg==false){
+                      // if( widget.isg==false){
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
                       widget.socket!.emit("leave.chat",{
                         "room": roomId??"",
-                        "userid":widget.chatid!=""?widget.chatid: widget.communicationUserModel?.id??""
+                        "userid":widget.grpchatid!=""?widget.grpchatid:widget.isg==false? widget.communicationUserModel?.id??"":widget.loginUserId??""
                       }
                        );
                        print("user left too");
@@ -905,56 +943,16 @@ double currentScrollPosition= 0.0;
                     print("ACTIVE ...length1 $data");
                   } );
                     }
-                    if(ismount){
+                    if(ismount1){
                       widget.socket?.emit("group.message.seen",roomId);
-                    widget.socket?.on("msg.seen.by", (data) =>print("active userss $data"));
-                    }
-                   
-                   widget.socket!.on("msg1.seen", (data) {
-                    print("room leave message $data");
-                 
-                   
-                   } );
-                  });
-                        widget.socket!.off("user.left");
-                        widget.socket!.on("user.left", (data){
-                          print("user left");
-                         
-                          if(data["userid"] == widget.loginUserId){
-                             print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                          print("user left the room1 ${data["chatid"]}");
-                          setState(() {
-                           
-                          });
-                        }else{
-                          print("same user id");
-                        }
-                        });
-                   
-                  Navigator.pop(context);
-                     }else{
-                  widget.socket!.emit("update.list",{
-                        print("update")
+                    widget.socket?.on("msg.seen.by", (data){
+                      print("active userss $data");
+                      setState(() {
+                        
                       });
-                      widget.socket!.emit("leave.chat",{
-                        "room": roomId??"",
-                        "userid":widget.loginUserId ??""
-                      }
-                       );
-                       print("user left too");
-                  widget.socket!.on("left.room", (data) {
-                    print("room left $data");
-                   
-                    if(mounted){
-                    widget.socket!.off("get.clients");
-                     widget.socket!.emit("get.clients",roomId);
-                     widget.socket!.off("active.length");
-                      widget.socket!.on("active.length", (data) {
-                      saveactiveusers(data);
-                    print("ACTIVE ...length1 $data");
-                  } );
+                      });
                     }
+                   
                    widget.socket!.on("msg1.seen", (data) {
                     print("room leave message $data");
                  
@@ -976,8 +974,53 @@ double currentScrollPosition= 0.0;
                           print("same user id");
                         }
                         });
+                   
                   Navigator.pop(context);
-                     }
+                  //    }else{
+                  // widget.socket!.emit("update.list",{
+                  //       print("update")
+                  //     });
+                  //     widget.socket!.emit("leave.chat",{
+                  //       "room": roomId??"",
+                  //       "userid":widget.loginUserId ??""
+                  //     }
+                  //      );
+                  //      print("user left too");
+                  // widget.socket!.on("left.room", (data) {
+                  //   print("room left $data");
+                   
+                  //   if(mounted){
+                  //   widget.socket!.off("get.clients");
+                  //    widget.socket!.emit("get.clients",roomId);
+                  //    widget.socket!.off("active.length");
+                  //     widget.socket!.on("active.length", (data) {
+                  //     saveactiveusers(data);
+                  //   print("ACTIVE ...length1 $data");
+                  // } );
+                  //   }
+                  //  widget.socket!.on("msg1.seen", (data) {
+                  //   print("room leave message $data");
+                 
+                   
+                  //  } );
+                  // });
+                  //       widget.socket!.off("user.left");
+                  //       widget.socket!.on("user.left", (data){
+                  //         print("user left");
+                         
+                  //         if(data["userid"] == widget.loginUserId){
+                  //            print("ACTIVE length sharedprefww");
+                  //             saveUnreadMessageCount1(0,roomId??"");
+                  //         print("user left the room1 ${data["chatid"]}");
+                  //         setState(() {
+                           
+                  //         });
+                  //       }else{
+                  //         print("same user id");
+                  //       }
+                  //       });
+                  // Navigator.pop(context);
+                  //    }
             //           PersistentNavBarNavigator.pushNewScreen(
             //   context,
             //   screen: CommunicationModule(),
@@ -1032,14 +1075,14 @@ double currentScrollPosition= 0.0;
 
                  }
               //    
+                 setState(() {
                  
+                });
                 messageList = messageList.reversed.toList();
                 ScrollService.scrollToEnd(
               scrollController: _controller, reversed: false);
               
-                setState(() {
-                 
-                });
+                
               }
 
               else if (state is ChatScreenGetFailed){
@@ -1103,7 +1146,9 @@ double currentScrollPosition= 0.0;
     setState(() {});
           }
                 }
-                  setState(() {});
+ScrollService.scrollToEnd(
+              scrollController: _controller, reversed: true);
+                 
 
               }
             },
@@ -1147,6 +1192,9 @@ double currentScrollPosition= 0.0;
         } );
               }
               Navigator.of(context).pop(true);
+              setState(() {
+                
+              });
             } else if (state is UploadPictureFailed) {
               print("failed");
             } else if (state is UploadVideoLoading) {
@@ -1171,7 +1219,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "video",
-                  "chatid":widget.chatid!=""?widget.chatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1186,6 +1234,9 @@ double currentScrollPosition= 0.0;
         } );
               }
               Navigator.of(context).pop(true);
+              setState(() {
+                
+              });
             } else if (state is UploadVideoFailed) {
               print("video failed");
             } else if (state is UploadFilesLoading) {
@@ -1194,7 +1245,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "file",
-                  "chatid":widget.chatid!=""?widget.chatid:  widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1210,7 +1261,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "file",
-                  "chatid":widget.chatid!=""?widget.chatid:  widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1225,6 +1276,9 @@ double currentScrollPosition= 0.0;
         } );
               }
               Navigator.of(context).pop(true);
+              setState(() {
+                
+              });
             } else if (state is UploadAudioLoading) {
               print("audio loading");
             } else if (state is UploadAudioSuccess) {
@@ -1247,7 +1301,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":  widget.chatid!=""?widget.chatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":  widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1262,6 +1316,9 @@ double currentScrollPosition= 0.0;
         } );
               }
               Navigator.of(context).pop(true);
+              setState(() {
+                
+              });
             } else if (state is UploadAudioFailed) {
               print("audio failed");
             } else if (state is UploadLiveAudioLoading) {
@@ -1286,7 +1343,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":widget.chatid!=""?widget.chatid:  widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
+                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1300,6 +1357,9 @@ double currentScrollPosition= 0.0;
        
         } );
               }
+              setState(() {
+                
+              });
             } else if (state is UploadLiveAudioFailed) {
               print("live audio failed");
             }
@@ -1366,11 +1426,12 @@ double currentScrollPosition= 0.0;
                           ))
                       : Expanded(
                           child: NotificationListener<ScrollEndNotification>(
-                            onNotification: (scrollEnd) {
-                              final metrics = scrollEnd.metrics;
-                              if (metrics.atEdge) {
-                                bool isTop = metrics.pixels == 0;
-                                if (isTop &&
+                            onNotification: (ScrollEndNotification notification) {
+                              final metrics = notification.metrics;
+                              if (metrics.hasPixels) {
+                                // bool isTop = metrics.pixels == 0;
+                                if (notification.metrics.pixels ==
+            notification.metrics.minScrollExtent &&
                                     _controller.position.userScrollDirection
                                     ==
                                         ScrollDirection.forward) {
@@ -1382,20 +1443,16 @@ double currentScrollPosition= 0.0;
                                           chatId: widget.chat==false?
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.communicationuser?.id??"",
-                                              // userId:  widget.chat==false?
-                                              // widget.communicationUserModel?.id ??
-                                              //     "":widget.communicationuser?.id??"",
+                                              grpchatId: "",
                                           pageNo: pageNo));
                                   }else{
                                      BlocProvider.of<PaginatedchatBloc>(context).add(
                                       PaginatedChatGetEvent(
                                           token: widget.token ?? "",
-                                          chatId: widget.chatid!=""?widget.chatid:widget.isg==false?
+                                          chatId: widget.grpchatid!=""?widget.grpchatid:widget.isg==false?
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.grpuser?.chatid??"",
-                                              // userId:  widget.chat==false?
-                                              // widget.communicationUserModel?.id ??
-                                              //     "":widget.communicationuser?.id??"",
+                                              grpchatId:widget.grpchatid!=""?widget.grpchatid:"" ,
                                           pageNo: pageNo));
                                   }
                                        
@@ -2555,7 +2612,8 @@ double currentScrollPosition= 0.0;
                                                                     ),
                                                                   ),
                                                                   SizedBox(width: 5,),
-                                                                  if(activeUsersLength == 2)...{
+                                                                  if(widget.grpchatid=="")...{
+                                                                    if(activeUsersLength == 2)...{
                                                                     Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                   }
                                                                   else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2567,6 +2625,10 @@ double currentScrollPosition= 0.0;
                                                                   Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                      
                                                                   }
+                                                                  } else...{
+                                                                    SizedBox()
+                                                                  }
+                                                                  
                                                                  
                                                                  ],
                                                                ),
@@ -2851,11 +2913,19 @@ double currentScrollPosition= 0.0;
                                                         "stopped.typing", roomId);    
                                                        
                                                   } else {
-                                                    sendGroupMessage(
+                                                    print("commentgrpid${widget.grpchatid}");
+                                                    if(widget.grpchatid==""){
+                                                      print("commentgrpid${widget.grpchatid}");
+                                                      sendGroupMessage(
                                                         typedMessageController.text,
-                                                        widget.chatid!=""?widget.chatid: widget.isg==false? widget.communicationUserModel
+                                                        widget.isg==false? widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.grpuser?.chatid??"");
+                                                    }else{
+                                                      sendGroupMessage(
+                                                        typedMessageController.text,
+                                                        widget.grpchatid.toString());
+                                                    }
                                                     widget.socket?.emit(
                                                         "group.stopped.typing",
                                                         roomId);
@@ -3197,7 +3267,7 @@ class ScrollService {
         reversed
             ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds:1000),
         curve: Curves.easeOut,
       );
       // }

@@ -877,8 +877,6 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   //         'auth': {'token': token.toString()},
   //         'autoConnect': false,
   //       });
-    
-    
     // socket.connect();
   // IO.Socket socket = IO.io(
   //       'https://api-communication-application.hilalcart.com/home',
@@ -925,7 +923,40 @@ class _CommunicationModuleState extends State<CommunicationModule> {
       print("vgyvgvh$loginuserId");
       setState(() {});
     });
-    
+     socketCon!.on('friends.list',(data){
+       print("hello");
+                  print("Friends list $data");
+                //   ulist = UserDummyList.fromJson(data);
+                // userlist.add(ulist!);
+                userlist.clear();
+                  (data as List).forEach((element) { 
+                  userlist.add(UserDummyList.fromJson(element));
+                  setState(() {
+                    
+                  });
+                   });
+                  // if(mounted){
+                     print("hgfjh");
+                     
+                    setState(() {
+                      
+                      if(userlist.isNotEmpty){
+
+                      isload=true;
+                      isloop=true;
+                          
+                      }else{
+                        isload=false;
+                        isloop=true;
+                      }
+                       
+                  });
+                  // }
+               
+                // userlist=userlist.toSet().toList();
+               
+                // print("mkkk ${userlist}");
+              });
     socketCon!.emit("update.list",{
       
                         print("update")
@@ -980,47 +1011,17 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                 // print("mkkk ${userlist}");
               // });
               print("upppppdate,,,,,1");
-       
+       if(isMount){
+        setState(() {
+          
+        });
+       }
           
         });
           });
       } );
    
-    socketCon!.on('friends.list',(data){
-       print("hello");
-                  print("Friends list $data");
-                //   ulist = UserDummyList.fromJson(data);
-                // userlist.add(ulist!);
-                userlist.clear();
-                  (data as List).forEach((element) {
-                    
-                  userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
-                   });
-                  // if(mounted){
-                     print("hgfjh");
-                     
-                    setState(() {
-                      
-                      if(userlist.isNotEmpty){
-
-                      isload=true;
-                      isloop=true;
-                          
-                      }else{
-                        isload=false;
-                        isloop=true;
-                      }
-                       
-                  });
-                  // }
-               
-                // userlist=userlist.toSet().toList();
-               
-                // print("mkkk ${userlist}");
-              });
+   
    
 
     // socket.on('move.chat.to.top', (data) {
@@ -1040,11 +1041,11 @@ setState(() {
 });
   }
 
-  // @override
-  // void dispose() {
-  //   isMount = false;
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    isMount = false;
+    super.dispose();
+  }
  
   TextEditingController searchController = TextEditingController();
   // bool isrefresh= false;

@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -115,6 +116,9 @@ class _TaskTitleState extends State<TaskTitle> {
   bool isNotify = false;
   String PriorityLeval = "";
   GetTaskList? getTaskRead;
+  PerfomerModel? reportingPersonModel;
+  PerfomerModel? assignToModel;
+  PerfomerModel? assignByModel;
   @override
   void initState() {
     getSocket();
@@ -161,13 +165,29 @@ class _TaskTitleState extends State<TaskTitle> {
   getSocket()async{
     pref=await SharedPreferences.getInstance();
     token = pref!.getString("token");
-    loginuserId=pref!.getString("loginuserid");
+    socketCon = IO.io(
+      'https://api-communication-application.hilalcart.com/home',
+      // 'http://192.168.1.20:5500/group',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'auth': {'token': token},
+        'autoConnect': false,
+      },
+    );
+
+    socketCon!.connect();
+      socketCon!.on('connect', (_) => print('connectt success: ${socketCon!.id}'));
+     socketCon!.on('user.id', (data) {
+      loginuserId = data;
+      print("vgyvgvh$loginuserId");
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final socketpro =context.watch<scoketProvider>();
-    socketCon =socketpro.socket;
+    // final socketpro =context.watch<scoketProvider>();
+    // socketCon =socketpro.socket;
     double w1 = MediaQuery.of(context).size.width ;
     double w = w1> 700
         ? 400
@@ -201,8 +221,62 @@ class _TaskTitleState extends State<TaskTitle> {
             listener: (context, state) {
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
-                context.read<EmployeeBloc>().add(
-                    GetGroupTReadEvent(getTaskRead?.groupId?? 0));
+                if(getTaskRead?.assigningType=="Individual"){
+
+                    userList?.add(
+                        FriendListModel(
+                            userCode: getTaskRead?.assignToDict?.userCode??"",
+                            email: getTaskRead?.assignToDict?.email,
+                            fName: getTaskRead?.assignToDict?.fName,
+                            lName: getTaskRead?.assignToDict?.lName
+                        ));
+                    if(getTaskRead?.assignByDict?.userCode==getTaskRead?.reportingPersonDict?.userCode){
+                      print("both are same");
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.assignByDict?.userCode??"",
+                              email: getTaskRead?.assignByDict?.email,
+                              fName: getTaskRead?.assignByDict?.fName,
+                              lName: getTaskRead?.assignByDict?.lName
+                          ));
+                    }
+                    else{
+                      print("both are different");
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.assignByDict?.userCode??"",
+                              email: getTaskRead?.assignByDict?.email,
+                              fName: getTaskRead?.assignByDict?.fName,
+                              lName: getTaskRead?.assignByDict?.lName
+                          ));
+                      userList?.add(
+                          FriendListModel(
+                              userCode: getTaskRead?.reportingPersonDict?.userCode??"",
+                              email: getTaskRead?.reportingPersonDict?.email,
+                              fName: getTaskRead?.reportingPersonDict?.fName,
+                              lName: getTaskRead?.reportingPersonDict?.lName
+                          ));
+                    }
+
+                    print("user list length${userList!.length}");
+                    for(var i=0;i<userList!.length;i++){
+                      print("user list code${userList?[i].userCode}");
+                    }
+
+                  CommunicationTaskGroup? chat;
+                  chat=CommunicationTaskGroup(
+                      createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
+                      friendList: userList,
+                      taskCode: getTaskRead?.taskCode,
+                      taskName: getTaskRead?.taskName
+                  );
+                  context.read<EmployeeBloc>().add(
+                      CreateTaskGroupCommunicationEvent(chat));
+                }else{
+                  context.read<EmployeeBloc>().add(
+                      GetGroupTReadEvent(getTaskRead?.groupId?? 0));
+                }
+
                 var date = getTaskRead?.endDate;
                 var date2 = getTaskRead?.startDate;
                 var dateTime = DateTime.parse("$date");
@@ -278,7 +352,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 }
                 CommunicationTaskGroup? chat;
                 chat=CommunicationTaskGroup(
-                  createdBy: getTaskRead?.createdPersonCode,
+                  createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
                   friendList: userList,
                   taskCode: getTaskRead?.taskCode,
                   taskName: getTaskRead?.taskName
@@ -2064,7 +2138,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-
+                                      context.read<ChatBloc>().add(ChatScreenGetEvent(
+                                        token: token.toString(), 
+                                        pageNo: 1, 
+                                        chatId: "",
+                                        grpchatId: communicationGroupId));
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
 
@@ -2072,7 +2150,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           token: token,
                                           loginUserId: loginuserId,
                                           socket: socketCon,
-                                          chatid: communicationGroupId,
+                                          grpchatid: communicationGroupId,
                                           isGroup: true,
                                           // communicationUserModel: widget.communicationUserModel,
                                         ),

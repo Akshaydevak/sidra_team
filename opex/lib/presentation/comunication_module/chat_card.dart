@@ -113,8 +113,8 @@ int unreadCount=0;
           //  widget.socket!.on("message.seen", (data) => print("message seen $data"));
           BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
               token: widget.token ?? "",
-              // userId: widget.communicationUserModel?.id ?? "",
               chatId: widget.communicationUserModel?.chatid??"",
+              grpchatId: "",
               pageNo: 1));
           PersistentNavBarNavigator.pushNewScreen(
             context,
