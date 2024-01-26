@@ -75,8 +75,8 @@ class CommunicationDatasource {
 
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
-    for (var i = 0; i < userIdList!.length; i++) {
-    print("${userIdList[i].userCode}");
+  for (var i = 0; i < userIdList.length; i++) {
+    print("asdd${userIdList.length}");
       map.add({
         "fname": userIdList[i].fname,
         "lname": userIdList[i].lname,
@@ -230,12 +230,20 @@ class CommunicationDatasource {
   }
 
   Future<ChatMessagaeData> getChatScreenData(
-      String token,String chatId,int pageNo) async {
+      String token,String chatId,String grpchatId, int pageNo) async {
     ChatMessagaeData chatScreenData =ChatMessagaeData();
+  String api="";
+  if(grpchatId != "")
+  {
+    api="${CommunicationUrls.commentGroupUrl}$grpchatId";
+  }else{
+    api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
+  }
     // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
-        "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
+        // "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
+        api,
         options: Options(
           validateStatus: (status) => true,
           headers: {
@@ -249,7 +257,26 @@ class CommunicationDatasource {
     chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
     return chatScreenData;
   }
-
+  Future<ChatMessagaeData> getcommentScreen(
+      String token,String grpchatId,int pageNo) async {
+    ChatMessagaeData chatScreenData =ChatMessagaeData();
+    // print(
+    //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
+    final response = await client.get(
+        "${CommunicationUrls.commentGroupUrl}$grpchatId",
+        options: Options(
+          validateStatus: (status) => true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ));
+    print("got it ${response.data}");
+    if(response.data['status']=="success"){
+    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
+    return chatScreenData;
+  }
   Future<ProfileGetModel> getGroupProfileGetData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;

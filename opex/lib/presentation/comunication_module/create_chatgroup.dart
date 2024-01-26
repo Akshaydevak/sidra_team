@@ -174,7 +174,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
       });
       BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
             token: widget.token ?? "",
-            // userId: widget.communicationUserModel?.id ?? "",
+            grpchatId: "",
             chatId:state.list.chatid??"",
             pageNo: 1));
       PersistentNavBarNavigator.pushNewScreen(

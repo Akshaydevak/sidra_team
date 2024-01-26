@@ -6,6 +6,7 @@ class CommunicationUrls {
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";
   static const createGroupUrl="${communicationBaseUrl}api/inventory/inventory-connect-group";
+  static const commentGroupUrl="${communicationBaseUrl}api/group/group-messages/";
   static const leaveGroupUrl="${communicationBaseUrl}api/chat/leave/group";
   static const getChatList="${communicationBaseUrl}api/chat/";
   static const getFilteredChatList="${communicationBaseUrl}api/chat?query=";

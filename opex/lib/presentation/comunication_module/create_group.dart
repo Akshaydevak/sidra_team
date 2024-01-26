@@ -301,7 +301,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                   i1=i;
                                                   BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
                                                   token: widget.token ?? "",
-                                                  // userId: chatlist[i].id ?? "",
+                                                  grpchatId: "",
                                                   pageNo: 1, chatId: chatlist[i].id??""));
                                                   print(",.,.,.,$i...$val1");
                                                 break;

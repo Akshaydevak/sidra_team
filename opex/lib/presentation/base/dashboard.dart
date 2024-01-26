@@ -77,7 +77,9 @@ class _DashBoardState extends State<DashBoard> {
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() {
+    setState(() { 
+      
+      print("internet connected");
       _connectionStatus = result;
     });
   }
@@ -249,6 +251,7 @@ class _DashBoardState extends State<DashBoard> {
                                 _connectivitySubscription = _connectivity
                                     .onConnectivityChanged
                                     .listen(_updateConnectionStatus);
+                                    context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
                                 PersistentNavBarNavigator.pushNewScreen(
                                   context,
                                   screen: DashBoard(),

@@ -33,6 +33,7 @@ class scoketProvider extends ChangeNotifier{
   void disconnect() {
     if (_socket != null) {
       _socket!.disconnect();
+      print('connectt disconnect: ${_socket!.id}');
       notifyListeners();
     }
   }

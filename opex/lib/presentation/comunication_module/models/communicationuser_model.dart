@@ -84,6 +84,8 @@ class ChatModel extends Equatable {
   final String? message;
   @JsonKey(name: "chatid")
   final String? chatid;
+  @JsonKey(name: "groupid")
+  final String? groupid;
   @JsonKey(name: "type")
   final String? type;
   @JsonKey(name: "time")
@@ -103,6 +105,7 @@ class ChatModel extends Equatable {
       {this.type,
       this.message,
       this.chatid,
+      this.groupid,
       this.fromUser,
       this.fromuserid,
       this.time,

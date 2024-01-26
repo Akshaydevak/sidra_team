@@ -64,13 +64,7 @@ class _GroupChatListState extends State<GroupChatList> {
                       profile: widget.employeeList?.profile,
                       code: widget.employeeList?.userCode
                       ));
-                  widget.userUpdateList.add(GetEmployeeList(
-                          fname: widget.employeeList?.fname,
-                      lname: widget.employeeList?.lname,
-                      email: widget.employeeList?.email,
-                      profile: widget.employeeList?.profile,
-                      code: widget.employeeList?.userCode
-                      ));
+                  
                 }
                 widget.listuser(widget.userList,widget.userUpdateList,true);
                 print("usr-list${widget.userList}");

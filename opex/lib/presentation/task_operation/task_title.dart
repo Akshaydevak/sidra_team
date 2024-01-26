@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -164,13 +165,29 @@ class _TaskTitleState extends State<TaskTitle> {
   getSocket()async{
     pref=await SharedPreferences.getInstance();
     token = pref!.getString("token");
-    loginuserId=pref!.getString("loginuserid");
+    socketCon = IO.io(
+      'https://api-communication-application.hilalcart.com/home',
+      // 'http://192.168.1.20:5500/group',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'auth': {'token': token},
+        'autoConnect': false,
+      },
+    );
+
+    socketCon!.connect();
+      socketCon!.on('connect', (_) => print('connectt success: ${socketCon!.id}'));
+     socketCon!.on('user.id', (data) {
+      loginuserId = data;
+      print("vgyvgvh$loginuserId");
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final socketpro =context.watch<scoketProvider>();
-    socketCon =socketpro.socket;
+    // final socketpro =context.watch<scoketProvider>();
+    // socketCon =socketpro.socket;
     double w1 = MediaQuery.of(context).size.width ;
     double w = w1> 700
         ? 400
@@ -248,7 +265,7 @@ class _TaskTitleState extends State<TaskTitle> {
 
                   CommunicationTaskGroup? chat;
                   chat=CommunicationTaskGroup(
-                      createdBy: getTaskRead?.createdPersonCode,
+                      createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
                       friendList: userList,
                       taskCode: getTaskRead?.taskCode,
                       taskName: getTaskRead?.taskName
@@ -335,7 +352,7 @@ class _TaskTitleState extends State<TaskTitle> {
                 }
                 CommunicationTaskGroup? chat;
                 chat=CommunicationTaskGroup(
-                  createdBy: getTaskRead?.createdPersonCode,
+                  createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
                   friendList: userList,
                   taskCode: getTaskRead?.taskCode,
                   taskName: getTaskRead?.taskName
@@ -2121,7 +2138,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-
+                                      context.read<ChatBloc>().add(ChatScreenGetEvent(
+                                        token: token.toString(), 
+                                        pageNo: 1, 
+                                        chatId: "",
+                                        grpchatId: communicationGroupId));
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
 
@@ -2129,7 +2150,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           token: token,
                                           loginUserId: loginuserId,
                                           socket: socketCon,
-                                          chatid: communicationGroupId,
+                                          grpchatid: communicationGroupId,
                                           isGroup: true,
                                           // communicationUserModel: widget.communicationUserModel,
                                         ),
