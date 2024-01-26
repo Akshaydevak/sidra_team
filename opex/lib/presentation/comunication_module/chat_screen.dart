@@ -179,6 +179,7 @@ AudioPlayer? player = AudioPlayer();
       if (widget.isGroup == true) {
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
+        
          widget.socket!.emit("group.members",
      widget.isg==false?widget.chatid!=""?widget.chatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
@@ -190,12 +191,13 @@ AudioPlayer? player = AudioPlayer();
    
       });
  print(grpmember.length);
- if(this.mounted){
+ 
     setState(() {
      
     });
- }
+
     });
+   
       } else{
        
      
@@ -468,13 +470,14 @@ widget.socket!.emit("update.list",{
                  
                 });
               }
-               print("fchgjh $unreadMessageCount");
+               print("fchgjh $unseenuser");
                 unreadMessageCount =1;
             }
             else if(activeUsersLength == grpmember.length){
               unreadMessageCount=0;
               print("lenght 2");
             }
+             print("fchgjh $unseenuser");
              widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.chatid!=""?widget.chatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
@@ -629,7 +632,7 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
               sendMessageCount=0;
-              saveUnreadMessageCount(0,chatid!);
+              saveUnreadMessageCount(0,chatid);
             }
 }
   void activeuserlist(data) {
@@ -762,7 +765,7 @@ Future<void> saveactiveusers(int count) async {
     widget.socket!.off('group.latest.message');
     super.dispose();
   }
-
+double currentScrollPosition= 0.0;
  
 
   @override
@@ -771,6 +774,7 @@ Future<void> saveactiveusers(int count) async {
     // print("token ${widget.token}");
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
+    
     return WillPopScope(
       onWillPop: () {
         if(widget.isGroup==false){
@@ -930,8 +934,6 @@ Future<void> saveactiveusers(int count) async {
                    
                   Navigator.pop(context);
                      }else{
-                     
-                  Navigator.pop(context);
                   widget.socket!.emit("update.list",{
                         print("update")
                       });
@@ -941,8 +943,6 @@ Future<void> saveactiveusers(int count) async {
                       }
                        );
                        print("user left too");
-                     
-    print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
                    
@@ -993,6 +993,7 @@ Future<void> saveactiveusers(int count) async {
             listener: (context, state) {
               print("the message state //");
               if (state is ChatScreenGetLoading) {
+
               } else if (state is ChatScreenGetSuccess) {
                
                 for (int i = 0; i < state.chatData.messages!.length; i++) {
@@ -1035,7 +1036,7 @@ Future<void> saveactiveusers(int count) async {
                 messageList = messageList.reversed.toList();
                 ScrollService.scrollToEnd(
               scrollController: _controller, reversed: false);
-                 
+              
                 setState(() {
                  
                 });
@@ -1056,12 +1057,15 @@ Future<void> saveactiveusers(int count) async {
               if (state is PaginatedChatLoading) {
                  
               } else if (state is PaginatedChatSuccess) {
+                
+              
               //  _insertMessagesWithDelay(state.chatData.messages!);
           for (int i = 0; i < state.chatData.messages!.length; i++) {
             // messageList.insertAll(0, [state.chatData.messages![i]]);
                if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null || widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
             {
-             messageList.insertAll(0, [state.chatData.messages![i]]);
+             
+               messageList.insertAll(0, [state.chatData.messages![i]]);
            
     setState(() {});
             }
@@ -1072,6 +1076,7 @@ Future<void> saveactiveusers(int count) async {
 
           if( state.chatData.messages![i].createdAt == null )
             {
+              
               messageList.insertAll(0, [state.chatData.messages![i]]);
              
     setState(() {});
@@ -1081,6 +1086,7 @@ Future<void> saveactiveusers(int count) async {
           DateTime dateTime1 = DateTime.parse(timestamp1!);
           int formattedTime1 = dateTime1.millisecondsSinceEpoch;
             if(formattedTime1 > formattedTime){
+              
           messageList.insertAll(0, [state.chatData.messages![i]]);
          
     setState(() {});
@@ -1088,20 +1094,17 @@ Future<void> saveactiveusers(int count) async {
             }
          
           }else if(widget.communicationUserModel?.isDeleted == true && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==true && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
-            messageList.clear();
+            
           }
           else{
+            
             messageList.insertAll(0, [state.chatData.messages![i]]);
            
     setState(() {});
           }
                 }
-             
                   setState(() {});
-                  // messageList = messageList.reversed.toList();
-                ScrollService.scrollToEnd(
-              scrollController: _controller, reversed: true);
-               
+
               }
             },
           ),
@@ -1371,7 +1374,6 @@ Future<void> saveactiveusers(int count) async {
                                     _controller.position.userScrollDirection
                                     ==
                                         ScrollDirection.forward) {
-                                     
                                   pageNo++;
                                   if(widget.isGroup==false){
                                   BlocProvider.of<PaginatedchatBloc>(context).add(
@@ -2653,16 +2655,19 @@ Future<void> saveactiveusers(int count) async {
                           ),
                       )
                       : typing == true
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  "asset/typinggif.gif",
-                                  height: 50.0,
-                                  width: 50.0,
-                                ),
-                              ],
-                            )
+                          ? Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                    "asset/typinggif.gif",
+                                    height: 50.0,
+                                    width: 50.0,
+                                  ),
+                                ],
+                              ),
+                          )
                           : SizedBox(),
                   Align(
                       alignment: Alignment.bottomCenter,
@@ -3184,18 +3189,18 @@ Future<void> saveactiveusers(int count) async {
 class ScrollService {
  
   static scrollToEnd(
-      {required ScrollController scrollController, reversed}) {
+      {required ScrollController scrollController,required reversed}) {
         print("print Scrolll.......");
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if(scrollController.hasClients){
+      // if(scrollController.hasClients){
          scrollController.animateTo(
         reversed
             ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 50),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
-      }
+      // }
      
     });
   }
@@ -3211,7 +3216,7 @@ String formatMessageTimestamp(DateTime timestamp) {
   } else if (timestamp.isAfter(lastWeek)) {
     return DateFormat('EEEE').format(timestamp);
   } else {
-    return DateFormat('d MMM yyyy ${DateFormat('jm').format(timestamp)}').format(timestamp);
+    return DateFormat('d MMM yyyy').format(timestamp);
   }
 }
 

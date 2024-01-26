@@ -75,8 +75,8 @@ class CommunicationDatasource {
 
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
-    for (var i = 0; i < userIdList!.length; i++) {
-    print("${userIdList[i].userCode}");
+  for (var i = 0; i < userIdList.length; i++) {
+    print("asdd${userIdList.length}");
       map.add({
         "fname": userIdList[i].fname,
         "lname": userIdList[i].lname,

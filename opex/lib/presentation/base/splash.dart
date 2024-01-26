@@ -37,7 +37,8 @@ class SplashScreenState extends State<SplashScreen> {
         carPlay: false,
         criticalAlert: false,
         provisional: false,
-        sound: true);
+        sound: true,
+        );
     final fcmToken=await _firebaseMessaging.getToken();
     print("FCM TOKENE.....$fcmToken");
 
