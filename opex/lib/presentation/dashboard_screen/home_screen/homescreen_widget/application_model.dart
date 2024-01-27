@@ -12,22 +12,20 @@ class ApplicationModel {
 
 List<ApplicationModel> applicationList = [
   ApplicationModel(
-      title: 'Al Rawabi Group of Companies- Corporate Ad',
-      image:
-          "https://rawabihypermarket.com/wp-content/uploads/2021/07/r1.jpg",
-      subTitle: "New add",
-      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+      title: 'Sidra Go Whatsapp & Sidra Business Whatsapp',
+      image: "asset/newbg2.jpg",
+      subTitle: "Sidra",
+      url: "https://sidra-bazar-uat-products.s3.ap-south-1.amazonaws.com/w_banners/Sidra+Meta+Ad2.mp4"),
   ApplicationModel(
-      title:
-          'ലോകത്തെ ആദ്യ കുടുംബ കേന്ദ്രീകൃത ഹൈപ്പർമാർക്കറ്റുമായി അൽറവാബി ഗ്രൂപ്പ് ഓഫ് കമ്പനീസ്',
+      title: 'Sidra Go Whatsapp & Sidra Business Whatsapp',
       image:
-          "https://menafn.com/updates/pr/2023-03/11/GT_2c0d9image_story.jpeg",
-      subTitle: "Task and operation",
-      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-  ApplicationModel(
-      title: 'Rawabi Hypermarket Al Murrah',
-      image: "https://alrawabigroup.com/uploads/media/news215549.jpg",
-      subTitle: "Task and operation",
-      url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+          "asset/newbg.jpg",
+      subTitle: "Sidra",
+      url: "https://sidra-bazar-uat-products.s3.ap-south-1.amazonaws.com/w_banners/Sidra+GO%26+Business.mp4"),
+  // ApplicationModel(
+  //     title: 'Rawabi Hypermarket Al Murrah',
+  //     image: "https://alrawabigroup.com/uploads/media/news215549.jpg",
+  //     subTitle: "Task and operation",
+  //     url: "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
 
 ];
