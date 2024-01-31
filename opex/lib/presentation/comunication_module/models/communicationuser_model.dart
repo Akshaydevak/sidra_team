@@ -50,7 +50,9 @@ class CommunicationUserModel extends Equatable {
 class ChatMessagaeData extends Equatable {
   @JsonKey(name: "messages")
   final List<ChatModel>? messages;
-  const ChatMessagaeData({this.messages});
+  @JsonKey(name: "pagination")
+  final ChatPage? pagination;
+  const ChatMessagaeData({this.messages,this.pagination});
   @override
   List<Object> get props => [];
   factory ChatMessagaeData.fromJson(Map<String, dynamic> json) =>
@@ -77,7 +79,20 @@ class   ChatUser extends Equatable {
       _$ChatUserFromJson(json);
   Map<String, dynamic> toJson() => _$ChatUserToJson(this);
 }
-
+@JsonSerializable()
+class ChatPage extends Equatable {
+  @JsonKey(name: "page")
+   var page;
+  @JsonKey(name: "totalPages")
+   var totalpages;
+  
+  ChatPage({this.page, this.totalpages});
+  @override
+  List<Object> get props => [];
+  factory ChatPage.fromJson(Map<String, dynamic> json) =>
+      _$ChatPageFromJson(json);
+  Map<String, dynamic> toJson() => _$ChatPageToJson(this);
+}
 @JsonSerializable()
 class ChatModel extends Equatable {
   @JsonKey(name: "message")

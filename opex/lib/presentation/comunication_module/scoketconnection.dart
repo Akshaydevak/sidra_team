@@ -10,7 +10,7 @@ class scoketProvider extends ChangeNotifier{
    void connect(String token) {
     _socket = IO.io(
       'https://api-communication-application.hilalcart.com/home',
-      // 'http://192.168.1.20:5500/home',
+      // 'http://192.168.1.10:5500/home',
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},

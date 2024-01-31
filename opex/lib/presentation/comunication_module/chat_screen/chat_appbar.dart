@@ -31,13 +31,18 @@ class ChatAppBar extends StatefulWidget {
   final Socket? socket;
   final String? roomId;
   final bool? isGroup;
+  final String cmntgrpid;
+  final String cmntgrpname;
   final GroupList? grpuser;
+  List<GroupUserList>? grpmember=[];
   // final VoidCallback ontap;
 ChatAppBar(
       {Key? key,
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser,
+      this.cmntgrpid="",
+      this.cmntgrpname="",
       this.loginUserId,
       this.typing,
       this.socket,
@@ -46,7 +51,8 @@ ChatAppBar(
       this.roomId,
       this.chat=false,
       this.isgrp=false,
-      this.groupTypingUser
+      this.groupTypingUser,
+      this.grpmember
       // required this.ontap
       })
       : super(key: key);
@@ -340,6 +346,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       isGroup: true,
                       communicationUserModel:widget.communicationUserModel,
                       communicationuser: widget.grpuser,
+                      grpmember: widget.grpmember,
                     ),
                     withNavBar: true, // OPTIONAL VALUE. True by default.
                     pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -355,21 +362,25 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         fontSize: w/22,
                         textColor: Colors.white,
                         fontWeight: FontWeight.w500,
-                        text:widget.isGroup==false?  widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.name.toString().toUpperCase()}" :widget.isgrp==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.grpuser?.gname.toString().toUpperCase()}" ,
+                        text:widget.isGroup==false?widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.name.toString().toUpperCase()}" :widget.isgrp==false ?"${widget.communicationUserModel?.name.toString().toUpperCase()}":widget.cmntgrpid==""?"${widget.grpuser?.gname.toString().toUpperCase()}":"${widget.cmntgrpname.toString().toUpperCase()}" ,
                       ):
                 
-                CircleAvatar(
+             widget.isGroup==false? CircleAvatar(
                     radius:w/23,
                     backgroundColor: Colors.grey,
                     backgroundImage:
                         NetworkImage(
-                          widget.isGroup??false?
-
-                         widget.chat==false ? widget.communicationUserModel?.photo?? "": widget.communicationuser?.photoUrl ??"":
+                         widget.chat==false ? widget.communicationUserModel?.photo?? "": widget.communicationuser?.photoUrl ??""
                           //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
                           // "${widget.communicationUserModel?.photo}"
-                          widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
-                          )),
+                          // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                          )):
+                           CircleAvatar(
+                    radius:w/23,
+                    backgroundColor: Colors.grey,
+                    backgroundImage:
+                        AssetImage("asset/chatgrpimg.png")
+                        ),
               ),
               const SizedBox(
                 width: 10,
@@ -391,10 +402,10 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   //   withNavBar: true, // OPTIONAL VALUE. True by default.
                   //   pageTransitionAnimation: PageTransitionAnimation.fade,
                   // );
-                   }  else{
+                   }  else if(widget.cmntgrpid==""){
                      PersistentNavBarNavigator.pushNewScreen(
                     context,
-                    screen: ChatProfileScreen2(
+                     screen: ChatProfileScreen2(
                       chat: widget.isgrp,
                       token: widget.token,
                       roomId: widget.roomId,
@@ -402,6 +413,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       isGroup: true,
                       communicationUserModel:widget.communicationUserModel,
                       communicationuser: widget.grpuser,
+                      grpmember: widget.grpmember,
                     ),
                     withNavBar: true, // OPTIONAL VALUE. True by default.
                     pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -429,15 +441,28 @@ class _ChatAppBarState extends State<ChatAppBar> {
                               ),
                             ),
                           )
-                        : Text(
+                        : widget.cmntgrpid==""?Text(
                             widget.isgrp==false?
                              "${widget.communicationUserModel?.name?.toTitleCase()}": "${widget.grpuser?.gname?.toTitleCase()}",
+                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.roboto(
                               color:  Colors.white,
                               fontSize: w/25,
                               fontWeight: FontWeight.w500,
                             ),
-                          ),
+                          ):Container(
+                            child: Text(
+                             
+                               "${widget.cmntgrpname.toTitleCase()}",
+                               overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.roboto(
+                                color:  Colors.white,
+                                fontSize: w/25,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          )
+
                     // groupTypingUser != null
                     //     ? Row(
                     //         children: [

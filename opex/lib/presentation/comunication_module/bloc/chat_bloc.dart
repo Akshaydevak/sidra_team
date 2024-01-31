@@ -19,7 +19,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       {required String token,required String chatId,required String grpchatId, required int pageNo}) async* {
         yield ChatScreenGetLoading();
         final dataResponse=await _productData.getChatScreenData(token, chatId,grpchatId,pageNo);
-        if(dataResponse.messages!=null){
+        if(dataResponse.isNotEmpty){
           yield ChatScreenGetSuccess(chatData: dataResponse);
         }else{
           yield ChatScreenGetFailed();
