@@ -696,6 +696,7 @@ class TaskDataSource {
         },
       ),
     );
+    print(" shifas 777777${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
       taskList.add(GetTaskList.fromJson(element));
     });
@@ -1448,11 +1449,15 @@ class TaskDataSource {
     required int? id,
     required String? reportStatus,
     required String? replay,
+    required String? replayType,
+    required String? reAssignCode,
   }) async {
     print("replay Url${ClusterUrls.replayReportUrl + id.toString()}");
     final response = await client.post(
       ClusterUrls.replayReportUrl + id.toString(),
-      data: {"report_status": reportStatus, "reply": replay},
+      data: {"report_status": reportStatus, "reply": replay,
+      "report_reply_type":replayType,
+      "updated_user":reAssignCode},
       options: Options(
         headers: {
           'Content-Type': 'application/json',

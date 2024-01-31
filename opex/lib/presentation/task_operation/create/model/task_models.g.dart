@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      parentGroupId: json['parent_group_id'] as int?,
       assignByDict: json['assigned_by_dict'] == null
           ? null
           : PerfomerModel.fromJson(
@@ -149,6 +150,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'tree_id': instance.treeId,
       'level': instance.level,
       'parent': instance.parent,
+      'parent_group_id': instance.parentGroupId,
       'job_id': instance.jobId,
       'image_count': instance.imgCount,
       'review_count': instance.reviewCount,

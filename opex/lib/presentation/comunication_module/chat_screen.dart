@@ -2190,8 +2190,7 @@ double currentScrollPosition= 0.0;
                                                               }
                                                             },
                                                             child: SvgPicture.string(
-                                                                TaskSvg()
-                                                                    .downloadIcon)),
+                                                              CommunicationSvg().dwnldIcon,)),
                                                       ],
                                                     ),
                                                   } else if (messageList[index]
@@ -2886,7 +2885,7 @@ double currentScrollPosition= 0.0;
                                   fromuserids=messageList[index+1].fromuserid!;
                                     return messageList[index].fromuserid!=messageList[index].fromuserid? const SizedBox(
                                     height: 8,
-                                  ):const SizedBox();
+                                  ):const SizedBox(height: 1,);
                                    
                                 },
                               ),

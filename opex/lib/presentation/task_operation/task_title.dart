@@ -20,6 +20,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -38,6 +39,7 @@ import 'create/model/task_models.dart';
 import 'create/single_row.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_bloc/employee_bloc.dart';
+import 'employee_card.dart';
 import 'employee_model/employee_model.dart';
 import 'home/bloc/job_bloc.dart';
 import 'home/comments_screen.dart';
@@ -47,8 +49,9 @@ import 'lottieLoader.dart';
 class TaskTitle extends StatefulWidget {
   bool isMyJob;
   bool isReporter;
+  bool isReported;
 
-  TaskTitle({Key? key, this.isMyJob = false, this.isReporter = false})
+  TaskTitle({Key? key, this.isMyJob = false, this.isReporter = false,this.isReported=false})
       : super(key: key);
 
   @override
@@ -157,14 +160,14 @@ class _TaskTitleState extends State<TaskTitle> {
   TextEditingController replayRejectNotes = TextEditingController();
   int topicId = 0;
   bool _isLoading = true;
-  List<FriendListModel>? userList=[];
+  List<FriendListModel>? userList = [];
   GetTaskGroupList? readGroup;
   SharedPreferences? pref;
   String? token;
   String? loginuserId;
   IO.Socket? socketCon;
-  getSocket()async{
-    pref=await SharedPreferences.getInstance();
+  getSocket() async {
+    pref = await SharedPreferences.getInstance();
     token = pref!.getString("token");
     socketCon = IO.io(
       'https://api-communication-application.hilalcart.com/home',
@@ -177,38 +180,45 @@ class _TaskTitleState extends State<TaskTitle> {
     );
 
     socketCon!.connect();
-      socketCon!.on('connect', (_) => print('connectt success: ${socketCon!.id}'));
-     socketCon!.on('user.id', (data) {
+    socketCon!
+        .on('connect', (_) => print('connectt success: ${socketCon!.id}'));
+    socketCon!.on('user.id', (data) {
       loginuserId = data;
       print("vgyvgvh$loginuserId");
       setState(() {});
     });
   }
 
+  List<GetEmployeeList> listEmployee = [];
+
   @override
   Widget build(BuildContext context) {
     // final socketpro =context.watch<scoketProvider>();
     // socketCon =socketpro.socket;
-    double w1 = MediaQuery.of(context).size.width ;
-    double w = w1> 700
-        ? 400
-        : w1;
-    var h=MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
+    var h = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         print("popScope");
         if (widget.isReporter == true) {
-          context
-              .read<TaskBloc>()
-              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
+          print("popScope repoted");
+          context.read<TaskBloc>().add(
+              GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
           context
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
           context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-        } else {
-          context
-              .read<TaskBloc>()
-              .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
+        }
+        else if (widget.isReported == true) {
+
+          print("popScope hhhhh");
+          context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
+        }
+        else {
+          print("popScope task");
+          context.read<TaskBloc>().add(
+              GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
           context
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
@@ -222,60 +232,54 @@ class _TaskTitleState extends State<TaskTitle> {
             listener: (context, state) {
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
-                if(getTaskRead?.assigningType=="Individual"){
+                if (getTaskRead?.assigningType == "Individual") {
+                  userList?.add(FriendListModel(
+                      userCode: getTaskRead?.assignToDict?.userCode ?? "",
+                      email: getTaskRead?.assignToDict?.email,
+                      fName: getTaskRead?.assignToDict?.fName,
+                      lName: getTaskRead?.assignToDict?.lName));
+                  if (getTaskRead?.assignByDict?.userCode ==
+                      getTaskRead?.reportingPersonDict?.userCode) {
+                    print("both are same");
+                    userList?.add(FriendListModel(
+                        userCode: getTaskRead?.assignByDict?.userCode ?? "",
+                        email: getTaskRead?.assignByDict?.email,
+                        fName: getTaskRead?.assignByDict?.fName,
+                        lName: getTaskRead?.assignByDict?.lName));
+                  } else {
+                    print("both are different");
+                    userList?.add(FriendListModel(
+                        userCode: getTaskRead?.assignByDict?.userCode ?? "",
+                        email: getTaskRead?.assignByDict?.email,
+                        fName: getTaskRead?.assignByDict?.fName,
+                        lName: getTaskRead?.assignByDict?.lName));
+                    userList?.add(FriendListModel(
+                        userCode:
+                            getTaskRead?.reportingPersonDict?.userCode ?? "",
+                        email: getTaskRead?.reportingPersonDict?.email,
+                        fName: getTaskRead?.reportingPersonDict?.fName,
+                        lName: getTaskRead?.reportingPersonDict?.lName));
+                  }
 
-                    userList?.add(
-                        FriendListModel(
-                            userCode: getTaskRead?.assignToDict?.userCode??"",
-                            email: getTaskRead?.assignToDict?.email,
-                            fName: getTaskRead?.assignToDict?.fName,
-                            lName: getTaskRead?.assignToDict?.lName
-                        ));
-                    if(getTaskRead?.assignByDict?.userCode==getTaskRead?.reportingPersonDict?.userCode){
-                      print("both are same");
-                      userList?.add(
-                          FriendListModel(
-                              userCode: getTaskRead?.assignByDict?.userCode??"",
-                              email: getTaskRead?.assignByDict?.email,
-                              fName: getTaskRead?.assignByDict?.fName,
-                              lName: getTaskRead?.assignByDict?.lName
-                          ));
-                    }
-                    else{
-                      print("both are different");
-                      userList?.add(
-                          FriendListModel(
-                              userCode: getTaskRead?.assignByDict?.userCode??"",
-                              email: getTaskRead?.assignByDict?.email,
-                              fName: getTaskRead?.assignByDict?.fName,
-                              lName: getTaskRead?.assignByDict?.lName
-                          ));
-                      userList?.add(
-                          FriendListModel(
-                              userCode: getTaskRead?.reportingPersonDict?.userCode??"",
-                              email: getTaskRead?.reportingPersonDict?.email,
-                              fName: getTaskRead?.reportingPersonDict?.fName,
-                              lName: getTaskRead?.reportingPersonDict?.lName
-                          ));
-                    }
-
-                    print("user list length${userList!.length}");
-                    for(var i=0;i<userList!.length;i++){
-                      print("user list code${userList?[i].userCode}");
-                    }
+                  print("user list length${userList!.length}");
+                  for (var i = 0; i < userList!.length; i++) {
+                    print("user list code${userList?[i].userCode}");
+                  }
 
                   CommunicationTaskGroup? chat;
-                  chat=CommunicationTaskGroup(
-                      createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
+                  chat = CommunicationTaskGroup(
+                      createdBy:
+                          "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
                       friendList: userList,
                       taskCode: getTaskRead?.taskCode,
-                      taskName: getTaskRead?.taskName
-                  );
-                  context.read<EmployeeBloc>().add(
-                      CreateTaskGroupCommunicationEvent(chat));
-                }else{
-                  context.read<EmployeeBloc>().add(
-                      GetGroupTReadEvent(getTaskRead?.groupId?? 0));
+                      taskName: getTaskRead?.taskName);
+                  context
+                      .read<EmployeeBloc>()
+                      .add(CreateTaskGroupCommunicationEvent(chat));
+                } else {
+                  context
+                      .read<EmployeeBloc>()
+                      .add(GetGroupTReadEvent(getTaskRead?.groupId ?? 0));
                 }
 
                 var date = getTaskRead?.endDate;
@@ -315,6 +319,9 @@ class _TaskTitleState extends State<TaskTitle> {
                     : context
                         .read<TaskBloc>()
                         .add(GetSubTaskListEvent(getTaskRead?.id));
+                getTaskRead?.parent != null
+                    ? context.read<EmployeeBloc>().add(GetGroupTReadEvent(getTaskRead?.parentGroupId ?? 0))
+                    :
                 isNotify = getTaskRead?.isNotify ?? false;
                 if (getTaskRead?.latitude == null &&
                         getTaskRead?.longitude == null ||
@@ -329,49 +336,46 @@ class _TaskTitleState extends State<TaskTitle> {
               }
             },
           ),
-
           BlocListener<EmployeeBloc, EmployeeState>(
             listener: (context, state) {
               print("state group$state");
-              if(state is GetReadGroupLoading){
+              if (state is GetReadGroupSuccess) {
+                readGroup = state.getGroupRead;
 
-              }
-              if(state is GetReadGroupSuccess){
-                readGroup=state.getGroupRead;
+                for (var i = 0; i < state.getGroupRead.userList!.length; i++) {
+                  listEmployee.add(GetEmployeeList(
+                      userCode: state.getGroupRead.userList?[i].code ?? "",
+                      fname: state.getGroupRead?.userList?[i].fName ?? "",
+                      lname: state.getGroupRead?.userList?[i].lName ?? "",
+                      email: state.getGroupRead?.userList?[i].email ?? "",
+                      isActive: true));
+                }
 
-
-                for(var i=0;i<state.getGroupRead.userList!.length;i++){
-
-                  userList?.add(
-                      FriendListModel(
-                          userCode: state.getGroupRead.userList?[i].code??"",
-                          email: state.getGroupRead.userList?[i].email,
-                        fName: state.getGroupRead.userList?[i].fName,
-                        lName: state.getGroupRead?.userList?[i].lName
-                      ));
-
+                for (var i = 0; i < state.getGroupRead.userList!.length; i++) {
+                  userList?.add(FriendListModel(
+                      userCode: state.getGroupRead.userList?[i].code ?? "",
+                      email: state.getGroupRead.userList?[i].email,
+                      fName: state.getGroupRead.userList?[i].fName,
+                      lName: state.getGroupRead?.userList?[i].lName));
                 }
                 CommunicationTaskGroup? chat;
-                chat=CommunicationTaskGroup(
-                  createdBy: "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
-                  friendList: userList,
-                  taskCode: getTaskRead?.taskCode,
-                  taskName: getTaskRead?.taskName
-                );
-                context.read<EmployeeBloc>().add(
-                    CreateTaskGroupCommunicationEvent(chat));
+                chat = CommunicationTaskGroup(
+                    createdBy:
+                        "${getTaskRead?.assignByDict?.fName} ${getTaskRead?.assignByDict?.lName}",
+                    friendList: userList,
+                    taskCode: getTaskRead?.taskCode,
+                    taskName: getTaskRead?.taskName);
+                context
+                    .read<EmployeeBloc>()
+                    .add(CreateTaskGroupCommunicationEvent(chat));
 
-                setState(() {
-
-                });
+                setState(() {});
               }
-
             },
           ),
           BlocListener<EmployeeBloc, EmployeeState>(
             listener: (context, state) {
               print("Communication Chat$state");
-
 
               if (state is TaskGroupCreationSuccess) {
                 communicationGroupId=state.chatlist.groupid??"";
@@ -429,11 +433,6 @@ class _TaskTitleState extends State<TaskTitle> {
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
               print("subtaskkk stateee $state");
-              if (state is GetSubTaskListLoading) {
-                print("task loading");
-              }
-
-              if (state is GetSubTaskListFailed) {}
               if (state is GetSubTaskListSuccess) {
                 print("subtaskkk sucsess${state.taskList}");
 
@@ -474,7 +473,10 @@ class _TaskTitleState extends State<TaskTitle> {
                     int.tryParse(getTaskRead?.jobId.toString() ?? ""),
                     '',
                     '',
-                    '',false,'',''));
+                    '',
+                    false,
+                    '',
+                    ''));
                 Navigator.pop(context);
               }
             },
@@ -562,9 +564,8 @@ class _TaskTitleState extends State<TaskTitle> {
                   // icon: Icons.admin_panel_settings_outlined
                 );
                 Navigator.pop(context);
-                context
-                    .read<TaskBloc>()
-                    .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
+                context.read<TaskBloc>().add(GetTaskListEvent(
+                    getTaskRead?.jobId, '', '', '', false, '', ''));
               }
             },
           ),
@@ -579,22 +580,28 @@ class _TaskTitleState extends State<TaskTitle> {
               onTap: () {
                 print("BACK");
                 if (widget.isReporter == true) {
-                  context
-                      .read<TaskBloc>()
-                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
+                  print("popScope repoted");
+                  context.read<TaskBloc>().add(
+                      GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
                   context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-                } else if (widget.isReporter == false) {
-                  context
-                      .read<TaskBloc>()
-                      .add(GetTaskListEvent(getTaskRead?.jobId, '', '', '',false,'',''));
+                }
+                else if (widget.isReported == true) {
+
+                  print("popScope hhhhh");
+                  context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
+                }
+                else {
+                  print("popScope task");
+                  context.read<TaskBloc>().add(
+                      GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
                   context.read<JobBloc>().add(GetNewJobListEvent('', '', ''));
-                } else {}
+                }
                 Navigator.pop(context);
               },
               label: " ${getTaskRead?.taskName ?? ""}",
@@ -963,28 +970,35 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                               ),
                                               // Spacer(),
-                                              getTaskRead?.statusName=="VERIFIED"?Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Row(
-                                                  children: [
-                                                    Text("COMPLETED"),
-                                                    SizedBox(width: 3,),
-                                                    SvgPicture.string(
-                                                      TaskSvg().tickIcon,
-                                                      color: Colors.green,
-                                                      width: 15,
-                                                      height: 15,
+                                              getTaskRead?.statusName ==
+                                                      "VERIFIED"
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5),
+                                                      child: Row(
+                                                        children: [
+                                                          Text("COMPLETED"),
+                                                          SizedBox(
+                                                            width: 3,
+                                                          ),
+                                                          SvgPicture.string(
+                                                            TaskSvg().tickIcon,
+                                                            color: Colors.green,
+                                                            width: 15,
+                                                            height: 15,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5),
+                                                      child: Text(getTaskRead
+                                                              ?.statusName ??
+                                                          "NOT INITIATED"),
                                                     ),
-                                                  ],
-                                                ),
-                                              ): Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(
-                                                    getTaskRead?.statusName ??
-                                                        "NOT INITIATED"),
-                                              ),
                                             ],
                                           ),
                                         )
@@ -1019,7 +1033,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                       color: Color(0xfff8f7f5),
                                                     ),
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: GestureDetector(
@@ -1100,7 +1114,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     "Task_Group"
                                                 ? TaskTitleCard(
                                                     paddingg: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     widget: SingleRow(
@@ -1108,13 +1122,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                       color: const Color(
                                                           0xffFFC800),
                                                       svg: CreateSvg().taskIcon,
-                                                      endIcon: isSubTask
-                                                          ? SvgPicture.string(
-                                                              HomeSvg()
-                                                                  .toggleActive)
-                                                          : SvgPicture.string(
-                                                              HomeSvg()
-                                                                  .toggleInActive),
+                                                      endIcon: Container(),
                                                       onTap: () {
                                                         setState(() {
                                                           // isSubTask = !isSubTask;
@@ -1139,67 +1147,126 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               itemBuilder: (context,
                                                                       index) =>
                                                                   GestureDetector(
-                                                                onTap: () {
-                                                                  context
-                                                                      .read<
-                                                                          TaskBloc>()
-                                                                      .add(GetTaskReadListEvent(
-                                                                          taskListNew[index].id ??
-                                                                              0));
-                                                                  PersistentNavBarNavigator
-                                                                      .pushNewScreen(
-                                                                    context,
-                                                                    screen:
-                                                                        TaskTitle(
-                                                                      isMyJob:
-                                                                          true,
-                                                                    ),
-                                                                    withNavBar:
-                                                                        false, // OPTIONAL VALUE. True by default.
-                                                                    pageTransitionAnimation:
-                                                                        PageTransitionAnimation
-                                                                            .fade,
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                        padding: const EdgeInsets.only(
-                                                                            left:
-                                                                                16,
-                                                                            right:
-                                                                                16,
-                                                                            top:
-                                                                                5,
-                                                                            bottom:
-                                                                                5),
+                                                                      onTap:
+                                                                          () {
+                                                                        context
+                                                                            .read<
+                                                                                TaskBloc>()
+                                                                            .add(GetTaskReadListEvent(taskListNew[index].id ??
+                                                                                0));
+                                                                        PersistentNavBarNavigator
+                                                                            .pushNewScreen(
+                                                                          context,
+                                                                          screen:
+                                                                              TaskTitle(
+                                                                            isMyJob:
+                                                                                true,
+                                                                          ),
+                                                                          withNavBar:
+                                                                              false, // OPTIONAL VALUE. True by default.
+                                                                          pageTransitionAnimation:
+                                                                              PageTransitionAnimation.fade,
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                          Card(
+                                                                        elevation:
+                                                                            1,
+                                                                        shape:
+                                                                            RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(4),
+                                                                        ),
+                                                                        color: Colors
+                                                                            .white,
+                                                                        surfaceTintColor:
+                                                                            Colors.white,
                                                                         child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            Text(
-                                                                              "${index + 1}: ${taskListNew[index].taskName.toString().toTitleCase()}",
-                                                                              style: GoogleFonts.roboto(
-                                                                                color: ColorPalette.primary,
-                                                                                fontSize: w / 22,
-                                                                                fontWeight: FontWeight.w500,
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 8,
+                                                                              horizontal: 8),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Task Name : ',
+                                                                                        style: GoogleFonts.roboto(
+                                                                                          color: Colors.black87,
+                                                                                          fontSize: w / 28,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Container(
+                                                                                        width: w1 / 2.55,
+                                                                                        child: Text(
+                                                                                          '${taskListNew[index].taskName.toString().toTitleCase()}',
+                                                                                          style: GoogleFonts.roboto(
+                                                                                            color: ColorPalette.primary,
+                                                                                            fontSize: w / 30,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  SizedBox(height: 2),
+                                                                                  Row(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Description : ',
+                                                                                        style: GoogleFonts.roboto(
+                                                                                          color: Colors.black87,
+                                                                                          fontSize: w / 28,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Container(
+                                                                                        width: w1 / 2.55,
+                                                                                        // color: Colors.red,
+                                                                                        child: Text(
+                                                                                          '${taskListNew[index].description.toString().toTitleCase()}',
+                                                                                          style: GoogleFonts.roboto(
+                                                                                            color: ColorPalette.primary,
+                                                                                            fontSize: w / 30,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
                                                                               ),
-                                                                            ),
-                                                                            // CircleAvatar(
-                                                                            //   radius: 16,
-                                                                            //   backgroundImage:
-                                                                            //       AssetImage(
-                                                                            //     "asset/newprofile.png",
-                                                                            //   ),
-                                                                            // ),
-                                                                            // Image.asset(
-                                                                            //
-                                                                            //   height: 27,
-                                                                            //   width: 27,
-                                                                            // )
-                                                                          ],
-                                                                        )),
-                                                              ),
+                                                                              Container(
+                                                                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                                                                decoration: BoxDecoration(
+                                                                                  color: ColorPalette.primary,
+                                                                                  borderRadius: BorderRadius.circular(4),
+                                                                                ),
+                                                                                child: Text(
+                                                                                  "${taskListNew[index].statusName.toString().toTitleCase()}",
+                                                                                  style: GoogleFonts.roboto(
+                                                                                    color: Colors.white,
+                                                                                    fontSize: w / 32,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      )),
                                                               primary: true,
                                                               shrinkWrap: true,
                                                               itemCount:
@@ -1208,14 +1275,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               separatorBuilder:
                                                                   (context,
                                                                           index) =>
-                                                                      Divider(
-                                                                color: const Color(
-                                                                        0xffE6ECF0)
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                                thickness: 1,
-                                                                indent: 16,
-                                                              ),
+                                                                      SizedBox(),
                                                             ),
                                                           ],
                                                         ),
@@ -1392,7 +1452,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     Container(
                                                       padding: isLocation
                                                           ? const EdgeInsets
-                                                                  .only(
+                                                              .only(
                                                               left: 16,
                                                               right: 16,
                                                               bottom: 10,
@@ -2039,10 +2099,14 @@ class _TaskTitleState extends State<TaskTitle> {
                                         )
                                       : GestureDetector(
                                           onTap: () {
-                                            if(getTaskRead?.statusStagesId == 5&&authentication.isAdmin==false&&authentication.isAssociateAdmin==false){
-
-                                            }
-                                            else{
+                                            if (getTaskRead?.statusStagesId ==
+                                                    5 &&
+                                                authentication.isAdmin ==
+                                                    false &&
+                                                authentication
+                                                        .isAssociateAdmin ==
+                                                    false) {
+                                            } else {
                                               _showModalBottomSheet();
                                             }
                                           },
@@ -2140,11 +2204,12 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      context.read<ChatBloc>().add(ChatScreenGetEvent(
-                                        token: token.toString(), 
-                                        pageNo: 1, 
-                                        chatId: "",
-                                        grpchatId: communicationGroupId));
+                                      context.read<ChatBloc>().add(
+                                          ChatScreenGetEvent(
+                                              token: token.toString(),
+                                              pageNo: 1,
+                                              chatId: "",
+                                              grpchatId: communicationGroupId));
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
 
@@ -2157,8 +2222,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                           isGroup: true,
                                           // communicationUserModel: widget.communicationUserModel,
                                         ),
-                                        withNavBar: false, // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                                        withNavBar:
+                                            false, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
                                       );
                                       // PersistentNavBarNavigator.pushNewScreen(
                                       //   context,
@@ -2618,206 +2685,253 @@ class _TaskTitleState extends State<TaskTitle> {
                                             color: ColorPalette.green,
                                             onPressed: () {
                                               showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: <Widget>[
-                                                          Text(
-                                                            "Accept the Report",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: GoogleFonts
-                                                                .roboto(
-                                                              color: Color(
-                                                                  0xff151522),
-                                                              fontSize: 22,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          Text(
-                                                            "Accept the report submitted by \n Shifas",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xff6d6d6d),
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          Container(
-                                                            height: h / 8,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color: Color(
-                                                                        0xffD3D3D3),
-                                                                    width: 0.2),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            child:
-                                                                TextFormField(
-                                                              readOnly: false,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                hintText:
-                                                                    "Add Notes...",
-                                                                hintStyle: GoogleFonts.roboto(
-                                                                    fontSize:
-                                                                        w / 26,
-                                                                    color: Color(
-                                                                        0xffD3D3D3)),
-                                                                contentPadding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            10),
-                                                              ),
-                                                              onChanged:
-                                                                  (ss) {},
-                                                              scrollPadding:
-                                                                  EdgeInsets
-                                                                      .all(10),
-                                                              cursorColor:
-                                                                  ColorPalette
-                                                                      .primary,
-                                                              obscureText:
-                                                                  false,
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      ColorPalette
-                                                                          .black,
-                                                                  fontSize: 17),
-                                                              // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
-                                                              // inputFormatters: [
-                                                              //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
-                                                              //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
-                                                              //   FilteringTextInputFormatter.singleLineFormatter,
-                                                              //
-                                                              // ],
-                                                              controller:
-                                                                  replayApproveNotes,
-                                                              maxLines: 5,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: <Widget>[
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    width:
-                                                                        w / 3.3,
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        vertical:
-                                                                            10),
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius: BorderRadius.circular(5),
-                                                                        border: Border.all(
-                                                                          color:
-                                                                              Color(0xffC6C6C6).withOpacity(0.2),
-                                                                          width:
-                                                                              1,
-                                                                        ),
-                                                                        color: Color(0xffC6C6C6).withOpacity(0.2)),
-                                                                    child: const Center(
-                                                                        child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .close,
-                                                                            color:
-                                                                                Colors.white),
-                                                                        Text(
-                                                                          "Cancel",
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontSize:
-                                                                                18,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    context.read<TaskBloc>().add(ReplayReportEvent(
-                                                                        reportStatus:
-                                                                            "Report_approved",
-                                                                        replay: replayApproveNotes
-                                                                            .text,
-                                                                        id: getTaskRead
-                                                                            ?.reportId));
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Container(
-                                                                      width: w / 3.1,
-                                                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                                                      decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                        color: ColorPalette
-                                                                            .green,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                            "Do you want to re-assign or delete this task ?"),
+                                                        SizedBox(
+                                                          height: 15,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Container(
+                                                              width: w1 / 3.35,
+                                                              height: 50,
+                                                              child:
+                                                                  GradientButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        getTaskRead?.assigningType == "Individual" &&
+                                                                                getTaskRead?.parent == null
+                                                                            ? context.read<JobBloc>().add(GetEmployeeListEvent('', '', ''))
+                                                                            : null;
+                                                                        _showModalBottomReAssignSheet();
+                                                                        setState(
+                                                                            () {});
+                                                                      },
+                                                                      gradient:
+                                                                          const LinearGradient(
+                                                                        colors: [
+                                                                          ColorPalette
+                                                                              .primary,
+                                                                          ColorPalette
+                                                                              .primary
+                                                                        ],
+                                                                        begin: Alignment
+                                                                            .topCenter,
+                                                                        end: Alignment
+                                                                            .bottomCenter,
                                                                       ),
-                                                                      child: Center(
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.task_alt_rounded,
-                                                                              color: Colors.white,
-                                                                            ),
-                                                                            Text(
-                                                                              "OK",
-                                                                              style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontSize: 18,
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child:
+                                                                          Text(
+                                                                        "Re-Assign",
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style: GoogleFonts
+                                                                            .roboto(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize:
+                                                                              w / 24,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
                                                                         ),
                                                                       )),
-                                                                ),
-                                                              ])
-                                                        ],
-                                                      ),
-                                                    );
-                                                  });
+                                                            ),
+                                                            Container(
+                                                              width: w1 / 3.35,
+                                                              height: 50,
+                                                              child:
+                                                                  GradientButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                content: Column(
+                                                                                  mainAxisSize: MainAxisSize.min,
+                                                                                  children: <Widget>[
+                                                                                    Text(
+                                                                                      "Accept the Report",
+                                                                                      textAlign: TextAlign.center,
+                                                                                      style: GoogleFonts.roboto(
+                                                                                        color: Color(0xff151522),
+                                                                                        fontSize: 22,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      height: 16,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "Accept the report submitted by \n Shifas",
+                                                                                      textAlign: TextAlign.center,
+                                                                                      style: TextStyle(
+                                                                                        color: Color(0xff6d6d6d),
+                                                                                        fontSize: 14,
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      height: 16,
+                                                                                    ),
+                                                                                    Container(
+                                                                                      height: h / 8,
+                                                                                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Color(0xffD3D3D3), width: 0.2), borderRadius: BorderRadius.circular(5)),
+                                                                                      child: TextFormField(
+                                                                                        readOnly: false,
+                                                                                        decoration: InputDecoration(
+                                                                                          border: InputBorder.none,
+                                                                                          hintText: "Add Notes...",
+                                                                                          hintStyle: GoogleFonts.roboto(fontSize: w / 26, color: Color(0xffD3D3D3)),
+                                                                                          contentPadding: EdgeInsets.all(10),
+                                                                                        ),
+                                                                                        onChanged: (ss) {},
+                                                                                        scrollPadding: EdgeInsets.all(10),
+                                                                                        cursorColor: ColorPalette.primary,
+                                                                                        obscureText: false,
+                                                                                        style: TextStyle(color: ColorPalette.black, fontSize: 17),
+                                                                                        // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+                                                                                        // inputFormatters: [
+                                                                                        //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+                                                                                        //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+                                                                                        //   FilteringTextInputFormatter.singleLineFormatter,
+                                                                                        //
+                                                                                        // ],
+                                                                                        controller: replayApproveNotes,
+                                                                                        maxLines: 5,
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      height: 10,
+                                                                                    ),
+                                                                                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                                                                      GestureDetector(
+                                                                                        onTap: () {
+                                                                                          Navigator.of(context).pop();
+                                                                                        },
+                                                                                        child: Container(
+                                                                                          width: w / 3.3,
+                                                                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                                                                          decoration: BoxDecoration(
+                                                                                              borderRadius: BorderRadius.circular(5),
+                                                                                              border: Border.all(
+                                                                                                color: Color(0xffC6C6C6).withOpacity(0.2),
+                                                                                                width: 1,
+                                                                                              ),
+                                                                                              color: Color(0xffC6C6C6).withOpacity(0.2)),
+                                                                                          child: const Center(
+                                                                                              child: Row(
+                                                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                                                            children: [
+                                                                                              Icon(Icons.close, color: Colors.white),
+                                                                                              Text(
+                                                                                                "Cancel",
+                                                                                                style: TextStyle(
+                                                                                                  color: Colors.white,
+                                                                                                  fontSize: 18,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ],
+                                                                                          )),
+                                                                                        ),
+                                                                                      ),
+                                                                                      GestureDetector(
+                                                                                        onTap: () {
+                                                                                          context.read<TaskBloc>().add(ReplayReportEvent(reportStatus: "Report_approved", replay: replayApproveNotes.text, id: getTaskRead?.reportId,replayType: "Task delete",reAssignCode: ""));
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: Container(
+                                                                                            width: w / 3.1,
+                                                                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                                                                            decoration: BoxDecoration(
+                                                                                              borderRadius: BorderRadius.circular(5),
+                                                                                              color: ColorPalette.green,
+                                                                                            ),
+                                                                                            child: Center(
+                                                                                              child: Row(
+                                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                children: [
+                                                                                                  Icon(
+                                                                                                    Icons.task_alt_rounded,
+                                                                                                    color: Colors.white,
+                                                                                                  ),
+                                                                                                  Text(
+                                                                                                    "OK",
+                                                                                                    style: TextStyle(
+                                                                                                      color: Colors.white,
+                                                                                                      fontSize: 18,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            )),
+                                                                                      ),
+                                                                                    ])
+                                                                                  ],
+                                                                                ),
+                                                                              );
+                                                                            });
+
+                                                                        //OtpScreen
+                                                                        setState(
+                                                                            () {});
+                                                                      },
+                                                                      gradient:
+                                                                          const LinearGradient(
+                                                                        colors: [
+                                                                          Colors
+                                                                              .red,
+                                                                          Colors
+                                                                              .red
+                                                                        ],
+                                                                        begin: Alignment
+                                                                            .topCenter,
+                                                                        end: Alignment
+                                                                            .bottomCenter,
+                                                                      ),
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      child:
+                                                                          Text(
+                                                                        "Delete",
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style: GoogleFonts
+                                                                            .roboto(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize:
+                                                                              w / 24,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                      )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             },
                                             gradient: const LinearGradient(
                                                 begin: Alignment.topCenter,
@@ -3008,6 +3122,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                 GestureDetector(
                                                                   onTap: () {
                                                                     context.read<TaskBloc>().add(ReplayReportEvent(
+                                                                      reAssignCode: "",
+                                                                        replayType: "",
                                                                         reportStatus:
                                                                             "Report_rejected",
                                                                         replay: replayRejectNotes
@@ -3893,6 +4009,366 @@ class _TaskTitleState extends State<TaskTitle> {
                     //         )),
                     //   ),
                     // )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  _showModalBottomReAssignSheet() {
+    String userCode='';
+    int? currentlyExpandedIndex;
+    void toggleExpansion(int index) {
+      setState(() {
+        if (currentlyExpandedIndex == index) {
+          // Clicking on the same card that is already expanded should collapse it.
+          currentlyExpandedIndex = -1;
+        } else {
+          currentlyExpandedIndex = index;
+        }
+      });
+    }
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+        ),
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var h = MediaQuery.of(context).size.height;
+          var w = MediaQuery.of(context).size.width;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: h / 1.3,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    )),
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: h / 180,
+                        ),
+                        Container(
+                          width: w / 5.3,
+                          height: h / 160,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Text(
+                          "Re-Assign Task To",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(
+                          height: h / 40,
+                        ),
+                        Container(
+                          height: h / 1.7,
+                          // color: Colors.yellow,
+                          child: ScrollConfiguration(
+                            behavior: NoGlow(),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          getTaskRead?.assigningType ==
+                                                      "Individual" &&
+                                                  getTaskRead?.parent == null
+                                              ? BlocBuilder<JobBloc, JobState>(
+                                                  builder: (context, state) {
+                                                    if (state
+                                                        is GetEmployeeListLoading) {
+                                                      return Container(
+                                                        height: h / 2,
+                                                        color: Colors.white
+                                                            .withOpacity(0.5),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Lottie.asset(
+                                                              'asset/loadingteams.json',
+                                                            ),
+                                                            Text(
+                                                              "Loading...",
+                                                              style: GoogleFonts
+                                                                  .roboto(
+                                                                fontSize:
+                                                                    w / 24,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    }
+                                                    if (state
+                                                        is GetEmployeeListSuccess) {
+                                                      for (int i = 0;
+                                                          i <
+                                                              state
+                                                                  .assignMeList!
+                                                                  .length;) {
+                                                        // print();
+                                                        if (authentication
+                                                                .authenticatedUser
+                                                                .code ==
+                                                            state
+                                                                .assignMeList?[
+                                                                    i]
+                                                                .userCode) {
+                                                          state.assignMeList
+                                                              ?.removeAt(i);
+                                                        }
+                                                        i++;
+                                                      }
+
+                                                      return Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "${state.assignMeList!.length} Employees",
+                                                            style: GoogleFonts
+                                                                .roboto(
+                                                              color:
+                                                                  ColorPalette
+                                                                      .black,
+                                                              fontSize: w / 22,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Container(
+                                                            //color: Colors.yellow,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              bottom: 20,
+                                                            ),
+                                                            child: ListView
+                                                                .separated(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    physics:
+                                                                        const ScrollPhysics(),
+                                                                    separatorBuilder:
+                                                                        (BuildContext
+                                                                                cxt,
+                                                                            int
+                                                                                i) {
+                                                                      return const SizedBox(
+                                                                        height:
+                                                                            3,
+                                                                      );
+                                                                    },
+                                                                    itemBuilder:
+                                                                        (BuildContext
+                                                                                context,
+                                                                            int
+                                                                                i) {
+                                                                      // print("employee  list fname   ${state.assignMeList?[i].code}");
+                                                                      // print("employee  list lname   ${state.assignMeList?[i].userCode
+                                                                      // }");
+                                                                      return InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          toggleExpansion(i);
+                                                                          userCode=state
+                                                                              .assignMeList?[i].userCode??"";
+                                                                          setState((){});
+                                                                        },
+                                                                        child:
+                                                                        EmployeeCard(
+                                                                          isSelect: currentlyExpandedIndex==i,
+                                                                          employeeList:
+                                                                          state
+                                                                              .assignMeList?[i],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    itemCount: state
+                                                                        .assignMeList!
+                                                                        .length),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    return Container();
+                                                  },
+                                                )
+                                              : getTaskRead?.parent != null
+                                                  ? Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "${listEmployee.length} Employees",
+                                                          style: GoogleFonts
+                                                              .roboto(
+                                                            color: ColorPalette
+                                                                .black,
+                                                            fontSize: w / 22,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Container(
+                                                          //color: Colors.yellow,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            bottom: 20,
+                                                          ),
+                                                          child: ListView
+                                                              .separated(
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  physics:
+                                                                      const ScrollPhysics(),
+                                                                  separatorBuilder:
+                                                                      (BuildContext
+                                                                              cxt,
+                                                                          int
+                                                                              i) {
+                                                                    return const SizedBox(
+                                                                      height: 3,
+                                                                    );
+                                                                  },
+                                                                  itemBuilder:
+                                                                      (BuildContext
+                                                                              context,
+                                                                          int
+                                                                              i) {
+                                                                    // print("employee  list fname   ${state.assignMeList?[i].code}");
+                                                                    // print("employee  list lname   ${state.assignMeList?[i].userCode
+                                                                    // }");
+                                                                    return InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                            toggleExpansion(i);
+                                                                            userCode=listEmployee[i].userCode??"";
+                                                                            setState((){});
+                                                                          },
+                                                                      child:
+                                                                          EmployeeCard(
+                                                                            isSelect: currentlyExpandedIndex==i,
+                                                                        employeeList:
+                                                                            listEmployee[i],
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  itemCount:
+                                                                      listEmployee
+                                                                          .length),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Container()
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
+                        child: GradientButton(
+                            color: ColorPalette.primary,
+                            onPressed: () {
+                              context.read<TaskBloc>().add(ReplayReportEvent(
+                                  reAssignCode: userCode,
+                                  replayType: "User update",
+                                  reportStatus:
+                                  "Report_approved",
+                                  replay: replayRejectNotes
+                                      .text,
+                                  id: getTaskRead
+                                      ?.reportId));
+                            },
+                            gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  ColorPalette.primary,
+                                  ColorPalette.primary
+                                ]),
+                            child: Text(
+                              "Continue",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                      ),
+                    )
                   ],
                 ),
               );

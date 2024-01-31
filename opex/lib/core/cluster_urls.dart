@@ -77,6 +77,17 @@ class ClusterUrls{
 
   static const changePawwordUserUrl="https://api-uat-user.sidrabazar.com/user-employeepassword-set/admin";
 
+  //organisation
+
+  static const createDepartmentUrl="${taskAndOperationBaseURL}task/department-creation";
+  static const listdepartmentUrl="${taskAndOperationBaseURL}task/department-list";
+  static const readDepartmentUrl="${taskAndOperationBaseURL}task/department-read-update/";
+
+  static const createDepartmentRoleUrl="${taskAndOperationBaseURL}task/department-role-creation";
+  static const listDepartmentRolesUrl="${taskAndOperationBaseURL}task/department-role-list";
+  static const readDepartmentRoleUrl="${taskAndOperationBaseURL}task/department-role-read-update/";
+
+  static const roleUderDepartmentUrl="${taskAndOperationBaseURL}task/list-role-under-department/";
 
 
 }
