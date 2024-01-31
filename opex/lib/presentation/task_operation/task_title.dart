@@ -131,6 +131,7 @@ class _TaskTitleState extends State<TaskTitle> {
     setState(() {});
   }
   String communicationGroupId='';
+  String communicationGroupname='';
 
   int tappedTile = 0;
   List<StatusListing> statusList = [];
@@ -373,8 +374,9 @@ class _TaskTitleState extends State<TaskTitle> {
 
 
               if (state is TaskGroupCreationSuccess) {
-                communicationGroupId=state.message;
-                print("chat group id........$communicationGroupId");
+                communicationGroupId=state.chatlist.groupid??"";
+                communicationGroupname=state.chatlist.groupName??"";
+                print("chat group id........$communicationGroupId $communicationGroupname");
                 setState(() {
 
                 });
@@ -2151,6 +2153,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           loginUserId: loginuserId,
                                           socket: socketCon,
                                           grpchatid: communicationGroupId,
+                                          cmntgrpchatname: communicationGroupname,
                                           isGroup: true,
                                           // communicationUserModel: widget.communicationUserModel,
                                         ),

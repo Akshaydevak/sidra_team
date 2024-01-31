@@ -47,11 +47,15 @@ ChatMessagaeData _$ChatMessagaeDataFromJson(Map<String, dynamic> json) =>
       messages: (json['messages'] as List<dynamic>?)
           ?.map((e) => ChatModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      pagination: json['pagination'] == null
+          ? null
+          : ChatPage.fromJson(json['pagination'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ChatMessagaeDataToJson(ChatMessagaeData instance) =>
     <String, dynamic>{
       'messages': instance.messages,
+      'pagination': instance.pagination,
     };
 
 ChatUser _$ChatUserFromJson(Map<String, dynamic> json) => ChatUser(
@@ -68,6 +72,16 @@ Map<String, dynamic> _$ChatUserToJson(ChatUser instance) => <String, dynamic>{
       'unreadMessages': instance.unreadMessages,
       'isDeleted': instance.isDeleted,
       'deletedAt': instance.deletedAt,
+    };
+
+ChatPage _$ChatPageFromJson(Map<String, dynamic> json) => ChatPage(
+      page: json['page'],
+      totalpages: json['totalPages'],
+    );
+
+Map<String, dynamic> _$ChatPageToJson(ChatPage instance) => <String, dynamic>{
+      'page': instance.page,
+      'totalPages': instance.totalpages,
     };
 
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(

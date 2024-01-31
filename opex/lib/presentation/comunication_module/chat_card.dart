@@ -72,33 +72,33 @@ int unreadCount=0;
       trailingActions: [SwipeAction(
         title: "Delete",
         onTap: (CompletionHandler){
-           setState(() {
-              print("hello delete${widget.communicationUserModel?.chatid}");
-        widget.socket?.emit("delete.chat",{
-        "chatId":widget.communicationUserModel?.chatid??"",
-        "userId":widget.isGroup==true? widget.loginUserId??"":widget.communicationUserModel?.id??""
-        }
+        //    setState(() {
+        // //       print("hello delete${widget.communicationUserModel?.chatid}");
+        // // widget.socket?.emit("delete.chat",{
+        // // "chatId":widget.communicationUserModel?.chatid??"",
+        // // "userId":widget.isGroup==true? widget.loginUserId??"":widget.communicationUserModel?.id??""
+        // }
         
-        );
-        print("hello delete"); 
-          widget.socket!.on("chat.deleted",(data) {
-              print("......,,...$data");
-              // data = UserDummyList.fromJson(data);
+        // );
+        // print("hello delete"); 
+        //   widget.socket!.on("chat.deleted",(data) {
+        //       print("......,,...$data");
+        //       // data = UserDummyList.fromJson(data);
             
-                  widget.socket!.on("update.chat.list", (data) => print("fxgf  $data"));
+        //           widget.socket!.on("update.chat.list", (data) => print("fxgf  $data"));
               
-                widget.socket!.emit("update.list",{
+        //         widget.socket!.emit("update.list",{
         
-                          print("update")
-                        });
-                  widget.socket!.on("friends.update", (data) {
-                  print(data);
-                  setState(() {
+        //                   print("update")
+        //                 });
+        //           widget.socket!.on("friends.update", (data) {
+        //           print(data);
+        //           setState(() {
                     
-                  });
-                } );
-          });
-          });
+        //           });
+        //         } );
+        //   });
+        //   });
       },
       color: ColorPalette.primary
       )],
@@ -164,15 +164,21 @@ int unreadCount=0;
                             fontWeight: FontWeight.w500,
                             text:"${widget.communicationUserModel?.name.toString().toUpperCase()}" ,
                           )
-                        : 
+                        : widget.isGroup?
                      CircleAvatar(
                           radius: 24,
                           backgroundColor: ColorPalette.inactiveGrey,
-                          backgroundImage: NetworkImage(
-                            widget.isGroup?
-                              widget.communicationUserModel?.photo ?? "":
+                          backgroundImage:  
+                              AssetImage("asset/chatgrpimg.png")
+                        ):
+                         CircleAvatar(
+                          radius: 24,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                           NetworkImage(
+                              widget.communicationUserModel?.photo ?? ""
                               // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
-                              "${widget.communicationUserModel?.photo}"
+                              // "${widget.communicationUserModel?.photo}"
                               ),
                         ),
                       ),

@@ -12,7 +12,7 @@ class ChatInitial extends ChatState {}
 class ChatScreenGetLoading extends ChatState {}
 
 class ChatScreenGetSuccess extends ChatState {
-  final ChatMessagaeData chatData;
+  final List<ChatMessagaeData> chatData;
   const ChatScreenGetSuccess({required this.chatData});
 }
 

@@ -33,7 +33,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     return Container(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 1.5,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(15),
         decoration:  BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft:widget.me==false? Radius.circular(0):Radius.circular(10),
@@ -44,38 +44,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           color:widget.me==true?  ColorPalette.primary:Colors.white,
         ),
         alignment: widget.alignmentGeometry,
-        child: Stack(
-          children: [
-            Chewie(
-              controller: ChewieController(
-                allowFullScreen: false,
-                videoPlayerController: widget.videoPlayerController!,
-                aspectRatio: 5 / 8,
-                autoInitialize: true,
-                autoPlay: widget.autoplay!,
-                looping: widget.looping!,
-                errorBuilder: (context, errorMessage) {
-                  return Center(
-                    child: Text(
-                      errorMessage,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              right: 5,
-              bottom: 5,
-              child: Text(
-              "just Now",
-              style: const TextStyle(
-                fontSize: 8,
-                color: Color.fromARGB(255, 239, 237, 237),
-              ),
-                                                                        ),
-            ),
-          ],
+        child: Chewie(
+          controller: ChewieController(
+            allowFullScreen: false,
+            videoPlayerController: widget.videoPlayerController!,
+            aspectRatio: 5 / 8,
+            autoInitialize: true,
+            autoPlay: widget.autoplay!,
+            looping: widget.looping!,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            },
+          ),
         ));
   }
 }

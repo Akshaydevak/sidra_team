@@ -484,7 +484,7 @@ print(groupRead.userId);
 
 
   //taskGroupCommu
-  Future<DataResponse> createTaskGroupCommunication({
+  Future<createTaskGroupChat> createTaskGroupCommunication({
     required CommunicationTaskGroup taskGroup,
       }) async {
     print("communucation Group${taskGroup.taskName}");
@@ -493,7 +493,7 @@ print(groupRead.userId);
     print("communucation Group${taskGroup.friendList!.length}");
     print("communucation Group${authentication.authenticatedUser.token}");
 
-
+    createTaskGroupChat chatlist = createTaskGroupChat();
     final response = await client.post(
       "https://api-communication-application.hilalcart.com/api/group/create-group",
       // "http://192.168.1.20:5500/api/group/create-group",
@@ -509,12 +509,12 @@ print(groupRead.userId);
 
     print("change response$response");
     if (response.data['status'] == 'success') {
-      return DataResponse(
-          data: response.data["status"] == "success",
-          error: response.data['groupid']);
-    } else {
-      return DataResponse(data: false, error: response.data['message']);
-    }
+      chatlist = createTaskGroupChat.fromJson(response.data);
+      // (response.data['data']['results'] as List).forEach((element) {
+      // chatlist.add(createTaskGroupChat.fromJson(element));
+    // });
+    } 
+    return chatlist;
   }
 
   Future<String> fcmRegister({required String fcmToken}) async {
