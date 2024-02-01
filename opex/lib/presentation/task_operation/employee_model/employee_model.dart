@@ -368,3 +368,22 @@ class FriendListModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$FriendListModelToJson(this);
 }
+@JsonSerializable()
+class createTaskGroupChat extends Equatable {
+
+  @JsonKey(name: 'groupid')
+  final String? groupid;
+  @JsonKey(name: 'groupName')
+  final String? groupName;
+  @JsonKey(name: 'createdBy')
+  final String? createdBy;
+  const createTaskGroupChat( {
+    this.groupid, this.groupName,this.createdBy
+  });
+  @override
+  List<Object> get props => [];
+  factory createTaskGroupChat.fromJson(Map<String, dynamic> json) =>
+      _$createTaskGroupChatFromJson(json);
+
+  Map<String, dynamic> toJson() => _$createTaskGroupChatToJson(this);
+}

@@ -12,7 +12,7 @@ class PaginatedchatInitial extends PaginatedchatState {}
 class PaginatedChatLoading extends PaginatedchatState {}
 
 class PaginatedChatSuccess extends PaginatedchatState {
-  final ChatMessagaeData chatData;
+  final List<ChatMessagaeData> chatData;
   const PaginatedChatSuccess({required this.chatData});
 }
 class PaginatedChatFailed extends PaginatedchatState{}

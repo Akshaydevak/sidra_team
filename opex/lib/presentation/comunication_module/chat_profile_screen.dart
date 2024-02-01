@@ -44,7 +44,6 @@ class ChatProfileScreen extends StatefulWidget {
   final String? roomId;
   final Socket? socket;
   final String? token;
-
   @override
   State<ChatProfileScreen> createState() => _ChatProfileScreenState();
 }

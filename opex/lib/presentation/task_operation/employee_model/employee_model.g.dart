@@ -257,3 +257,18 @@ Map<String, dynamic> _$FriendListModelToJson(FriendListModel instance) =>
       'lname': instance.lName,
       'email': instance.email,
     };
+
+createTaskGroupChat _$createTaskGroupChatFromJson(Map<String, dynamic> json) =>
+    createTaskGroupChat(
+      groupid: json['groupid'] as String?,
+      groupName: json['groupName'] as String?,
+      createdBy: json['createdBy'] as String?,
+    );
+
+Map<String, dynamic> _$createTaskGroupChatToJson(
+        createTaskGroupChat instance) =>
+    <String, dynamic>{
+      'groupid': instance.groupid,
+      'groupName': instance.groupName,
+      'createdBy': instance.createdBy,
+    };

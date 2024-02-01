@@ -245,13 +245,13 @@ class ChangePasswordFailed extends EmployeeState {
 class TaskGroupCreationLoading extends EmployeeState {}
 
 class TaskGroupCreationSuccess extends EmployeeState {
-  final String message;
+  final createTaskGroupChat chatlist;
   const TaskGroupCreationSuccess({
-    required this.message,
+    required this.chatlist,
   });
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [chatlist];
 }
 
 class TaskGroupCreationFailed extends EmployeeState {

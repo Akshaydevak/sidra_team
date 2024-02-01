@@ -33,6 +33,7 @@ class ChatProfileScreen2 extends StatefulWidget {
   final Socket? socket;
   final String? roomId;
   final bool chat;
+  List<GroupUserList>? grpmember=[];
   ChatProfileScreen2(
       {Key? key,
       this.isGroup = false,
@@ -41,6 +42,7 @@ class ChatProfileScreen2 extends StatefulWidget {
       this.communicationUserModel,
       this.socket,
       this.roomId,
+      required this.grpmember,
       required this.token})
       : super(key: key);
 
@@ -50,30 +52,30 @@ class ChatProfileScreen2 extends StatefulWidget {
 
 class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isMute = false;
-  List<GroupUserList> grpmember=[];
-  bool isM=true;
+  // List<GroupUserList> grpmember=[];
+  // bool isM=true;
   String uid='';
     @override
   void initState() {
 
- widget.socket!.emit("group.members", 
-     widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
+//  widget.socket!.emit("group.members", 
+//      widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
      
-    widget.socket!.on("groupmembers.result", (data){ 
-      print("group members: $data");
-      grpmember.clear();
-    (data as List).forEach((element) {
-    grpmember.add(GroupUserList.fromJson(element));
+//     widget.socket!.on("groupmembers.result", (data){ 
+//       print("group members: $data");
+//       grpmember.clear();
+//     (data as List).forEach((element) {
+//     grpmember.add(GroupUserList.fromJson(element));
    
-      });
-      isM=false;
- print(grpmember.length);
- if(this.mounted){
-    setState(() {
+//       });
+//       isM=false;
+//  print(grpmember.length);
+//  if(this.mounted){
+//     setState(() {
       
-    });
- }
-    });
+//     });
+//  }
+//     });
      
 widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$data"));
     // TODO: implement initState
@@ -176,7 +178,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
             elevation: 0,
             backgroundColor: Colors.white,
           ),
-          body:isM==true?LottieLoader(): SafeArea(
+          body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -197,15 +199,17 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                     CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.grey,
-                        backgroundImage: NetworkImage(
-                          widget.isGroup?
-                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? "":
-                          //  "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}"
-                          // "${widget.communicationUserModel?.photo}"
-                          widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? ""
-                          ,
+                        backgroundImage: AssetImage("asset/chatgrpimg.png")
+                        // NetworkImage(
+                        //   widget.isGroup?
+                        //   widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? "":
+                        //   //  "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}"
+                        //   // "${widget.communicationUserModel?.photo}"
+                        //   widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? ""
+                        //   ,
                           
-                        )),
+                        // )
+                        ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -233,7 +237,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   Text(
                    
                     widget.isGroup
-                        ? "Created by ${grpmember[0].createdBy.toString().toTitleCase()}"
+                        ? "Created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
                         : "",
                     style: const TextStyle(
                       color: Color.fromARGB(255, 188, 212, 233),
@@ -296,7 +300,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  "${grpmember.length} Members",
+                                                  "${widget.grpmember!.length} Members",
                                                   style: GoogleFonts.roboto(
                                                     color:
                                                         const Color(0xff151522),
@@ -347,7 +351,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                               padding: const EdgeInsets.all(16),
                                               physics:
                                                   const NeverScrollableScrollPhysics(),
-                                                  itemCount: grpmember.length,
+                                                  itemCount:widget.grpmember!.length,
                                               itemBuilder: (context, index) {
                                                 return Row(
                                                   mainAxisAlignment:
@@ -363,7 +367,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         fontSize: w/22,
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
-                                                        text:"${grpmember[index].name.toString().toUpperCase()}" ,
+                                                        text:"${widget.grpmember?[index].name.toString().toUpperCase()}" ,
                                                       ),
                                                         const SizedBox(
                                                           width: 5,
@@ -378,7 +382,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                           children: [
                                                             Text(
                                                               
-                                                                  "${grpmember[index].name.toString().toTitleCase()}",
+                                                                  "${widget.grpmember?[index].name.toString().toTitleCase()}",
                                                               style: TextStyle(
                                                                 color: Color(
                                                                     0xff151522),
@@ -471,13 +475,13 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                 GestureDetector(
                                                                 onTap: (){
                                                                   print("hello");
-                                                                  uid=grpmember[index].name!;
+                                                                  uid=widget.grpmember![index].name!;
                                                                  
                                                                    showDialog(
                                                                             context: context, builder: (BuildContext context) {
                                                                               return AlertDialog(
                                                                                 insetPadding: EdgeInsets.symmetric(vertical:20),
-                                                                                content: Text("Delete ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group"),
+                                                                                content: Text("Delete ${widget.grpmember![index].name?.toLowerCase().toTitleCase()} from this group"),
                                                                                 actions: [
                                                                                   Row( mainAxisAlignment: MainAxisAlignment.end,
                                                                                     children: [
@@ -487,7 +491,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                       TextButton(onPressed: (){
                                                                                          setState(() {
                                                                                         widget.socket!.emit("removeUserFromGroup",
-                                                                                    {"userId":grpmember[index].id??"",
+                                                                                    {"userId":widget.grpmember![index].id??"",
                                                                                     "chatId":widget.communicationUserModel!.chatid??""
                                                                                     }
                                                                                     );
@@ -497,7 +501,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                       showSnackBar(context, message: data, color: Colors.black);
                                                                                     } );
                                                                                     widget.socket!.emit("group.message",{
-                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is deleted from group"
+                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${widget.grpmember![index].name.toString().toTitleCase()} is deleted from group"
                                                                                     }); 
                                                                                     Navigator.pop(context);
                                                                                       });
@@ -580,7 +584,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                "${grpmember.length} Members",
+                                                "${widget.grpmember!.length} Members",
                                                 style: GoogleFonts.roboto(
                                                   color:
                                                       const Color(0xff151522),
@@ -628,7 +632,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                             padding: const EdgeInsets.all(16),
                                             physics:
                                                 const NeverScrollableScrollPhysics(),
-                                                itemCount: grpmember.length,
+                                                itemCount:widget.grpmember!.length,
                                             itemBuilder: (context, index) {
                                               return Row(
                                                 mainAxisAlignment:
@@ -644,7 +648,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         fontSize: w/22,
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
-                                                        text:"${grpmember[index].name.toString().toUpperCase()}" ,
+                                                        text:"${widget.grpmember![index].name.toString().toUpperCase()}" ,
                                                       ),
                                                       const SizedBox(
                                                         width: 5,
@@ -658,7 +662,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                        "${grpmember[index].name.toString().toTitleCase()}",
+                                                        "${widget.grpmember![index].name.toString().toTitleCase()}",
                                                             style: TextStyle(
                                                               color: Color(
                                                                   0xff151522),
@@ -743,7 +747,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                         
                                                                       });
                                                                     } );
-                                                                  uid=grpmember[index].id!;
+                                                                  uid=widget.grpmember![index].id!;
                                                                   // BlocProvider.of<GroupBloc>(context).add(
 
                                                                     //   GroupMemberDeleteEvent(
@@ -754,7 +758,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                     showDialog(
                                                                             context: context, builder: (BuildContext context) {
                                                                               return AlertDialog(
-                                                                                content: Text("Delete ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group?"),
+                                                                                content: Text("Delete ${widget.grpmember![index].name?.toLowerCase().toTitleCase()} from this group?"),
                                                                                 actions: [
                                                                                   Row( mainAxisAlignment: MainAxisAlignment.end,
                                                                                     children: [
@@ -764,7 +768,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                       TextButton(onPressed: (){
                                                                                          setState(() {
                                                                                         widget.socket!.emit("removeUserFromGroup",
-                                                                                    {"userId":grpmember[index].id??"",
+                                                                                    {"userId":widget.grpmember![index].id??"",
                                                                                     "chatId":widget.communicationUserModel!.chatid??""
                                                                                     }
                                                                                     );
@@ -774,7 +778,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                       showSnackBar(context, message: data, color: Colors.black);
                                                                                     } );
                                                                                     widget.socket!.emit("group.message",{
-                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content":"${grpmember[index].name.toString().toTitleCase()} is deleted from group "
+                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content":"${widget.grpmember![index].name.toString().toTitleCase()} is removed from this group "
                                                                                     }); 
                                                                                     Navigator.pop(context);
                                                                                       });

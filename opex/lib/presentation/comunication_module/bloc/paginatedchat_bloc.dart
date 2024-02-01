@@ -24,7 +24,7 @@ class PaginatedchatBloc extends Bloc<PaginatedchatEvent, PaginatedchatState> {
     yield PaginatedChatLoading();
     final dataResponse =
         await _productData.getChatScreenData(token,chatId,grpchatId,pageNo);
-    if (dataResponse.messages != null) {
+    if (dataResponse.isNotEmpty) {
       yield PaginatedChatSuccess(chatData: dataResponse);
     } else {
       yield PaginatedChatFailed();

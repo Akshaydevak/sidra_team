@@ -11,6 +11,7 @@ import 'package:cluster/presentation/comunication_module/chat_screen/image_detai
 import 'package:cluster/presentation/comunication_module/com_svg.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/videoplayerscreen.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:dio/dio.dart';
@@ -43,6 +44,7 @@ class ChatScreen extends StatefulWidget {
   final bool chat;
   final Socket? socket;
   final String grpchatid;
+  final String cmntgrpchatname;
   final String? token;
   final String? loginUserId;
   final UserDummyList? communicationUserModel;
@@ -59,6 +61,7 @@ class ChatScreen extends StatefulWidget {
       this.isg=false,
       this.chat=false,
       this.grpchatid="",
+      this.cmntgrpchatname="",
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser
@@ -81,10 +84,12 @@ bool ismount1=true;
   bool issixthMount = true;
   bool isseventhMount = true;
   bool iseigthMount = true;
+  bool loadmsg=false;
+  int totpage=0;
   int activeUsersLength=0;
   String? roomId;
   String msgdate1='';
-  String msgdate='';
+  int indeex=0;
   final ScrollController _controller = ScrollController();
    TextEditingController typedMessageController = TextEditingController();
   int pageNo = 1;
@@ -111,6 +116,7 @@ bool ismount1=true;
   // int messageListLimit = 26;
   SharedPreferences? pref;
   AnimationController? _animationController;
+  String fromuserids="";
   //Mic Animation
   Animation<double>? _micTranslateTop;
   Animation<double>? _micRotationFirst;
@@ -131,6 +137,7 @@ bool ismount1=true;
 
   @override
   void initState() {
+
      print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.chatid}");
     widget.socket?.emit("join.chat", {
       widget.grpchatid!=""?widget.grpchatid:  
@@ -147,7 +154,7 @@ bool ismount1=true;
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
-    }else if(widget.isGroup==true && widget.chat==""){
+    }else if(widget.isGroup==true && widget.grpchatid==""){
         print("unreaded messages....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
@@ -178,7 +185,10 @@ bool ismount1=true;
       if (widget.isGroup == true) {
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
+     widget.socket!.emit("group.members",
+     widget.isg==false?widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
+    widget.socket!.on("groupmembers.result",datagrpmember);
          
    
       } else{
@@ -238,9 +248,13 @@ widget.socket?.emit("group.message.seen",roomId);
       });
       widget.socket?.on("latest.message", (data)  {
         print("total res listened  ${data}");
-       ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
-        messageList.add(ChatModel(
+     
+       totpage<=1?messageList.add(ChatModel(
+            type: data['type'],
+            message: data['message'],
+            createdAt: data['createdAt'],
+            fromuserid: data['fromuserid'])): 
+            messageList.insert(0,ChatModel(
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
@@ -281,11 +295,11 @@ widget.socket?.emit("group.message.seen",roomId);
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+            scrollController: _controller, reversed: true);
             }
             else{
              ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+            scrollController: _controller, reversed: true);
               print("my msg");
             }
             }
@@ -314,8 +328,13 @@ widget.socket?.emit("group.message.seen",roomId);
          
         });
        }
-      ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+       _controller.animateTo(
+      _controller.position.minScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+      // ScrollService.scrollToEnd(
+      //       scrollController: _controller, reversed: true);
       });
           widget.socket!.on("unread.update", (data) {
             String? chatid= widget.chat==false
@@ -336,10 +355,7 @@ widget.socket!.emit("update.list",{
    
     } else {
         
-widget.socket!.emit("group.members",
-     widget.isg==false?widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
-     
-    widget.socket!.on("groupmembers.result",datagrpmember); 
+ 
 
       widget.socket?.on("group.typing", (data) {
         groupTypingUser = FromUser(
@@ -380,7 +396,15 @@ widget.socket!.emit("group.members",
       widget.socket?.on("group.latest.message", (data) {
         // print("total ser listened ${widget.loginUserId} ...${data}");
         // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
-        messageList.add(ChatModel(
+      totpage<=1?messageList.add(ChatModel(
+            message: data['message'],
+            fromuserid: data['fromuserid'],
+            type: data['type'],
+            createdAt: data['createdAt'],
+            fromUser: FromUser(
+                email: data['fromUser']['email'],
+                name: data['fromUser']['name'],
+                photo: data['fromUser']['photo']))): messageList.insert(0,ChatModel(
             message: data['message'],
             fromuserid: data['fromuserid'],
             type: data['type'],
@@ -439,8 +463,42 @@ widget.socket!.emit("group.members",
             // }
                print("activeUsersLength $activeUsersLength");
           if(widget.grpchatid==""){
-            print("fchgjh entered");
-             unseeenList(); 
+            print("fchgjh entered ${grpmember.length}");
+             if(activeUsersLength < grpmember.length){
+              print("fchgjh checked");
+                unseenuser.clear();
+              for (int i = 0; i < grpmember.length; i++) {
+                bool isUserIdInEnterList = false;
+
+                for (int j = 0; j < enter.length; j++) {
+                  if (grpmember[i].id == enter[j].userid) {
+                    isUserIdInEnterList = true;
+                    break;
+                  }
+                }
+
+                if (!isUserIdInEnterList) {
+                  print("fchgjh added");
+                  unseenuser.add(grpmember[i].id);
+                  for(int i=0;i<unseenuser.length;){
+                    if(widget.loginUserId==unseenuser[i]){
+                    unseenuser.removeAt(i);
+                    break;
+                    }
+                    i++;
+                  }
+                  
+                  print("fchgjh ${grpmember[i].id} $unseenuser");
+                }
+               
+              }
+               print("fchgjh $unseenuser");
+                unreadMessageCount =1;
+            }
+            else {
+              unreadMessageCount=0;
+              print("lenght 2");
+            }
              print("fchgjh $unseenuser");
              widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
@@ -452,7 +510,7 @@ widget.socket!.emit("group.members",
         }
 
         ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+            scrollController: _controller, reversed: true);
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
@@ -613,11 +671,8 @@ print("jhdgfkjhgkrng");
     grpmember.add(GroupUserList.fromJson(element));
    
       });
- print(grpmember.length);
+ print("jhdgfkjhgkrng${grpmember.length}");
  
-    setState(() {
-     
-    });
 }
   void activeuserlist(data) {
    print("active usersss $data");
@@ -689,103 +744,7 @@ Future<void> saveactiveusers(int count) async {
   });
  
   }
-  void unseeenList(){
-    print("fchgjh inside the userlist ${grpmember.length}");
-    if(activeUsersLength < grpmember.length){
-              print("fchgjh checked");
-                unseenuser.clear();
-              for (int i = 0; i < grpmember.length; i++) {
-                bool isUserIdInEnterList = false;
-
-                for (int j = 0; j < enter.length; j++) {
-                  if (grpmember[i].id == enter[j].userid) {
-                    isUserIdInEnterList = true;
-                    break;
-                  }
-                }
-
-                if (!isUserIdInEnterList) {
-                  print("fchgjh added");
-                  unseenuser.add(grpmember[i].id);
-                  print("fchgjh ${grpmember[i].id} $unseenuser");
-                }
-               
-              }
-               print("fchgjh $unseenuser");
-                unreadMessageCount =1;
-            }
-            else {
-              if(activeUsersLength == grpmember.length){
-                print("fchgjh else part");
-               unseenuser.clear();
-              for (int i = 0; i < grpmember.length; i++) {
-                bool isUserIdInEnterList = false;
-                  print("fchgjh else check");
-                for (int j = 0; j < enter.length; j++) {
-                  if (grpmember[i].id == enter[j].userid) {
-                    isUserIdInEnterList = true;
-                    break;
-                  }
-                }
-
-                if (isUserIdInEnterList) {
-                  unseenuser.add(grpmember[i].id);
-                  print("fchgjh ${grpmember[i].id} $unseenuser");
-                }
-              }
-              }
-              unreadMessageCount=0;
-              print("lenght 2");
-            }
-  }
-  // void _insertMessagesWithDelay(List<ChatModel> messages) async {
-  // for (int i = 0; i < messages.length; i++) {
-    // Insert each message with a delay
-    //  if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null || widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
-    //         {
-    //         //  messageList.insertAll(0, [state.chatData.messages![i]]);
-    //         await Future.delayed(Duration(milliseconds:1000)); // Adjust the delay duration as needed
-    // messageList.insert(0, messages[i]);
-    // setState(() {});
-    //         }
-    //         else if(widget.communicationUserModel?.isDeleted == false && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
-    //         String? timestamp = widget.communicationUserModel!.deletedAt.toString();
-    //         DateTime dateTime = DateTime.parse(timestamp);
-    //         int formattedTime = dateTime.millisecondsSinceEpoch;  
-
-    //       if( messages[i].createdAt == null )
-    //         {
-    //           // messageList.insertAll(0, [state.chatData.messages![i]]);
-    //           await Future.delayed(Duration(milliseconds:1000)); // Adjust the delay duration as needed
-    // messageList.insert(0, messages[i]);
-    // setState(() {});
-    //         }
-    //         else {
-    //         String? timestamp1 = messages[i].createdAt;
-    //       DateTime dateTime1 = DateTime.parse(timestamp1!);
-    //       int formattedTime1 = dateTime1.millisecondsSinceEpoch;
-    //         if(formattedTime1 > formattedTime){
-    //       // messageList.insertAll(0, [state.chatData.messages![i]]);
-    //       await Future.delayed(Duration(milliseconds:1000)); // Adjust the delay duration as needed
-    // messageList.insert(0, messages[i]);
-    // setState(() {});
-    //     }
-    //         }
-         
-    //       }else if(widget.communicationUserModel?.isDeleted == true && widget.communicationUserModel?.deletedAt != null ||widget.communicationuser?.users![0].chatUser?.isDeleted ==true && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
-    //         messageList.clear();
-    //       }
-    //       else{
-    //         // messageList.insertAll(0, [state.chatData.messages![i]]);
-    //         await Future.delayed(Duration(milliseconds:1500)); // Adjust the delay duration as needed
-    // messageList.insert(0, messages[i]);
-    // setState(() {});
-    //       }
-   
-//     ScrollService.scrollToEnd(scrollController: _controller, reversed: true);
-//   }
-// }
-  
+   double currentVisibleItemIndex=0.0;
   @override
   void dispose() {
     _controller.dispose();
@@ -802,6 +761,7 @@ Future<void> saveactiveusers(int count) async {
     _animationController?.dispose();
     widget.socket!.off('latest.message');
     widget.socket!.off('group.latest.message');
+    widget.socket!.off("group,members");
     super.dispose();
   }
 double currentScrollPosition= 0.0;
@@ -1039,12 +999,12 @@ double currentScrollPosition= 0.0;
               if (state is ChatScreenGetLoading) {
 
               } else if (state is ChatScreenGetSuccess) {
-               
-                for (int i = 0; i < state.chatData.messages!.length; i++) {
+                totpage=state.chatData[0].pagination!.totalpages;
+                for (int i = 0; i < state.chatData[0].messages!.length; i++) {
                
                  if(widget.communicationUserModel?.isDeleted  == false && widget.communicationUserModel?.deletedAt == null||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
                  {
-                   messageList.add(state.chatData.messages![i]);
+                   messageList.add(state.chatData[0].messages![i]);
                  }
                    else if(widget.communicationUserModel?.isDeleted == false && widget.communicationUserModel?.deletedAt != null||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
                   String? timestamp = widget.communicationUserModel!.deletedAt.toString();
@@ -1052,17 +1012,17 @@ double currentScrollPosition= 0.0;
                   int formattedTime = dateTime.millisecondsSinceEpoch;              // Combine hours and minutes into a single integer
                
 
-                if( state.chatData.messages?[i].createdAt == null )
+                if( state.chatData[0].messages?[i].createdAt == null )
                   {
-                    messageList.add(state.chatData.messages![i]);
+                    messageList.add(state.chatData[0].messages![i]);
                  }
                  else {
-                 String? timestamp1 = state.chatData.messages![i].createdAt;
+                 String? timestamp1 = state.chatData[0].messages![i].createdAt;
                 DateTime dateTime1 = DateTime.parse(timestamp1!);
                 int formattedTime1 = dateTime1.millisecondsSinceEpoch;
 
                   if(formattedTime1 > formattedTime){
-                messageList.add(state.chatData.messages![i]);
+                messageList.add(state.chatData[0].messages![i]);
               }
                  }
                
@@ -1071,25 +1031,28 @@ double currentScrollPosition= 0.0;
                 }
                
                 else{
-                  messageList.add(state.chatData.messages![i]);
+                  messageList.add(state.chatData[0].messages![i]);
                 }
 
                  }
               //    
                  setState(() {
-                 
+                   totpage=state.chatData[0].pagination!.totalpages;
+                print("totalpagess$totpage");
+                  loadmsg=true;
                 });
-                messageList = messageList.reversed.toList();
+
+               state.chatData[0].pagination!.totalpages<=1? 
+               messageList = messageList.reversed.toList()
+               :null;
                 ScrollService.scrollToEnd(
-              scrollController: _controller, reversed: false);
-              
-                
+              scrollController: _controller, reversed: true);
+               
               }
 
               else if (state is ChatScreenGetFailed){
-               
-                setState(() {
-                 
+               setState(() {
+                  loadmsg=true;
                 });
               }
      
@@ -1104,12 +1067,12 @@ double currentScrollPosition= 0.0;
                 
               
               //  _insertMessagesWithDelay(state.chatData.messages!);
-          for (int i = 0; i < state.chatData.messages!.length; i++) {
+          for (int i = 0; i < state.chatData[0].messages!.length; i++) {
             // messageList.insertAll(0, [state.chatData.messages![i]]);
                if(widget.communicationUserModel?.isDeleted ==false && widget.communicationUserModel?.deletedAt == null || widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
             {
-             
-               messageList.insertAll(0, [state.chatData.messages![i]]);
+              messageList.add(state.chatData[0].messages![i]);
+              //  messageList.insertAll(0, [state.chatData.messages![i]]);
            
     setState(() {});
             }
@@ -1118,20 +1081,20 @@ double currentScrollPosition= 0.0;
             DateTime dateTime = DateTime.parse(timestamp);
             int formattedTime = dateTime.millisecondsSinceEpoch;  
 
-          if( state.chatData.messages![i].createdAt == null )
+          if( state.chatData[0].messages![i].createdAt == null )
             {
               
-              messageList.insertAll(0, [state.chatData.messages![i]]);
+              messageList.add(state.chatData[0].messages![i]);
              
     setState(() {});
             }
             else {
-            String? timestamp1 = state.chatData.messages![i].createdAt;
+            String? timestamp1 = state.chatData[0].messages![i].createdAt;
           DateTime dateTime1 = DateTime.parse(timestamp1!);
           int formattedTime1 = dateTime1.millisecondsSinceEpoch;
             if(formattedTime1 > formattedTime){
-              
-          messageList.insertAll(0, [state.chatData.messages![i]]);
+               messageList.add(state.chatData[0].messages![i]);
+          // messageList.insertAll(0, [state.chatData.messages![i]]);
          
     setState(() {});
         }
@@ -1141,18 +1104,16 @@ double currentScrollPosition= 0.0;
             
           }
           else{
-            
-            messageList.insertAll(0, [state.chatData.messages![i]]);
+             messageList.add(state.chatData[0].messages![i]);
+            // messageList.insertAll(0, [state.chatData.messages![i]]);
            
     setState(() {});
           }
-                }
-ScrollService.scrollToEnd(
-              scrollController: _controller, reversed: true);
-                 
-
+          }
+           
               }
             },
+            
           ),
           BlocListener<AttachmentBloc, AttachmentState>(
               listener: (context, state) {
@@ -1383,12 +1344,14 @@ ScrollService.scrollToEnd(
             body: SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Column(
+              child:loadmsg==false?LottieLoader(): Column(
                 children: [
                   ChatAppBar(
                     chat: widget.chat,
                     isGroup: widget.isGroup,
                     roomId: roomId,
+                    cmntgrpid: widget.grpchatid,
+                    cmntgrpname: widget.cmntgrpchatname,
                     socket: widget.socket,
                     token: widget.token,
                     loginUserId: widget.loginUserId,
@@ -1398,10 +1361,11 @@ ScrollService.scrollToEnd(
                     communicationuser: widget.communicationuser,
                     isgrp: widget.isg,
                     grpuser: widget.grpuser,
+                    grpmember: grpmember,
                    
                   ),
                   SizedBox(height:3),
-              messageList.isEmpty
+                    messageList.isEmpty
                       ? Expanded(
                           // height: h / 1.5,
                           child: Padding(
@@ -1429,13 +1393,14 @@ ScrollService.scrollToEnd(
                           child: NotificationListener<ScrollEndNotification>(
                             onNotification: (ScrollEndNotification notification) {
                               final metrics = notification.metrics;
-                              if (metrics.hasPixels) {
+                              if (metrics.atEdge) {
                                 // bool isTop = metrics.pixels == 0;
                                 if (notification.metrics.pixels ==
-            notification.metrics.minScrollExtent &&
+            notification.metrics.maxScrollExtent &&
                                     _controller.position.userScrollDirection
                                     ==
-                                        ScrollDirection.forward) {
+                                        ScrollDirection.reverse && totpage > 1 && totpage != pageNo) {
+                                         
                                   pageNo++;
                                   if(widget.isGroup==false){
                                   BlocProvider.of<PaginatedchatBloc>(context).add(
@@ -1463,465 +1428,826 @@ ScrollService.scrollToEnd(
                               }
                               return false;
                             },
-                            child: ListView.separated(
-                              reverse: false,
-                              // shrinkWrap: true,
-                              controller: _controller,
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: messageList.length,
-                              separatorBuilder: (context, index) {
-                                return const SizedBox(
-                                  height: 8,
-                                );
-                              },
-                              itemBuilder: (context, index) {
-                                print("list view reload");
-                                msgdate1=msgdate;
-                                String? timestamp = messageList[index].createdAt.toString();
-                                DateTime dateTime = DateTime.parse(timestamp); print("getey$dateTime");
-                                String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
-                                msgdate = formatMessageTimestamp(dateTime);
-                               
-                                return Column(
-                                  crossAxisAlignment:
-                                      messageList[index].fromuserid !=
-                                              widget.loginUserId
-                                          ? CrossAxisAlignment.start
-                                          : CrossAxisAlignment.end,
-                                  children: [
-                                    msgdate != msgdate1?
-                                    Padding(
-                                         padding: const EdgeInsets.only(left: 25,right: 25,bottom: 10),
-                                         child: Center(
-                                           child: Container(
-                                             padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
-                                             
-                                             decoration: BoxDecoration(
-                                               borderRadius: BorderRadius.circular(20),
-                                               color: Color.fromARGB(184, 197, 194, 194)
-                                             ),
-                                             child: Column(
-                                               children:[ Text(
-                                                        msgdate,
-                                                             textAlign: TextAlign.center,
-                                                             softWrap: true,
-                                                             maxLines: 3,
-                                                         style: const TextStyle(
-                                                           color: Color(0xff151522),
-                                                           fontSize: 12,
-                                                         ),
-                                                       ),]
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: ListView.separated(
+                                reverse:totpage<=1?false: true,
+                                shrinkWrap: true,
+                                controller: _controller,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.only(left: 8, right: 8),
+                                itemCount: messageList.length,
+                                itemBuilder: (context, index) {
+                                  print("list view reload $index ${messageList[index].message}");
+                                  
+                                  String? timestamp = messageList[index].createdAt.toString();
+                                  DateTime dateTime = DateTime.parse(timestamp); 
+                                  String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
+                                  String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+                                  String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+                                  msgdate1=formattedDate;
+                                  return  Column(
+                                    crossAxisAlignment:
+                                        messageList[index].fromuserid !=
+                                                widget.loginUserId
+                                            ? CrossAxisAlignment.start
+                                            : CrossAxisAlignment.end,
+                                    children: [
+                                      msgdate != ""?
+                                      Padding(
+                                           padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
+                                           child: Center(
+                                             child: Container(
+                                               padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
+                                               
+                                               decoration: BoxDecoration(
+                                                 borderRadius: BorderRadius.circular(20),
+                                                 color: Color.fromARGB(236, 233, 232, 232)
+                                               ),
+                                               child: Column(
+                                                 children:[ Text(
+                                                          msgdate,
+                                                               textAlign: TextAlign.center,
+                                                               softWrap: true,
+                                                               maxLines: 3,
+                                                           style: const TextStyle(
+                                                             color: Color(0xff151522),
+                                                             fontSize: 12,
+                                                           ),
+                                                         ),]
+                                               ),
                                              ),
                                            ),
-                                         ),
-                                       ):SizedBox(),
-                                       
-                                    if (messageList[index].fromuserid !=
-                                        widget.loginUserId) ...{
-                                      if (widget.isGroup == false ) ...{
-                                        if (messageList[index].type == "image")...{
-                                          InkWell(
-                                              onTap: () {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(builder: (_) {
-                                                  return DetailScreen(
-                                                    image: messageList[index]
-                                                            .message ??
-                                                        "",
-                                                  );
-                                                }));
-                                              },
-                                              child: Container(
-                                                  width: w / 1.5,
-                                                  padding: const EdgeInsets.all(4),
+                                         ):SizedBox(),
+                                         
+                                      if (messageList[index].fromuserid !=
+                                          widget.loginUserId) ...{
+                                        if (widget.isGroup == false ) ...{
+                                          if (messageList[index].type == "image")...{
+                                            InkWell(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(builder: (_) {
+                                                    return DetailScreen(
+                                                      image: messageList[index]
+                                                              .message ??
+                                                          "",
+                                                    );
+                                                  }));
+                                                },
+                                                child: Container(
+                                                    width: w / 1.5,
+                                                    padding: const EdgeInsets.all(4),
+                                                    decoration: const BoxDecoration(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(10),
+                                                        topRight: Radius.circular(10),
+                                                        bottomLeft:
+                                                            Radius.circular(0),
+                                                        bottomRight:
+                                                            Radius.circular(10),
+                                                      ),
+                                                      color: Colors.white,
+                                                    ),
+                                                    alignment: Alignment.topLeft,
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          constraints: BoxConstraints(
+                                                            maxHeight:
+                                                                MediaQuery.of(context)
+                                                                        .size
+                                                                        .height /
+                                                                    3,
+                                                          ),
+                                                          width: w,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                        .only(
+                                                                    topLeft: Radius
+                                                                        .circular(0),
+                                                                    topRight: Radius
+                                                                        .circular(6),
+                                                                    bottomLeft: Radius
+                                                                        .circular(6),
+                                                                    bottomRight:
+                                                                        Radius
+                                                                            .circular(
+                                                                                6)),
+                                                            child: Image(
+                                                                loadingBuilder: (context,
+                                                                    child,
+                                                                    loadingProgress) {
+                                                                  if (loadingProgress ==
+                                                                      null)
+                                                                    return child;
+                                                                  return const SizedBox(
+                                                                    child: Center(
+                                                                        child: CircularProgressIndicator(
+                                                                            color: Colors
+                                                                                .white)),
+                                                                  );
+                                                                },
+                                                                fit: BoxFit.cover,
+                                                                image: NetworkImage(
+                                                                    messageList[index]
+                                                                            .message ??
+                                                                        "")),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 3,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment.end,
+                                                          children: [
+                                                            Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color(0xFF6D6D6D),
+                                                                        ),
+                                                                      ),
+                                                                      
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )))
+                                          } else if (messageList[index].type ==
+                                              "audio") ...{
+                                                Stack(
+                                                  children:[
+                                                    VoiceMessage(
+                                              audioSrc:
+                                                  messageList[index].message ?? "",
+                                              played:
+                                                  false, // To show played badge or not.
+                                              me: false, // Set message side.
+                                              onPlay:
+                                                  () {}, // Do something when voice played.
+                                            ),
+                                            Positioned(
+                                                        right: 6,
+                                                        bottom: 5,
+                                                        child: Text(
+                                                      formattedTime,
+                                                        style: const TextStyle(
+                                                          fontSize: 8,
+                                                          color: Color(0xFF6D6D6D),
+                                                        ),                                                           ),
+                                                      ),
+                                                  ]
+                                                )
+                                            
+                                          } else if (messageList[index].type ==
+                                              "video") ...{
+                                                Stack(
+                                                  children:[
+                                                    VideoPlayerScreen(
+                                              autoplay: false,
+                                              looping: false,
+                                              me: false,
+                                              alignmentGeometry: Alignment.topLeft,
+                                              videoPlayerController:
+                                                  VideoPlayerController.network(
+                                                messageList[index].message ?? "",
+                                              ),
+                                            ),
+                                            Positioned(
+                                                        right: 6,
+                                                        bottom: 0,
+                                                        child: Text(
+                                                      formattedTime,
+                                                        style: const TextStyle(
+                                                          fontSize: 8,
+                                                          color: Color(0xFF6D6D6D),
+                                                        ),                                                           ),
+                                                      ),
+                                                  ]
+                                                ),
+                                            
+                                          } else if (messageList[index].type ==
+                                              "file") ...{
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  width: w / 1.63,
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 10, horizontal: 8),
                                                   decoration: const BoxDecoration(
                                                     borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(10),
+                                                      topLeft: Radius.circular(0),
                                                       topRight: Radius.circular(10),
-                                                      bottomLeft:
-                                                          Radius.circular(0),
+                                                      bottomLeft: Radius.circular(11),
                                                       bottomRight:
                                                           Radius.circular(10),
                                                     ),
                                                     color: Colors.white,
                                                   ),
-                                                  alignment: Alignment.topLeft,
-                                                  child: Column(
+                                                  child: Stack(
                                                     children: [
-                                                      Container(
-                                                        constraints: BoxConstraints(
-                                                          maxHeight:
-                                                              MediaQuery.of(context)
-                                                                      .size
-                                                                      .height /
-                                                                  3,
-                                                        ),
-                                                        width: w,
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .only(
-                                                                  topLeft: Radius
-                                                                      .circular(0),
-                                                                  topRight: Radius
-                                                                      .circular(6),
-                                                                  bottomLeft: Radius
-                                                                      .circular(6),
-                                                                  bottomRight:
-                                                                      Radius
-                                                                          .circular(
-                                                                              6)),
-                                                          child: Image(
-                                                              loadingBuilder: (context,
-                                                                  child,
-                                                                  loadingProgress) {
-                                                                if (loadingProgress ==
-                                                                    null)
-                                                                  return child;
-                                                                return const SizedBox(
-                                                                  child: Center(
-                                                                      child: CircularProgressIndicator(
-                                                                          color: Colors
-                                                                              .white)),
-                                                                );
-                                                              },
-                                                              fit: BoxFit.cover,
-                                                              image: NetworkImage(
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            height: 45,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+                                                                color: Colors.white),
+                                                            child: SvgPicture.string(
+                                                                CommunicationSvg().docIcon2),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Container(
+                                                            width: w / 2,
+                                                            height: 45,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      10),
+                                                              boxShadow: [
+                                                                const BoxShadow(
+                                                                  color:
+                                                                      Color(0x05000000),
+                                                                  blurRadius: 8,
+                                                                  offset: Offset(1, 1),
+                                                                ),
+                                                              ],
+                                                              color: Colors.white,
+                                                            ),
+                                                            padding: const EdgeInsets
+                                                                .symmetric(horizontal: 8),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
                                                                   messageList[index]
                                                                           .message ??
-                                                                      "")),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 3,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment.start,
-                                                        children: [
-                                                          Text( //formattedTime.isEmpty?
-                                                            // messageList[index]
-                                                            //         .createdAt ??
-                                                            //     "",//:
-                                                               
-                                                                formattedTime,
-                                                            style: const TextStyle(
-                                                                fontSize: 13,
-                                                                color:
-                                                                    Color(0xFF6D6D6D)),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  )))
-                                        } else if (messageList[index].type ==
-                                            "audio") ...{
-                                              SizedBox(height:5,),
-                                          VoiceMessage(
-                                            audioSrc:
-                                                messageList[index].message ?? "",
-                                            played:
-                                                false, // To show played badge or not.
-                                            me: false, // Set message side.
-                                            onPlay:
-                                                () {}, // Do something when voice played.
-                                          )
-                                        } else if (messageList[index].type ==
-                                            "video") ...{
-                                          VideoPlayerScreen(
-                                            autoplay: false,
-                                            looping: false,
-                                            me: false,
-                                            alignmentGeometry: Alignment.topLeft,
-                                            videoPlayerController:
-                                                VideoPlayerController.network(
-                                              messageList[index].message ?? "",
-                                            ),
-                                          )
-                                        } else if (messageList[index].type ==
-                                            "file") ...{
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: w / 1.75,
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 10, horizontal: 8),
-                                                decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(0),
-                                                    topRight: Radius.circular(10),
-                                                    bottomLeft: Radius.circular(01),
-                                                    bottomRight:
-                                                        Radius.circular(10),
-                                                  ),
-                                                  color: Color(0xfff8f7f5),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 45,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
-                                                          color: Colors.white),
-                                                      child: SvgPicture.string(
-                                                          CommunicationSvg().docIcon2),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Container(
-                                                      width: w / 2,
-                                                      height: 45,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                10),
-                                                        boxShadow: [
-                                                          const BoxShadow(
-                                                            color:
-                                                                Color(0x05000000),
-                                                            blurRadius: 8,
-                                                            offset: Offset(1, 1),
-                                                          ),
-                                                        ],
-                                                        color: Colors.white,
-                                                      ),
-                                                      padding: const EdgeInsets
-                                                          .symmetric(horizontal: 8),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            messageList[index]
-                                                                    .message ??
-                                                                "",
-                                                            style: GoogleFonts.roboto(textStyle:TextStyle(
-                                                              color: Colors.black,
-                                                              fontSize: 8,
-                                                            ),)
-                                                          ),
-                                                          const SizedBox(height: 4),
-                                                          // Text(
-                                                          //   "21.54 Mb",
-                                                          //   style: TextStyle(
-                                                          //     color: Color(0xff333333),
-                                                          //     fontSize: 12,
-                                                          //   ),
-                                                          // ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              InkWell(
-                                                  onTap: () async {
-                                                    final url = messageList[index]
-                                                            .message ??
-                                                        "";
-                                                    if (await canLaunch(url)) {
-                                                      await launch(url);
-                                                    } else {
-                                                      throw 'Could not launch $url';
-                                                    }
-                                                  },
-                                                  child: SvgPicture.string(
-                                                      CommunicationSvg().dwnldIcon)),
-                                            ],
-                                          ),
-                                        } else ...{
-                                          Column(children: [
-                                            Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: ConstrainedBox(
-                                                constraints: BoxConstraints(
-                                                minWidth: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      290,
-                                                  maxWidth: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      45,
-                                                ),
-                                                child: Card(
-                                                  elevation: 1,
-                                                  shape:
-                                                      const RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(0),
-                                                      topRight: Radius.circular(10),
-                                                      bottomLeft:
-                                                          Radius.circular(10),
-                                                      bottomRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                  ),
-                                                  color: Colors.white,
-                                                  // margin: const EdgeInsets.symmetric(
-                                                  //     horizontal: 15, vertical: 5),
-                                                  child: Stack(
-                                                    // mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                          left: 10,
-                                                          right:20,
-                                                          top:7,
-                                                          bottom: 10,
-                                                        ),
-                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                            messageList[index]
-                                                                    .message ??
-                                                                "",
-                                                                textAlign: TextAlign.left,
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors.black),
+                                                                      "",
+                                                                  style: GoogleFonts.roboto(textStyle:TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontSize: 8,
+                                                                  ),)
+                                                                ),
+                                                                const SizedBox(height: 4),
+                                                                // Text(
+                                                                //   "21.54 Mb",
+                                                                //   style: TextStyle(
+                                                                //     color: Color(0xff333333),
+                                                                //     fontSize: 12,
+                                                                //   ),
+                                                                // ),
+                                                              ],
                                                             ),
-                                                            SizedBox(height: 5,),
-                                                           
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                       Positioned(
-                                                               right: 5,
-                                                               bottom: 5,
-                                                               child: Text(
-                                                              formattedTime,
-                                                                style: const TextStyle(
-                                                                  fontSize: 8,
-                                                                  color: Color(0xFF6D6D6D),
-                                                                ),                                                           ),
-                                                             ),
+                                                      Positioned(
+                                                        right: 3,
+                                                        bottom: -4,
+                                                        child: Text(
+                                                      formattedTime,
+                                                        style: const TextStyle(
+                                                          fontSize: 8,
+                                                          color: Color(0xFF6D6D6D),
+                                                        ),                                                           ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
-                                              ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                InkWell(
+                                                    onTap: () async {
+                                                      final url = messageList[index]
+                                                              .message ??
+                                                          "";
+                                                      if (await canLaunch(url)) {
+                                                        await launch(url);
+                                                      } else {
+                                                        throw 'Could not launch $url';
+                                                      }
+                                                    },
+                                                    child: SvgPicture.string(
+                                                        CommunicationSvg().dwnldIcon)),
+                                              ],
                                             ),
-                                            // Row(
-                                            //   mainAxisAlignment:
-                                            //       MainAxisAlignment.start,
-                                            //   children: [
-                                            //     Text(
-                                            //       messageList[index].createdAt ??
-                                            //           "",
-                                            //       style: const TextStyle(
-                                            //           fontSize: 13,
-                                            //           color: Color(0xFF6D6D6D)),
-                                            //     ),
-                                            //   ],
-                                            // ),
-                                          ])
-                                        }
-                                      } else ...{
-                                        if(messageList[index].type=="notify")...{
-                                                 Padding(
-                                         padding: const EdgeInsets.only(left: 25,right: 25),
-                                         child: Center(
-                                           child: Container(
-                                             padding: EdgeInsets.only(top:10,bottom:10,right: 10,left: 10),
-                                             
-                                             decoration: BoxDecoration(
-                                               borderRadius: BorderRadius.circular(20),
-                                               color: Color.fromARGB(184, 197, 194, 194)
-                                             ),
-                                             child: Column(
-                                               children:[ Text(
-                                                         messageList[index]
-                                                                 .message??
-                                                             "",
-                                                             textAlign: TextAlign.center,
-                                                             softWrap: true,
-                                                             maxLines: 3,
-                                                         style: const TextStyle(
-                                                           color: Color(0xff151522),
-                                                           fontSize: 12,
-                                                         ),
-                                                       ),]
+                                          } else ...{
+                                            Column(children: [
+                                              Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                  minWidth: MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        300,
+                                                    maxWidth: MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        95,
+                                                  ),
+                                                  child: Card(
+                                                    elevation: 1,
+                                                    shape:
+                                                        const RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(0),
+                                                        topRight: Radius.circular(10),
+                                                        bottomLeft:
+                                                            Radius.circular(10),
+                                                        bottomRight:
+                                                            Radius.circular(10),
+                                                      ),
+                                                    ),
+                                                    color: Colors.white,
+                                                    // margin: const EdgeInsets.symmetric(
+                                                    //     horizontal: 15, vertical: 5),
+                                                    child: Stack(
+                                                      // mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                            left: 10,
+                                                            right:20,
+                                                            top:7,
+                                                            bottom: 17,
+                                                          ),
+                                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Text(
+                                                              messageList[index]
+                                                                      .message ??
+                                                                  "",
+                                                                  textAlign: TextAlign.left,
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors.black),
+                                                              ),
+                                                              SizedBox(height: 5,),
+                                                             
+                                                            ],
+                                                          ),
+                                                        ),
+                                                         Positioned(
+                                                                 right: 5,
+                                                                 bottom: 5,
+                                                                 child: Text(
+                                                                formattedTime,
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),                                                           ),
+                                                               ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Row(
+                                              //   mainAxisAlignment:
+                                              //       MainAxisAlignment.start,
+                                              //   children: [
+                                              //     Text(
+                                              //       messageList[index].createdAt ??
+                                              //           "",
+                                              //       style: const TextStyle(
+                                              //           fontSize: 13,
+                                              //           color: Color(0xFF6D6D6D)),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                            ])
+                                          }
+                                        } else ...{
+                                          if(messageList[index].type=="notify")...{
+                                                   Padding(
+                                           padding: const EdgeInsets.only(top:10,left: 25,right: 25,bottom: 10),
+                                           child: Center(
+                                             child: Container(
+                                               padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
+                                               
+                                               decoration: BoxDecoration(
+                                                 borderRadius: BorderRadius.circular(20),
+                                                 color: Color.fromARGB(236, 233, 232, 232)
+                                               ),
+                                               child: Column(
+                                                 children:[ Text(
+                                                           messageList[index]
+                                                                   .message??
+                                                               "",
+                                                               textAlign: TextAlign.center,
+                                                               softWrap: true,
+                                                               maxLines: 3,
+                                                           style: const TextStyle(
+                                                             color: Color(0xff151522),
+                                                             fontSize: 12,
+                                                           ),
+                                                         ),]
+                                               ),
                                              ),
                                            ),
-                                         ),
-                                       )
-                                                 
-                                                 } else...{
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
+                                         )
+                                                   
+                                                   } else...{
+                                                        Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                             Align(
-                                                alignment: Alignment.topLeft,
-                                                child: CircleAvatar(
-                                                    backgroundColor: Colors.white,
-                                                    radius:18,
-                                                    child: TextAvatar(
-                                                  shape: Shape.Circular,
-                                                  size: 14,
-                                                  numberLetters: 2,
-                                                  fontSize: w/23,
-                                                  textColor: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  text:"${messageList[index].fromUser?.name.toString().toTitleCase()}" ,
-                                                )
-                                                )
+                                                  alignment: Alignment.topLeft,
+                                                  child: CircleAvatar(
+                                                      backgroundColor: Colors.white,
+                                                      radius:18,
+                                                      child: TextAvatar(
+                                                    shape: Shape.Circular,
+                                                    size: 14,
+                                                    numberLetters: 2,
+                                                    fontSize: w/23,
+                                                    textColor: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    text:"${messageList[index].fromUser?.name.toString().toTitleCase()}" ,
+                                                  )
+                                                  )
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(height: 5,),
+                                                  Text(
+                                                    messageList[index]
+                                                            .fromUser
+                                                            ?.name.toString().toTitleCase() ??
+                                                        "",
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      color: Color(0xff151522),
+                                                      fontSize: 12,
                                                     ),
-                                                    SizedBox(width: 5,),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(height: 5,),
-                                                Text(
-                                                  messageList[index]
-                                                          .fromUser
-                                                          ?.name.toString().toTitleCase() ??
-                                                      "",
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xff151522),
-                                                    fontSize: 12,
                                                   ),
-                                                ),
-                                               
-                                               if (messageList[index].type ==
-                                                    "image") ...{
-                                                  InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(context,
-                                                            MaterialPageRoute(
-                                                                builder: (_) {
-                                                          return DetailScreen(
-                                                            image:
-                                                                messageList[index]
-                                                                        .message ??
-                                                                    "",
-                                                          );
-                                                        }));
-                                                      },
-                                                      child: Container(
-                                                          width: w / 1.5,
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                  4),
+                                                 
+                                                 if (messageList[index].type ==
+                                                      "image") ...{
+                                                    InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(context,
+                                                              MaterialPageRoute(
+                                                                  builder: (_) {
+                                                            return DetailScreen(
+                                                              image:
+                                                                  messageList[index]
+                                                                          .message ??
+                                                                      "",
+                                                            );
+                                                          }));
+                                                        },
+                                                        child: Container(
+                                                            width: w / 1.5,
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                    4),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius.only(
+                                                                topLeft:
+                                                                    Radius.circular(
+                                                                        0),
+                                                                topRight:
+                                                                    Radius.circular(
+                                                                        10),
+                                                                bottomLeft:
+                                                                    Radius.circular(
+                                                                        10),
+                                                                bottomRight:
+                                                                    Radius.circular(
+                                                                        10),
+                                                              ),
+                                                              color: Colors.white
+                                                            ),
+                                                            alignment:
+                                                                Alignment.topLeft,
+                                                            child: Column(
+                                                              children: [
+                                                                Container(
+                                                                  constraints:
+                                                                      BoxConstraints(
+                                                                    maxHeight: MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .height /
+                                                                        3,
+                                                                  ),
+                                                                  width: w,
+                                                                  child: ClipRRect(
+                                                                    borderRadius: const BorderRadius
+                                                                            .only(
+                                                                        topLeft: Radius
+                                                                            .circular(
+                                                                                0),
+                                                                        topRight: Radius
+                                                                            .circular(
+                                                                                6),
+                                                                        bottomLeft: Radius
+                                                                            .circular(
+                                                                                6),
+                                                                        bottomRight: Radius
+                                                                            .circular(
+                                                                                6)),
+                                                                    child: Image(
+                                                                        loadingBuilder:
+                                                                            (context,
+                                                                                child,
+                                                                                loadingProgress) {
+                                                                          if (loadingProgress ==
+                                                                              null)
+                                                                            return child;
+                                                                          return const SizedBox(
+                                                                            child: Center(
+                                                                                child: CircularProgressIndicator(
+                                                                              color: Colors
+                                                                                  .white,
+                                                                            )),
+                                                                          );
+                                                                        },
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        image: NetworkImage(
+                                                                            messageList[index]
+                                                                                    .message ??
+                                                                                "")),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 3,
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .end,
+                                                                  children: [
+                                                                    Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color(0xFF6D6D6D),
+                                                                        ),
+                                                                      ),
+                                                                     
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            )))
+                                                  } else if (messageList[index]
+                                                          .type ==
+                                                      "audio") ...{
+                                                        SizedBox(height: 5,),
+                                                        Stack(
+                                                          children:[
+                                                            VoiceMessage(
+                                                      audioSrc: messageList[index]
+                                                              .message ??
+                                                          "",
+                                                      played:
+                                                          false, // To show played badge or not.
+                                                      me: false, // Set message side.
+                                                      onPlay:
+                                                          () {}, // Do something when voice played.
+                                                    ),
+                                                    Positioned(
+                                                                 right: 6,
+                                                                 bottom: 5,
+                                                                 child: Text(
+                                                                  formattedTime,
+                                                                //   messageList[index]
+                                                                //     .createdAt ??
+                                                                // "",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),
+                                                                                                                            ),
+                                                               ),
+                                                          ]
+                                                        )
+                                                    
+                                                  } else if (messageList[index]
+                                                          .type ==
+                                                      "file") ...{
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          width: w / 1.6,
+                                                          padding: const EdgeInsets
+                                                                  .symmetric(
+                                                              vertical: 10,
+                                                              horizontal: 8),
                                                           decoration:
                                                               const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(0),
+                                                              topRight:
+                                                                  Radius.circular(10),
+                                                              bottomLeft:
+                                                                  Radius.circular(10),
+                                                              bottomRight:
+                                                                  Radius.circular(10),
+                                                            ),
+                                                            color: Colors.white,
+                                                          ),
+                                                          child: Stack(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Container(
+                                                                    height: 45,
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius
+                                                                                .circular(
+                                                                                    8),
+                                                                        color:
+                                                                            Colors.white),
+                                                                    child:
+                                                                        SvgPicture.string(
+                                                                            CommunicationSvg()
+                                                                                .docIcon2),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Container(
+                                                                    width: w / 2,
+                                                                    height: 45,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(
+                                                                                  10),
+                                                                      boxShadow: [
+                                                                        const BoxShadow(
+                                                                          color: Color(
+                                                                              0x05000000),
+                                                                          blurRadius: 8,
+                                                                          offset: Offset(
+                                                                              1, 1),
+                                                                        ),
+                                                                      ],
+                                                                      color: Colors.white,
+                                                                    ),
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                                .symmetric(
+                                                                            horizontal:
+                                                                                8),
+                                                                    child: Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          messageList[index]
+                                                                                  .message ??
+                                                                              "",
+                                                                          style:
+                                                                              GoogleFonts.roboto(textStyle: TextStyle(
+                                                                            color: Colors
+                                                                                .black,
+                                                                            fontSize: 8,
+                                                                          ),
+                                                                              ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height: 4),
+                                                                        // Text(
+                                                                        //   "21.54 Mb",
+                                                                        //   style: TextStyle(
+                                                                        //     color: Color(0xff333333),
+                                                                        //     fontSize: 12,
+                                                                        //   ),
+                                                                        // ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Positioned(
+                                                                 right: 3,
+                                                                 bottom: -4,
+                                                                 child: Text(
+                                                                  formattedTime,
+                                                                //   messageList[index]
+                                                                //     .createdAt ??
+                                                                // "",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),
+                                                                                                                            ),
+                                                               ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        InkWell(
+                                                            onTap: () async {
+                                                              final url =
+                                                                  messageList[index]
+                                                                          .message ??
+                                                                      "";
+                                                              if (await canLaunch(
+                                                                  url)) {
+                                                                await launch(url);
+                                                              } else {
+                                                                throw 'Could not launch $url';
+                                                              }
+                                                            },
+                                                            child: SvgPicture.string(
+                                                              CommunicationSvg().dwnldIcon,)),
+                                                      ],
+                                                    ),
+                                                  } else if (messageList[index]
+                                                          .type ==
+                                                      "video") ...{
+                                                        Stack(
+                                                          children: [
+                                                            VideoPlayerScreen(
+                                                      me: false,
+                                                      autoplay: false,
+                                                      looping: false,
+                                                      alignmentGeometry:
+                                                          Alignment.topLeft,
+                                                      videoPlayerController:
+                                                          VideoPlayerController
+                                                              .network(
+                                                        messageList[index].message ??
+                                                            "",
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                                 right: 6,
+                                                                 bottom: 0,
+                                                                 child: Text(
+                                                                  formattedTime,
+                                                                //   messageList[index]
+                                                                //     .createdAt ??
+                                                                // "",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),
+                                                                                                                            ),
+                                                               ),
+                                                          ],
+                                                        )
+                                                    
+                                                  } else ...{
+                                                    Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                      ConstrainedBox(
+                                                        constraints: BoxConstraints(
+                                                             minWidth:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .width -
+                                                                  300,
+                                                          maxWidth:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .width -
+                                                                  90,
+                                                        ),
+                                                        child: Card(
+                                                          elevation: 1,
+                                                          shape:
+                                                              const RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius.only(
                                                               topLeft:
@@ -1937,728 +2263,632 @@ ScrollService.scrollToEnd(
                                                                   Radius.circular(
                                                                       10),
                                                             ),
-                                                            color: ColorPalette
-                                                                .primary,
                                                           ),
-                                                          alignment:
-                                                              Alignment.topLeft,
-                                                          child: Column(
+                                                          color:
+                                                              Colors.white,
+                                                          // margin: const EdgeInsets
+                                                          //         .symmetric(
+                                                          //     horizontal: 15,
+                                                          //     vertical: 5),
+                                                          child:  Stack(
+                                                      // mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                            left: 10,
+                                                            right:20,
+                                                            top:7,
+                                                            bottom: 17,
+                                                          ),
+                                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
                                                             children: [
-                                                              Container(
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                  maxHeight: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height /
-                                                                      3,
-                                                                ),
-                                                                width: w,
-                                                                child: ClipRRect(
-                                                                  borderRadius: const BorderRadius
-                                                                          .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              0),
-                                                                      topRight: Radius
-                                                                          .circular(
-                                                                              6),
-                                                                      bottomLeft: Radius
-                                                                          .circular(
-                                                                              6),
-                                                                      bottomRight: Radius
-                                                                          .circular(
-                                                                              6)),
-                                                                  child: Image(
-                                                                      loadingBuilder:
-                                                                          (context,
-                                                                              child,
-                                                                              loadingProgress) {
-                                                                        if (loadingProgress ==
-                                                                            null)
-                                                                          return child;
-                                                                        return const SizedBox(
-                                                                          child: Center(
-                                                                              child: CircularProgressIndicator(
-                                                                            color: Colors
-                                                                                .white,
-                                                                          )),
-                                                                        );
-                                                                      },
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      image: NetworkImage(
-                                                                          messageList[index]
-                                                                                  .message ??
-                                                                              "")),
-                                                                ),
+                                                              Text(
+                                                              messageList[index]
+                                                                      .message ??
+                                                                  "",
+                                                                  softWrap: true,
+                                                                  textAlign: TextAlign.left,
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors.black),
                                                               ),
-                                                              const SizedBox(
-                                                                height: 3,
-                                                              ),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                  formattedTime,
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                              SizedBox(height: 5,),
+                                                             
                                                             ],
-                                                          )))
-                                                } else if (messageList[index]
-                                                        .type ==
-                                                    "audio") ...{
-                                                      SizedBox(height: 5,),
-                                                  VoiceMessage(
-                                                    audioSrc: messageList[index]
-                                                            .message ??
-                                                        "",
-                                                    played:
-                                                        false, // To show played badge or not.
-                                                    me: false, // Set message side.
-                                                    onPlay:
-                                                        () {}, // Do something when voice played.
-                                                  )
-                                                } else if (messageList[index]
-                                                        .type ==
-                                                    "file") ...{
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Container(
-                                                        width: w / 1.75,
-                                                        padding: const EdgeInsets
-                                                                .symmetric(
-                                                            vertical: 10,
-                                                            horizontal: 8),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(0),
-                                                            topRight:
-                                                                Radius.circular(10),
-                                                            bottomLeft:
-                                                                Radius.circular(10),
-                                                            bottomRight:
-                                                                Radius.circular(10),
-                                                          ),
-                                                          color: Color(0xfff8f7f5),
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              height: 45,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  color:
-                                                                      Colors.white),
-                                                              child:
-                                                                  SvgPicture.string(
-                                                                      CommunicationSvg()
-                                                                          .docIcon2),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Container(
-                                                              width: w / 2,
-                                                              height: 45,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                boxShadow: [
-                                                                  const BoxShadow(
-                                                                    color: Color(
-                                                                        0x05000000),
-                                                                    blurRadius: 8,
-                                                                    offset: Offset(
-                                                                        1, 1),
-                                                                  ),
-                                                                ],
-                                                                color: Colors.white,
-                                                              ),
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          8),
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    messageList[index]
-                                                                            .message ??
-                                                                        "",
-                                                                    style:
-                                                                        GoogleFonts.roboto(textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize: 8,
-                                                                    ),
-                                                                        ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      height: 4),
-                                                                  // Text(
-                                                                  //   "21.54 Mb",
-                                                                  //   style: TextStyle(
-                                                                  //     color: Color(0xff333333),
-                                                                  //     fontSize: 12,
-                                                                  //   ),
-                                                                  // ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      InkWell(
-                                                          onTap: () async {
-                                                            final url =
-                                                                messageList[index]
-                                                                        .message ??
-                                                                    "";
-                                                            if (await canLaunch(
-                                                                url)) {
-                                                              await launch(url);
-                                                            } else {
-                                                              throw 'Could not launch $url';
-                                                            }
-                                                          },
-                                                          child: SvgPicture.string(
-                                                              TaskSvg()
-                                                                  .downloadIcon)),
-                                                    ],
-                                                  ),
-                                                } else if (messageList[index]
-                                                        .type ==
-                                                    "video") ...{
-                                                  VideoPlayerScreen(
-                                                    me: false,
-                                                    autoplay: false,
-                                                    looping: false,
-                                                    alignmentGeometry:
-                                                        Alignment.topLeft,
-                                                    videoPlayerController:
-                                                        VideoPlayerController
-                                                            .network(
-                                                      messageList[index].message ??
-                                                          "",
-                                                    ),
-                                                  )
-                                                } else ...{
-                                                  Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                    ConstrainedBox(
-                                                      constraints: BoxConstraints(
-                                                           minWidth:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width -
-                                                                280,
-                                                        maxWidth:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width -
-                                                                60,
-                                                      ),
-                                                      child: Card(
-                                                        elevation: 1,
-                                                        shape:
-                                                            const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    0),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    10),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    10),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    10),
                                                           ),
                                                         ),
-                                                        color:
-                                                            Colors.white,
-                                                        // margin: const EdgeInsets
-                                                        //         .symmetric(
-                                                        //     horizontal: 15,
-                                                        //     vertical: 5),
-                                                        child:  Stack(
-                                                    // mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                          left: 10,
-                                                          right:20,
-                                                          top:7,
-                                                          bottom: 10,
-                                                        ),
-                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                            messageList[index]
-                                                                    .message ??
-                                                                "",
-                                                                softWrap: true,
-                                                                textAlign: TextAlign.left,
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors.black),
-                                                            ),
-                                                            SizedBox(height: 5,),
-                                                           
-                                                          ],
-                                                        ),
-                                                      ),
-                                                       Positioned(
-                                                               right: 6,
-                                                               bottom: 5,
-                                                               child: Text(
-                                                                formattedTime,
-                                                              //   messageList[index]
-                                                              //     .createdAt ??
-                                                              // "",
-                                                                style: const TextStyle(
-                                                                  fontSize: 8,
-                                                                  color: Color(0xFF6D6D6D),
-                                                                ),
-                                                                                                                          ),
-                                                             ),
-                                                    ],
-                                                  ),
-                                                      ),
-                                                    ),
-                                                    // Row(
-                                                    //   mainAxisAlignment:
-                                                    //       MainAxisAlignment.start,
-                                                    //   children: [
-                                                    //     Text(
-                                                    //       messageList[index]
-                                                    //               .createdAt ??
-                                                    //           "",
-                                                    //       style: const TextStyle(
-                                                    //           fontSize: 13,
-                                                    //           color: Color(
-                                                    //               0xFF6D6D6D)),
-                                                    //     ),
-                                                    //   ],
-                                                    // ),
-                                                  ])
-                                                }
-                                              ],
-                                            ),
-                                          ],
-                                        )
-                                      }
-                                      }
-                                    }
-                                   
-                                    else ...{
-                                      if(messageList[index].type=="notify")...{
-                                       Padding(
-                                         padding: const EdgeInsets.only(left: 25,top:2,right: 25),
-                                         child: Center(
-                                           child: Container(
-                                             padding: EdgeInsets.only(top:10,bottom:10,right: 10,left: 10),
-                                             
-                                             decoration: BoxDecoration(
-                                               borderRadius: BorderRadius.circular(20),
-                                               color: Color.fromARGB(184, 197, 194, 194)
-                                             ),
-                                             child: Center(
-                                               child: Text(
-                                                         messageList[index]
-                                                                 .message??
-                                                             "",
-                                                             textAlign: TextAlign.center,
-                                                             softWrap: true,
-                                                             maxLines: 3,
-                                                         style: const TextStyle(
-                                                           color: Color(0xff151522),
-                                                           fontSize: 12,
-                                                         ),
-                                                       ),
-                                             ),
-                                           ),
-                                         ),
-                                       )  
-                                        }
-                                     else if (messageList[index].type == "image") ...{
-                                      SizedBox(height: 5,),
-                                        InkWell(
-                                            onTap: () {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(builder: (_) {
-                                                return DetailScreen(
-                                                  image:
-                                                      messageList[index].message ??
-                                                          "",
-                                                );
-                                              }));
-                                            },
-                                            child: Container(
-                                                width: w / 1.5,
-                                                padding: const EdgeInsets.all(4),
-                                                decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(10),
-                                                    topRight: Radius.circular(10),
-                                                    bottomLeft: Radius.circular(10),
-                                                    bottomRight: Radius.circular(0),
-                                                  ),
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                alignment: Alignment.topRight,
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      constraints: BoxConstraints(
-                                                        maxHeight:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height /
-                                                                3,
-                                                      ),
-                                                      width: w,
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius.only(
-                                                                topLeft:
-                                                                    Radius.circular(
-                                                                        6),
-                                                                topRight:
-                                                                    Radius.circular(
-                                                                        6),
-                                                                bottomLeft:
-                                                                    Radius.circular(
-                                                                        6),
-                                                                bottomRight:
-                                                                    Radius.circular(
-                                                                        0)),
-                                                        child: Image(
-                                                            loadingBuilder: (context,
-                                                                child,
-                                                                loadingProgress) {
-                                                              if (loadingProgress ==
-                                                                  null)
-                                                                return child;
-                                                              return const SizedBox(
-                                                                child: Center(
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                  color:
-                                                                      Colors.white,
-                                                                )),
-                                                              );
-                                                            },
-                                                            fit: BoxFit.cover,
-                                                            image: NetworkImage(
-                                                                messageList[index]
-                                                                        .message ??
-                                                                    "")),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 3,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          formattedTime,
-                                                          style: const TextStyle(
-                                                              fontSize: 13,
-                                                              color: Colors.white),
-                                                        ),
+                                                         Positioned(
+                                                                 right: 6,
+                                                                 bottom: 5,
+                                                                 child: Text(
+                                                                  formattedTime,
+                                                                //   messageList[index]
+                                                                //     .createdAt ??
+                                                                // "",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),
+                                                                                                                            ),
+                                                               ),
                                                       ],
                                                     ),
-                                                  ],
-                                                )))
-                                      } else if (messageList[index].type ==
-                                          "audio") ...{
-                                            SizedBox(height:5,),
-                                        VoiceMessage(
-                                          audioSrc:
-                                              messageList[index].message ?? "",
-                                          played:
-                                              false, // To show played badge or not.
-                                          me: true, // Set message side.
-                                          onPlay:
-                                              () {}, // Do something when voice played.
-                                        )
-                                      } else if (messageList[index].type ==
-                                          "file") ...{
-                                        Column(
-                                          children: [
-                                     
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            InkWell(
-                                                onTap: () async {
-                                                  final url =
-                                                      messageList[index].message ??
-                                                          "";
-                                                  if (await canLaunch(url)) {
-                                                    await launch(url);
-                                                  } else {
-                                                    throw 'Could not launch $url';
+                                                        ),
+                                                      ),
+                                                      // Row(
+                                                      //   mainAxisAlignment:
+                                                      //       MainAxisAlignment.start,
+                                                      //   children: [
+                                                      //     Text(
+                                                      //       messageList[index]
+                                                      //               .createdAt ??
+                                                      //           "",
+                                                      //       style: const TextStyle(
+                                                      //           fontSize: 13,
+                                                      //           color: Color(
+                                                      //               0xFF6D6D6D)),
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                    ])
                                                   }
-                                                },
-                                                child: SvgPicture.string(
-                                                    CommunicationSvg().dwnldIcon,)),
-                                                     const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Container(
-                                              height: 55,
-                                              decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight: Radius.circular(0),
-                                              ),
-                                                        color: ColorPalette.primary),
-                                              child: Row(
-                                                children: [
-                                                  SizedBox(width: 8,),
-                                                  SizedBox(
-                                                    width: 34,
-                                                    height: 36,
-                                                    child: SvgPicture.string(
-                                                        CommunicationSvg().docIcon2,color: Colors.white,),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Container(
-                                                    width: w / 1.8,
-                                                    height: 52,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(10),
-                                                      boxShadow: [
-                                                        const BoxShadow(
-                                                          color: Color(0x05000000),
-                                                          blurRadius: 8,
-                                                          offset: Offset(1, 1),
-                                                        ),
-                                                      ],
-                                                      color: ColorPalette.primary,
-                                                    ),
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            horizontal: 8),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          messageList[index]
-                                                                  .message ??
-                                                              "",
-                                                          style:GoogleFonts.roboto (textStyle: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:10,
-                                                          ),)
-                                                        ),
-                                                        const SizedBox(height: 4),
-                                                        // Text(
-                                                        //   "21.54 Mb",
-                                                        //   style: TextStyle(
-                                                        //     color: Color(0xff333333),
-                                                        //     fontSize: 12,
-                                                        //   ),
-                                                        // ),
-                                                      ],
-                                                    ),
-                                                  ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 5,),
-                                        Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                 formattedTime,
-                                                  style: const TextStyle(
-                                                      fontSize: 13,
-                                                      color: Color(0xFF6D6D6D)),
-                                                ),
-                                              ],
-                                            ),
-                                          ]),
-                                      } else if (messageList[index].type ==
-                                          "video") ...{
-                                        VideoPlayerScreen(
-                                          me:true,
-                                          autoplay: false,
-                                          looping: false,
-                                          alignmentGeometry: Alignment.topRight,
-                                          videoPlayerController:
-                                              VideoPlayerController.network(
-                                            messageList[index].message ?? "",
-                                          ),
-                                        )
-                                      } else ...{
-                                        Column(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: ConstrainedBox(
-                                                constraints: BoxConstraints(
-                                                  minWidth: MediaQuery.of(context)
-                                                          .size
-                                                          .width - 280,
-                                                  maxWidth: MediaQuery.of(context)
-                                                          .size
-                                                          .width - 45,
-                                                ),
-                                                child: Card(
-                                                  elevation: 1,
-                                                  shape:
-                                                      const RoundedRectangleBorder(
+                                            ],
+                                          )
+                                          
+                                          
+                                        }
+                                        }
+                                      }
+                                     
+                                      else ...{
+                                        if(messageList[index].type=="notify")...{
+                                         Padding(
+                                           padding: const EdgeInsets.only(top:10,left: 25,right: 25,bottom:10),
+                                           child: Center(
+                                             child: Container(
+                                               padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
+                                               
+                                               decoration: BoxDecoration(
+                                                 borderRadius: BorderRadius.circular(20),
+                                                 color: Color.fromARGB(236, 233, 232, 232)
+                                               ),
+                                               child: Center(
+                                                 child: Text(
+                                                           messageList[index]
+                                                                   .message??
+                                                               "",
+                                                               textAlign: TextAlign.center,
+                                                               softWrap: true,
+                                                               maxLines: 3,
+                                                           style: const TextStyle(
+                                                             color: Color(0xff151522),
+                                                             fontSize: 12,
+                                                           ),
+                                                         ),
+                                               ),
+                                             ),
+                                           ),
+                                         )  
+                                          }
+                                       else if (messageList[index].type == "image") ...{
+                                        SizedBox(height:2,),
+                                          InkWell(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(builder: (_) {
+                                                  return DetailScreen(
+                                                    image:
+                                                        messageList[index].message ??
+                                                            "",
+                                                  );
+                                                }));
+                                              },
+                                              child: Container(
+                                                  width: w / 1.5,
+                                                  padding: const EdgeInsets.all(4),
+                                                  decoration: const BoxDecoration(
                                                     borderRadius: BorderRadius.only(
                                                       topLeft: Radius.circular(10),
                                                       topRight: Radius.circular(10),
-                                                      bottomLeft:
-                                                          Radius.circular(10),
-                                                      bottomRight:
-                                                          Radius.circular(0),
+                                                      bottomLeft: Radius.circular(10),
+                                                      bottomRight: Radius.circular(0),
                                                     ),
+                                                    color: ColorPalette.primary,
                                                   ),
-                                                  color: ColorPalette.primary,
-                                                  // margin:
-                                                  //     const EdgeInsets.symmetric(
-                                                  //         horizontal: 10,
-                                                  //         vertical: 5),
-                                                  child:  Stack(
-                                                    // mainAxisSize: MainAxisSize.min,
+                                                  alignment: Alignment.topRight,
+                                                  child: Column(
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                          left: 10,
-                                                          right:20,
-                                                          top:7,
-                                                          bottom: 10,
+                                                      Container(
+                                                        constraints: BoxConstraints(
+                                                          maxHeight:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .height /
+                                                                  3,
                                                         ),
-                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                            messageList[index]
-                                                                    .message ??
-                                                                "",
-                                                                textAlign: TextAlign.left,
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color: Color.fromARGB(255, 255, 255, 255)),
-                                                            ),
-                                                            SizedBox(height: 5,),
-                                                           
-                                                          ],
+                                                        width: w,
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius.only(
+                                                                  topLeft:
+                                                                      Radius.circular(
+                                                                          6),
+                                                                  topRight:
+                                                                      Radius.circular(
+                                                                          6),
+                                                                  bottomLeft:
+                                                                      Radius.circular(
+                                                                          6),
+                                                                  bottomRight:
+                                                                      Radius.circular(
+                                                                          0)),
+                                                          child: Image(
+                                                              loadingBuilder: (context,
+                                                                  child,
+                                                                  loadingProgress) {
+                                                                if (loadingProgress ==
+                                                                    null)
+                                                                  return child;
+                                                                return const SizedBox(
+                                                                  child: Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(
+                                                                    color:
+                                                                        Colors.white,
+                                                                  )),
+                                                                );
+                                                              },
+                                                              fit: BoxFit.cover,
+                                                              image: NetworkImage(
+                                                                  messageList[index]
+                                                                          .message ??
+                                                                      "")),
                                                         ),
                                                       ),
-                                                       Positioned(
-                                                               right: 5,
-                                                               bottom: 5,
-                                                               child: Row(
-                                                                 children: [
-                                                                   Text(
-                                                                    formattedTime,
-                                                                    style: const TextStyle(
-                                                                      fontSize: 8,
-                                                                      color: Color.fromARGB(255, 211, 209, 209),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(width: 5,),
-                                                                  if(widget.grpchatid=="")...{
-                                                                    if(activeUsersLength == 2)...{
-                                                                    Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
-                                                                  }
-                                                                  else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
-                                                                    SizedBox()
-                                                                  }
-                                                                  else...{
-                                                                    messageList[index].seenBy!.isEmpty?
-                                                                    SizedBox():
-                                                                  Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
-                                     
-                                                                  }
-                                                                  } else...{
-                                                                    SizedBox()
-                                                                  }
-                                                                  
-                                                                 
-                                                                 ],
-                                                               ),
-                                                             ),
+                                                      const SizedBox(
+                                                        height: 3,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment.end,
+                                                        children: [
+                                                          Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color.fromARGB(255, 211, 209, 209),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 5,),
+                                                                      if(widget.grpchatid=="")...{
+                                                                        if(activeUsersLength == 2)...{
+                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                      }
+                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      else...{
+                                                                        messageList[index].seenBy!.isEmpty?
+                                                                        SizedBox():
+                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                         
+                                                                      }
+                                                                      } else...{
+                                                                        SizedBox()
+                                                                      }
+                                                        ],
+                                                      ),
                                                     ],
+                                                  )))
+                                        } else if (messageList[index].type ==
+                                            "audio") ...{
+                                              SizedBox(height:1,),
+                                              Stack(
+                                                children:[
+                                                   VoiceMessage(
+                                            audioSrc:
+                                                messageList[index].message ?? "",
+                                            played:
+                                                false, // To show played badge or not.
+                                            me: true, // Set message side.
+                                            onPlay:
+                                                () {}, // Do something when voice played.
+                                          ),
+                                           Positioned(
+                                                                   right: 5,
+                                                                   bottom: 5,
+                                                                   child: Row(
+                                                                     children: [
+                                                                       Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color.fromARGB(255, 211, 209, 209),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 5,),
+                                                                      if(widget.grpchatid=="")...{
+                                                                        if(activeUsersLength == 2)...{
+                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                      }
+                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      else...{
+                                                                        messageList[index].seenBy!.isEmpty?
+                                                                        SizedBox():
+                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                         
+                                                                      }
+                                                                      } else...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      
+                                                                     
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                ]
+                                              )
+                                         
+                                        } else if (messageList[index].type ==
+                                            "file") ...{
+                                          Column(
+                                            children: [
+                                       
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              InkWell(
+                                                  onTap: () async {
+                                                    final url =
+                                                        messageList[index].message ??
+                                                            "";
+                                                    if (await canLaunch(url)) {
+                                                      await launch(url);
+                                                    } else {
+                                                      throw 'Could not launch $url';
+                                                    }
+                                                  },
+                                                  child: SvgPicture.string(
+                                                      CommunicationSvg().dwnldIcon,)),
+                                                       const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Container(
+                                                height: 60,
+                                                decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight: Radius.circular(10),
+                                                  bottomLeft: Radius.circular(10),
+                                                  bottomRight: Radius.circular(0),
+                                                ),
+                                                          color: ColorPalette.primary),
+                                                child: Stack(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        SizedBox(width: 8,),
+                                                        SizedBox(
+                                                          width: 34,
+                                                          height: 36,
+                                                          child: SvgPicture.string(
+                                                              CommunicationSvg().docIcon2,color: Colors.white,),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Container(
+                                                          width: w / 1.8,
+                                                          height: 52,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.circular(10),
+                                                            boxShadow: [
+                                                              const BoxShadow(
+                                                                color: Color(0x05000000),
+                                                                blurRadius: 8,
+                                                                offset: Offset(1, 1),
+                                                              ),
+                                                            ],
+                                                            color: ColorPalette.primary,
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                  horizontal: 8),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment.center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                messageList[index]
+                                                                        .message ??
+                                                                    "",
+                                                                style:GoogleFonts.roboto (textStyle: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize:10,
+                                                                ),)
+                                                              ),
+                                                              // Text(
+                                                              //   "21.54 Mb",
+                                                              //   style: TextStyle(
+                                                              //     color: Color(0xff333333),
+                                                              //     fontSize: 12,
+                                                              //   ),
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                          Positioned(
+                                                                   right: 5,
+                                                                   bottom: 5,
+                                                                   child: Row(
+                                                                     children: [
+                                                                       Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color.fromARGB(255, 211, 209, 209),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 5,),
+                                                                      if(widget.grpchatid=="")...{
+                                                                        if(activeUsersLength == 2)...{
+                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                      }
+                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      else...{
+                                                                        messageList[index].seenBy!.isEmpty?
+                                                                        SizedBox():
+                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                         
+                                                                      }
+                                                                      } else...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      
+                                                                     
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          
+                                            ]),
+                                        } else if (messageList[index].type ==
+                                            "video") ...{
+                                              Stack(
+                                                children:[
+                                                  VideoPlayerScreen(
+                                            me:true,
+                                            autoplay: false,
+                                            looping: false,
+                                            alignmentGeometry: Alignment.topRight,
+                                            videoPlayerController:
+                                                VideoPlayerController.network(
+                                              messageList[index].message ?? "",
+                                            ),
+                                          ),
+                                          Positioned(
+                                                                   right: 5,
+                                                                   bottom: 0,
+                                                                   child: Row(
+                                                                     children: [
+                                                                       Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color.fromARGB(255, 211, 209, 209),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 5,),
+                                                                      if(widget.grpchatid=="")...{
+                                                                        if(activeUsersLength == 2)...{
+                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                      }
+                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      else...{
+                                                                        messageList[index].seenBy!.isEmpty?
+                                                                        SizedBox():
+                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                         
+                                                                      }
+                                                                      } else...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      
+                                                                     
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                ]
+                                              )
+                                          
+                                        } else ...{
+                                          Column(
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerRight,
+                                                child: ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                    minWidth: MediaQuery.of(context)
+                                                            .size
+                                                            .width - 300,
+                                                    maxWidth: MediaQuery.of(context)
+                                                            .size
+                                                            .width - 100,
+                                                  ),
+                                                  child: GestureDetector(
+                                                    onLongPress: (){
+                                                      if(widget.isGroup==true){
+                                                        // showMenu(context: context, position: RelativeRect.fill, 
+                                                        // items: [
+                                                        //   PopupMenuItem(child: Row(
+                                                        //     children: [
+                                                        //       Text("Read by"),
+                                                        //       IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios))
+                                                        //     ],
+                                                        //   ))
+                              
+                                                        // ]);
+                                                      }
+                                                    },
+                                                    child: Card(
+                                                      elevation: 1,
+                                                      shape:
+                                                          const RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.only(
+                                                          topLeft: Radius.circular(10),
+                                                          topRight: Radius.circular(10),
+                                                          bottomLeft:
+                                                              Radius.circular(10),
+                                                          bottomRight:
+                                                              Radius.circular(0),
+                                                        ),
+                                                      ),
+                                                      color: ColorPalette.primary,
+                                                      // margin:
+                                                      //     const EdgeInsets.symmetric(
+                                                      //         horizontal: 10,
+                                                      //         vertical: 5),
+                                                      child:  Stack(
+                                                        // mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                              left: 10,
+                                                              right:20,
+                                                              top:7,
+                                                              bottom:16,
+                                                            ),
+                                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(
+                                                                messageList[index]
+                                                                        .message ??
+                                                                    "",
+                                                                    textAlign: TextAlign.left,
+                                                                style: const TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: Color.fromARGB(255, 255, 255, 255)),
+                                                                ),
+                                                                
+                                                               SizedBox(height: 5,)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                           Positioned(
+                                                                   right: 5,
+                                                                   bottom: 5,
+                                                                   child: Row(
+                                                                     children: [
+                                                                       Text(
+                                                                        formattedTime,
+                                                                        style: const TextStyle(
+                                                                          fontSize: 8,
+                                                                          color: Color.fromARGB(255, 211, 209, 209),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 5,),
+                                                                      if(widget.grpchatid=="")...{
+                                                                        if(activeUsersLength == 2)...{
+                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                      }
+                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      else...{
+                                                                        messageList[index].seenBy!.isEmpty?
+                                                                        SizedBox():
+                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                         
+                                                                      }
+                                                                      } else...{
+                                                                        SizedBox()
+                                                                      }
+                                                                      
+                                                                     
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            // Row(
-                                            //   mainAxisAlignment:
-                                            //       MainAxisAlignment.end,
-                                            //   children: [
-                                            //     Text(
-                                            //       messageList[index].createdAt ??
-                                            //           "",
-                                            //       style: const TextStyle(
-                                            //           fontSize: 13,
-                                            //           color: Color(0xFF6D6D6D)),
-                                            //     ),
-                                            //   ],
-                                            // ),
-                                          ],
-                                        )
-                                      }
-                                    },
-                                  ],
-                                );
-                              },
+                                              // Row(
+                                              //   mainAxisAlignment:
+                                              //       MainAxisAlignment.end,
+                                              //   children: [
+                                              //     Text(
+                                              //       messageList[index].createdAt ??
+                                              //           "",
+                                              //       style: const TextStyle(
+                                              //           fontSize: 13,
+                                              //           color: Color(0xFF6D6D6D)),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                            ],
+                                          )
+                                        }
+                                      },
+                                      // msgdate != msgdate1 && totpage>1?
+                                      // Padding(
+                                      //      padding: const EdgeInsets.only(left: 25,right: 25,bottom: 10),
+                                      //      child: Center(
+                                      //        child: Container(
+                                      //          padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
+                                               
+                                      //          decoration: BoxDecoration(
+                                      //            borderRadius: BorderRadius.circular(20),
+                                      //            color: Color.fromARGB(236, 233, 232, 232)
+                                      //          ),
+                                      //          child: Column(
+                                      //            children:[ Text(
+                                      //                     msgdate,
+                                      //                          textAlign: TextAlign.center,
+                                      //                          softWrap: true,
+                                      //                          maxLines: 3,
+                                      //                      style: const TextStyle(
+                                      //                        color: Color(0xff151522),
+                                      //                        fontSize: 12,
+                                      //                      ),
+                                      //                    ),]
+                                      //          ),
+                                      //        ),
+                                      //      ),
+                                      //    ):SizedBox(),
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  fromuserids=messageList[index+1].fromuserid!;
+                                    return messageList[index].fromuserid!=messageList[index].fromuserid? const SizedBox(
+                                    height: 8,
+                                  ):const SizedBox(height: 1,);
+                                   
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -2672,7 +2902,7 @@ ScrollService.scrollToEnd(
                   //     ),
                   //   ],
                   // ),
-                  const SizedBox(height: 4),
+                  // const SizedBox(height: 4),
                   seenUsersList.isNotEmpty
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -3027,7 +3257,25 @@ ScrollService.scrollToEnd(
       ),
     );
   }
-
+String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness){
+  DateTime now = DateTime.now();
+  DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+  DateTime lastWeek = DateTime.now().subtract(Duration(days: DateTime.now().weekday + 6));
+  if (!checkUniqueness==true) {
+    // If checkUniqueness is false, return null without checking the uniqueness of the date.
+    return "";
+  }
+  if (timestamp.year == now.year && timestamp.month == now.month && timestamp.day == now.day) {
+    return ' Today ';
+  } else if (timestamp.year == yesterday.year && timestamp.month == yesterday.month && timestamp.day == yesterday.day) {
+    return 'Yesterday ';
+  } else if (timestamp.isAfter(lastWeek)) {
+    return DateFormat('EEEE').format(timestamp);
+  } else {
+    return DateFormat('d MMM yyyy').format(timestamp);
+  }
+  
+}
   Widget buildStart() {
     final isRecording = true;
     final icon = isRecording ? Icons.stop : Icons.mic;
@@ -3276,21 +3524,44 @@ class ScrollService {
     });
   }
 }
-String formatMessageTimestamp(DateTime timestamp) {
-  DateTime now = DateTime.now();
-  DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-  DateTime lastWeek = DateTime.now().subtract(Duration(days: DateTime.now().weekday + 6));
-  if (timestamp.year == now.year && timestamp.month == now.month && timestamp.day == now.day) {
-    return ' Today ';
-  } else if (timestamp.year == yesterday.year && timestamp.month == yesterday.month && timestamp.day == yesterday.day) {
-    return 'Yesterday ';
-  } else if (timestamp.isAfter(lastWeek)) {
-    return DateFormat('EEEE').format(timestamp);
-  } else {
-    return DateFormat('d MMM yyyy').format(timestamp);
+
+class PositionRetainedScrollPhysics extends ScrollPhysics {
+  final bool shouldRetain;
+  const PositionRetainedScrollPhysics({super.parent, this.shouldRetain = true});
+
+  @override
+  PositionRetainedScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return PositionRetainedScrollPhysics(
+      parent: buildParent(ancestor),
+      shouldRetain: shouldRetain,
+    );
+  }
+
+  @override
+  double adjustPositionForNewDimensions({
+    required ScrollMetrics oldPosition,
+    required ScrollMetrics newPosition,
+    required bool isScrolling,
+    required double velocity,
+  }) {
+    final position = super.adjustPositionForNewDimensions(
+      oldPosition: oldPosition,
+      newPosition: newPosition,
+      isScrolling: isScrolling,
+      velocity: velocity,
+    );
+
+    final diff = newPosition.minScrollExtent - 1;
+
+    if (1 > oldPosition.maxScrollExtent &&
+        diff < 0 &&
+        shouldRetain) {
+      return position - diff;
+    } else {
+      return position;
+    }
   }
 }
-
 
 void _recordingFinishedCallback(
   String path,

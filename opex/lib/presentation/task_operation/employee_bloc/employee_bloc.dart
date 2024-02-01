@@ -431,13 +431,13 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     final dataResponse = await _employeeRepo.createTaskGroupCommunication(
       taskGroup: taskGroup
     );
-    if (dataResponse.data) {
+    if (dataResponse.groupid !=null) {
       yield TaskGroupCreationSuccess(
-          message: dataResponse.error??""
+          chatlist: dataResponse
       );
     } else {
       yield TaskGroupCreationFailed(
-        message: dataResponse.error ?? "",
+        message: "Failed",
       );
     }
   }
