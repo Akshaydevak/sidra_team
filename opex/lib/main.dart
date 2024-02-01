@@ -68,10 +68,78 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // FlutterTts ftts = FlutterTts();
+  void createChannel(AndroidNotificationChannel channel) async {
+    final FlutterLocalNotificationsPlugin plugin =
+    FlutterLocalNotificationsPlugin();
+    await plugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+
+  @override
+  void initState() {
+    // data();
+    print("login init");
+    final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
+    FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings androidinitializationsettings =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings darwinInitializationSettings =
+    DarwinInitializationSettings();
+    const InitializationSettings initializationSettings =
+    InitializationSettings(
+        android: androidinitializationsettings,
+        iOS: darwinInitializationSettings);
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'messages', 'Messages',
+        description: "This is for flutter firebase",
+        importance: Importance.max);
+    createChannel(channel);
+    flutterlocalnotificationplugins.initialize(initializationSettings);
+    FirebaseMessaging.onMessage.listen((event) async {
+
+      // await ftts.setLanguage("en-US");
+      // await ftts.setSpeechRate(0.5);
+      // await ftts.setVolume(1.0);
+      // await ftts.setPitch(1);
+      //
+      // //play text to sp
+      // var result = await ftts.speak(
+      // "${event.notification?.title ?? ""} ${event.notification?.body}");
+      // if (result == 1) {
+      //
+      // //speaking
+      // } else {
+      // //not speaking
+      // }
+      final notification = event.notification;
+      final android = event.notification?.android;
+      if (notification != null && android != null) {
+        flutterlocalnotificationplugins.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails(channel.id, channel.name,
+                    channelDescription: channel.description,
+                    icon: android.smallIcon)));
+      }
+    });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   // Handle the incoming message when the app is in the foreground
+    //   print("onMessage: ${message}");
+    //   // _handleNotification(message.data);
+    // });
+
+    super.initState();
+  }
 
 
   @override
   Widget build(BuildContext context) {
+
     print("..........${authentication.authenticatedUser.token}");
       return StreamProvider<InternetConnectionStatus>(
         initialData: InternetConnectionStatus.connected,

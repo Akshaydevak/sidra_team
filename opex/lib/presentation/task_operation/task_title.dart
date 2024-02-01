@@ -883,25 +883,17 @@ class _TaskTitleState extends State<TaskTitle> {
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
-                                          child: Text(
-                                            "Priority : ",
-                                            style: GoogleFonts.roboto(
-                                              color: const Color(0xff151522),
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                        Text(
+                                          "Priority ",
+                                          style: GoogleFonts.roboto(
+                                            color: const Color(0xff151522),
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        // Spacer(),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
-                                          child:
-                                              Text(getTaskRead?.priority ?? ""),
-                                        ),
+                                        Spacer(),
+
+                                        Text(getTaskRead?.priority ?? ""),
                                       ],
                                     ),
                                   ),
@@ -2133,7 +2125,18 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 color: const Color(0xff33c658),
                                                 label: "Status",
                                                 svg: CreateSvg().priorityIcon,
-                                                onTap: () {},
+                                                onTap: () {
+                                                  if (getTaskRead?.statusStagesId ==
+                                                      5 &&
+                                                      authentication.isAdmin ==
+                                                          false &&
+                                                      authentication
+                                                          .isAssociateAdmin ==
+                                                          false) {
+                                                  } else {
+                                                    _showModalBottomSheet();
+                                                  }
+                                                },
                                                 endIcon: Row(
                                                   children: [
                                                     Container(

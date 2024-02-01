@@ -17,6 +17,7 @@ import '../../../../common_widgets/gradient_button.dart';
 import '../../../../common_widgets/loading.dart';
 
 import '../../core/color_palatte.dart';
+import '../authentication/authentication.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'employee_group_screen.dart';
 import 'group_list.dart';
@@ -241,6 +242,24 @@ class _CreateGroupState extends State<CreateGroup> {
                           return  LottieLoader();
                         }
                         if (state is GetEmployeeListSuccess) {
+                          for (int i = 0;
+                          i <
+                              state
+                                  .assignMeList!
+                                  .length;) {
+                            // print();
+                            if (authentication
+                                .authenticatedUser
+                                .code ==
+                                state
+                                    .assignMeList?[
+                                i]
+                                    .userCode) {
+                              state.assignMeList
+                                  ?.removeAt(i);
+                            }
+                            i++;
+                          }
 
                           print("Success shifu");
 

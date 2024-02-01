@@ -114,6 +114,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                 ),
                 elevation: 0,
                 backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
                 centerTitle: false,
 
                 title: Text(
@@ -709,6 +710,10 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
+                                          surfaceTintColor: Colors.white,
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),),
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
