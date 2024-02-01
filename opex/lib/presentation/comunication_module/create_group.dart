@@ -115,6 +115,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
       
      ],
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
            leading: BackButton(

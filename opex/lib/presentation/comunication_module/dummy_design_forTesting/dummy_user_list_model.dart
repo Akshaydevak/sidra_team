@@ -16,12 +16,14 @@ class UserDummyList extends Equatable {
   final String? chatid;
   @JsonKey(name: "isGroupChat")
   final bool? isgrp;
+  @JsonKey(name: "type")
+  final String? type;
   @JsonKey(name: "groupname")
   final String? isgrpname;
   @JsonKey(name: "groupId")
   final String? isgrpid;
-  @JsonKey(name: "type")
-  final String? type;
+  @JsonKey(name: "description")
+  final String? description;
   @JsonKey(name: "latestMessage")
   final String? latestMessage;
   @JsonKey(name: "latestMessageCreatedAt")
@@ -34,7 +36,7 @@ class UserDummyList extends Equatable {
   final String? createdBy;
   @JsonKey(name: "unreadMessages")
   final int? unreadMessages;
-  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy,this.unreadMessages});
+  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy,this.unreadMessages,this.description});
   @override
   List<Object> get props => [];
 
@@ -79,10 +81,12 @@ class GroupList extends Equatable {
   final String? gphoto;
   @JsonKey(name: "createdBy")
   final String? createdBy;
+  @JsonKey(name: "description")
+  final String? description;
   @JsonKey(name: "addedUsers")
   final List<dynamic>? addedUsers;
 
-  GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy,this.addedUsers});
+  GroupList({this.status,this.msg,this.chatid,this.gname,this.gphoto, this.createdBy,this.description,this.addedUsers});
   @override
   List<Object> get props => [];
 

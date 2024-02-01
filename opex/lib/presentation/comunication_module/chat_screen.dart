@@ -138,7 +138,7 @@ bool ismount1=true;
   @override
   void initState() {
 
-     print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.chatid}");
+     print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.description}");
     widget.socket?.emit("join.chat", {
       widget.grpchatid!=""?widget.grpchatid:  
       widget.chat==false && widget.isg==false
@@ -147,15 +147,15 @@ bool ismount1=true;
     widget.socket!.emit("update.list",{
                         print("update ")
                       });
-    if(widget.isGroup ==false){
+    if(widget.isGroup == false && widget.isg==false){
        if(widget.communicationUserModel?.unreadMessages != 0 || widget.communicationuser?.users?[0].chatUser?.unreadMessages != 0) {
         print("unreaded messages....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.chat==false
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
-    }else if(widget.isGroup==true && widget.grpchatid==""){
-        print("unreaded messages....");
+    }else if(widget.isGroup==true){
+        print("unreaded messagess....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
     }
@@ -713,6 +713,7 @@ Future<void> saveactiveusers(int count) async {
   }
 
   void sendGroupMessage(String message, String chatId) {
+    print("enter the grp $message , $chatId ");
     widget.socket?.emit("group.message",
         {"type": "text","chatid": chatId, "content": message});
        
@@ -2360,7 +2361,7 @@ double currentScrollPosition= 0.0;
                                                  child: Text(
                                                            messageList[index]
                                                                    .message??
-                                                               "",
+                                                               "..",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
@@ -3146,13 +3147,14 @@ double currentScrollPosition= 0.0;
                                                   } else {
                                                     print("commentgrpid${widget.grpchatid}");
                                                     if(widget.grpchatid==""){
-                                                      print("commentgrpid${widget.grpchatid}");
+                                                      
                                                       sendGroupMessage(
                                                         typedMessageController.text,
                                                         widget.isg==false? widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.grpuser?.chatid??"");
                                                     }else{
+                                                      print("commentgrppid${widget.grpchatid}");
                                                       sendGroupMessage(
                                                         typedMessageController.text,
                                                         widget.grpchatid.toString());

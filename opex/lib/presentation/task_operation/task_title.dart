@@ -167,11 +167,12 @@ class _TaskTitleState extends State<TaskTitle> {
   String? loginuserId;
   IO.Socket? socketCon;
   getSocket() async {
+    print("task comment ");
     pref = await SharedPreferences.getInstance();
     token = pref!.getString("token");
     socketCon = IO.io(
-      'https://api-communication-application.hilalcart.com/home',
-      // 'http://192.168.1.20:5500/group',
+      'https://api-communication-application.hilalcart.com/group',
+      // 'http://192.168.1.10:5500/group',
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},
@@ -181,10 +182,10 @@ class _TaskTitleState extends State<TaskTitle> {
 
     socketCon!.connect();
     socketCon!
-        .on('connect', (_) => print('connectt success: ${socketCon!.id}'));
+        .on('connect', (_) => print('connecttt success: ${socketCon!.id}'));
     socketCon!.on('user.id', (data) {
       loginuserId = data;
-      print("vgyvgvh$loginuserId");
+      print("vgyvgvht$loginuserId");
       setState(() {});
     });
   }

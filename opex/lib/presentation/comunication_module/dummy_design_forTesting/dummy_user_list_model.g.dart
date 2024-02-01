@@ -23,6 +23,7 @@ UserDummyList _$UserDummyListFromJson(Map<String, dynamic> json) =>
       deletedAt: json['deletedAt'] as String?,
       createdBy: json['createdBy'] as String?,
       unreadMessages: json['unreadMessages'] as int?,
+      description: json['description'] as String?,
     );
 
 Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
@@ -33,9 +34,10 @@ Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
       'photoUrl': instance.photo,
       'chatId': instance.chatid,
       'isGroupChat': instance.isgrp,
+      'type': instance.type,
       'groupname': instance.isgrpname,
       'groupId': instance.isgrpid,
-      'type': instance.type,
+      'description': instance.description,
       'latestMessage': instance.latestMessage,
       'latestMessageCreatedAt': instance.latestMessagecreated,
       'isDeleted': instance.isDeleted,
@@ -69,6 +71,7 @@ GroupList _$GroupListFromJson(Map<String, dynamic> json) => GroupList(
       gname: json['groupName'] as String?,
       gphoto: json['groupPhotoUrl'] as String?,
       createdBy: json['createdBy'] as String?,
+      description: json['description'] as String?,
       addedUsers: json['addedUsers'] as List<dynamic>?,
     );
 
@@ -79,6 +82,7 @@ Map<String, dynamic> _$GroupListToJson(GroupList instance) => <String, dynamic>{
       'groupName': instance.gname,
       'groupPhotoUrl': instance.gphoto,
       'createdBy': instance.createdBy,
+      'description': instance.description,
       'addedUsers': instance.addedUsers,
     };
 

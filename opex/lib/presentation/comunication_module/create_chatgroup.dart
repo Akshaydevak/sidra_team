@@ -399,7 +399,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                     BlocProvider.of<GroupBloc>(context).add(
                         CreateGroupEvent(
                             groupName: groupName.text,
-                            // discription: discription.text,
+                            description: discription.text,
                             userIdList: userList,
                             token: widget.token ??"",
                             groupPhotoUrl: ""

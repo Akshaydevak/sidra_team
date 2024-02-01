@@ -70,7 +70,9 @@ class CommunicationDatasource {
       {required String token,
       required String groupPicUrl,
       required List<GetEmployeeList>? userIdList,
-      required String groupName}) async {
+      required String groupName,
+      required String description
+      }) async {
         print("asdd${userIdList![0].userCode}");
 
         GroupList? grpuserlist=GroupList();
@@ -87,7 +89,7 @@ class CommunicationDatasource {
     }
     final response = await client.post(
       CommunicationUrls.createGroupUrl,
-      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl},
+      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl, "description":description},
       options: Options(
         headers: {
           'Content-Type': 'application/json',

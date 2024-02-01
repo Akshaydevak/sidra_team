@@ -54,10 +54,11 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isMute = false;
   // List<GroupUserList> grpmember=[];
   // bool isM=true;
+  
   String uid='';
     @override
   void initState() {
-
+print("room id listens atleast ${widget.communicationuser?.description}");
 //  widget.socket!.emit("group.members", 
 //      widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
      
@@ -236,12 +237,24 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   Text(
                    
-                    widget.isGroup
-                        ? "Created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
+                    widget.isGroup 
+                        ? "created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
                         : "",
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 188, 212, 233),
-                      fontSize: 14,
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(  
+                    widget.chat ==false 
+                        ? "${widget.communicationUserModel?.description}"
+                        : "${widget.communicationuser?.description}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
                     ),
                   ),
                   Container(

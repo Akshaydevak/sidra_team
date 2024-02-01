@@ -74,6 +74,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   void initState() {
+    
     // TODO: implement initState
     super.initState();
   }
@@ -297,21 +298,21 @@ class _ChatAppBarState extends State<ChatAppBar> {
               GestureDetector(
                 onTap: () {
                   if (widget.isGroup == false) {
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: ChatProfileScreen(
-                        chat: widget.chat,
-                        token: widget.token,
-                        roomId: widget.roomId,
-                        socket: widget.socket,
-                        isGroup: widget.communicationUserModel?.isgrp ?? false,
-                        communicationUserModel: widget.communicationUserModel,
-                        communicationuser: widget.communicationuser,
-                      ),
-                      withNavBar: true, // OPTIONAL VALUE. True by default.
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
-                  } else {
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: ChatProfileScreen(
+                    //     chat: widget.chat,
+                    //     token: widget.token,
+                    //     roomId: widget.roomId,
+                    //     socket: widget.socket,
+                    //     isGroup: widget.communicationUserModel?.isgrp ?? false,
+                    //     communicationUserModel: widget.communicationUserModel,
+                    //     communicationuser: widget.communicationuser,
+                    //   ),
+                    //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
+                  } else if(widget.cmntgrpid=="") {
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
                       screen: ChatProfileScreen2(
