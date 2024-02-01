@@ -136,6 +136,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is ReplayReportEvent) {
       yield* replayReport(
 
+        replayType: event.replayType,
+         reAssignCode: event.reAssignCode,
          id: event.id,
         replay: event.replay,
         reportStatus: event.reportStatus
@@ -1242,10 +1244,14 @@ userId: userId,
         required int? id,
         required String? reportStatus,
         required String? replay,
+        required String? replayType,
+        required String? reAssignCode,
       }) async* {
     yield ReplayReportLoading();
 
     final dataResponse = await _taskRepo.replayReport(
+      reAssignCode: reAssignCode,
+       replayType: replayType,
        reportStatus: reportStatus,
       replay: replay,
       id: id

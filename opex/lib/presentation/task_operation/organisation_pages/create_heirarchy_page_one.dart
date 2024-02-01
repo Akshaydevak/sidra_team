@@ -1,6 +1,11 @@
+import 'package:cluster/common_widgets/loading.dart';
+import 'package:cluster/presentation/seller_admin_app/model_seller_admin/seller_admin_models.dart';
 import 'package:cluster/presentation/task_operation/organisation_pages/card_design_organisation.dart';
+import 'package:cluster/presentation/task_operation/organisation_pages/models_org/org_model.dart';
+import 'package:cluster/presentation/task_operation/organisation_pages/organisation_bloc_task/organisation_task_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -29,6 +34,9 @@ class _CreateHeirarchyPageOneState extends State<CreateHeirarchyPageOne> {
   @override
   void initState() {
     super.initState();
+    context
+        .read<OrganisationTaskBloc>()
+        .add(const GetDepartmentTaskListEvent('', "", ""));
     currentlyExpandedIndex =
         -1; // Initialize to -1, indicating no card is expanded initially.
   }
@@ -43,13 +51,24 @@ class _CreateHeirarchyPageOneState extends State<CreateHeirarchyPageOne> {
       }
     });
   }
+  List<DepartmentTaskModel> model=[];
 
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return BlocListener<OrganisationTaskBloc, OrganisationTaskState>(
+  listener: (context, state) {
+    if(state is DepartmentTaskListSuccess){
+      model=state.inventory??[];
+      setState(() {
+
+      });
+    }
+    // TODO: implement listener
+  },
+  child: Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -64,69 +83,67 @@ class _CreateHeirarchyPageOneState extends State<CreateHeirarchyPageOne> {
           physics: NeverScrollableScrollPhysics(),
           child: Stack(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      "5 Department",
-                      style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontSize: w / 24,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Container(
-                    height: h/1.2,
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        primary: false,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              ToggleExpandCard(
-                                onTap: () {
-                                  toggleExpansion(index);
-                                  setState(() {});
-                                },
-                                isExpaned: currentlyExpandedIndex == index,
-                              ),
-                              // if (currentlyExpandedIndex == index)
-                              //   Container(
-                              //     height: 100.0,
-                              //     color: Colors.green,
-                              //     child: Center(
-                              //       child: Text(
-                              //         'Expanded Container for Item $index',
-                              //         style: TextStyle(color: Colors.white),
-                              //       ),
-                              //     ),
-                              //   ),
-                            ],
-                          );
-                          //   ToggleExpandCard(
-                          //   onTap: (){
-                          //     onselect(index);
-                          //     setState(() {
-                          //
-                          //     });
-                          //   },
-                          //   isExpaned: select==index,
-                          // );
-                        },
-                        separatorBuilder: (context, index) => Container(
-                              height: 0,
-                            ),
-                        itemCount: 6),
-                  ),
-                ],
+              // BlocBuilder<OrganisationTaskBloc, OrganisationTaskState>(
+              //   builder: (context, state) {
+              //     if (state is DepartmentTaskListLoading) {
+              //       return Container(
+              //           height: h / 1.2, child: customCupertinoLoading());
+              //     }
+              //     if (state is DepartmentTaskListSuccess) {
+              //       return
+                      Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text(
+                            "${model.length} Department",
+                            style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w / 24,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Container(
+                          height: h / 1.2,
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              primary: false,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    ToggleExpandCard(
+                                      onTap: () {
+                                        toggleExpansion(index);
+                                        context
+                                            .read<OrganisationTaskBloc>()
+                                            .add( RoleUnderDepartmentListEvent('', "", "",model[index].id));
+                                        setState(() {});
+                                      },
+                                      label: model[index].name,
+                                      // id: state.inventory?[index].id,
+                                      isExpaned:
+                                          currentlyExpandedIndex == index,
+                                    ),
+                                  ],
+                                );
+                              },
+                              separatorBuilder: (context, index) => Container(
+                                    height: 0,
+                                  ),
+                              itemCount: model.length),
+                        ),
+                      ],
+                    // );
+                //   }
+                //   return Container();
+                // },
               ),
               Positioned(
                 bottom: 0,
                 left: 0,
-                right:0,
+                right: 0,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: GradientButton(
@@ -150,7 +167,7 @@ class _CreateHeirarchyPageOneState extends State<CreateHeirarchyPageOne> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.roboto(
                           color: Colors.white,
-                          fontSize: w/24,
+                          fontSize: w / 24,
                           fontWeight: FontWeight.w600,
                         ),
                       )),
@@ -160,6 +177,7 @@ class _CreateHeirarchyPageOneState extends State<CreateHeirarchyPageOne> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }

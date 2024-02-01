@@ -128,6 +128,8 @@ class GetTaskList extends Equatable {
   final int? level;
   @JsonKey(name: "parent")
   final int? parent;
+  @JsonKey(name: "parent_group_id")
+  final int? parentGroupId;
   @JsonKey(name: "job_id")
   final int? jobId;
   @JsonKey(name: "image_count")
@@ -153,6 +155,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.parentGroupId,
     this.assignByDict,
     this.assignToDict,
     this.reportingPersonDict,

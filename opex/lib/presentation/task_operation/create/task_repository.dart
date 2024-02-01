@@ -835,12 +835,16 @@ class TaskRepo {
     required int? id,
     required String? reportStatus,
     required String? replay,
+    required String? replayType,
+    required String? reAssignCode,
   }) async {
     final restAPIresponse = await _dataSource.replayReport(
 
       id: id,
       replay: replay,
-      reportStatus: reportStatus
+      reportStatus: reportStatus,
+      reAssignCode: reAssignCode,
+      replayType: replayType
 
     );
     if (restAPIresponse.data) {

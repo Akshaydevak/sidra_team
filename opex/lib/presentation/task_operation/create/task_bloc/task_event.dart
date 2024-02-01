@@ -601,10 +601,14 @@ class ReplayReportEvent extends TaskEvent {
   final int? id;
   final String? reportStatus;
   final String? replay;
+  final String replayType;
+  final String reAssignCode;
 
   const ReplayReportEvent(  {
 
     this.id,
+    required this.replayType,
+    required this.reAssignCode,
     required this.replay,
     required this.reportStatus
 

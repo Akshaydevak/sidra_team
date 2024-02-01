@@ -10,6 +10,7 @@ import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_a
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
+import 'package:cluster/presentation/task_operation/organisation_pages/organisation_bloc_task/organisation_task_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
@@ -122,6 +123,9 @@ class _MyAppState extends State<MyApp> {
               ),
               BlocProvider(
                 create: (context) => ProfileBloc(),
+              ),
+              BlocProvider(
+                create: (context) => OrganisationTaskBloc(),
               ),
             ],
             child: MaterialApp(

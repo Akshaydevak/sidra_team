@@ -19,8 +19,9 @@ import '../../core/utils/variables.dart';
 
 class EmployeeCard extends StatelessWidget {
   final GetEmployeeList? employeeList;
-  final bool? isSelect;
+  final bool isSelect;
   final bool? isCommunicate;
+
   const EmployeeCard({Key? key, this.employeeList,this.isSelect=false, this.isCommunicate=false}) : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class EmployeeCard extends StatelessWidget {
         padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+          border: Border.all(color: isSelect ? ColorPalette.primary:Color(0xffe6ecf0), width: 1, ),
           boxShadow: [
             BoxShadow(
               color: Color(0x05000000),
@@ -44,7 +45,8 @@ class EmployeeCard extends StatelessWidget {
               offset: Offset(1, 1),
             ),
           ],
-          color:  Variable.assignName == employeeList?.fname ?ColorPalette.cardBackground:Colors.white,
+          // color:  Variable.assignName == employeeList?.fname ?ColorPalette.cardBackground:Colors.white,
+          color:  isSelect ?ColorPalette.cardBackground:Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
