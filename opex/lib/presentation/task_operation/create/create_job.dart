@@ -317,10 +317,7 @@ class _CreateJobState extends State<CreateJob> {
                       ' ${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date2"))}';
                   _range = '${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date"))} -'
                       ' ${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date2"))}';
-                  print("JOB COME${startTime}");
-                  print("JOB COME${startDate2}");
-                  print("JOB COME${ebdDate2}");
-                  print("JOB COME${endTime}");
+
                   setState(() {
 
                   });
@@ -584,6 +581,10 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
+                                                    surfaceTintColor: Colors.white,
+                                                    backgroundColor: Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),),
                                                     content: Column(
                                                       mainAxisSize:
                                                       MainAxisSize
@@ -593,6 +594,7 @@ class _CreateJobState extends State<CreateJob> {
                                                           height: 300,
                                                           child:
                                                           Scaffold(
+
                                                             body:
                                                             SfDateRangePicker(
                                                               backgroundColor:
@@ -926,6 +928,10 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
+                                                    surfaceTintColor: Colors.white,
+                                                    backgroundColor: Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),),
                                                     content: Column(
                                                       mainAxisSize:
                                                       MainAxisSize

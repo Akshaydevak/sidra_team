@@ -38,6 +38,9 @@ class TextCard extends StatelessWidget {
         ),
         Container(
           padding: EdgeInsets.only(left: 16, right: 5),
+          width: w1/1.15,
+          // color: Colors.teal,
+
           child:  Text(
             subText?? "",
             style: TextStyle(
