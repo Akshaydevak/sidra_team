@@ -1,16 +1,19 @@
 import 'package:cluster/common_widgets/api_firebase.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
+import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/base/splash.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 
 import 'package:cluster/presentation/order_app/bloc/order_status_bloc/order_status_bloc.dart';
 import 'package:cluster/presentation/seller_admin_app/seller_admin_bloc/seller_admin_bloc.dart';
+import 'package:cluster/presentation/task_operation/create/create_job.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/organisation_pages/organisation_bloc_task/organisation_task_bloc.dart';
+import 'package:cluster/presentation/task_operation/task_title.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
@@ -116,6 +119,7 @@ class _MyAppState extends State<MyApp> {
       // }
       final notification = event.notification;
       final android = event.notification?.android;
+      final data = event.data;
       if (notification != null && android != null) {
         flutterlocalnotificationplugins.show(
             notification.hashCode,
@@ -126,7 +130,9 @@ class _MyAppState extends State<MyApp> {
                     channelDescription: channel.description,
                     icon: android.smallIcon)));
       }
+
     });
+
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     //   // Handle the incoming message when the app is in the foreground
     //   print("onMessage: ${message}");
@@ -147,6 +153,7 @@ class _MyAppState extends State<MyApp> {
           return InternetConnectionChecker().onStatusChange;
         },
         child: FlutterSizer(builder: (context, orientation, screenType) {
+
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: ((context) => scoketProvider() )),
@@ -196,7 +203,12 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => OrganisationTaskBloc(),
               ),
             ],
-            child: MaterialApp(
+            child: MaterialApp(routes: {
+            '/communication': (context) => CreateJob(),
+              '/task':(context) => TaskTitle()
+
+            // Add more routes as needed
+            } ,
               debugShowCheckedModeBanner: false,
               title: 'Sidrateams',
               theme: ThemeData(
@@ -209,6 +221,9 @@ class _MyAppState extends State<MyApp> {
           );
         }));
   }
+
+
+
 }
 
 

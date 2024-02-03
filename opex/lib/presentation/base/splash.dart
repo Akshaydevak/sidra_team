@@ -1,6 +1,7 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
+import 'package:cluster/presentation/task_operation/task_title.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -57,15 +58,62 @@ data();
                     authentication.isAuthenticated
                         ? const DashBoard()
                         : const OnBoarding())
-                        );}
+                        );
+        }
                         );
                         
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     var h = MediaQuery.of(context).size.width;
     debugPrint("${authentication.authenticatedUser.token}customer_CODE");
+
+    // FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    //   alert: true,
+    //   badge: true,
+    //   sound: true,
+    // );
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print("=====shifas");
+    //
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => TaskTitle(),
+    //     ),
+    //   );
+    // });
+    // // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //
+    //   print('FCM Message Received: ${message.data['Sidra_teams_key']}');
+    //   print('FCM Message Received: ${message.data['chat_id']}');
+    //   print('FCM Message Received: ${message.data['click_action']}');
+    //   print('FCM Message Received: ${message.data['is_group_chat']}');
+    //   if (message.data.isNotEmpty) {
+    //     // configureFirebaseMessaging(context);
+    //     print("object");
+    //     // Access payload data as needed
+    //     // String routeName = message.data['route'];
+    //
+    //     // Navigate to the relevant screen based on the payload data
+    //     // if (message.data['Sidra_teams_key'] == "communication") {
+    //     // Navigator.push(
+    //     //   context,
+    //     //   MaterialPageRoute(
+    //     //     builder: (context) => TaskTitle(),
+    //     //   ),
+    //     // );
+    //     // }
+    //   }
+    // });
+    //
+    //
+
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -86,4 +134,6 @@ data();
       ),
     );
   }
+
 }
+

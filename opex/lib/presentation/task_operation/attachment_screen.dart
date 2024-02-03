@@ -153,13 +153,13 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                           "${widget.readData?.createdOn?.split("T")[1].split("+")[0]}",
                       jobid: widget.readData?.jobId,
                       notas: widget.readData?.notes ?? "",
-                      priorityLeval: "1",
+                      priorityLeval: 0,
                       remarks: widget.readData?.remarks ?? "",
                       taskName: widget.readData?.taskName ?? "",
                       taskType: widget.readData?.taskType ?? 0,
                       lastmodified: null,
                       parant: widget.readData?.parent ?? null,
-                      statusStagesId: null,
+                      statusStagesId: widget.readData?.statusStagesId,
                       discription: widget.readData?.description ?? "",
                       createdBy:
                       widget.readData?.createdPersonCode ?? "",
@@ -207,9 +207,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
           listeners: [
             BlocListener<EmployeeBloc, EmployeeState>(
               listener: (context, state) {
-                if (state is PicLoading) {
-                  print("Inside Loading");
-                }
+
                 if (state is PicSuccess) {
                   print("Inside Success${state.data}\t${state.url}");
                   setState(() {

@@ -148,7 +148,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     print(endTime);
   }
 
-  String PriorityLeval = "";
+  String PriorityLeval = "Low";
   void refreah() {
     setState(() {});
   }
@@ -1392,7 +1392,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                       notas: notesController
                                                               .text ??
                                                           "",
-                                                      priorityLeval: "1",
+                                                      priorityLeval: 0,
                                                       remarks: remarksController
                                                           .text,
                                                       taskName:
@@ -1411,7 +1411,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                           "",
                                                       isActive: true,
                                                       priority:
-                                                          Variable.prioritys,
+                                                          PriorityLeval,
                                                       reportingPerson: Variable
                                                                   .reportingCode ==
                                                               ""
@@ -1422,10 +1422,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                           : Variable
                                                               .reportingCode
                                                               .toString(),
-                                                      endDate:
-                                                          "${_range.split(" - ")[1]} $endTime2",
-                                                      startDate:
-                                                          "${_range.split(" - ")[0]} $startTime2",
+                                                endDate: "$ebdDate ${endTime2}",
+                                                startDate: "$startDate ${startTime2}",
                                                     ));
                                               Variable.taskType == 0 ||
                                                       taskTitle.text == "" ||
@@ -1613,6 +1611,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ? Container()
                             : GradientButton(
                                 color: ColorPalette.primary,
+
                                 onPressed: () {
                                   createButton = true;
                                   widget.editTask || updateval || isSubTask
@@ -1629,21 +1628,21 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                   "${_range.split(" - ")[0]} ${startTime2}",
                                               jobid: readTask?.jobId,
                                               notas: notesController.text ?? "",
-                                              priorityLeval: "1",
+                                              priorityLeval: 0,
                                               remarks:
                                                   remarksController.text ?? "",
                                               taskName: taskTitle.text ?? "",
                                               taskType: Variable.taskType,
                                               lastmodified: null,
                                               parant: readTask?.parent,
-                                              statusStagesId: null,
+                                              statusStagesId: readTask?.statusStagesId,
                                               discription:
                                                   discription.text ?? "",
                                               createdBy: authentication
                                                       .authenticatedUser.code ??
                                                   "",
                                               isActive: true,
-                                              priority: Variable.prioritys,
+                                              priority: PriorityLeval,
                                               reportingPerson: readTask
                                                       ?.reportingPersonCode ??
                                                   "",
@@ -1671,7 +1670,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               "${_range.split(" - ")[0]} ${startTime2}",
                                           jobId: widget.jobId ?? 0,
                                           notas: notesController.text,
-                                          priorityLeval: "1",
+                                          priorityLeval: 0,
                                           remarks: remarksController.text,
                                           taskName: taskTitle.text,
                                           taskType: Variable.taskType,
@@ -1683,7 +1682,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                   .authenticatedUser.code ??
                                               "",
                                           isActive: true,
-                                          priority: Variable.prioritys,
+                                          priority: PriorityLeval,
                                           reportingPerson:
                                               Variable.reportingCode == ""
                                                   ? authentication

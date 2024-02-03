@@ -294,6 +294,10 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
+                                            surfaceTintColor: Colors.white,
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),),
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
@@ -301,6 +305,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                   height: 300,
                                                   child: Scaffold(
                                                     body: SfDateRangePicker(
+
 
                                                         backgroundColor:
                                                         Colors.white,
@@ -311,6 +316,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                         rangeSelectionColor:
                                                         ColorPalette.primary
                                                             .withOpacity(0.1),
+
                                                         selectionColor:
                                                         Colors.grey,
                                                         todayHighlightColor:
@@ -944,7 +950,12 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     PersistentNavBarNavigator
                                         .pushNewScreen(
                                       context,
-                                      screen: const NewJobList(),
+                                      screen:  NewJobList(
+                                          startDate:
+                                          ebdDate2,
+                                          endDate:
+                                          startDate2
+                                      ),
                                       withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
@@ -982,7 +993,11 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     PersistentNavBarNavigator
                                         .pushNewScreen(
                                       context,
-                                      screen: const PendingJobs(),
+                                      screen:  PendingJobs(
+                                          startDate:
+                                      ebdDate2,
+                                          endDate:
+                                          startDate2),
                                       withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
