@@ -634,7 +634,24 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                         if (state is GetEmployeeListSuccess) {
 
                                           print("Success shifu");
-
+                                          for (int i = 0;
+                                          i <
+                                              state
+                                                  .assignMeList!
+                                                  .length;) {
+                                            // print();
+                                            if (authentication
+                                                .authenticatedUser
+                                                .code ==
+                                                state
+                                                    .assignMeList?[
+                                                i]
+                                                    .userCode) {
+                                              state.assignMeList
+                                                  ?.removeAt(i);
+                                            }
+                                            i++;
+                                          }
                                           return SingleChildScrollView(
                                             child: Column(
                                               children: [

@@ -22,10 +22,27 @@ class SplashScreenState extends State<SplashScreen> {
 
 
 
+  data() async {
+    await Firebase.initializeApp();
+    print("log data");
+    final _firebaseMessaging=FirebaseMessaging.instance;
+    await _firebaseMessaging.requestPermission( alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true);
+    final fcmToken=await _firebaseMessaging.getToken();
+    print("FCM TOKEN.....$fcmToken");
 
+    context.read<EmployeeBloc>().add( FcmTokenRegisterEvent(fcmToken.toString()??""));
+    print("after fcm");
+
+  }
   @override
   void initState() {
-
+data();
     super.initState();
     Timer(
         const Duration(seconds: 2),

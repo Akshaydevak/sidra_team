@@ -53,6 +53,7 @@ GroupUserList _$GroupUserListFromJson(Map<String, dynamic> json) =>
       photo: json['PhotoUrl'] as String?,
       connect: json['connected'] as bool?,
       createdBy: json['createdBy'] as String?,
+      isAdmin: json['isAdmin'] as bool?,
     );
 
 Map<String, dynamic> _$GroupUserListToJson(GroupUserList instance) =>
@@ -62,6 +63,7 @@ Map<String, dynamic> _$GroupUserListToJson(GroupUserList instance) =>
       'connected': instance.connect,
       'PhotoUrl': instance.photo,
       'createdBy': instance.createdBy,
+      'isAdmin': instance.isAdmin,
     };
 
 GroupList _$GroupListFromJson(Map<String, dynamic> json) => GroupList(

@@ -73,6 +73,14 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
     // TODO: implement initState
     super.initState();
   }
+
+  void dispose() {
+    // Remove the socket listener when the widget is disposed
+    widget.socket?.off("userAddedToGroup");
+    widget.socket?.off("userAlreadyInGroup");
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -209,19 +217,19 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                         padding:EdgeInsets.only(left: 16,right: 16) ,
                                         physics: NeverScrollableScrollPhysics(),
                                         shrinkWrap: true,
-                                        itemBuilder: (context, index) => InkWell(
+                                        itemBuilder: (context, index) => GestureDetector(
                                               onTap: () {
                                                 
-                                                 setState((){
+                                                 
                                                     widget.socket!.emit("userAddToGroup",{
                                                       "userCode": "${state.registeresUsers[index].userCode}",
                                                      "chatId": widget.chatid.toString() });
-                                                      });
+                                                    
                                                    print("hjkl");
                                                    print("hjkluser1");
                                                  widget.socket!.on("userAddedToGroup", (data) {     
-                                                  // print("hjkluser $data");
-                                                  setState(() {
+                                                  print("hjkluser $data");
+                                                  
                                                    showSnackBar(context,
                                                   message: "User Add To Group Successfully", color: ColorPalette.primary);
                                                    widget.socket!.emit("group.message",{
@@ -229,25 +237,19 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                   });
                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                   
-                                                    
-                                                  });
                                                 } 
                                                
                                               );
                                                 widget.socket!.on("userAlreadyInGroup", (data) {
                                                   print("hjkluser2 $data");
-                                                  setState(() {
+                                                  
                                                   showSnackBar(context,
                                                   message: "Already in Group", color: ColorPalette.primary);
+                                                  setState(() {
+                                                    
+                                                  });
                                                 
-                                                  
-                                                });
-                                                });
-                                                
-                                               
-                                               
-                                               
-                                               
+                                                }); 
                                                 
                                               },
                                               child: EmployeeCard(employeeList: state.registeresUsers[index],isCommunicate:true,)

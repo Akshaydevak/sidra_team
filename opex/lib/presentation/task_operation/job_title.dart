@@ -774,6 +774,8 @@ class _JobTitleState extends State<JobTitle> {
                           PersistentNavBarNavigator.pushNewScreen(
                             context,
                             screen: CreateNewTask(
+                              startDateTime: "${startstdDate}  ${startTime}",
+                              endDateTime: "$endstdDate  $endTime",
                               isSubTask: false,
                               jobId: JobRead?.id,
                             ),

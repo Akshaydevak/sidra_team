@@ -31,12 +31,14 @@ class CreateNewTask extends StatefulWidget {
   final bool editTask;
   final int? subTaskId;
   final int? jobId;
+  final String? startDateTime;
+  final String? endDateTime;
   const CreateNewTask(
       {Key? key,
       this.isSubTask = false,
       this.editTask = false,
       this.subTaskId,
-      this.jobId})
+      this.jobId, this.startDateTime, this.endDateTime})
       : super(key: key);
 
   @override
@@ -602,6 +604,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
+                                                surfaceTintColor: Colors.white,
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),),
                                                 content: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
@@ -855,8 +861,15 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ],
                           ),
                         ),
+                        Text("Job Duration ${widget.startDateTime} - ${widget.endDateTime}",
+                        style: GoogleFonts.roboto(
+                          color: Color(0x66151522),
+                          fontSize: w / 32,
+                          fontWeight: FontWeight.w500
+                        ),),
                         SizedBox(
-                          height: 5,
+                          height: 15,
+
                         ),
                         GestureDetector(
                           onTap: () {

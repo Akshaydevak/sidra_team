@@ -34,12 +34,14 @@ class ChatAppBar extends StatefulWidget {
   final String cmntgrpname;
   final GroupList? grpuser;
   List<GroupUserList>? grpmember = [];
+  final bool? isadmin;
   // final VoidCallback ontap;
   ChatAppBar(
       {Key? key,
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser,
+      this.isadmin,
       this.cmntgrpid = "",
       this.cmntgrpname = "",
       this.loginUserId,
@@ -74,7 +76,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   void initState() {
-    
+    print("isadminn ${widget.isadmin}");
     // TODO: implement initState
     super.initState();
   }
@@ -320,10 +322,13 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         token: widget.token,
                         roomId: widget.roomId,
                         socket: widget.socket,
+                        loginuserid: widget.loginUserId,
                         isGroup: true,
+                        isadmin: widget.isadmin,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
+
                       ),
                       withNavBar: true, // OPTIONAL VALUE. True by default.
                       pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -395,6 +400,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         roomId: widget.roomId,
                         socket: widget.socket,
                         isGroup: true,
+                        isadmin: widget.isadmin,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,

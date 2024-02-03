@@ -10,7 +10,8 @@ class scoketProvider extends ChangeNotifier{
    void connect(String token) {
     _socket = IO.io(
       'https://api-communication-application.hilalcart.com/home',
-      // 'http://192.168.1.10:5500/home',
+      // 'http://192.168.1.187:5500/home',
+      // "https://8120-223-228-161-250.ngrok-free.app/home",
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},

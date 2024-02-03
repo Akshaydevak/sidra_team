@@ -85,11 +85,13 @@ bool ismount1=true;
   bool isseventhMount = true;
   bool iseigthMount = true;
   bool loadmsg=false;
+  bool isadmin=false;
   int totpage=0;
   int activeUsersLength=0;
   String? roomId;
   String msgdate1='';
-  int indeex=0;
+  int? indeex;
+  List day=[];
   final ScrollController _controller = ScrollController();
    TextEditingController typedMessageController = TextEditingController();
   int pageNo = 1;
@@ -154,7 +156,7 @@ bool ismount1=true;
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
-    }else if(widget.isGroup==true){
+    }else if(widget.isGroup==true && widget.isg==false){
         print("unreaded messagess....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
@@ -295,11 +297,11 @@ widget.socket?.emit("group.message.seen",roomId);
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed:totpage<=1? false:true);
             }
             else{
              ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed:totpage<=1? false:true);
               print("my msg");
             }
             }
@@ -394,6 +396,7 @@ widget.socket!.emit("update.list",{
       });
      
       widget.socket?.on("group.latest.message", (data) {
+        loadmsg=true;
         // print("total ser listened ${widget.loginUserId} ...${data}");
         // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
       totpage<=1?messageList.add(ChatModel(
@@ -451,7 +454,7 @@ widget.socket!.emit("update.list",{
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+            scrollController: _controller, reversed:totpage<=1? true:false);
             }
             else{
               print("my msg");
@@ -510,7 +513,7 @@ widget.socket!.emit("update.list",{
         }
 
         ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed: totpage<=1?false:true);
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
@@ -672,6 +675,15 @@ print("jhdgfkjhgkrng");
    
       });
  print("jhdgfkjhgkrng${grpmember.length}");
+ for(int i=0;i<grpmember.length;i++){
+  if(widget.loginUserId==grpmember[i].id){
+      isadmin=grpmember[i].isAdmin!;
+      
+      break;
+  }
+  print("isadmin+ $isadmin");
+ 
+ }
  
 }
   void activeuserlist(data) {
@@ -761,8 +773,6 @@ Future<void> saveactiveusers(int count) async {
     widget.socket!.off("active.length",handleActiveLength);
     _animationController?.dispose();
     widget.socket!.off('latest.message');
-    widget.socket!.off('group.latest.message');
-    widget.socket!.off("group,members");
     super.dispose();
   }
 double currentScrollPosition= 0.0;
@@ -1040,15 +1050,36 @@ double currentScrollPosition= 0.0;
                  setState(() {
                    totpage=state.chatData[0].pagination!.totalpages;
                 print("totalpagess$totpage");
-                  loadmsg=true;
+                loadmsg=true;
+          //        if(messageList.isNotEmpty && totpage>=1){
+          //   List<ChatModel> msglist=messageList.reversed.toList();
+          //   for(int index=0;index<msglist.length;){
+          //   String? timestamp = msglist[index].createdAt.toString();
+          //   DateTime dateTime = DateTime.parse(timestamp); 
+          // String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+          //   String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+          //   print("dayyyyyy$msgdate");
+          //   msglist.insert(index,ChatModel(day: msgdate));
+          //   print("dayyyyyy..${msglist[index].day}");
+          //   msgdate1=formattedDate;
+            
+          // }
+          // messageList=msglist.reversed.toList();
+          
+          // }
+                  
                 });
-
+               
                state.chatData[0].pagination!.totalpages<=1? 
                messageList = messageList.reversed.toList()
                :null;
-                ScrollService.scrollToEnd(
-              scrollController: _controller, reversed: true);
-               
+              totpage<=1?  _controller.animateTo(
+      _controller.position.maxScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    ):  ScrollService.scrollToEnd(
+              scrollController: _controller, reversed:true);
+              
               }
 
               else if (state is ChatScreenGetFailed){
@@ -1111,6 +1142,21 @@ double currentScrollPosition= 0.0;
     setState(() {});
           }
           }
+          // if(messageList.isNotEmpty){
+          //   List<ChatModel> msglist=messageList.reversed.toList();
+          //   for(int index=0;index<msglist.length;index++){
+          //   String? timestamp = msglist[index].createdAt.toString();
+          //   DateTime dateTime = DateTime.parse(timestamp); 
+          // String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+          //   String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+          //   print("dayyyyyy$msgdate");
+          //   msglist.add(ChatModel(day: "$msgdate"));
+          //   msgdate1=formattedDate;
+          // }
+          // messageList=msglist.reversed.toList();
+          // }
+          
+          
            
               }
             },
@@ -1140,7 +1186,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "image",
-                  "chatid":widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.grpchatid==""?widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid:widget.grpchatid,
                   "content": state.upload
                 });
                
@@ -1357,6 +1403,7 @@ double currentScrollPosition= 0.0;
                     token: widget.token,
                     loginUserId: widget.loginUserId,
                     typing: typing,
+                    isadmin: isadmin,
                     groupTypingUser: groupTypingUser,
                     communicationUserModel: widget.communicationUserModel,
                     communicationuser: widget.communicationuser,
@@ -1436,17 +1483,17 @@ double currentScrollPosition= 0.0;
                                 shrinkWrap: true,
                                 controller: _controller,
                                 physics: AlwaysScrollableScrollPhysics(),
-                                padding: const EdgeInsets.only(left: 8, right: 8),
+                                padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
                                 itemCount: messageList.length,
                                 itemBuilder: (context, index) {
-                                  print("list view reload $index ${messageList[index].message}");
+                                  print("list view reload $index ${messageList[index].day}");
                                   
                                   String? timestamp = messageList[index].createdAt.toString();
                                   DateTime dateTime = DateTime.parse(timestamp); 
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
-                                  String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
-                                  msgdate1=formattedDate;
+                                   String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+                                   msgdate1=formattedDate;
                                   return  Column(
                                     crossAxisAlignment:
                                         messageList[index].fromuserid !=
@@ -1454,7 +1501,7 @@ double currentScrollPosition= 0.0;
                                             ? CrossAxisAlignment.start
                                             : CrossAxisAlignment.end,
                                     children: [
-                                      msgdate != ""?
+                                      msgdate!=""?
                                       Padding(
                                            padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -1466,8 +1513,10 @@ double currentScrollPosition= 0.0;
                                                  color: Color.fromARGB(236, 233, 232, 232)
                                                ),
                                                child: Column(
-                                                 children:[ Text(
-                                                          msgdate,
+                                                 children:[ 
+                                                  
+                                                  Text(
+                                                          "$msgdate",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
@@ -1475,11 +1524,12 @@ double currentScrollPosition= 0.0;
                                                              color: Color(0xff151522),
                                                              fontSize: 12,
                                                            ),
-                                                         ),]
+                                                         )
+                                                         ,]
                                                ),
                                              ),
                                            ),
-                                         ):SizedBox(),
+                                         ):Container(),
                                          
                                       if (messageList[index].fromuserid !=
                                           widget.loginUserId) ...{
@@ -3268,8 +3318,10 @@ String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness)
     return "";
   }
   if (timestamp.year == now.year && timestamp.month == now.month && timestamp.day == now.day) {
+   
     return ' Today ';
   } else if (timestamp.year == yesterday.year && timestamp.month == yesterday.month && timestamp.day == yesterday.day) {
+   
     return 'Yesterday ';
   } else if (timestamp.isAfter(lastWeek)) {
     return DateFormat('EEEE').format(timestamp);
@@ -3505,6 +3557,22 @@ String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness)
       ],
     );
   }
+  void _recordingFinishedCallback(
+  String path,
+  BuildContext context,
+) {
+  print("file is thee $path");
+  final uri = Uri.parse(path);
+  File file = File(uri.path);
+
+  file.length().then(
+    (fileSize) {
+      print("files is this ${file}");
+      BlocProvider.of<AttachmentBloc>(context)
+          .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
+    },
+  );
+}
 }
 
 class ScrollService {
@@ -3518,7 +3586,7 @@ class ScrollService {
         reversed
             ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds:1000),
+        duration: const Duration(milliseconds:100),
         curve: Curves.easeOut,
       );
       // }
@@ -3565,19 +3633,3 @@ class PositionRetainedScrollPhysics extends ScrollPhysics {
   }
 }
 
-void _recordingFinishedCallback(
-  String path,
-  BuildContext context,
-) {
-  print("file is thee $path");
-  final uri = Uri.parse(path);
-  File file = File(uri.path);
-
-  file.length().then(
-    (fileSize) {
-      print("files is this ${file}");
-      BlocProvider.of<AttachmentBloc>(context)
-          .add(UploadLiveAudioEvent(audio: file));
-    },
-  );
-}

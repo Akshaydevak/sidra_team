@@ -74,7 +74,7 @@ class CommunicationDatasource {
       required String description
       }) async {
         print("asdd${userIdList![0].userCode}");
-
+        print("asdd$description");
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
   for (var i = 0; i < userIdList.length; i++) {
@@ -237,7 +237,7 @@ class CommunicationDatasource {
   String api="";
   if(grpchatId != "")
   {
-    api="${CommunicationUrls.commentGroupUrl}$grpchatId";
+    api="${CommunicationUrls.commentGroupUrl}$grpchatId?page=$pageNo";
   }else{
     api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
   }
@@ -349,7 +349,7 @@ class CommunicationDatasource {
     return statusCode;
   }
 
-  Future<String> uploadLiveAudioData({File? img}) async {
+  Future<String> uploadLiveAudioData({File? img,bool comment=false}) async {
     String statusCode;
 
     print("total result ${img}");

@@ -172,7 +172,8 @@ class _TaskTitleState extends State<TaskTitle> {
     token = pref!.getString("token");
     socketCon = IO.io(
       'https://api-communication-application.hilalcart.com/group',
-      // 'http://192.168.1.10:5500/group',
+      // 'http://192.168.1.187:5500/group',
+      // "https://8120-223-228-161-250.ngrok-free.app/group",
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},
@@ -884,25 +885,17 @@ class _TaskTitleState extends State<TaskTitle> {
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
-                                          child: Text(
-                                            "Priority : ",
-                                            style: GoogleFonts.roboto(
-                                              color: const Color(0xff151522),
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                        Text(
+                                          "Priority ",
+                                          style: GoogleFonts.roboto(
+                                            color: const Color(0xff151522),
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        // Spacer(),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
-                                          child:
-                                              Text(getTaskRead?.priority ?? ""),
-                                        ),
+                                        Spacer(),
+
+                                        Text(getTaskRead?.priority ?? ""),
                                       ],
                                     ),
                                   ),
@@ -2134,7 +2127,18 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 color: const Color(0xff33c658),
                                                 label: "Status",
                                                 svg: CreateSvg().priorityIcon,
-                                                onTap: () {},
+                                                onTap: () {
+                                                  if (getTaskRead?.statusStagesId ==
+                                                      5 &&
+                                                      authentication.isAdmin ==
+                                                          false &&
+                                                      authentication
+                                                          .isAssociateAdmin ==
+                                                          false) {
+                                                  } else {
+                                                    _showModalBottomSheet();
+                                                  }
+                                                },
                                                 endIcon: Row(
                                                   children: [
                                                     Container(
@@ -2205,6 +2209,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
+                                      print("grp id $communicationGroupId");
                                       context.read<ChatBloc>().add(
                                           ChatScreenGetEvent(
                                               token: token.toString(),
