@@ -50,8 +50,16 @@ class TaskTitle extends StatefulWidget {
   bool isMyJob;
   bool isReporter;
   bool isReported;
+  bool isPinnJob;
+  bool isPendingJob;
 
-  TaskTitle({Key? key, this.isMyJob = false, this.isReporter = false,this.isReported=false})
+  TaskTitle(
+      {Key? key,
+      this.isMyJob = false,
+      this.isPendingJob = false,
+      this.isPinnJob = false,
+      this.isReporter = false,
+      this.isReported = false})
       : super(key: key);
 
   @override
@@ -82,13 +90,13 @@ class _TaskTitleState extends State<TaskTitle> {
             "${getTaskRead?.createdOn?.split("T")[1].split("+")[0]}",
         jobid: getTaskRead?.jobId,
         notas: getTaskRead?.notes ?? "",
-        priorityLeval: "1",
+        priorityLeval: 0,
         remarks: getTaskRead?.remarks ?? "",
         taskName: getTaskRead?.taskName ?? "",
         taskType: getTaskRead?.taskType ?? 0,
         lastmodified: null,
         parant: getTaskRead?.parent,
-        statusStagesId: null,
+        statusStagesId: getTaskRead?.statusStagesId,
         discription: getTaskRead?.description ?? "",
         createdBy: getTaskRead?.createdPersonCode ?? "",
         isActive: true,
@@ -116,7 +124,7 @@ class _TaskTitleState extends State<TaskTitle> {
   }
 
   bool isReporting = true;
-  bool isNotify = false;
+  bool isNotify = true;
   String PriorityLeval = "";
   GetTaskList? getTaskRead;
   PerfomerModel? reportingPersonModel;
@@ -133,8 +141,9 @@ class _TaskTitleState extends State<TaskTitle> {
   void refresh() {
     setState(() {});
   }
-  String communicationGroupId='';
-  String communicationGroupname='';
+
+  String communicationGroupId = '';
+  String communicationGroupname = '';
 
   int tappedTile = 0;
   List<StatusListing> statusList = [];
@@ -211,13 +220,14 @@ class _TaskTitleState extends State<TaskTitle> {
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
           context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-        }
-        else if (widget.isReported == true) {
-
+        } else if (widget.isReported == true) {
           print("popScope hhhhh");
           context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
-        }
-        else {
+        } else if (widget.isPendingJob == true) {
+          context.read<TaskBloc>().add(GetPendingTaskListEvent());
+        } else if (widget.isPinnJob == true) {
+          context.read<TaskBloc>().add(GetPinnedTaskListEvent());
+        } else {
           print("popScope task");
           context.read<TaskBloc>().add(
               GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
@@ -322,9 +332,9 @@ class _TaskTitleState extends State<TaskTitle> {
                         .read<TaskBloc>()
                         .add(GetSubTaskListEvent(getTaskRead?.id));
                 getTaskRead?.parent != null
-                    ? context.read<EmployeeBloc>().add(GetGroupTReadEvent(getTaskRead?.parentGroupId ?? 0))
-                    :
-                isNotify = getTaskRead?.isNotify ?? false;
+                    ? context.read<EmployeeBloc>().add(
+                        GetGroupTReadEvent(getTaskRead?.parentGroupId ?? 0))
+                    : isNotify = getTaskRead?.isNotify ?? false;
                 if (getTaskRead?.latitude == null &&
                         getTaskRead?.longitude == null ||
                     getTaskRead?.latitude == "" &&
@@ -380,13 +390,11 @@ class _TaskTitleState extends State<TaskTitle> {
               print("Communication Chat$state");
 
               if (state is TaskGroupCreationSuccess) {
-                communicationGroupId=state.chatlist.groupid??"";
-                communicationGroupname=state.chatlist.groupName??"";
-                print("chat group id........$communicationGroupId $communicationGroupname");
-                setState(() {
-
-                });
-
+                communicationGroupId = state.chatlist.groupid ?? "";
+                communicationGroupname = state.chatlist.groupName ?? "";
+                print(
+                    "chat group id........$communicationGroupId $communicationGroupname");
+                setState(() {});
 
                 setState(() {});
               }
@@ -583,22 +591,23 @@ class _TaskTitleState extends State<TaskTitle> {
                 print("BACK");
                 if (widget.isReporter == true) {
                   print("popScope repoted");
-                  context.read<TaskBloc>().add(
-                      GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
+                  context.read<TaskBloc>().add(GetTaskListEvent(
+                      getTaskRead?.jobId, '', '', '', false, '', ''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
                   context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-                }
-                else if (widget.isReported == true) {
-
+                } else if (widget.isReported == true) {
                   print("popScope hhhhh");
                   context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
-                }
-                else {
+                } else if (widget.isPendingJob == true) {
+                  context.read<TaskBloc>().add(GetPendingTaskListEvent());
+                } else if (widget.isPinnJob == true) {
+                  context.read<TaskBloc>().add(GetPinnedTaskListEvent());
+                } else {
                   print("popScope task");
-                  context.read<TaskBloc>().add(
-                      GetTaskListEvent(getTaskRead?.jobId, '', '', '', false, '', ''));
+                  context.read<TaskBloc>().add(GetTaskListEvent(
+                      getTaskRead?.jobId, '', '', '', false, '', ''));
                   context
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
@@ -894,7 +903,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                           ),
                                         ),
                                         Spacer(),
-
                                         Text(getTaskRead?.priority ?? ""),
                                       ],
                                     ),
@@ -905,7 +913,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                           height: 5,
                                         )
                                       : Container(),
-
                                   authentication.isAdmin ||
                                           authentication.isAssociateAdmin
                                       ? Container(
@@ -1249,7 +1256,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                                   borderRadius: BorderRadius.circular(4),
                                                                                 ),
                                                                                 child: Text(
-                                                                                  "${taskListNew[index].statusName.toString().toTitleCase()}",
+                                                                                  taskListNew[index].statusName.toString() == "null" ? "Not Started" : "${taskListNew[index].statusName.toString().toTitleCase()}",
                                                                                   style: GoogleFonts.roboto(
                                                                                     color: Colors.white,
                                                                                     fontSize: w / 32,
@@ -1319,10 +1326,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      GestureDetector(
-                                                        onTap: () {},
+                                                      Container(
+                                                        width: w1 / 4.5,
                                                         child: Text(
-                                                          "Start Date :",
+                                                          "Start Date ",
                                                           style: TextStyle(
                                                             color: ColorPalette
                                                                 .black,
@@ -1330,6 +1337,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                           ),
                                                         ),
                                                       ),
+                                                      Text(":"),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
@@ -1365,14 +1373,18 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
-                                                        "Due Date  :",
-                                                        style: TextStyle(
-                                                          color: ColorPalette
-                                                              .black,
-                                                          fontSize: w / 24,
+                                                      Container(
+                                                        width: w1 / 4.5,
+                                                        child: Text(
+                                                          "Due Date",
+                                                          style: TextStyle(
+                                                            color: ColorPalette
+                                                                .black,
+                                                            fontSize: w / 24,
+                                                          ),
                                                         ),
                                                       ),
+                                                      Text(":"),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
@@ -1484,7 +1496,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                   SizedBox(
                                     height: 5,
                                   ),
-
                                   TaskTitleCard(
                                     widget: Column(
                                       children: [
@@ -2129,11 +2140,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 svg: CreateSvg().priorityIcon,
                                                 onTap: () {
                                                   if (getTaskRead?.statusStagesId ==
-                                                      5 &&
+                                                          5 &&
                                                       authentication.isAdmin ==
                                                           false &&
                                                       authentication
-                                                          .isAssociateAdmin ==
+                                                              .isAssociateAdmin ==
                                                           false) {
                                                   } else {
                                                     _showModalBottomSheet();
@@ -2179,7 +2190,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                             4
                                                                         ? const Text(
                                                                             "PENDING",
-                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: ColorPalette.primary))
+                                                                            style: TextStyle(fontWeight: FontWeight.w600, color: ColorPalette.primary))
                                                                         : getTaskRead?.statusStagesId == 5
                                                                             ? Row(
                                                                                 children: [
@@ -2203,7 +2214,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 )),
                                           ),
                                         ),
-
                                   SizedBox(
                                     height: 5,
                                   ),
@@ -2224,7 +2234,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                           loginUserId: loginuserId,
                                           socket: socketCon,
                                           grpchatid: communicationGroupId,
-                                          cmntgrpchatname: communicationGroupname,
+                                          cmntgrpchatname:
+                                              communicationGroupname,
                                           isGroup: true,
                                           // communicationUserModel: widget.communicationUserModel,
                                         ),
@@ -2388,88 +2399,37 @@ class _TaskTitleState extends State<TaskTitle> {
                                       label: "Notify me on due date",
                                       color: Color(0xffffc800),
                                       svg: TaskSvg().notificationIcon,
-                                      endIcon: isNotify
-                                          ? SvgPicture.string(
-                                              HomeSvg().toggleActive,
-                                              height: 22,
-                                            )
-                                          : SvgPicture.string(
-                                              HomeSvg().toggleInActive,
-                                              height: 22,
-                                            ),
+                                      endIcon:
+                                          // isNotify
+                                          //     ?
+                                          SvgPicture.string(
+                                        HomeSvg().toggleActive,
+                                        height: 22,
+                                      ),
+                                      // : SvgPicture.string(
+                                      //     HomeSvg().toggleInActive,
+                                      //     height: 22,
+                                      //   ),
                                       onTap: () {
                                         setState(() {
-                                          if (isNotify == false) {
-                                            isNotify = !isNotify;
-                                            context.read<TaskBloc>().add(
-                                                NotificationDueEvent(
-                                                    getTaskRead?.id ?? 0));
-                                          } else {}
+                                          // if (isNotify == false) {
+                                          //   isNotify = !isNotify;
+                                          //   context.read<TaskBloc>().add(
+                                          //       NotificationDueEvent(
+                                          //           getTaskRead?.id ?? 0));
+                                          // } else {}
                                         });
                                       },
                                     ),
                                   ),
-                                  // SizedBox(
-                                  //   height: 10,
-                                  // ),
-                                  // authentication.isAdmin
-                                  //     ? GestureDetector(
-                                  //         onTap: () {
-                                  //           context.read<TaskBloc>().add(
-                                  //               GetPaymentReadListEvent(
-                                  //                   getTaskRead?.id ?? 0, true));
-                                  //           PersistentNavBarNavigator.pushNewScreen(
-                                  //             context,
-                                  //             screen: PaymentOption(
-                                  //               update: getTaskRead?.paymentId == null
-                                  //                   ? false
-                                  //                   : true,
-                                  //               isJob: false,
-                                  //               isTask: true,
-                                  //               paymentId: getTaskRead?.paymentId ?? 0,
-                                  //               taskId: getTaskRead?.id ?? 0,
-                                  //             ),
-                                  //             withNavBar:
-                                  //                 true, // OPTIONAL VALUE. True by default.
-                                  //             pageTransitionAnimation:
-                                  //                 PageTransitionAnimation.fade,
-                                  //           );
-                                  //         },
-                                  //         child: Container(
-                                  //           width: w,
-                                  //           height: 60,
-                                  //           decoration: BoxDecoration(
-                                  //             borderRadius: BorderRadius.circular(10),
-                                  //             border: Border.all(
-                                  //               color: Color(0xffe6ecf0),
-                                  //               width: 1,
-                                  //             ),
-                                  //             boxShadow: [
-                                  //               BoxShadow(
-                                  //                 color: Color(0x05000000),
-                                  //                 blurRadius: 8,
-                                  //                 offset: Offset(1, 1),
-                                  //               ),
-                                  //             ],
-                                  //             color: Colors.white,
-                                  //           ),
-                                  //           alignment: Alignment.center,
-                                  //           child: Text(
-                                  //             "Payment Option",
-                                  //             style: GoogleFonts.roboto(
-                                  //               color: Colors.black,
-                                  //               fontSize: 18,
-                                  //               fontWeight: FontWeight.w500,
-                                  //             ),
-                                  //           ),
-                                  //         ),
-                                  //       )
-                                  //     : Container(),
                                   SizedBox(
                                     height: 20,
                                   ),
                                   GestureDetector(
                                     onTap: () {
+                                      context
+                                          .read<TaskBloc>()
+                                          .add(GetTopicListEvent());
                                       widget.isMyJob
                                           ? showDialog(
                                               context: context,
@@ -2677,7 +2637,7 @@ class _TaskTitleState extends State<TaskTitle> {
                             ),
                           ),
                           getTaskRead?.isReported == true &&
-                                  authentication.isAdmin == true
+                                      authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
                               ? Container(
                                   width: w,
                                   padding: EdgeInsets.symmetric(horizontal: 15),
@@ -2718,9 +2678,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                           () {
                                                                         Navigator.pop(
                                                                             context);
-                                                                        getTaskRead?.assigningType == "Individual" &&
-                                                                                getTaskRead?.parent == null
-                                                                            ? context.read<JobBloc>().add(GetEmployeeListEvent('', '', ''))
+                                                                        getTaskRead?.assigningType == "Individual" && getTaskRead?.parent == null
+                                                                            ? context.read<JobBloc>().add(GetEmployeeListEvent(
+                                                                                '',
+                                                                                '',
+                                                                                ''))
                                                                             : null;
                                                                         _showModalBottomReAssignSheet();
                                                                         setState(
@@ -2861,7 +2823,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                                       ),
                                                                                       GestureDetector(
                                                                                         onTap: () {
-                                                                                          context.read<TaskBloc>().add(ReplayReportEvent(reportStatus: "Report_approved", replay: replayApproveNotes.text, id: getTaskRead?.reportId,replayType: "Task delete",reAssignCode: ""));
+                                                                                          context.read<TaskBloc>().add(ReplayReportEvent(reportStatus: "Report_approved", replay: replayApproveNotes.text, id: getTaskRead?.reportId, replayType: "Task delete", reAssignCode: ""));
                                                                                           Navigator.pop(context);
                                                                                         },
                                                                                         child: Container(
@@ -3128,8 +3090,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                 GestureDetector(
                                                                   onTap: () {
                                                                     context.read<TaskBloc>().add(ReplayReportEvent(
-                                                                      reAssignCode: "",
-                                                                        replayType: "",
+                                                                        reAssignCode:
+                                                                            "",
+                                                                        replayType:
+                                                                            "",
                                                                         reportStatus:
                                                                             "Report_rejected",
                                                                         replay: replayRejectNotes
@@ -3292,8 +3256,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                     taskName: getTaskRead?.taskName ?? "",
                                     remarks: getTaskRead?.remarks ?? "",
                                     priorityLeval:
-                                        getTaskRead?.priorityLevel.toString() ??
-                                            "",
+                                        getTaskRead?.priorityLevel ?? 0,
                                     createdOn:
                                         "${getTaskRead?.createdOn?.split("T")[0]}"
                                                 " "
@@ -3495,7 +3458,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                           remarks: getTaskRead
                                                                   ?.remarks ??
                                                               "",
-                                                          priorityLeval: getTaskRead?.priorityLevel.toString() ?? "",
+                                                          priorityLeval: getTaskRead?.priorityLevel ?? 0,
                                                           createdOn: "${getTaskRead?.createdOn?.split("T")[0]}"
                                                                   " "
                                                                   "${getTaskRead?.createdOn?.split("T")[1].split(".")[0]}" ??
@@ -4024,7 +3987,7 @@ class _TaskTitleState extends State<TaskTitle> {
   }
 
   _showModalBottomReAssignSheet() {
-    String userCode='';
+    String userCode = '';
     int? currentlyExpandedIndex;
     void toggleExpansion(int index) {
       setState(() {
@@ -4036,6 +3999,7 @@ class _TaskTitleState extends State<TaskTitle> {
         }
       });
     }
+
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -4227,17 +4191,19 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                       return InkWell(
                                                                         onTap:
                                                                             () {
-                                                                          toggleExpansion(i);
-                                                                          userCode=state
-                                                                              .assignMeList?[i].userCode??"";
-                                                                          setState((){});
+                                                                          toggleExpansion(
+                                                                              i);
+                                                                          userCode =
+                                                                              state.assignMeList?[i].userCode ?? "";
+                                                                          setState(
+                                                                              () {});
                                                                         },
                                                                         child:
-                                                                        EmployeeCard(
-                                                                          isSelect: currentlyExpandedIndex==i,
+                                                                            EmployeeCard(
+                                                                          isSelect:
+                                                                              currentlyExpandedIndex == i,
                                                                           employeeList:
-                                                                          state
-                                                                              .assignMeList?[i],
+                                                                              state.assignMeList?[i],
                                                                         ),
                                                                       );
                                                                     },
@@ -4307,13 +4273,19 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                     return InkWell(
                                                                       onTap:
                                                                           () {
-                                                                            toggleExpansion(i);
-                                                                            userCode=listEmployee[i].userCode??"";
-                                                                            setState((){});
-                                                                          },
+                                                                        toggleExpansion(
+                                                                            i);
+                                                                        userCode =
+                                                                            listEmployee[i].userCode ??
+                                                                                "";
+                                                                        setState(
+                                                                            () {});
+                                                                      },
                                                                       child:
                                                                           EmployeeCard(
-                                                                            isSelect: currentlyExpandedIndex==i,
+                                                                        isSelect:
+                                                                            currentlyExpandedIndex ==
+                                                                                i,
                                                                         employeeList:
                                                                             listEmployee[i],
                                                                       ),
@@ -4350,12 +4322,9 @@ class _TaskTitleState extends State<TaskTitle> {
                               context.read<TaskBloc>().add(ReplayReportEvent(
                                   reAssignCode: userCode,
                                   replayType: "User update",
-                                  reportStatus:
-                                  "Report_approved",
-                                  replay: replayRejectNotes
-                                      .text,
-                                  id: getTaskRead
-                                      ?.reportId));
+                                  reportStatus: "Report_approved",
+                                  replay: replayRejectNotes.text,
+                                  id: getTaskRead?.reportId));
                             },
                             gradient: const LinearGradient(
                                 begin: Alignment.topCenter,

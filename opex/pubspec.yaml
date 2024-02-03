@@ -40,6 +40,7 @@ dependencies:
   flutter_svg:
   google_fonts:
   persistent_bottom_nav_bar: ^5.0.2
+  another_flushbar: ^1.12.30
   double_back_to_close_app:
   internet_connection_checker:
   provider:
