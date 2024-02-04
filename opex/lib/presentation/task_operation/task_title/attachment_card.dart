@@ -22,7 +22,7 @@ class _AttachmentCardState extends State<AttachmentCard> {
     for(int i=0;i<5;i++) {
       picModel.add(PicModel(data: null,url: ""));
     }
-    // picData();
+    picData();
     super.initState();
   }
   picData(){
@@ -52,15 +52,19 @@ class _AttachmentCardState extends State<AttachmentCard> {
         picLength++;
       }
     }
+    print("hgfhgfhgf${widget.readData?.metaData?.image1}");
+    print("hgfhgfhgf${picModel[0].url}");
+    print("hgfhgfhgf${picModel[1].url}");
+    print("hgfhgfhgf${picModel[2].url}");
+    print("hgfhgfhgf${picModel[3].url}");
+    print("hgfhgfhgf${picModel[4].url}");
+    print("hgfhgfhgf${picLength}");
 
   }
 
   @override
   Widget build(BuildContext context) {
-    picData();
-    // print("hgfhgfhgf${widget.readData?.metaData?.image1}");
-    // print("hgfhgfhgf${picModel[0].url}");
-    // print("hgfhgfhgf${picLength}");
+    // picData();
      var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return    Container(
@@ -125,7 +129,7 @@ class _RewardsCardState extends State<RewardsCard> {
     for(int i=0;i<5;i++) {
       picModel.add(PicModel(data: null,url: ""));
     }
-    // picData();
+    picData();
     super.initState();
   }
   int picLength=0;
@@ -159,7 +163,7 @@ class _RewardsCardState extends State<RewardsCard> {
 
   @override
   Widget build(BuildContext context) {
-picData();
+// picData();
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return    Container(
@@ -224,7 +228,7 @@ class _PaymentCardState extends State<PaymentCard> {
     for(int i=0;i<5;i++) {
       picModel.add(PicModel(data: null,url: ""));
     }
-   // picData();
+   picData();
     super.initState();
   }
   picData(){
@@ -263,7 +267,7 @@ class _PaymentCardState extends State<PaymentCard> {
 
   @override
   Widget build(BuildContext context) {
-    picData();
+    // picData();
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return    Container(

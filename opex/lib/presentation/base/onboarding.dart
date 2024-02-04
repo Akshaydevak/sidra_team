@@ -118,6 +118,7 @@ class OnBoarding extends StatelessWidget {
                   // ),
                   GestureDetector(
                     onTap: (){
+                      Navigator.pop(context);
 
 
                       PersistentNavBarNavigator.pushNewScreen(

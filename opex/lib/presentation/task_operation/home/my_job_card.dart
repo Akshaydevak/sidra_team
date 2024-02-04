@@ -23,14 +23,23 @@ class MyJobCard extends StatefulWidget {
   final GetJobList? jobsList;
   final bool isTaskCard;
   final List<StatusListing>? statusList;
-   MyJobCard({Key? key,this.status="PENDING", this.tasksList, this.statusList, required this.isPinned,  this.isPending=false, this.jobsList,  this.isTaskCard=false}) : super(key: key);
+  MyJobCard(
+      {Key? key,
+      this.status = "PENDING",
+      this.tasksList,
+      this.statusList,
+      required this.isPinned,
+      this.isPending = false,
+      this.jobsList,
+      this.isTaskCard = false})
+      : super(key: key);
 
   @override
   State<MyJobCard> createState() => _MyJobCardState();
 }
 
 class _MyJobCardState extends State<MyJobCard> {
-  bool isExpanded=false;
+  bool isExpanded = false;
   int tappedTile = 0;
   List<StatusListing>? statusList;
   void changeTappedTile(int val) {
@@ -38,51 +47,53 @@ class _MyJobCardState extends State<MyJobCard> {
 
     setState(() {});
   }
-  void refresh(){
-    context.read<JobBloc>().add(GetJobListEvent());
-    setState(() {
 
-    });
+  void refresh() {
+    context.read<JobBloc>().add(GetJobListEvent());
+    setState(() {});
   }
+
   @override
   void initState() {
     context.read<JobBloc>().add(GetStatusListEvent());
-    setState(() {
-
-    });
+    setState(() {});
     super.initState();
   }
-  String endstdDate='';
-  String startstdDate='';
-  String assignstdDate='';
+
+  String endstdDate = '';
+  String startstdDate = '';
+  String assignstdDate = '';
   @override
   Widget build(BuildContext context) {
     var date = widget.tasksList?.endDate;
-    var dateTime =  DateTime.parse("$date");
-    endstdDate =  DateFormat('dd-MM-yyyy').format(dateTime).toString();
+    var dateTime = DateTime.parse("$date");
+    endstdDate = DateFormat('dd-MM-yyyy').format(dateTime).toString();
 
     var date1 = widget.tasksList?.startDate;
-    var dateTime1 =  DateTime.parse("$date1");
-    startstdDate =  DateFormat('dd-MM-yyyy').format(dateTime1).toString();
+    var dateTime1 = DateTime.parse("$date1");
+    startstdDate = DateFormat('dd-MM-yyyy').format(dateTime1).toString();
 
     var date2 = widget.tasksList?.createdOn;
-    var dateTime2 =  DateTime.parse("$date2");
-    assignstdDate =  DateFormat('dd-MM-yyyy').format(dateTime2).toString();
+    var dateTime2 = DateTime.parse("$date2");
+    assignstdDate = DateFormat('dd-MM-yyyy').format(dateTime2).toString();
 
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
-          onTap: (){
-            context.read<TaskBloc>().add(
-                GetTaskReadListEvent(widget.tasksList?.id??0));
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: TaskTitle(isMyJob: false,),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-          },
-            child:
-          Container(
+        onTap: () {
+          context
+              .read<TaskBloc>()
+              .add(GetTaskReadListEvent(widget.tasksList?.id ?? 0));
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: TaskTitle(
+                isMyJob: false,
+                isPinnJob: widget.isPinned,
+                isPendingJob: widget.isPending),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+        },
+        child: Container(
           width: w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
@@ -97,7 +108,8 @@ class _MyJobCardState extends State<MyJobCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 15, bottom: 10),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,14 +117,14 @@ class _MyJobCardState extends State<MyJobCard> {
                         Row(
                           children: [
                             Container(
-                              width: w/1.4,
+                              width: w / 1.4,
                               child: Text(
-                                widget.tasksList?.taskName??"",
+                                widget.tasksList?.taskName ?? "",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.roboto(
                                   color: ColorPalette.black,
-                                  fontSize: w/22,
+                                  fontSize: w / 22,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -248,10 +260,10 @@ class _MyJobCardState extends State<MyJobCard> {
                           height: 5,
                         ),
                         Text(
-                          widget.tasksList?.description??"",
-                          style:  TextStyle(
+                          widget.tasksList?.description ?? "",
+                          style: TextStyle(
                             color: Colors.black,
-                            fontSize: w/26,
+                            fontSize: w / 26,
                           ),
                           textAlign: TextAlign.justify,
                         ),
@@ -260,178 +272,205 @@ class _MyJobCardState extends State<MyJobCard> {
                 Divider(
                   color: const Color(0xffA9A8A8).withOpacity(0.3),
                 ),
-                isExpanded?Column(
-                  children: [
-                    Container(
-                      padding:
-                      const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
-                      child: Column(
+                isExpanded
+                    ? Column(
                         children: [
-                          Row(children: [
-                            SizedBox(
-                              width: w/3.5,
-                              child: const Text(
-                                "Assigned By",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+                          Container(
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, top: 10, bottom: 10),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: w / 3.5,
+                                      child: const Text(
+                                        "Assigned By",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 16,
+                                      child: Text(
+                                        ":",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.tasksList?.assignName ?? "",
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                              child: Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              widget.tasksList?.assignName??"",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-                          const SizedBox(height: 5,),
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Reporting To",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              widget.tasksList?.reportingName.toString()??"",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-                          const SizedBox(height: 5,),
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Assigned On",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: w / 3.5,
+                                      child: const Text(
+                                        "Reporting To",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 16,
+                                      child: const Text(
+                                        ":",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.tasksList?.reportingName
+                                              .toString() ??
+                                          "",
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              assignstdDate,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-                          const SizedBox(height: 5,),
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Start On",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              startstdDate ,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-                          const SizedBox(height: 5,),
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Due On",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: w / 3.5,
+                                      child: const Text(
+                                        "Assigned On",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 16,
+                                      child: const Text(
+                                        ":",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      assignstdDate,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: w / 3.5,
+                                      child: const Text(
+                                        "Start On",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 16,
+                                      child: const Text(
+                                        ":",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      startstdDate,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: w / 3.5,
+                                      child: const Text(
+                                        "Due On",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 16,
+                                      child: const Text(
+                                        ":",
+                                        style: TextStyle(
+                                          color: Color(0xff6d6d6d),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      endstdDate,
+                                      style: GoogleFonts.roboto(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              endstdDate,
-                              style: GoogleFonts.roboto(
-                                color: Colors.black,
-                                fontSize: 15,
-
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-
-
-
-
+                          ),
+                          Divider(
+                            color: const Color(0xffA9A8A8).withOpacity(0.3),
+                            height: 2,
+                          ),
                         ],
-                      ),
-                    ),
-                    Divider(
-                      color: const Color(0xffA9A8A8).withOpacity(0.3),
-                      height: 2,
-                    ),
-                  ],
-                ):Container(),
+                      )
+                    : Container(),
                 Container(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 16),
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 10, bottom: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -452,74 +491,86 @@ class _MyJobCardState extends State<MyJobCard> {
                             // const SizedBox(
                             //   width: 15,
                             // ),
-                           SvgPicture.string(TaskSvg().startDateIcon,height: 20,width: 20,),
+                            SvgPicture.string(
+                              TaskSvg().startDateIcon,
+                              height: 20,
+                              width: 20,
+                            ),
                             const SizedBox(
                               width: 5,
                             ),
                             Text(
                               assignstdDate,
                               style: GoogleFonts.roboto(
-                                color:  Colors.black,
-                                fontSize: w/24,
+                                color: Colors.black,
+                                fontSize: w / 24,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             const SizedBox(
                               width: 15,
                             ),
-                          
+
                             const SizedBox(
                               width: 5,
                             ),
                             SvgPicture.string(TaskSvg().priorityIcon,
-                              color: widget.tasksList?.priority=="Low"?const Color(0xff50D166):
-                            widget.tasksList?.priority=="Medium"?const Color(0xffF18F1C):null),
-                              const SizedBox(
+                                color: widget.tasksList?.priority == "Low"
+                                    ? const Color(0xff50D166)
+                                    : widget.tasksList?.priority == "Medium"
+                                        ? const Color(0xffF18F1C)
+                                        : null),
+                            const SizedBox(
                               width: 15,
                             ),
-                            widget.isPinned==true?GestureDetector(
-                              onTap: (){
-                                  context.read<JobBloc>().add(
-                                                PinAJobPostEvent(
-                                                    userCode: authentication.authenticatedUser.code??"",
-                                                    taskId: widget.tasksList?.id??0,
-                                                    isPinned: false));
-                                            context.read<TaskBloc>().add(
-                                                const GetPinnedTaskListEvent());
-                              },
-                              child: Text("Unpin Task",
-                              style: GoogleFonts.roboto(
-                                color: ColorPalette.primary,
-                                fontSize: w/28,
-                                fontWeight: FontWeight.w500
-                              ),),
-                            ):Container()
+                            widget.isPinned == true
+                                ? GestureDetector(
+                                    onTap: () {
+                                      context.read<JobBloc>().add(
+                                          PinAJobPostEvent(
+                                              userCode: authentication
+                                                      .authenticatedUser.code ??
+                                                  "",
+                                              taskId: widget.tasksList?.id ?? 0,
+                                              isPinned: false));
+                                      context
+                                          .read<TaskBloc>()
+                                          .add(const GetPinnedTaskListEvent());
+                                    },
+                                    child: Text(
+                                      "Unpin Task",
+                                      style: GoogleFonts.roboto(
+                                          color: ColorPalette.primary,
+                                          fontSize: w / 28,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ),
                         GestureDetector(
-                          onTap: (){
-                            setState((){
-                              isExpanded=!isExpanded;
-                            });
-                          },
-                            child: isExpanded?const Icon(Icons.keyboard_arrow_up):const Icon(Icons.keyboard_arrow_down_sharp))
+                            onTap: () {
+                              setState(() {
+                                isExpanded = !isExpanded;
+                              });
+                            },
+                            child: isExpanded
+                                ? const Icon(Icons.keyboard_arrow_up)
+                                : const Icon(Icons.keyboard_arrow_down_sharp))
                       ],
                     ))
               ]),
         ));
   }
 
-  _showModalBottomSheet(BuildContext context,List<StatusListing> status) {
-    
+  _showModalBottomSheet(BuildContext context, List<StatusListing> status) {
     showModalBottomSheet(
-
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(18), topRight: Radius.circular(18)),
         ),
         context: context,
         builder: (context) {
-
           var h = MediaQuery.of(context).size.height;
           var w = MediaQuery.of(context).size.width;
           return StatefulBuilder(
@@ -537,17 +588,20 @@ class _MyJobCardState extends State<MyJobCard> {
                 alignment: Alignment.center,
                 child: Column(
                   children: [
-                    const SizedBox(height: 24,),
+                    const SizedBox(
+                      height: 24,
+                    ),
                     Text(
                       "Change Status To:",
                       style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontSize: 20,
-                        
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     ListView.separated(
                       padding: const EdgeInsets.only(),
                       physics: const ScrollPhysics(),
@@ -555,44 +609,57 @@ class _MyJobCardState extends State<MyJobCard> {
                       itemCount: status.length,
                       itemBuilder: (BuildContext context, int i) {
                         return GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             // refresh();
 
                             changeTappedTile(i);
-                            BlocProvider.of<TaskBloc>(context).add(
-                                UpdateTaskEvent(
-                                  longitude: widget.tasksList?.longitude,
-                                  latitude: widget.tasksList?.latitude,
-                                  taskType: widget.tasksList?.taskType??0,
-                                    discription: widget.tasksList?.description??"",
-                                    createdBy: widget.tasksList?.createdPersonCode??"",
-                                    isActive: true,
-                                    priority: widget.tasksList?.priority??"",
-                                    reportingPerson: widget.tasksList?.reportingPersonCode??"",
-                                    endDate: "${widget.tasksList?.endDate?.split("T")[0]}"" ""${widget.tasksList?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                    startDate: "${widget.tasksList?.startDate?.split("T")[0]}"" ""${widget.tasksList?.startDate?.split("T")[1].split("+")[0]}"??"",
-                                  AssigningCode: widget.tasksList?.assigningCode??"",
-                                  notas: widget.tasksList?.notes??"",
-                                  taskName: widget.tasksList?.taskName??"",
-                                  remarks: widget.tasksList?.remarks??"",
-                                  priorityLeval: widget.tasksList?.priorityLevel.toString()??"",
-                                  createdOn: "${widget.tasksList?.createdOn?.split("T")[0]}"" ""${widget.tasksList?.createdOn?.split("T")[1].split(".")[0]}"??"",
-                                  AssigningType: widget.tasksList?.assigningType??"",
-                                  statusStagesId: status[i].id,
-                                  parant: widget.tasksList?.parent??null,
-                                  lastmodified: widget.tasksList?.lastModified??null,
-                                  jobid: widget.tasksList?.jobId??0,
-                                  id: widget.tasksList?.id??0,
-                                    img5: widget.tasksList?.metaData?.image5,
-                                    img1: widget.tasksList?.metaData?.image1,
-                                    img4: widget.tasksList?.metaData?.image4,
-                                    img2: widget.tasksList?.metaData?.image2,
-                                    img3: widget.tasksList?.metaData?.image3,
-                                    attachmentDescription: widget.tasksList?.metaData?.description,
-                                    attachmentNote: widget.tasksList?.metaData?.note
-
-
-                                ));
+                            BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(
+                                longitude: widget.tasksList?.longitude,
+                                latitude: widget.tasksList?.latitude,
+                                taskType: widget.tasksList?.taskType ?? 0,
+                                discription:
+                                    widget.tasksList?.description ?? "",
+                                createdBy:
+                                    widget.tasksList?.createdPersonCode ?? "",
+                                isActive: true,
+                                priority: widget.tasksList?.priority ?? "",
+                                reportingPerson:
+                                    widget.tasksList?.reportingPersonCode ?? "",
+                                endDate: "${widget.tasksList?.endDate?.split("T")[0]}"
+                                        " "
+                                        "${widget.tasksList?.endDate?.split("T")[1].split("+")[0]}" ??
+                                    "",
+                                startDate:
+                                    "${widget.tasksList?.startDate?.split("T")[0]}"
+                                            " "
+                                            "${widget.tasksList?.startDate?.split("T")[1].split("+")[0]}" ??
+                                        "",
+                                AssigningCode:
+                                    widget.tasksList?.assigningCode ?? "",
+                                notas: widget.tasksList?.notes ?? "",
+                                taskName: widget.tasksList?.taskName ?? "",
+                                remarks: widget.tasksList?.remarks ?? "",
+                                priorityLeval:
+                                    widget.tasksList?.priorityLevel ??
+                                        0,
+                                createdOn:
+                                    "${widget.tasksList?.createdOn?.split("T")[0]}"
+                                            " "
+                                            "${widget.tasksList?.createdOn?.split("T")[1].split(".")[0]}" ??
+                                        "",
+                                AssigningType: widget.tasksList?.assigningType ?? "",
+                                statusStagesId: status[i].id,
+                                parant: widget.tasksList?.parent ?? null,
+                                lastmodified: widget.tasksList?.lastModified ?? null,
+                                jobid: widget.tasksList?.jobId ?? 0,
+                                id: widget.tasksList?.id ?? 0,
+                                img5: widget.tasksList?.metaData?.image5,
+                                img1: widget.tasksList?.metaData?.image1,
+                                img4: widget.tasksList?.metaData?.image4,
+                                img2: widget.tasksList?.metaData?.image2,
+                                img3: widget.tasksList?.metaData?.image3,
+                                attachmentDescription: widget.tasksList?.metaData?.description,
+                                attachmentNote: widget.tasksList?.metaData?.note));
 
                             Navigator.pop(context);
                             setState(() {});
@@ -605,13 +672,15 @@ class _MyJobCardState extends State<MyJobCard> {
                             child: Row(
                               children: [
                                 tappedTile == i
-                                    ? SvgPicture.string(TaskSvg().checkActiveIcon)
-                                    : SvgPicture.string(TaskSvg().checkInActiveIcon),
+                                    ? SvgPicture.string(
+                                        TaskSvg().checkActiveIcon)
+                                    : SvgPicture.string(
+                                        TaskSvg().checkInActiveIcon),
                                 const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
-                                  status[i].name??"",
+                                  status[i].name ?? "",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
                                     fontSize: 18,

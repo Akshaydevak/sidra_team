@@ -124,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
           data();
           _isLoading=false;
                context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+               Navigator.pop(context);
           PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: DashBoard(),
@@ -224,14 +225,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     email: emailController.text,
                                     password: passwordController.text,
                                     code: codeController.text));
-                                // PersistentNavBarNavigator.pushNewScreen(
-                                //   context,
-                                //   screen: OtpScreen(),
-                                //   withNavBar: true,
-                                //   // OPTIONAL VALUE. True by default.
-                                //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                                // );
-                                //OtpScreen
                                 setState(() {
                                   
                                 });
