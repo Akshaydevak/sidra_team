@@ -59,13 +59,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
   
     super.initState();
   }
-  TextEditingController newpassword=TextEditingController();
-  TextEditingController cofirempassword=TextEditingController();
-  onRefresh(){
-    setState(() {
 
-    });
-  }
   void getChatList()async{
     pref=await SharedPreferences.getInstance();
     token = pref!.getString("token");
@@ -109,11 +103,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
     ),
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
-        if(state is DeleteEmployeeLoading){
-          // showSnackBar(context,
-          //     message: "User Dele Loading",
-          //     color: ColorPalette.green);
-        }
+
         if(state is DeleteEmployeeSuccess){
           showSnackBar(context,
               message:"User Deleted Successfully",
@@ -161,8 +151,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
         }
         if(state is ChagePasswordSuccess){
           Navigator.pop(context);
-          newpassword.clear();
-          cofirempassword.clear();
+          // newpassword.clear();
+          // cofirempassword.clear();
           context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
           showSnackBar(context, message: state.user??"", color: Colors.black);
           setState(() {
@@ -223,6 +213,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
           ),
   ],
   child: Scaffold(
+    backgroundColor: ColorPalette.cardBackground,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(label: _tabTextIconIndexSelected==0? "Users":"Groups",isAction: false,
@@ -294,8 +285,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
             child: Column(
               children: [
                 FlutterToggleTab(
-                  width: w / 4,
-                  height: 55,
+                  width: w1 / 4,
+                  height: 55,isShadowEnable: true,
                   borderRadius: 10,
                   selectedBackgroundColors: [
                     ColorPalette.primary
@@ -1163,6 +1154,19 @@ BlocProvider.of<CommunicationBloc>(context).add(
         });
   }
   _showModalBottomChagePass(GetEmployeeList? employee) {
+    TextEditingController newpassword=TextEditingController();
+    TextEditingController cofirempassword=TextEditingController();
+    bool isActive=false;
+    onRefresh(){
+      if(newpassword.text==cofirempassword.text){
+        isActive=true;
+      }
+      else{
+      isActive=false;}
+      setState(() {
+
+      });
+    }
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -1241,6 +1245,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         isMandatory: false,
                                         onchange: (dd){
                                           onRefresh();
+                                          setState((){});
                                         },
                                       ),
                                       SizedBox(
@@ -1253,6 +1258,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         isMandatory: false,
                                         onchange: (dd){
                                           onRefresh();
+                                          setState((){});
                                         },
                                       ),
                                       SizedBox(
@@ -1272,8 +1278,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                         right: 0,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                          child: newpassword.text==cofirempassword.text&&
-                              newpassword.text!=""||cofirempassword.text!=""
+                          child: isActive==true
                               ?GradientButton(
                               color: ColorPalette.primary,
                               onPressed: () {

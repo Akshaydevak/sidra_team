@@ -94,13 +94,6 @@ class _CreateGroupState extends State<CreateGroup> {
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
             listener: (context, state) {
-              if (state is CreateGroupLoading) {
-                // showSnackBar(context,
-                    // message: "Loading...",
-                    // color: Colors.white,
-                    // // icon: HomeSvg().SnackbarIcon,
-                    // autoDismiss: true);
-              }
 
               if (state is CreateGroupFailed) {
                 showSnackBar(
@@ -282,23 +275,6 @@ class _CreateGroupState extends State<CreateGroup> {
                                 ),
                                 Container(
                                   width: w1,
-                                  // height: h / 2.5,
-                                  // decoration: BoxDecoration(
-                                  //   borderRadius:
-                                  //   BorderRadius.circular(10),
-                                  //   border: Border.all(
-                                  //     color: Color(0xffe6ecf0),
-                                  //     width: 1,
-                                  //   ),
-                                  //   boxShadow: const [
-                                  //     BoxShadow(
-                                  //       color: Color(0x05000000),
-                                  //       blurRadius: 8,
-                                  //       offset: Offset(1, 1),
-                                  //     ),
-                                  //   ],
-                                  //   color: Colors.white,
-                                  // ),
                                   child: ListView.separated(
                                       primary: true,
                                       shrinkWrap: true,

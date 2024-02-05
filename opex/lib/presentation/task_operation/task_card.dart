@@ -125,7 +125,7 @@ class TaskCard extends StatelessWidget {
                       ),
                       child: Text(
                         taskList?.statusName == null
-                            ? "STARTED"
+                            ? "NOT INITIATED"
                             : taskList?.statusName ?? "",
                         style: GoogleFonts.roboto(
                           color: Colors.white,
