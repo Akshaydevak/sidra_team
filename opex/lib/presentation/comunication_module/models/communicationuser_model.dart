@@ -113,8 +113,8 @@ class ChatModel extends Equatable {
   final String? updatedAt;
   @JsonKey(name: "fromUser")
   final FromUser? fromUser;
-  @JsonKey(name: "day")
-  final String? day;
+  @JsonKey(name: "lastMessageOfDay")
+  final bool? lastMessageOfDay;
   @JsonKey(name: "seenBy")
   final List<String>? seenBy;
 
@@ -129,7 +129,7 @@ class ChatModel extends Equatable {
       this.createdAt,
       this.updatedAt,
       this.seenBy,
-      this.day});
+      this.lastMessageOfDay});
   @override
   List<Object> get props => [];
   factory ChatModel.fromJson(Map<String, dynamic> json) =>

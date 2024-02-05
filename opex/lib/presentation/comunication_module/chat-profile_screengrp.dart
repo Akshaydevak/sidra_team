@@ -59,7 +59,7 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isMute = false;
   List<GroupUserList> grpmember=[];
   bool isM=true;
-  
+  bool issMount= true;
   String uid='';
     @override
   void initState() {
@@ -74,8 +74,13 @@ print("room id listens atleast ${widget.communicationuser?.description} ${widget
     grpmember.add(GroupUserList.fromJson(element));
    
       });
-      isM=false;
- print(grpmember.length);
+      if(issMount){
+        setState(() {
+          isM=false;
+          print(grpmember.length);
+        });
+      }
+      
 
     });
      
@@ -85,6 +90,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
   }
     @override
    void dispose(){
+    issMount=false;
   super.dispose();
    }
 
