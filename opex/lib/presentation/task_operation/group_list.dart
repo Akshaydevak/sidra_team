@@ -38,6 +38,7 @@ class _GroupListState extends State<GroupList> {
         padding: EdgeInsets.all(3),
         child: CustomCheckBoxData(
           role: widget.employeeList?.role??"",
+
           profile: widget.employeeList?.profile??"",
           lname: widget.employeeList?.lname??"",
           key: UniqueKey(),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/comunication_module/chat_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
@@ -28,6 +29,7 @@ import '../dashboard_screen/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../dashboard_screen/profile/profile_screen.dart';
 
+import '../task_operation/create/task_bloc/task_bloc.dart';
 import '../task_operation/task_title.dart';
 import 'icon_constants.dart';
 import 'internet_not_connected.dart';
@@ -95,10 +97,30 @@ class _DashBoardState extends State<DashBoard> {
           print("jjijij: ${data['Sidra_teams_key']}");
           print("wow message: ${messages.notification?.title}");
           print("wow message: ${messages.notification?.body}");
-          Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
-            'uid': data["uid"] ,
-            'serviceUid': data["serviceUid"] ,
-          });
+          // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
+          //   'uid': data["uid"] ,
+          //   'serviceUid': data["serviceUid"] ,
+          // });
+          String id=data['chat_id'];
+          if(data['Sidra_teams_key']=="task_and_operation"){
+
+            context.read<TaskBloc>().add(
+                GetTaskReadListEvent(int.tryParse(id) ?? 0));
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: TaskTitle(),
+              withNavBar: true, // OPTIONAL VALUE. True by default.
+              pageTransitionAnimation: PageTransitionAnimation.fade,
+            );
+          }
+          else{
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen:  ChatScreen(),
+              withNavBar: true, // OPTIONAL VALUE. True by default.
+              pageTransitionAnimation: PageTransitionAnimation.fade,
+            );
+          }
         },
         backgroundColor: Colors.black,
         titleColor: Colors.black,
@@ -133,12 +155,27 @@ class _DashBoardState extends State<DashBoard> {
       //   'uid': data["uid"] ,
       //   'serviceUid': data["serviceUid"] ,
       // });
-      PersistentNavBarNavigator.pushNewScreen(
-                context,
-                screen: const CreateJob(),
-                withNavBar: true, // OPTIONAL VALUE. True by default.
-                pageTransitionAnimation: PageTransitionAnimation.fade,
-              );
+      String id=data['chat_id'];
+      if(data['Sidra_teams_key']=="task_and_operation"){
+
+        context.read<TaskBloc>().add(
+            GetTaskReadListEvent(int.tryParse(id) ?? 0));
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen: TaskTitle(),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+      }
+      else{
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+      }
+
     });
   }
 
@@ -463,6 +500,4 @@ class _DashBoardState extends State<DashBoard> {
       ),
     );
   }
-
-
 }

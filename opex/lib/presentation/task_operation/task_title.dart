@@ -1426,7 +1426,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  authentication.isAdmin == true
+                                  authentication.isAdmin == true || authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
                                       ? Container()
                                       : getTaskRead?.latitude != null &&
                                               getTaskRead?.latitude != "" &&
@@ -2425,6 +2425,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                   SizedBox(
                                     height: 20,
                                   ),
+                                  authentication.isAssociateAdmin==true&&
+                                      authentication.authenticatedUser.code==getTaskRead?.reportingPersonDict?.userCode?Container():
                                   GestureDetector(
                                     onTap: () {
                                       context

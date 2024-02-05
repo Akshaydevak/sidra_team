@@ -89,9 +89,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
       strokeWidth: 2.0,
       child: BlocListener<JobBloc, JobState>(
         listener: (context, state) {
-          if (state is GetReportingPersonListLoading) {
-            // customCupertinoLoading();
-          }
+
           if (state is GetReportingPersonListSuccess) {
             employee = state.employeeList;
 
@@ -100,6 +98,7 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
           }
         },
         child: Scaffold(
+          backgroundColor: Colors.white,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: BackAppBar(

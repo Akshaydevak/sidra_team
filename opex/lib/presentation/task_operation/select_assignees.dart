@@ -686,7 +686,8 @@ class _SelectAssigneesState extends State<SelectAssignees> {
 }
 
 class AssignesUnderGroup extends StatefulWidget {
-  const AssignesUnderGroup({Key? key}) : super(key: key);
+  final Function(bool val)? groupVal;
+  const AssignesUnderGroup({Key? key, this.groupVal}) : super(key: key);
 
   @override
   State<AssignesUnderGroup> createState() => _AssignesUnderGroupState();
@@ -774,6 +775,7 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                     // Variable.assignName = state.userlist[index].code??"";
                                     Variable.assignCode =
                                         state.userlist[index].code ?? "";
+                                    widget.groupVal!(true);
 
                                     Navigator.pop(context);
                                   });
@@ -781,53 +783,6 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                 child: EmployeeCardUnderGroup(
                                   userList: state.userlist[index],
                                 )
-                                // Card(
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.all(10),
-                                //     child: Row(
-                                //       mainAxisAlignment:
-                                //           MainAxisAlignment.start,
-                                //       children: [
-                                //         Radio(
-                                //           value: index,
-                                //           groupValue: indValue,
-                                //           activeColor: ColorPalette.primary,
-                                //           onChanged: (int? value) {
-                                //             setState(() {
-                                //               indValue = value!;
-                                //               Variable.assignType =
-                                //                   "Individual";
-                                //               Variable.assignCode =
-                                //                   state.userlist[index].code ??
-                                //                       "";
-                                //             });
-                                //           },
-                                //         ),
-                                //         Row(
-                                //           children: [
-                                //             Image.asset("asset/newprofile.png",
-                                //                 width: 35, height: 35),
-                                //             SizedBox(
-                                //               width: 5,
-                                //             ),
-                                //             Container(
-                                //               width: w / 1.7,
-                                //               child: Text(
-                                //                 state.userlist[index].email ??
-                                //                     "",
-                                //                 overflow: TextOverflow.ellipsis,
-                                //                 style: TextStyle(
-                                //                   color: Color(0xff151522),
-                                //                   fontSize: w / 24,
-                                //                 ),
-                                //               ),
-                                //             )
-                                //           ],
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
                               ),
                           separatorBuilder: (context, index) {
                             return SizedBox(
