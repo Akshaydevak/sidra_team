@@ -66,7 +66,7 @@ class TaskDataSource {
       api = prev ?? "";
     } else if (filter == true) {
       api =
-          "${ClusterUrls.taskListUrl + id.toString()}?assigned_to=&reporter=&priority=$priority&task_status=$status";
+          "${ClusterUrls.taskListUrl + id.toString()}?assigned_to=&reporter=&priority=$priority&status=$status";
     } else {
       api = search!.isNotEmpty
           ? "${ClusterUrls.taskListUrl + id.toString()}?name=$search"
@@ -103,7 +103,7 @@ class TaskDataSource {
       String? status,
       String? priority,
       reportingPersonFilter) async {
-    print("URL Task Under Job List:${ClusterUrls.adminAllJobListUrl}");
+    print("ALL Job List:${ClusterUrls.adminAllJobListUrl}");
     List<GetJobList> nationalityModel = [];
     String api = "";
     if (next != "") {

@@ -203,12 +203,7 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => OrganisationTaskBloc(),
               ),
             ],
-            child: MaterialApp(routes: {
-            '/communication': (context) => CreateJob(),
-              '/task':(context) => TaskTitle()
-
-            // Add more routes as needed
-            } ,
+            child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Sidrateams',
               theme: ThemeData(

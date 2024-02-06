@@ -10,6 +10,7 @@ import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,6 +73,7 @@ class _PaymentOptionState extends State<PaymentOption> {
   dynamic? imageId;
   String imgUrl='';
   String? imageFileName;
+  bool buttonLoad=false;
 
   int indexImage=0;
   int catindexImage=0;
@@ -120,9 +122,7 @@ class _PaymentOptionState extends State<PaymentOption> {
   listeners: [
       BlocListener<EmployeeBloc, EmployeeState>(
         listener: (context, state) {
-          if(state is PicLoading){
-            print("Inside Loading");
-          }
+
           if(state is PicSuccess){
             print("Inside Success${state.data}\t${state.url}");
             setState(() {
@@ -136,23 +136,21 @@ class _PaymentOptionState extends State<PaymentOption> {
       ),
       BlocListener<TaskBloc, TaskState>(
   listener: (context, state) {
-      if (state is CreatePaymentLoading) {
-        // showSnackBar(context,
-        //     message: "Loading...",
-        //     color: Colors.white,
-        //     // icon: HomeSvg().SnackbarIcon,
-        //     autoDismiss: true);
-      }
 
       if (state is CreatePaymentFailed) {
+        buttonLoad=false;
         showSnackBar(
           context,
           message: state.error,
           color: Colors.red,
           // icon: Icons.admin_panel_settings_outlined
         );
+        setState(() {
+
+        });
       }
       if (state is CreatePaymentSuccess) {
+        buttonLoad=false;
         // createJob = state.user;
 
         Fluttertoast.showToast(
@@ -171,23 +169,21 @@ class _PaymentOptionState extends State<PaymentOption> {
 ),
       BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
-          if (state is UpdatePaymentLoading) {
-            // showSnackBar(context,
-            //     message: "Loading...",
-            //     color: Colors.white,
-            //     // icon: HomeSvg().SnackbarIcon,
-            //     autoDismiss: true);
-          }
 
           if (state is UpdatePaymentFailed) {
+            buttonLoad=false;
             showSnackBar(
               context,
               message: state.error,
               color: Colors.red,
               // icon: Icons.admin_panel_settings_outlined
             );
+            setState(() {
+
+            });
           }
           if (state is UpdatePaymentSuccess) {
+            buttonLoad=false;
             // createJob = state.user;
 
             Fluttertoast.showToast(
@@ -201,14 +197,14 @@ class _PaymentOptionState extends State<PaymentOption> {
             context.read<TaskBloc>().add(
                 GetTaskReadListEvent(Variable.taskReadId));
             Navigator.pop(context);
+            setState(() {
+
+            });
           }
         },
       ),
       BlocListener<JobBloc, JobState>(
         listener: (context, state) {
-          if (state is GetGroupListLoading) {
-            customCupertinoLoading();
-          }
           if (state is GetGroupListSuccess) {
             print("GROUPLIST${state.groupList.length}");
             grouplist=state.groupList;
@@ -220,9 +216,6 @@ class _PaymentOptionState extends State<PaymentOption> {
       ),
       BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
-          if (state is GetPaymentReadLoading) {
-            customCupertinoLoading();
-          }
           if (state is GetPaymentReadSuccess) {
             paymentRead=state.paymentRead;
             budgetController.text=paymentRead?.budget.toString()??"";
@@ -266,9 +259,6 @@ class _PaymentOptionState extends State<PaymentOption> {
       ),
       BlocListener<JobBloc, JobState>(
         listener: (context, state) {
-          if (state is GetEmployeeListLoading) {
-            customCupertinoLoading();
-          }
           if (state is GetEmployeeListSuccess) {
             print("EMplot${state.assignMeList!.length}");
             employeeList=state.assignMeList??[];
@@ -318,6 +308,10 @@ class _PaymentOptionState extends State<PaymentOption> {
                 ):
                 GestureDetector(
                   onTap: (){
+                    buttonLoad=true;
+                    setState(() {
+
+                    });
                     widget.update?BlocProvider.of<TaskBloc>(context).add(
                         UpdatePaymentEvent(
                             isActive: true,
@@ -363,7 +357,10 @@ class _PaymentOptionState extends State<PaymentOption> {
                       color: ColorPalette.primary,
                     ),
                     alignment: Alignment.center,
-                    child: Text(
+                    child: buttonLoad==true?SpinKitThreeBounce(
+                      color: Colors.white,
+                      size: 15.0,
+                    ):Text(
                       widget.update?"Update":"Create",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.roboto(
@@ -420,6 +417,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                           ),
                           child: DropdownButton(
                               isExpanded: true,
+                              dropdownColor: Colors.white,
                               icon: Icon(Icons.keyboard_arrow_down_outlined),
                               underline: Container(),
                               items: assignTypeList.map((String items) {
@@ -460,47 +458,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                           onTap: (){
                             _showModalBottomGroupList(grouplist);
                           },
-                        )
-                        // Flex(direction: Axis.vertical,
-                        //     children:[
-                        //       Column(crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           Text("Assigning Name",
-                        //             style: GoogleFonts.roboto(
-                        //               color: ColorPalette.black,
-                        //               fontSize: w/24,
-                        //               fontWeight: FontWeight.w500,
-                        //             ),),
-                        //           Container(
-                        //             width: w,
-                        //             padding: EdgeInsets.symmetric(horizontal: 12),
-                        //             decoration: BoxDecoration(color: Colors.white,
-                        //                 border: Border.all(color: Color(0xffe6ecf0)),
-                        //                 borderRadius: BorderRadius.circular(10)),
-                        //             child: DropdownButton<String>(
-                        //               underline:Container(),
-                        //               isExpanded: true,
-                        //               icon: Icon(Icons.keyboard_arrow_down_outlined),
-                        //               hint: const Text("Assigning Name"),
-                        //               value: selCode,
-                        //               onChanged: (value) {
-                        //                 setState(() {
-                        //                   selCode = value;
-                        //                 });
-                        //               },
-                        //
-                        //               items: grouplist
-                        //                   .map<DropdownMenuItem<String>>((GetTaskGroupList _value) =>
-                        //                   DropdownMenuItem<String>(
-                        //                       value: _value.groupCode,
-                        //                       child: Text(_value.gName??"",)
-                        //                   )).toList(),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ])
-                            :
+                        ) :
                         selectedType=="Individual"?
                             DropDownCard(
                               label: "Assigning Name",
@@ -509,50 +467,6 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 _showModalBottomAdditionalRole(employeeList);
                               },
                             ):
-                        // Flex(direction: Axis.vertical,
-                        //     children:[
-                        //       Column(crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           GestureDetector(
-                        //             onTap: (){
-                        //               _showModalBottomAdditionalRole();
-                        //             },
-                        //             child: Text("Assigning Code",
-                        //               style: GoogleFonts.roboto(
-                        //                 color: ColorPalette.black,
-                        //                 fontSize: w/24,
-                        //                 fontWeight: FontWeight.w500,
-                        //               ),),
-                        //           ),
-                        //           Container(
-                        //             width: w,
-                        //             padding: EdgeInsets.symmetric(horizontal: 12),
-                        //             decoration: BoxDecoration(color: Colors.white,
-                        //                 border: Border.all(color: Color(0xffe6ecf0)),
-                        //                 borderRadius: BorderRadius.circular(10)),
-                        //             child: DropdownButton<String>(
-                        //               underline:Container(),
-                        //               isExpanded: true,
-                        //               icon: Icon(Icons.keyboard_arrow_down_outlined),
-                        //               hint: const Text("Assigning Code"),
-                        //               value: selCode,
-                        //               onChanged: (value) {
-                        //                 setState(() {
-                        //                   selCode = value;
-                        //                 });
-                        //               },
-                        //
-                        //               items: employeeList
-                        //                   .map<DropdownMenuItem<String>>((GetEmployeeList _value) =>
-                        //                   DropdownMenuItem<String>(
-                        //                       value: _value.userCode,
-                        //                       child: Text(_value.fname??"",)
-                        //                   )).toList(),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ]):
                         Container(),
                       ],
                     ):Container(),
