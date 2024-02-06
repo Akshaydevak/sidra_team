@@ -173,7 +173,12 @@ class _CreateUserState extends State<CreateUser> {
                   i++) {
                 passNameList
                     .add(state.getEmployee?.userMete!.roleList?[i] ?? "");
+                
               }
+              context
+                  .read<SellerAdminBloc>()
+                  .add(const AdditionalRoleListEvent('', "", ""));
+              print("pass ${passNameList.length}");
 
               setState(() {});
             }
@@ -181,7 +186,6 @@ class _CreateUserState extends State<CreateUser> {
         ),
         BlocListener<SellerAdminBloc, SellerAdminState>(
           listener: (context, state) {
-            if (state is AdditionalRoleListLoading) {}
             if (state is AdditionalRoleListSuccess) {
               roleList = state.role ?? [];
               setState(() {});
@@ -939,299 +943,299 @@ class _CreateUserState extends State<CreateUser> {
     );
   }
 
-  _showModalBottomOfficialRole(String? offerPeriodNameNew) {
-    void onselect(int index) {
-      setState(() {
-        selectIndex = index;
-      });
-    }
-
-    showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18), topRight: Radius.circular(18)),
-        ),
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          var h = MediaQuery.of(context).size.height;
-          double w1 = MediaQuery.of(context).size.width;
-          double w = w1 > 700 ? 400 : w1;
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                height: h / 1.3,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                    )),
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: h / 180,
-                        ),
-                        Container(
-                          width: w / 5.3,
-                          height: h / 160,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFD9D9D9),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: h / 40,
-                        ),
-                        Text(
-                          "Select Official Role",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: w / 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          height: h / 40,
-                        ),
-                        // SizedBox(height: 10,),
-                        SizedBox(
-                          height: h / 1.5,
-                          child: ScrollConfiguration(
-                            behavior: NoGlow(),
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 15, right: 15),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    BlocBuilder<SellerAdminBloc,
-                                        SellerAdminState>(
-                                      builder: (context, state) {
-                                        if (state is OfficialRoleListLoading) {
-                                          return LottieLoader();
-                                        }
-                                        if (state is OfficialRoleListSuccess) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ListView.separated(
-                                                primary: true,
-                                                shrinkWrap: true,
-                                                itemCount: state.role!.length,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemBuilder: (context, index) =>
-                                                    GestureDetector(
-                                                  onTap: () {
-                                                    onselect(index);
-                                                    setState(() {});
-                                                    officialId =
-                                                        state.role?[index].id ??
-                                                            0;
-                                                    officialRoleName = state
-                                                            .role?[index]
-                                                            .role ??
-                                                        "";
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              onselect(index);
-                                                              setState(() {});
-                                                              officialId = state
-                                                                      .role?[
-                                                                          index]
-                                                                      .id ??
-                                                                  0;
-                                                              officialRoleName =
-                                                                  state.role?[index]
-                                                                          .role ??
-                                                                      "";
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      // left: 8,
-                                                                      bottom: 5,
-                                                                      top: 5,
-                                                                      right: 8),
-                                                              child: SvgPicture.string(state
-                                                                          .role?[
-                                                                              index]
-                                                                          .role ==
-                                                                      offerPeriodNameNew
-                                                                  // selectIndex == index
-                                                                  ? HomeSvg()
-                                                                      .radioButtonActive
-                                                                  : HomeSvg()
-                                                                      .radioInActive),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            // padding: const EdgeInsets.only(bottom: 5),
-                                                            width: w / 1.5,
-                                                            child: Text(
-                                                              state.role?[index]
-                                                                      .role
-                                                                      .toString()
-                                                                      .toTitleCase() ??
-                                                                  "",
-                                                              style: GoogleFonts
-                                                                  .roboto(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize:
-                                                                    w / 24,
-                                                                // fontWeight: FontWeight.w500,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const Spacer(),
-                                                    ],
-                                                  ),
-                                                ),
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        Container(
-                                                  color: ColorPalette.divider,
-                                                  height: 1,
-                                                  margin: const EdgeInsets.only(
-                                                      top: 3, bottom: 3),
-                                                  width: w,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: h / 40,
-                                              ),
-                                              // Row(
-                                              //   mainAxisAlignment:
-                                              //   MainAxisAlignment.spaceBetween,
-                                              //   children: [
-                                              //     state.prevPageUrl == null
-                                              //         ? Text("")
-                                              //         : GestureDetector(
-                                              //       onTap: () {
-                                              //         context.read<SellerAdminBloc>().add(
-                                              //             OfficialRoleListEvent('',"",
-                                              //                 state
-                                              //                     .nextPageUrl ??
-                                              //                     "",
-                                              //                 ));
-                                              //       },
-                                              //       child: Text(
-                                              //         "Previous",
-                                              //         style: TextStyle(
-                                              //             fontWeight: FontWeight.w500,
-                                              //             color: ColorPalette.primary,
-                                              //             fontSize: w / 24),
-                                              //       ),
-                                              //     ),
-                                              //     state.nextPageUrl == null
-                                              //         ? Text("")
-                                              //         : GestureDetector(
-                                              //       onTap: () {
-                                              //         context.read<SellerAdminBloc>().add(
-                                              //             OfficialRoleListEvent("",
-                                              //                 state
-                                              //                     .nextPageUrl ??
-                                              //                     "",
-                                              //                 ""));
-                                              //       },
-                                              //       child: Text(
-                                              //         "Next",
-                                              //         style: TextStyle(
-                                              //             fontWeight: FontWeight.w500,
-                                              //             color: ColorPalette.primary,
-                                              //             fontSize: w / 24),
-                                              //       ),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                              // SizedBox(
-                                              //   height: h/10,
-                                              // ),
-                                              SizedBox(
-                                                height: h / 20,
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                        return SizedBox(
-                                            width: w,
-                                            height: 300,
-                                            child: customCupertinoLoading());
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10),
-                        child: GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  ColorPalette.primary,
-                                  ColorPalette.primary
-                                ]),
-                            child: Text(
-                              "Continue",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          );
-        });
-  }
+  // _showModalBottomOfficialRole(String? offerPeriodNameNew) {
+  //   void onselect(int index) {
+  //     setState(() {
+  //       selectIndex = index;
+  //     });
+  //   }
+  //
+  //   showModalBottomSheet(
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+  //       ),
+  //       context: context,
+  //       isScrollControlled: true,
+  //       builder: (context) {
+  //         var h = MediaQuery.of(context).size.height;
+  //         double w1 = MediaQuery.of(context).size.width;
+  //         double w = w1 > 700 ? 400 : w1;
+  //         return StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setState) {
+  //             return Container(
+  //               height: h / 1.3,
+  //               width: double.infinity,
+  //               decoration: const BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.only(
+  //                     topRight: Radius.circular(10),
+  //                     topLeft: Radius.circular(10),
+  //                   )),
+  //               alignment: Alignment.center,
+  //               child: Stack(
+  //                 children: [
+  //                   Column(
+  //                     children: [
+  //                       SizedBox(
+  //                         height: h / 180,
+  //                       ),
+  //                       Container(
+  //                         width: w / 5.3,
+  //                         height: h / 160,
+  //                         decoration: ShapeDecoration(
+  //                           color: const Color(0xFFD9D9D9),
+  //                           shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(10),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: h / 40,
+  //                       ),
+  //                       Text(
+  //                         "Select Official Role",
+  //                         style: GoogleFonts.roboto(
+  //                           color: Colors.black,
+  //                           fontSize: w / 22,
+  //                           fontWeight: FontWeight.w700,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: h / 40,
+  //                       ),
+  //                       // SizedBox(height: 10,),
+  //                       SizedBox(
+  //                         height: h / 1.5,
+  //                         child: ScrollConfiguration(
+  //                           behavior: NoGlow(),
+  //                           child: SingleChildScrollView(
+  //                             physics: const AlwaysScrollableScrollPhysics(),
+  //                             child: Padding(
+  //                               padding:
+  //                                   const EdgeInsets.only(left: 15, right: 15),
+  //                               child: Column(
+  //                                 mainAxisAlignment: MainAxisAlignment.start,
+  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                                 children: [
+  //                                   BlocBuilder<SellerAdminBloc,
+  //                                       SellerAdminState>(
+  //                                     builder: (context, state) {
+  //                                       if (state is OfficialRoleListLoading) {
+  //                                         return LottieLoader();
+  //                                       }
+  //                                       if (state is OfficialRoleListSuccess) {
+  //                                         return Column(
+  //                                           mainAxisAlignment:
+  //                                               MainAxisAlignment.start,
+  //                                           crossAxisAlignment:
+  //                                               CrossAxisAlignment.start,
+  //                                           children: [
+  //                                             ListView.separated(
+  //                                               primary: true,
+  //                                               shrinkWrap: true,
+  //                                               itemCount: state.role!.length,
+  //                                               physics:
+  //                                                   const NeverScrollableScrollPhysics(),
+  //                                               itemBuilder: (context, index) =>
+  //                                                   GestureDetector(
+  //                                                 onTap: () {
+  //                                                   onselect(index);
+  //                                                   setState(() {});
+  //                                                   officialId =
+  //                                                       state.role?[index].id ??
+  //                                                           0;
+  //                                                   officialRoleName = state
+  //                                                           .role?[index]
+  //                                                           .role ??
+  //                                                       "";
+  //                                                   Navigator.pop(context);
+  //                                                 },
+  //                                                 child: Row(
+  //                                                   children: [
+  //                                                     Row(
+  //                                                       children: [
+  //                                                         GestureDetector(
+  //                                                           onTap: () {
+  //                                                             onselect(index);
+  //                                                             setState(() {});
+  //                                                             officialId = state
+  //                                                                     .role?[
+  //                                                                         index]
+  //                                                                     .id ??
+  //                                                                 0;
+  //                                                             officialRoleName =
+  //                                                                 state.role?[index]
+  //                                                                         .role ??
+  //                                                                     "";
+  //                                                             Navigator.pop(
+  //                                                                 context);
+  //                                                           },
+  //                                                           child: Container(
+  //                                                             padding:
+  //                                                                 const EdgeInsets
+  //                                                                     .only(
+  //                                                                     // left: 8,
+  //                                                                     bottom: 5,
+  //                                                                     top: 5,
+  //                                                                     right: 8),
+  //                                                             child: SvgPicture.string(state
+  //                                                                         .role?[
+  //                                                                             index]
+  //                                                                         .role ==
+  //                                                                     offerPeriodNameNew
+  //                                                                 // selectIndex == index
+  //                                                                 ? HomeSvg()
+  //                                                                     .radioButtonActive
+  //                                                                 : HomeSvg()
+  //                                                                     .radioInActive),
+  //                                                           ),
+  //                                                         ),
+  //                                                         SizedBox(
+  //                                                           // padding: const EdgeInsets.only(bottom: 5),
+  //                                                           width: w / 1.5,
+  //                                                           child: Text(
+  //                                                             state.role?[index]
+  //                                                                     .role
+  //                                                                     .toString()
+  //                                                                     .toTitleCase() ??
+  //                                                                 "",
+  //                                                             style: GoogleFonts
+  //                                                                 .roboto(
+  //                                                               color: Colors
+  //                                                                   .black,
+  //                                                               fontSize:
+  //                                                                   w / 24,
+  //                                                               // fontWeight: FontWeight.w500,
+  //                                                             ),
+  //                                                             overflow:
+  //                                                                 TextOverflow
+  //                                                                     .ellipsis,
+  //                                                           ),
+  //                                                         ),
+  //                                                       ],
+  //                                                     ),
+  //                                                     const Spacer(),
+  //                                                   ],
+  //                                                 ),
+  //                                               ),
+  //                                               separatorBuilder:
+  //                                                   (context, index) =>
+  //                                                       Container(
+  //                                                 color: ColorPalette.divider,
+  //                                                 height: 1,
+  //                                                 margin: const EdgeInsets.only(
+  //                                                     top: 3, bottom: 3),
+  //                                                 width: w,
+  //                                               ),
+  //                                             ),
+  //                                             SizedBox(
+  //                                               height: h / 40,
+  //                                             ),
+  //                                             // Row(
+  //                                             //   mainAxisAlignment:
+  //                                             //   MainAxisAlignment.spaceBetween,
+  //                                             //   children: [
+  //                                             //     state.prevPageUrl == null
+  //                                             //         ? Text("")
+  //                                             //         : GestureDetector(
+  //                                             //       onTap: () {
+  //                                             //         context.read<SellerAdminBloc>().add(
+  //                                             //             OfficialRoleListEvent('',"",
+  //                                             //                 state
+  //                                             //                     .nextPageUrl ??
+  //                                             //                     "",
+  //                                             //                 ));
+  //                                             //       },
+  //                                             //       child: Text(
+  //                                             //         "Previous",
+  //                                             //         style: TextStyle(
+  //                                             //             fontWeight: FontWeight.w500,
+  //                                             //             color: ColorPalette.primary,
+  //                                             //             fontSize: w / 24),
+  //                                             //       ),
+  //                                             //     ),
+  //                                             //     state.nextPageUrl == null
+  //                                             //         ? Text("")
+  //                                             //         : GestureDetector(
+  //                                             //       onTap: () {
+  //                                             //         context.read<SellerAdminBloc>().add(
+  //                                             //             OfficialRoleListEvent("",
+  //                                             //                 state
+  //                                             //                     .nextPageUrl ??
+  //                                             //                     "",
+  //                                             //                 ""));
+  //                                             //       },
+  //                                             //       child: Text(
+  //                                             //         "Next",
+  //                                             //         style: TextStyle(
+  //                                             //             fontWeight: FontWeight.w500,
+  //                                             //             color: ColorPalette.primary,
+  //                                             //             fontSize: w / 24),
+  //                                             //       ),
+  //                                             //     ),
+  //                                             //   ],
+  //                                             // ),
+  //                                             // SizedBox(
+  //                                             //   height: h/10,
+  //                                             // ),
+  //                                             SizedBox(
+  //                                               height: h / 20,
+  //                                             ),
+  //                                           ],
+  //                                         );
+  //                                       }
+  //                                       return SizedBox(
+  //                                           width: w,
+  //                                           height: 300,
+  //                                           child: customCupertinoLoading());
+  //                                     },
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   Positioned(
+  //                     bottom: 0,
+  //                     left: 0,
+  //                     right: 0,
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.only(
+  //                           left: 15, right: 15, bottom: 10),
+  //                       child: GradientButton(
+  //                           color: ColorPalette.primary,
+  //                           onPressed: () {
+  //                             Navigator.pop(context);
+  //                           },
+  //                           gradient: const LinearGradient(
+  //                               begin: Alignment.topCenter,
+  //                               end: Alignment.bottomCenter,
+  //                               colors: [
+  //                                 ColorPalette.primary,
+  //                                 ColorPalette.primary
+  //                               ]),
+  //                           child: Text(
+  //                             "Continue",
+  //                             textAlign: TextAlign.center,
+  //                             style: GoogleFonts.roboto(
+  //                               color: Colors.white,
+  //                               fontSize: w / 22,
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           )),
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //             );
+  //           },
+  //         );
+  //       });
+  // }
 
   _showModalBottomAdditionalRole() {
     showModalBottomSheet(
@@ -1311,10 +1315,22 @@ class _CreateUserState extends State<CreateUser> {
                                       itemBuilder: (context, index) => Row(
                                         children: [
                                           widget.edit == true
-                                              ? Container(
-                                                  child: SvgPicture.string(
-                                                      OrderSvg()
-                                                          .checkBoxActiveIcon))
+                                              ? Row(
+                                                children: [
+                                                  Container(
+                                                      child: SvgPicture.string(
+                                                          OrderSvg()
+                                                              .checkBoxActiveIcon)),
+                                                  SizedBox(width: 10,),
+                                                  Text(roleList[index].role??"",
+                                                    style: GoogleFonts.roboto(
+                                                      color: Colors.black,
+                                                      fontSize: w / 24,
+                                                      // fontWeight: FontWeight.w500,
+                                                    ),)
+
+                                                ],
+                                              )
                                               : CustomCheckBox(
                                                   key: UniqueKey(),
                                                   value: passNameList.contains(

@@ -164,7 +164,7 @@ class _TaskTitleState extends State<TaskTitle> {
     setState(() {});
   }
 
-  TextEditingController reportNotes = TextEditingController();
+
   TextEditingController replayApproveNotes = TextEditingController();
   TextEditingController replayRejectNotes = TextEditingController();
   int topicId = 0;
@@ -3588,6 +3588,7 @@ class _TaskTitleState extends State<TaskTitle> {
   }
 
   _showModalBottomAdditionalRole() {
+    TextEditingController reportNotes = TextEditingController();
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -3599,244 +3600,268 @@ class _TaskTitleState extends State<TaskTitle> {
         builder: (context) {
           var h = MediaQuery.of(context).size.height;
           var w = MediaQuery.of(context).size.width;
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                height: h / 1.3,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                    )),
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    Column(
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  height: h / 1.3,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        topLeft: Radius.circular(10),
+                      )),
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: Stack(
                       children: [
-                        SizedBox(
-                          height: h / 180,
-                        ),
-                        Container(
-                          width: w / 5.3,
-                          height: h / 160,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFD9D9D9),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: h / 180,
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: h / 40,
-                        ),
-                        Text(
-                          "Report Task",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: w / 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          height: h / 40,
-                        ),
-                        Container(
-                          height: h / 2.2,
-                          // color: Colors.yellow,
-                          child: ScrollConfiguration(
-                            behavior: NoGlow(),
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 15, right: 15),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SingleChildScrollView(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            "Why Are You Reporting This Task?",
-                                            style: GoogleFonts.roboto(
-                                                color: Colors.black,
-                                                fontSize: w / 24,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Container(
-                                            width: w,
-                                            // height: h / 2.5,
-                                            // decoration: BoxDecoration(
-                                            //   // borderRadius:
-                                            //   //     BorderRadius.circular(10),
-                                            //   // border: Border.all(
-                                            //   //   color: Color(0xffe6ecf0),
-                                            //   //   width: 1,
-                                            //   // ),
-                                            //   boxShadow: const [
-                                            //     BoxShadow(
-                                            //       color: Color(0x05000000),
-                                            //       blurRadius: 8,
-                                            //       offset: Offset(1, 1),
-                                            //     ),
-                                            //   ],
-                                            //   color: Colors.white,
-                                            // ),
-                                            child: BlocBuilder<TaskBloc,
-                                                TaskState>(
-                                              builder: (context, state) {
-                                                if (state
-                                                    is GetTopicListLoading) {
-                                                  return LottieLoader();
-                                                }
-                                                if (state
-                                                    is GetTopicListSuccess) {
-                                                  return ListView.separated(
-                                                      primary: true,
-                                                      shrinkWrap: true,
-                                                      physics:
-                                                          NeverScrollableScrollPhysics(),
-                                                      itemBuilder:
-                                                          (context, index) =>
-                                                              Row(
-                                                                children: [
-                                                                  CustomRadioButton(
-                                                                    onTap: () {
+                            Container(
+                              width: w / 5.3,
+                              height: h / 160,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFD9D9D9),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: h / 40,
+                            ),
+                            Text(
+                              "Report Task",
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w / 22,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(
+                              height: h / 40,
+                            ),
+                            Container(
+                              height: h / 2.2,
+                              // color: Colors.yellow,
+                              child: ScrollConfiguration(
+                                behavior: NoGlow(),
+                                child: SingleChildScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 15, right: 15),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                "Why Are You Reporting This Task?",
+                                                style: GoogleFonts.roboto(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                    fontWeight: FontWeight.w600),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Container(
+                                                width: w,
+                                                child: BlocBuilder<TaskBloc,
+                                                    TaskState>(
+                                                  builder: (context, state) {
+                                                    if (state
+                                                        is GetTopicListLoading) {
+                                                      return LottieLoader();
+                                                    }
+                                                    if (state
+                                                        is GetTopicListSuccess) {
+                                                      return ListView.separated(
+                                                          primary: true,
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemBuilder:
+                                                              (context, index) =>
+                                                                  GestureDetector(
+                                                                    onTap: (){
                                                                       onSelect(
                                                                           index);
                                                                       topicId =
                                                                           state.taskList[index].id ??
                                                                               0;
                                                                       setState(
-                                                                          () {});
+                                                                              () {});
                                                                     },
-                                                                    isActive:
-                                                                        selected ==
-                                                                            index,
+                                                                    child: Row(
+                                                                      children: [
+                                                                        CustomRadioButton(
+                                                                          onTap: () {
+                                                                            onSelect(
+                                                                                index);
+                                                                            topicId =
+                                                                                state.taskList[index].id ??
+                                                                                    0;
+                                                                            setState(
+                                                                                () {});
+                                                                          },
+                                                                          isActive:
+                                                                              selected ==
+                                                                                  index,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width: 10,
+                                                                        ),
+                                                                        Container(
+                                                                            width: w /
+                                                                                1.5,
+                                                                            child:
+                                                                                Text(
+                                                                              state.taskList[index].name ??
+                                                                                  "",
+                                                                              style: GoogleFonts.roboto(
+                                                                                  fontSize: w /
+                                                                                      24,
+                                                                                  fontWeight: selected == index
+                                                                                      ? FontWeight.w600
+                                                                                      : FontWeight.w400),
+                                                                            )),
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Container(
-                                                                      width: w /
-                                                                          1.5,
-                                                                      child:
-                                                                          Text(
-                                                                        state.taskList[index].name ??
-                                                                            "",
-                                                                        style: GoogleFonts.roboto(
-                                                                            fontSize: w /
-                                                                                24,
-                                                                            fontWeight: selected == index
-                                                                                ? FontWeight.w600
-                                                                                : FontWeight.w400),
-                                                                      )),
-                                                                ],
-                                                              ),
-                                                      separatorBuilder:
-                                                          (context, index) =>
-                                                              Divider(),
-                                                      itemCount: 8);
-                                                }
-                                                return Container();
-                                              },
-                                            ),
+                                                          separatorBuilder:
+                                                              (context, index) =>
+                                                                  Divider(),
+                                                          itemCount: 8);
+                                                    }
+                                                    return Container();
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          height: h / 8,
-                          margin: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: Color(0xffD3D3D3), width: 0.2),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: TextFormField(
-                            readOnly: false,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Add Notes...",
-                              hintStyle: GoogleFonts.roboto(
-                                  fontSize: w / 26, color: Color(0xffD3D3D3)),
-                              contentPadding: EdgeInsets.all(10),
+                            Container(
+                              height: h / 8,
+                              margin: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: Color(0xffD3D3D3), width: 0.2),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                readOnly: false,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Add Notes...",
+                                  hintStyle: GoogleFonts.roboto(
+                                      fontSize: w / 26, color: Color(0xffD3D3D3)),
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                                onChanged: (ss) {
+                                  setState((){});
+                                },
+                                scrollPadding: EdgeInsets.all(10),
+                                cursorColor: ColorPalette.primary,
+                                obscureText: false,
+                                style: TextStyle(
+                                    color: ColorPalette.black, fontSize: 17),
+                                // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
+                                // inputFormatters: [
+                                //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
+                                //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
+                                //   FilteringTextInputFormatter.singleLineFormatter,
+                                //
+                                // ],
+                                controller: reportNotes,
+                                maxLines: 5,
+                              ),
                             ),
-                            onChanged: (ss) {},
-                            scrollPadding: EdgeInsets.all(10),
-                            cursorColor: ColorPalette.primary,
-                            obscureText: false,
-                            style: TextStyle(
-                                color: ColorPalette.black, fontSize: 17),
-                            // keyboardType: widget.numField==true||widget.floatVal==true?TextInputType.numberWithOptions(decimal: false):TextInputType.emailAddress,
-                            // inputFormatters: [
-                            //   widget.numField==true?FilteringTextInputFormatter.digitsOnly:
-                            //   widget.floatVal==true?FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')):
-                            //   FilteringTextInputFormatter.singleLineFormatter,
-                            //
-                            // ],
-                            controller: reportNotes,
-                            maxLines: 5,
-                          ),
+                            SizedBox(height: 50,),
+                          ],
                         ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Padding(
+                            padding:  EdgeInsets.only(
+                                left: 15, right: 15, bottom: 10),
+                            child: topicId!=0&&reportNotes.text.isNotEmpty?GradientButton(
+                                color: ColorPalette.primary,
+                                onPressed: () {
+                                  context.read<TaskBloc>().add(CreateReportEvent(
+                                      toipicId: topicId,
+                                      taskId: getTaskRead?.id,
+                                      notes: reportNotes.text,
+                                      userId:
+                                          authentication.authenticatedUser.code));
+                                },
+                                gradient: const LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      ColorPalette.primary,
+                                      ColorPalette.primary
+                                    ]),
+                                child: Text(
+                                  "Report this Task",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.white,
+                                    fontSize: w / 22,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )):
+                            GradientButton(
+                                color: ColorPalette.inactiveGrey,
+                                onPressed: () {
+
+                                },
+                                gradient: const LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+
+                                    colors: [
+                                      ColorPalette.inactiveGrey,
+                                      ColorPalette.inactiveGrey
+                                    ]),
+                                child: Text(
+                                  "Report this Task",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.white,
+                                    fontSize: w / 22,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )),
+                          ),
+                        )
                       ],
                     ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10),
-                        child: GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              context.read<TaskBloc>().add(CreateReportEvent(
-                                  toipicId: topicId,
-                                  taskId: getTaskRead?.id,
-                                  notes: reportNotes.text,
-                                  userId:
-                                      authentication.authenticatedUser.code));
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  ColorPalette.primary,
-                                  ColorPalette.primary
-                                ]),
-                            child: Text(
-                              "Report this Task",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
+                  ),
+                );
+              },
+            ),
           );
         });
   }
