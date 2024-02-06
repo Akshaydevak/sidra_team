@@ -34,6 +34,8 @@ class ChatProfileScreen2 extends StatefulWidget {
   final Socket? socket;
   final String? roomId;
   final String? loginuserid;
+  final String redirectchatid;
+  final String redirectchatname;
   final bool? isadmin;
   final bool chat;
   List<GroupUserList>? grpmember=[];
@@ -46,6 +48,8 @@ class ChatProfileScreen2 extends StatefulWidget {
       this.socket,
       this.isadmin,
       this.roomId,
+      this.redirectchatid="",
+      this.redirectchatname="",
       this.loginuserid,
       required this.grpmember,
       required this.token})
@@ -63,9 +67,9 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   String uid='';
     @override
   void initState() {
-print("room id listens atleast ${widget.communicationuser?.description} ${widget.isadmin}");
+print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid} ${widget.redirectchatname}");
  widget.socket!.emit("group.members", 
-     widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
+     widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
      
     widget.socket!.on("groupmembers.result", (data){ 
       print("group members: $data");
@@ -80,7 +84,7 @@ print("room id listens atleast ${widget.communicationuser?.description} ${widget
           print(grpmember.length);
         });
       }
-      
+      print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid}");
 
     });
      
@@ -109,8 +113,9 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           BlocProvider(
             create: (context) => AttachmentBloc()
               ..add(GroupProfileAttachmentsGet(
-                  chatId: widget.chat==false? widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.chatid??"",
+                  chatId: widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.chatid??"",
                   token: widget.token ?? "")),
+
           )
         ],
     
@@ -125,7 +130,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           showSnackBar(context,
               message: state.successMessage, color: Colors.green);
               widget.socket!.emit("group.message",{
-        "type": "notify", "chatid": widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid, "content": "${authentication.authenticatedUser.fname.toString().toTitleCase()} ${authentication.authenticatedUser.lname.toString().toTitleCase()} left"
+        "type": "notify", "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid : widget.communicationuser?.chatid, "content": "${authentication.authenticatedUser.fname.toString().toTitleCase()} ${authentication.authenticatedUser.lname.toString().toTitleCase()} left"
       });
           PersistentNavBarNavigator.pushNewScreen(
             context,
@@ -149,7 +154,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
            
-        widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+        widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                      widget.socket!.on("groupmembers.result", (data) => print("update"));
        
                     showSnackBar(context,
@@ -197,19 +202,19 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                 children: [
                   SizedBox(
                     // width: w,
-                    child: widget.communicationUserModel?.photo==null||
-                      widget.communicationUserModel!.photo!.isEmpty 
-                      ?TextAvatar(
-               shape: Shape.Circular,
-               size: 120,
-               numberLetters: 2,
-               fontSize: w/11,
-               textColor: Colors.white,
-               fontWeight: FontWeight.w500,
-               text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
-             ):
+            //         child: widget.communicationUserModel?.photo==null||
+            //           widget.communicationUserModel!.photo!.isEmpty 
+            //           ?TextAvatar(
+            //    shape: Shape.Circular,
+            //    size: 120,
+            //    numberLetters: 2,
+            //    fontSize: w/11,
+            //    textColor: Colors.white,
+            //    fontWeight: FontWeight.w500,
+            //    text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
+            //  ):
                     
-                    CircleAvatar(
+               child:     CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.grey,
                         backgroundImage: AssetImage("asset/chatgrpimg.png")
@@ -229,7 +234,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   widget.communicationUserModel?.isgrp == false
                       ? Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
+                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -237,7 +242,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                           ),
                         )
                       : Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
+                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -262,7 +267,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                     padding: const EdgeInsets.all(16),
                     child: Text(  
                       widget.chat ==false 
-                          ? widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
                           :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",
                           textAlign: TextAlign.center,
                       style: const TextStyle(

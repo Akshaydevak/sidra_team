@@ -177,33 +177,37 @@ class _TaskTitleState extends State<TaskTitle> {
   IO.Socket? socketCon;
   getSocket() async {
     print("task comment ");
+    
     pref = await SharedPreferences.getInstance();
     token = pref!.getString("token");
-    socketCon = IO.io(
-      'https://api-communication-application.hilalcart.com/group',
-      // 'http://192.168.1.187:5500/group',
-      // "https://8120-223-228-161-250.ngrok-free.app/group",
-      <String, dynamic>{
-        'transports': ['websocket'],
-        'auth': {'token': token},
-        'autoConnect': false,
-      },
-    );
+    loginuserId=pref!.getString("logingrpuserid");
+    // socketCon = IO.io(
+    //   'https://api-communication-application.hilalcart.com/group',
+    //   // 'http://192.168.1.187:5500/group',
+    //   // "https://5z7l1nh4-5500.inc1.devtunnels.ms/group",
+    //   <String, dynamic>{
+    //     'transports': ['websocket'],
+    //     'auth': {'token': token},
+    //     'autoConnect': false,
+    //   },
+    // );
 
-    socketCon!.connect();
-    socketCon!
-        .on('connect', (_) => print('connecttt success: ${socketCon!.id}'));
-    socketCon!.on('user.id', (data) {
-      loginuserId = data;
-      print("vgyvgvht$loginuserId");
-      setState(() {});
-    });
+    // socketCon!.connect();
+    // socketCon!
+    //     .on('connect', (_) => print('connecttt success: ${socketCon!.id}'));
+    // socketCon!.on('user.id', (data) {
+    //   loginuserId = data;
+    //   print("vgyvgvht$loginuserId");
+    //   setState(() {});
+    // });
   }
 
   List<GetEmployeeList> listEmployee = [];
 
   @override
   Widget build(BuildContext context) {
+    final socketpro =context.watch<scoketgrpProvider>();
+        socketCon = socketpro.socket;
     // final socketpro =context.watch<scoketProvider>();
     // socketCon =socketpro.socket;
     double w1 = MediaQuery.of(context).size.width;
@@ -2214,9 +2218,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 )),
                                           ),
                                         ),
-                                  SizedBox(
+                                  communicationGroupId==""?Container():SizedBox(
                                     height: 5,
                                   ),
+                                  communicationGroupId==""?Container():
                                   GestureDetector(
                                     onTap: () {
                                       print("grp id $communicationGroupId");

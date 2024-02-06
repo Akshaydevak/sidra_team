@@ -42,11 +42,13 @@ import 'unread.dart';
 import 'globals.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 class ChatScreen extends StatefulWidget {
-  final bool  isGroup;
+  final bool isGroup;
   final bool chat;
   final Socket? socket;
   final String grpchatid;
   final String cmntgrpchatname;
+  final String redirectchatid;
+  final String redirectchatname;
   final String? token;
   final String? loginUserId;
   final UserDummyList? communicationUserModel;
@@ -64,6 +66,8 @@ class ChatScreen extends StatefulWidget {
       this.chat=false,
       this.grpchatid="",
       this.cmntgrpchatname="",
+      this.redirectchatid="",
+      this.redirectchatname="",
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser
@@ -115,7 +119,7 @@ bool ismount1=true;
   var username;
   bool isenter=false;
   List seenuser=[];
-   String  oldertimestampp="";
+  String oldertimestampp="";
   int unreadMessageCount=0;
   int sendMessageCount=0;
   bool isload=false;
@@ -147,8 +151,9 @@ bool ismount1=true;
   @override
   void initState() {
 
-     print("room id listens atleast ${widget.communicationUserModel?.chatid} chatid${widget.grpuser?.description}");
+     print("room id listens atleast ${widget.redirectchatid} chatid${widget.grpchatid} ${widget.isGroup}");
     widget.socket?.emit("join.chat", {
+      widget.redirectchatid!=""?widget.redirectchatid:
       widget.grpchatid!=""?widget.grpchatid:  
       widget.chat==false && widget.isg==false
     ? widget.communicationUserModel?.chatid:
@@ -159,19 +164,19 @@ bool ismount1=true;
     if(widget.isGroup == false && widget.isg==false){
        if(widget.communicationUserModel?.unreadMessages != 0 || widget.communicationuser?.users?[0].chatUser?.unreadMessages != 0) {
         print("unreaded messages....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.chat==false
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
     }else if(widget.isGroup==true && widget.isg==false){
         print("unreaded messagess....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
     }
      
       widget.socket!.on("unread.update1", (data) {
       print("my msg updatess $data");
-      String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.chat==false && widget.isg==false
+      String? chatid= widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid: widget.chat==false && widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
     print(chatid);
@@ -195,7 +200,7 @@ bool ismount1=true;
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
      widget.socket!.emit("group.members",
-     widget.isg==false?widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
+     widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
     widget.socket!.on("groupmembers.result",datagrpmember);
          
@@ -326,7 +331,7 @@ widget.socket?.emit("group.message.seen",roomId);
               sendMessageCount=0;
               print("lenght 2");
             }
-             widget.socket?.emit("unread.messages",{'unreadMessageCount':sendMessageCount,'chatid':widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,'userid':widget.loginUserId.toString()});
+             widget.socket?.emit("unread.messages",{'unreadMessageCount':sendMessageCount,'chatid':widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,'userid':widget.loginUserId.toString()});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $sendMessageCount,'userid':${widget.communicationUserModel?.id} ");
            
@@ -347,7 +352,7 @@ widget.socket?.emit("group.message.seen",roomId);
       });
           widget.socket!.on("unread.update", (data) {
             String? chatid= widget.chat==false
-    ? "${widget.communicationUserModel?.chatid}":
+    ?widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
    "${widget.communicationuser?.id}";
            
       print("my msg update $data");
@@ -510,7 +515,7 @@ widget.socket!.emit("update.list",{
               print("lenght 2");
             }
              print("fchgjh $unseenuser");
-             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
+             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
           }
@@ -524,8 +529,8 @@ widget.socket!.emit("update.list",{
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
-            String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+            String? chatid= widget.isg==false
+    ? widget.grpchatid!=""?"${widget.grpchatid}":  widget.redirectchatid!=""?widget.redirectchatid:"${widget.communicationUserModel?.chatid}":
    "${widget.grpuser?.chatid}";            
       print("my msg update $data");
       // saveUnreadMessageCount(data,chatid);
@@ -631,8 +636,8 @@ loadUnreadMessageCount();
   }
  
   Future<void> loadUnreadMessageCount() async {
-    String? chatid=widget.grpchatid!=""?widget.grpchatid:widget.chat==false && widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+    String? chatid=widget.chat==false && widget.isg==false
+    ?widget.grpchatid!=""?"${widget.grpchatid}":  widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
      pref = await SharedPreferences.getInstance();
     setState(() {
@@ -660,8 +665,8 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
   saveactiveusers(data);
   loadactiveusers();
   print("ACTIVE length sharedpref");
-  String? chatid=widget.grpchatid!=""?widget.grpchatid:  widget.chat==false && widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+  String? chatid= widget.chat==false && widget.isg==false
+    ?widget.grpchatid!=""?"${widget.grpchatid}": widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
               sendMessageCount=0;
@@ -911,7 +916,7 @@ double currentScrollPosition= 0.0;
                       });
                       widget.socket!.emit("leave.chat",{
                         "room": roomId??"",
-                        "userid":widget.grpchatid!=""?widget.grpchatid:widget.isg==false? widget.communicationUserModel?.id??"":widget.loginUserId??""
+                        "userid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
                       }
                        );
                        print("user left too");
@@ -1189,7 +1194,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "image",
-                  "chatid":widget.chat==false?widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid":widget.chat==false?widget.redirectchatid!=""?"${widget.redirectchatid}":widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1205,7 +1210,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "image",
-                  "chatid":widget.grpchatid==""?widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid:widget.grpchatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1231,7 +1236,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "video",
-                  "chatid": widget.chat==false?widget.communicationUserModel?.chatid : widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1247,7 +1252,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "video",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1273,7 +1278,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "file",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1289,7 +1294,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "file",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid": widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1313,7 +1318,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "audio",
-                  "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1329,7 +1334,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":  widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid": widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1355,7 +1360,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "audio",
-                  "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1371,7 +1376,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1418,6 +1423,8 @@ double currentScrollPosition= 0.0;
                     roomId: roomId,
                     cmntgrpid: widget.grpchatid,
                     cmntgrpname: widget.cmntgrpchatname,
+                    redirectchatid: widget.redirectchatid,
+                    redirectchatname: widget.redirectchatname,
                     socket: widget.socket,
                     token: widget.token,
                     loginUserId: widget.loginUserId,
@@ -1474,6 +1481,7 @@ double currentScrollPosition= 0.0;
                                       PaginatedChatGetEvent(
                                           token: widget.token ?? "",
                                           chatId: widget.chat==false?
+                                          widget.redirectchatid!=""?widget.redirectchatid:
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.communicationuser?.id??"",
                                               grpchatId: "",
@@ -1482,7 +1490,8 @@ double currentScrollPosition= 0.0;
                                      BlocProvider.of<PaginatedchatBloc>(context).add(
                                       PaginatedChatGetEvent(
                                           token: widget.token ?? "",
-                                          chatId: widget.grpchatid!=""?widget.grpchatid:widget.isg==false?
+                                          chatId: widget.isg==false?widget.grpchatid!=""?widget.grpchatid:
+                                          widget.redirectchatid!=""?widget.redirectchatid:
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.grpuser?.chatid??"",
                                               grpchatId:widget.grpchatid!=""?widget.grpchatid:"" ,
@@ -1509,22 +1518,13 @@ double currentScrollPosition= 0.0;
                                   print("list view reload $index $a");
                                   String msgdate = "";
                                  bool showdate=false;
-                                 
+                                 int today=0;
                                   String? timestamp = messageList[index].createdAt.toString();
                                   DateTime dateTime = DateTime.parse(timestamp); 
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
                                     msgdate = formatMessageTimestamp(dateTime,index);
-                                    print("list...q $a");
-                                  if(messageList[index].lastMessageOfDay == true && messageList[index].day != a) {
-                                    if(messageList[index].day !=null){
-                                      a = "${messageList[index].day}";
-                                    }
-                                   
-                                   print("list... $a");
-                                     msgdate1=msgdate;
-                                     showdate=true;
-                                  }
+                                 
                                   
                                   return  Column(
                                     crossAxisAlignment:
@@ -1533,7 +1533,7 @@ double currentScrollPosition= 0.0;
                                             ? CrossAxisAlignment.start
                                             : CrossAxisAlignment.end,
                                     children: [
-                                     showdate == true ?
+                                     messageList[index].firstMessageOfDay == true ?
                                       Padding(
                                            padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -1548,7 +1548,7 @@ double currentScrollPosition= 0.0;
                                                  children:[ 
                                                   
                                                   Text(
-                                                      "$msgdate1",
+                                                      "$msgdate",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
@@ -3224,7 +3224,7 @@ double currentScrollPosition= 0.0;
                                                   if (widget.isGroup == false) {
                                                           sendMessage(
                                                         typedMessageController.text,
-                                                       widget.chat==false? widget.communicationUserModel
+                                                       widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.communicationuser?.id??"");
                                                     widget.socket?.emit(
@@ -3236,14 +3236,14 @@ double currentScrollPosition= 0.0;
                                                       
                                                       sendGroupMessage(
                                                         typedMessageController.text,
-                                                        widget.isg==false? widget.communicationUserModel
+                                                        widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.grpuser?.chatid??"");
                                                     }else{
                                                       print("commentgrppid${widget.grpchatid}");
                                                       sendGroupMessage(
                                                         typedMessageController.text,
-                                                        widget.grpchatid.toString());
+                                                        widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
                                                     }
                                                     widget.socket?.emit(
                                                         "group.stopped.typing",

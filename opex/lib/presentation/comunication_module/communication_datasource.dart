@@ -232,16 +232,19 @@ class CommunicationDatasource {
   }
 
   Future<List<ChatMessagaeData>> getChatScreenData(
-      String token,String chatId,String grpchatId, int pageNo) async {
+      String token,String chatId,String grpchatId,int pageNo) async {
    List<ChatMessagaeData>? chatScreenData =[];
   String api="";
+  print("shifas++@@ $grpchatId ..");
   if(grpchatId != "")
   {
+    print("if grpchatId $grpchatId");
     api="${CommunicationUrls.commentGroupUrl}$grpchatId?page=$pageNo";
   }else{
+    print("else chatId $chatId ..");
     api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
   }
-    // print(
+   print("display $api "); // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
         // "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
