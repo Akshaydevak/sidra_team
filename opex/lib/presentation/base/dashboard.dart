@@ -22,6 +22,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:upgrader/upgrader.dart';
 import 'dart:developer' as developer;
 import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/cart_screen/cart_svg.dart';
@@ -303,6 +304,25 @@ class _DashBoardState extends State<DashBoard> {
       // ),
     ];
   }
+  bool _doubleBackToExitPressedOnce=false;
+  Future<bool> _onWillPop() async {
+    print("new index $newIndex");
+    if (_doubleBackToExitPressedOnce) {
+      print("new index $newIndex");
+      return true;
+    }
+    _doubleBackToExitPressedOnce = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Press back again to exit the app.')),
+    );
+
+    Timer(const Duration(seconds: 2), () {
+      _doubleBackToExitPressedOnce = false;
+    });
+
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -334,133 +354,132 @@ class _DashBoardState extends State<DashBoard> {
             );
           }
       },
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-        child: Scaffold(
-          // appBar: PreferredSize(
-          //   preferredSize: Size.zero,
-          //   child: AppBar(
-          //     elevation: 0,
-          //     systemOverlayStyle: const SystemUiOverlayStyle(
-          //       systemNavigationBarColor: Colors.white, // Navigation bar
-          //       statusBarColor: Colors.white, // Status bar
-          //     ),
-          //     // brightness: Brightness.light,
-          //     backgroundColor: Colors.white,
-          //   ),
-          // ),
-          body: Provider.of<InternetConnectionStatus>(context) ==
-                  InternetConnectionStatus.disconnected
-              ? Center(
-                  child: Column(children: [
-                  Visibility(
-                      visible: Provider.of<InternetConnectionStatus>(context) ==
-                          InternetConnectionStatus.disconnected,
-                      child: const InternetNotAvailable()),
-                  Container(
-                    margin: const EdgeInsets.only(top: 100),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.string(
-                          CartSvg().cartEmptyIcon,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Network missing",
-                          style: GoogleFonts.roboto(
-                              fontSize: w / 24,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 30),
-                          child: Text(
-                            "You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.roboto(
-                                fontSize: w / 28,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff6D6D6D)),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          width: w1 / 3.5,
-                          child: GradientButton(
-                              border: 30,
-                              onPressed: () {
-                                _connectivitySubscription = _connectivity
-                                    .onConnectivityChanged
-                                    .listen(_updateConnectionStatus);
-                                    context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: DashBoard(),
-                                  withNavBar:
-                                      false, // OPTIONAL VALUE. True by default.
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.fade,
-                                );
-                                setState(() {
-                                });
-                              },
-                              gradient: const LinearGradient(
-                                colors: [
-                                  ColorPalette.primary,
-                                  ColorPalette.primary,
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
+      child: UpgradeAlert(
+
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: WillPopScope(
+            onWillPop: newIndex!=0?
+                () async {
+              newIndex=0;
+              setState(() {
+
+              });
+              return true;
+            }:_onWillPop,
+            child: Scaffold(
+              body: Provider.of<InternetConnectionStatus>(context) ==
+                      InternetConnectionStatus.disconnected
+                  ? Center(
+                      child: Column(children: [
+                      Visibility(
+                          visible: Provider.of<InternetConnectionStatus>(context) ==
+                              InternetConnectionStatus.disconnected,
+                          child: const InternetNotAvailable()),
+                      Container(
+                        margin: const EdgeInsets.only(top: 100),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SvgPicture.string(
+                              CartSvg().cartEmptyIcon,
+                              fit: BoxFit.contain,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Network missing",
+                              style: GoogleFonts.roboto(
+                                  fontSize: w / 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30),
+                              child: Text(
+                                "You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(
+                                    fontSize: w / 28,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff6D6D6D)),
                               ),
-                              color: ColorPalette.primary,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.refresh,
-                                    color: Colors.white,
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                              width: w1 / 3.5,
+                              child: GradientButton(
+                                  border: 30,
+                                  onPressed: () {
+                                    _connectivitySubscription = _connectivity
+                                        .onConnectivityChanged
+                                        .listen(_updateConnectionStatus);
+                                        context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+                                    PersistentNavBarNavigator.pushNewScreen(
+                                      context,
+                                      screen: DashBoard(),
+                                      withNavBar:
+                                          false, // OPTIONAL VALUE. True by default.
+                                      pageTransitionAnimation:
+                                          PageTransitionAnimation.fade,
+                                    );
+                                    setState(() {
+                                    });
+                                  },
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      ColorPalette.primary,
+                                      ColorPalette.primary,
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
                                   ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Retry",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.white,
-                                      fontSize: w / 24,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        )
-                      ],
-                    ),
-                  )
-                ]))
-              : DoubleBackToCloseApp(
-                  snackBar: const SnackBar(
-                    // backgroundColor: Color(0xff086DB5),
-                    content: Text('Tap back again to leave'),
-                  ),
-                  child: PersistentTabView(
+                                  color: ColorPalette.primary,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.refresh,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        "Retry",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.roboto(
+                                          color: Colors.white,
+                                          fontSize: w / 24,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            )
+                          ],
+                        ),
+                      )
+                    ]))
+                  : PersistentTabView(
                     context,
                     padding: const NavBarPadding.only(left: 10, right: 10),
                     controller: _controller,
                     onItemSelected: (value) {
-                      newIndex = _controller.index;
+                      newIndex = value;
+                      setState(() {
+
+                      });
+                      print("llllll$newIndex");
                       if (newIndex == 0 || newIndex == 3) {
+
                         setState(() {});
                       } else if (newIndex == 2) {
                         context.read<ProfileBloc>().add(GetProfileEvent());
@@ -495,7 +514,8 @@ class _DashBoardState extends State<DashBoard> {
                       duration: Duration(milliseconds: 200),
                     ),
                   ),
-                ),
+            ),
+          ),
         ),
       ),
     );

@@ -698,7 +698,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         child: Text(
                                           "Message User",
                                           style: GoogleFonts.roboto(
-                                            color: Colors.grey,
+                                            color: Colors.black,
                                             fontSize: w / 24,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -1051,7 +1051,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                           .start,
                                                       children: [
                                                         SizedBox(
-                                                          // width: w/1.5,
+                                                          width: w/1.8,
                                                           child: Text(
                                                             employee?.email ??
                                                                 "",
