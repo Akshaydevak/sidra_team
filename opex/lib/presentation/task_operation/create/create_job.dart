@@ -11,6 +11,7 @@ import 'package:cluster/presentation/task_operation/job_title.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -168,12 +169,13 @@ class _CreateJobState extends State<CreateJob> {
 
     super.initState();
   }
+  bool buttonLoad=false;
   List<JobTypeList> jobTypeList=[];
   FocusNode focusNode=FocusNode();
   FocusNode descriptionfocusNode=FocusNode();
   bool? isValid=false;
   validationCheck(){
-    if(jobtitle.text!=""&&jobdiscription.text!=""&&_range!=""&&startTime!="Select Time"&&endTime!="Select Time"){
+    if(jobtitle.text!=""&&jobdiscription.text!=""&&_range!=""&&startTime2!="00:00"&&endTime2!="00:00"){
       isValid=true;
     }
     else{
@@ -201,20 +203,20 @@ class _CreateJobState extends State<CreateJob> {
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
                 print('StateCreate$state');
-                if (state is CreateJobLoading) {
-                  // showSnackBar(context,
-                  //     message: "Loading...",
-                  //     color: Colors.white,
-                  //     autoDismiss: true);
-                }
+
                 if (state is CreateJobFailed) {
+                  buttonLoad=false;
                   showSnackBar(
                     context,
                     message: state.error,
                     color: Colors.red,
                   );
+                  setState(() {
+
+                  });
                 }
                 if (state is CreateJobSuccess) {
+                  buttonLoad=false;
                   print("JOBID${state.jobId}");
                   // Fluttertoast.showToast(
                   //     msg: 'Successfully Created',
@@ -232,30 +234,31 @@ class _CreateJobState extends State<CreateJob> {
                     withNavBar: true, // OPTIONAL VALUE. True by default.
                     pageTransitionAnimation: PageTransitionAnimation.fade,
                   );
+                  setState(() {
+
+                  });
 
                 }
               },
             ),
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
-                if (state is UpdateJobLoading) {
-                  // showSnackBar(context,
-                  //     message: "Loading...",
-                  //     color: Colors.white,
-                  //     // icon: HomeSvg().SnackbarIcon,
-                  //     autoDismiss: true);
-                }
+
 
                 if (state is UpdateJobFailed) {
+                  buttonLoad=false;
                   showSnackBar(
                     context,
                     message: state.error,
                     color: Colors.red,
                     // icon: Icons.admin_panel_settings_outlined
                   );
+                  setState(() {
+
+                  });
                 }
                 if (state is UpdateJobSuccess) {
-
+                  buttonLoad=false;
                   Fluttertoast.showToast(
                       msg: 'Job Updated Successfully',
                       toastLength: Toast.LENGTH_SHORT,
@@ -264,14 +267,9 @@ class _CreateJobState extends State<CreateJob> {
                       textColor: Colors.white);
                   Navigator.pop(context);
 
-                  // context.read<JobBloc>().add(
-                  //     GetJobReadListEvent(int.tryParse(Variable.jobReadId.toString())??0));
-                  // PersistentNavBarNavigator.pushNewScreen(
-                  //   context,
-                  //   screen: JobTitle(),
-                  //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                  //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                  // );
+                  setState(() {
+
+                  });
                 }
               },
             ),
@@ -317,10 +315,7 @@ class _CreateJobState extends State<CreateJob> {
                       ' ${DateFormat('dd-MM-yyyy').format(DateTime.parse("$date2"))}';
                   _range = '${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date"))} -'
                       ' ${DateFormat('yyyy-MM-dd').format(DateTime.parse("$date2"))}';
-                  print("JOB COME${startTime}");
-                  print("JOB COME${startDate2}");
-                  print("JOB COME${ebdDate2}");
-                  print("JOB COME${endTime}");
+
                   setState(() {
 
                   });
@@ -329,9 +324,7 @@ class _CreateJobState extends State<CreateJob> {
             ),
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
-                if(state is GetInstantJobListLoading){
 
-                }
                 if(state is GetInstantJobListSuccess){
                   joblist=state.jobList;
                   setState(() {
@@ -342,9 +335,7 @@ class _CreateJobState extends State<CreateJob> {
             ),
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
-                if(state is GetJobTypeListLoading){
 
-                }
                 if(state is GetJobTypeListSuccess){
                   jobTypeList=state.jobTypeList;
 
@@ -584,6 +575,10 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
+                                                    surfaceTintColor: Colors.white,
+                                                    backgroundColor: Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),),
                                                     content: Column(
                                                       mainAxisSize:
                                                       MainAxisSize
@@ -593,6 +588,7 @@ class _CreateJobState extends State<CreateJob> {
                                                           height: 300,
                                                           child:
                                                           Scaffold(
+
                                                             body:
                                                             SfDateRangePicker(
                                                               backgroundColor:
@@ -926,6 +922,10 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
+                                                    surfaceTintColor: Colors.white,
+                                                    backgroundColor: Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10.0),),
                                                     content: Column(
                                                       mainAxisSize:
                                                       MainAxisSize
@@ -1242,6 +1242,10 @@ class _CreateJobState extends State<CreateJob> {
                           children: [
                             isValid==true?GestureDetector(
                               onTap: (){
+                                buttonLoad=true;
+                                setState(() {
+
+                                });
                                 jobtitle.text==""||jobdiscription.text==""||_range==""?Fluttertoast.showToast(
                                     msg: 'Please Fill Fields',
                                     toastLength: Toast.LENGTH_SHORT,
@@ -1303,7 +1307,10 @@ class _CreateJobState extends State<CreateJob> {
                                   color: const Color(0xff2871AF),
                                 ),
                                 alignment: Alignment.center,
-                                child: Text(
+                                child: buttonLoad==true?SpinKitThreeBounce(
+                                  color: Colors.white,
+                                  size: 15.0,
+                                ):Text(
                                   widget.edit?"Update":"Create",
 
                                   style: GoogleFonts.roboto(

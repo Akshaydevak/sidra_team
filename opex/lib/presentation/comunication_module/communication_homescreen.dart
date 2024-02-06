@@ -776,6 +776,7 @@ import 'package:cluster/presentation/comunication_module/dummy_design_forTesting
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummychatscreen.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/comunication_module/pinned_profile.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
@@ -810,6 +811,7 @@ class CommunicationModule extends StatefulWidget {
 }
  
 class _CommunicationModuleState extends State<CommunicationModule> {
+  Future<void>? _initializeSocket;
   bool isHomeMount = true;
   Dio client = Dio();
   String _data = '';
@@ -847,41 +849,60 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   }
  
   @override
-  void initState()  {
-    getsocketconnect();
+  void didChangeDependencies()  {
    
-    super.initState();
+   _initializeSocket = getsocketconnect();
+   
+    super.didChangeDependencies();
   }
+
   Future<void> getsocketconnect() async {
+    final socketpro =context.watch<scoketProvider>();
+        socketCon =socketpro.socket;
     pref=await SharedPreferences.getInstance();
     token = pref!.getString("token");
+    loginuserId=pref!.getString("loginuserid");
     print("tooken ${token}");
-  IO.Socket socket = IO.io(
-        'https://api-communication-application.hilalcart.com/home',
-        // "http://192.168.1.16:5500/home",
-        // 'https://baf9-103-179-197-125.ngrok-free.app/',
-        // OptionBuilder().setTransports(['websocket']).setQuery({
-        //   'transports': ['websocket', 'polling'],
-        //   'auth': {'token': token.toString()},
-        //   'autoConnect': false,
-        // }).build());
-        <String, dynamic>{
-          'transports': ['websocket'],
-          'auth': {'token': token.toString()},
-          'autoConnect': false,
-        });
-    socket.connect();
-    setState(() {
-      print("ccccconneccct");
-    });
+  // IO.Socket socket = IO.io(
+  //       'https://api-communication-application.hilalcart.com/home',
+  //       // "http://192.168.1.20:5500/home",
+  //       // 'https://baf9-103-179-197-125.ngrok-free.app/',
+  //       // OptionBuilder().setTransports(['websocket']).setQuery({
+  //       //   'transports': ['websocket', 'polling'],
+  //       //   'auth': {'token': token.toString()},
+  //       //   'autoConnect': false,
+  //       // }).build());
+  //       <String, dynamic>{
+  //         'transports': ['websocket'],
+  //         'auth': {'token': token.toString()},
+  //         'autoConnect': false,
+  //       });
+    // socket.connect();
+  // IO.Socket socket = IO.io(
+  //       'https://api-communication-application.hilalcart.com/home',
+  //       // "http://192.168.1.20:5500/home",
+  //       // 'https://baf9-103-179-197-125.ngrok-free.app/',
+  //       // OptionBuilder().setTransports(['websocket']).setQuery({
+  //       //   'transports': ['websocket', 'polling'],
+  //       //   'auth': {'token': token.toString()},
+  //       //   'autoConnect': false,
+  //       // }).build());
+  //       <String, dynamic>{
+  //         'transports': ['websocket'],
+  //         'auth': {'token': token.toString()},
+  //         'autoConnect': false,
+  //       });
+  //   socket.connect();
+
+  //   setState(() {
+  //     print("ccccconneccct");
+  //   });
     // Handle socket events
-    socket.on('connect', (_) => print('connectt success: ${socket.id}'));
+  
  
-  socket.on('user.id', (data) {
-    print("!!!!!!!!user.id : $data");
-  });
  
-    socket.on('online', (data) {
+ 
+    socketCon!.on('online', (data) {
       print("online anutto ${data}");
       onlineUsers.add(data['id']);
       // if (isHomeMount) {
@@ -890,31 +911,64 @@ class _CommunicationModuleState extends State<CommunicationModule> {
       print("online anutto users data ${onlineUsers}");
     });
     print(onlineUsers);
-    socket.on('offline', (data) {
+    socketCon!.on('offline', (data) {
       // print("online anutto poyetto  ${data}");
       onlineUsers.remove(data['id']);
       // if (isHomeMount) {
       setState(() {});
       // }
     });
-    socket.on('user.id', (data) {
+    socketCon!.on('user.id', (data) {
       loginuserId = data;
       print("vgyvgvh$loginuserId");
       setState(() {});
     });
-    
-    socket.emit("update.list",{
+     socketCon!.on('friends.list',(data){
+       print("hello");
+                  print("Friends list $data");
+                //   ulist = UserDummyList.fromJson(data);
+                // userlist.add(ulist!);
+                userlist.clear();
+                  (data as List).forEach((element) { 
+                  userlist.add(UserDummyList.fromJson(element));
+                  setState(() {
+                    
+                  });
+                   });
+                  // if(mounted){
+                     print("hgfjh");
+                     
+                    setState(() {
+                      
+                      if(userlist.isNotEmpty){
+
+                      isload=true;
+                      isloop=true;
+                          
+                      }else{
+                        isload=false;
+                        isloop=true;
+                      }
+                       
+                  });
+                  // }
+               
+                // userlist=userlist.toSet().toList();
+               
+                // print("mkkk ${userlist}");
+              });
+    socketCon!.emit("update.list",{
       
                         print("update")
 
                         
                       });
    
-   socket.on("update.chat.list", (data) {
+   socketCon!.on("update.chat.list", (data) {
       print("updata.chat.list $data");
        
     print("friends..chatlist");
-      socket.emit("update.list",{
+      socketCon!.emit("update.list",{
       
                         print("update")
                         
@@ -923,7 +977,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   //       print(data);
   //       print("upppppdate,,,,,");
          setState(() {
-       socket.on('friends.list',(data){
+       socketCon!.on('friends.list',(data){
        
        print("hello");
        print("upppppdate,,,,,");
@@ -957,47 +1011,17 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                 // print("mkkk ${userlist}");
               // });
               print("upppppdate,,,,,1");
-       
+       if(isMount){
+        setState(() {
+          
+        });
+       }
           
         });
           });
       } );
    
-    socket.on('friends.list',(data){
-       print("hello");
-                  print("Friends list $data");
-                //   ulist = UserDummyList.fromJson(data);
-                // userlist.add(ulist!);
-                userlist.clear();
-                  (data as List).forEach((element) {
-                    
-                  userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
-                   });
-                  // if(mounted){
-                     print("hgfjh");
-                     
-                    setState(() {
-                      
-                      if(userlist.isNotEmpty){
-
-                      isload=true;
-                      isloop=true;
-                          
-                      }else{
-                        isload=false;
-                        isloop=true;
-                      }
-                       
-                  });
-                  // }
-               
-                // userlist=userlist.toSet().toList();
-               
-                // print("mkkk ${userlist}");
-              });
+   
    
 
     // socket.on('move.chat.to.top', (data) {
@@ -1011,7 +1035,6 @@ class _CommunicationModuleState extends State<CommunicationModule> {
     // socket.on('latest.message', (data) => streamSocket.addResponse);
     // socket.onDisconnect((_) => print('disconnect happened'));
 
-    socketCon = socket;
     // socket.disconnect();
 setState(() {
   
@@ -1064,6 +1087,7 @@ setState(() {
             child: Column(
               children: [
                 AppBar(
+                  surfaceTintColor: Colors.white,
                   systemOverlayStyle: const SystemUiOverlayStyle(
                     systemNavigationBarColor: Colors.white, // Navigation bar
                     statusBarColor: Colors.white, // Status bar

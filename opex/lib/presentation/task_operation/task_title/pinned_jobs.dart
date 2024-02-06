@@ -74,15 +74,6 @@ class _PinnedJobsState extends State<PinnedJobs> {
             }
           },
         ),
-        // BlocListener<TaskBloc, TaskState>(
-        //   listener: (context, state) {
-        //     if (state is GetPinnedTaskListLoading) {}
-        //     if (state is GetPinnedTaskListSuccess) {
-        //       taskList = state.taskList;
-        //       setState(() {});
-        //     }
-        //   },
-        // ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,

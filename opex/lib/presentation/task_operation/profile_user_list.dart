@@ -1,3 +1,8 @@
+import 'package:cluster/common_widgets/loading.dart';
+import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
+import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
+import 'package:cluster/presentation/comunication_module/chat_screen.dart';
+import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/task_operation/employee_card.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/no_glow.dart';
@@ -29,6 +36,12 @@ class ProfileUserList extends StatefulWidget {
 class _ProfileUserListState extends State<ProfileUserList> {
   TextEditingController newpassword=TextEditingController();
   TextEditingController cofirempassword=TextEditingController();
+  SharedPreferences? pref;
+  String? token;
+  String? loginuserId;
+  IO.Socket? socketCon;List<CommunicationUserModel> chatlist=[];
+  String email1='';
+  bool val=true;
   @override
   void initState() {
     context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
@@ -38,6 +51,17 @@ class _ProfileUserListState extends State<ProfileUserList> {
     setState(() {
 
     });
+  }
+   void getChatList()async{
+    pref=await SharedPreferences.getInstance();
+    token = pref!.getString("token");
+    loginuserId=pref!.getString("loginuserid");
+    print("tooken ${token}");
+BlocProvider.of<CommunicationBloc>(context).add(
+          GetFilterdChatListEvent(
+            token: token.toString(),
+            chatFilter:"chats"
+          ));
   }
   GetEmployeeList? readEmployee;
   @override
@@ -127,6 +151,56 @@ class _ProfileUserListState extends State<ProfileUserList> {
         }
       },
     ),
+    BlocListener<CommunicationBloc,CommunicationState>( 
+      listener: (context, state) {
+        print("state found ${state}");
+         if (state is AddAFriendUserSuccess) {
+          print("add friend success");
+          val=false;
+        PersistentNavBarNavigator.pushNewScreen(
+        context,
+        screen: ChatScreen(
+          token: token,
+          loginUserId: loginuserId,
+          socket:socketCon,
+          isGroup:false,
+          chat: true,
+          communicationuser:state.chatListData1,
+        ),
+        );
+          // Navigator.pop(context); 
+          // BlocProvider.of<CommunicationBloc>(context).add(
+          //         GetFilterdChatListEvent(
+          //           token: widget.token ?? "",
+          //           chatFilter: "chats"
+          //         ));                 
+          
+          //           getlist(email1);
+        } else if(state is AddAFriendUserFailed) {
+          showSnackBar(context, message: state.error, color: Colors.red);
+        }
+      },
+      // listenWhen: ,
+     ),
+       BlocListener<CommunicationBloc, CommunicationState>(
+          listener: (context, state) {
+            if (state is GetChatListLoading) {
+             customCupertinoLoading();
+            } 
+            else if (state is GetChatListSuccess) {
+              print("sucesss ${state.chatList[0].email}");
+              chatlist=state.chatList;
+              setState(() {
+              });
+              }
+              else if(state is GetChatListFailed){
+                print("faileddddddd");
+                setState(() {
+                  
+                });
+              }
+          }
+          ),
   ],
   child: Scaffold(
     // backgroundColor: Colors.red,
@@ -429,15 +503,101 @@ class _ProfileUserListState extends State<ProfileUserList> {
                                       ),
                                     ),
                                     Divider(),
-                                    Container(
-                                      width: w,
-                                      padding: EdgeInsets.only(top: 5,bottom: 5,right: 10,left: 10),
-                                      child: Text(
-                                        "Message User",
-                                        style: GoogleFonts.roboto(
-                                          color: Colors.grey,
-                                          fontSize: w / 24,
-                                          fontWeight: FontWeight.w500,
+                                    GestureDetector(
+                                      onTap: (){
+                                        email1=readEmployee?.email??"";
+                                             
+                                            setState(()async{
+                                              bool val1=false;
+                                              int id=1;
+                                              int i1=0;
+                                              print("1-------------$val");
+                                            print("llllll${chatlist.length}}");
+                                            if(chatlist.isNotEmpty){
+                                            for(int i=0; i<=chatlist.length;i++){
+                                              print(chatlist[i].users!.length);
+                                              for(int j=0; j<=chatlist[i].users!.length;j++){ 
+                                                print(" $i");
+                                              print(val);
+                                                if(chatlist[i].users?[j].email==email1){ 
+                                                  val1=true;
+                                                  i1=i;
+                                                  BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+                                                  token: token.toString(),
+                                                  grpchatId: "",
+                                                  pageNo: 1, chatId: chatlist[i].id??""));
+                                                  print(",.,.,.,$i...$val1");
+                                                break;
+                                                }
+                                                else{
+                                                  val1=false;
+      
+                                                j++;
+                                                    id++;
+                                                }
+                                                  
+                                                  } 
+                                                  if(val1==true){
+                                                  break; 
+                                                  }
+                                                  else if(id>chatlist.length){
+                                                    break;
+                                                  }
+                                                } 
+                                            }
+                                            else{
+                                              val1=false;
+                                            } 
+                                                print("...$val1");
+                                            print("2-------------$val1");
+                                            
+                                               val1==false? 
+                                                
+                                            BlocProvider.of<
+                                                        CommunicationBloc>(
+                                                    context)
+                                                .add(AddAFriendUserEvent(
+                                              token: token.toString(),
+                                              email: readEmployee?.email ??
+                                                  "",
+                                              fname:readEmployee?.fname ??
+                                                  "",
+                                              photo: readEmployee?.userMete
+                                              ?. profile ??
+                                                  "",
+                                              lname: readEmployee?.lname ??
+                                                  "",
+                                                 usercode: readEmployee?.userCode??"" 
+                                            ))
+                                            :val1==true?
+                                             
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                context,
+                                                screen: ChatScreen(
+                                                  token: token.toString(),
+                                                  loginUserId:loginuserId.toString(),
+                                                  socket:socketCon,
+                                                  isGroup:false,
+                                                  chat: true,
+                                                  communicationuser:chatlist[i1],
+                                                ),
+                                                withNavBar:
+                                                    false, // OPTIONAL VALUE. True by default.
+                                                pageTransitionAnimation:
+                                                    PageTransitionAnimation.fade,
+                                              ):null;
+                                            }); 
+                                      },
+                                      child: Container(
+                                        width: w,
+                                        padding: EdgeInsets.only(top: 5,bottom: 5,right: 10,left: 10),
+                                        child: Text(
+                                          "Message User",
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.grey,
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                     ),

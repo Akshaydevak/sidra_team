@@ -452,7 +452,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                             priorityLeval: widget
                                                                 .readTask
                                                                 ?.priorityLevel
-                                                                .toString() ?? "",
+                                                                ?? 0,
                                                             remarks: widget
                                                                 .readTask
                                                                 ?.remarks ?? "",

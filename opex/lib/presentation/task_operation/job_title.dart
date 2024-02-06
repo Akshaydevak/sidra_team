@@ -69,6 +69,10 @@ class _JobTitleState extends State<JobTitle> {
   }
   @override
   void initState() {
+    // if(widget.isCreated==true){
+      taskList.clear();
+
+    // }
     // dialog();
     super.initState();
     widget.isCreated==true?WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -262,13 +266,7 @@ class _JobTitleState extends State<JobTitle> {
         listeners: [
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is DeleteJobLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
+
 
               if (state is DeleteJobFailed) {
                 showSnackBar(
@@ -296,7 +294,6 @@ class _JobTitleState extends State<JobTitle> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetJobReadLoading) {}
               if (state is GetJobReadSuccess) {
                 JobRead = state.getjobRead;
                 var date = JobRead?.endDate;
@@ -774,6 +771,8 @@ class _JobTitleState extends State<JobTitle> {
                           PersistentNavBarNavigator.pushNewScreen(
                             context,
                             screen: CreateNewTask(
+                              startDateTime: "${startstdDate}  ${startTime}",
+                              endDateTime: "$endstdDate  $endTime",
                               isSubTask: false,
                               jobId: JobRead?.id,
                             ),
@@ -1313,6 +1312,10 @@ class _JobTitleState extends State<JobTitle> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
+                                surfaceTintColor: Colors.white,
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
@@ -1554,8 +1557,8 @@ class _JobTitleState extends State<JobTitle> {
                                                           changeTappedTile(i);
 
 
-                                                          newStatus=status[i];
-                                                          statusFilter=status[i];
+                                                          newStatus=status[i].toUpperCase();
+                                                          statusFilter=status[i].toUpperCase();
                                                           onRefreash();
                                                           // Navigator.pop(context);
                                                           setState(() {});
@@ -1569,7 +1572,7 @@ class _JobTitleState extends State<JobTitle> {
                                                               : ColorPalette.white,
                                                           child: Row(
                                                             children: [
-                                                              newStatus == status[i]
+                                                              newStatus == status[i].toUpperCase()
                                                                   ? SvgPicture.string(
                                                                 HomeSvg()
                                                                     .radioButtonActive,width: 24,height: 24

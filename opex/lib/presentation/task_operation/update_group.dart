@@ -1,22 +1,17 @@
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
-import 'package:cluster/presentation/dashboard_screen/cart_screen/cart_svg.dart';
-import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../../common_widgets/gradient_button.dart';
 import '../../../../common_widgets/loading.dart';
-
-import '../../common_widgets/custom_checkbox.dart';
 import '../../common_widgets/no_glow.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -109,9 +104,6 @@ class _UpdateGroupState extends State<UpdateGroup> {
                 BlocListener<EmployeeBloc, EmployeeState>(
                   listener: (context, state) {
                     print("state group$state");
-                    if(state is GetReadGroupLoading){
-
-                    }
                     if(state is GetReadGroupSuccess){
                       readGroup=state.getGroupRead;
                       // print(":GPName4${state.getGroupRead.i}");
@@ -642,7 +634,24 @@ class _UpdateGroupState extends State<UpdateGroup> {
                                         if (state is GetEmployeeListSuccess) {
 
                                           print("Success shifu");
-
+                                          for (int i = 0;
+                                          i <
+                                              state
+                                                  .assignMeList!
+                                                  .length;) {
+                                            // print();
+                                            if (authentication
+                                                .authenticatedUser
+                                                .code ==
+                                                state
+                                                    .assignMeList?[
+                                                i]
+                                                    .userCode) {
+                                              state.assignMeList
+                                                  ?.removeAt(i);
+                                            }
+                                            i++;
+                                          }
                                           return SingleChildScrollView(
                                             child: Column(
                                               children: [

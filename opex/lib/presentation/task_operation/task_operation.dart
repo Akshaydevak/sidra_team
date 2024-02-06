@@ -294,6 +294,10 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
+                                            surfaceTintColor: Colors.white,
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),),
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
@@ -301,6 +305,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                   height: 300,
                                                   child: Scaffold(
                                                     body: SfDateRangePicker(
+
 
                                                         backgroundColor:
                                                         Colors.white,
@@ -311,6 +316,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                         rangeSelectionColor:
                                                         ColorPalette.primary
                                                             .withOpacity(0.1),
+
                                                         selectionColor:
                                                         Colors.grey,
                                                         todayHighlightColor:
@@ -868,7 +874,8 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                         ],
                                       ),
                                     ),
-                                    // SizedBox(height: 20,),
+
+                                    SizedBox(height: 20,),
                                     // Padding(
                                     //   padding: const EdgeInsets.only(left: 10,right: 15),
                                     //   child: Row(
@@ -943,7 +950,12 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     PersistentNavBarNavigator
                                         .pushNewScreen(
                                       context,
-                                      screen: const NewJobList(),
+                                      screen:  NewJobList(
+                                          startDate:
+                                          ebdDate2,
+                                          endDate:
+                                          startDate2
+                                      ),
                                       withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
@@ -981,7 +993,11 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     PersistentNavBarNavigator
                                         .pushNewScreen(
                                       context,
-                                      screen: const PendingJobs(),
+                                      screen:  PendingJobs(
+                                          startDate:
+                                      ebdDate2,
+                                          endDate:
+                                          startDate2),
                                       withNavBar: false,
                                       // OPTIONAL VALUE. True by default.
                                       pageTransitionAnimation:
@@ -1083,77 +1099,77 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                             const SizedBox(
                               height: 25,
                             ),
-                            joblist.isEmpty
-                                ? Container()
-                                : Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "New Tasks",
-                                      style: GoogleFonts.roboto(
-                                        color: ColorPalette.black,
-                                        fontSize: w / 24,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          PersistentNavBarNavigator
-                                              .pushNewScreen(
-                                            context,
-                                            screen: authentication.isAdmin
-                                                ? TaskAndOperationHomePage(
-                                              newIndex: 0,
-                                            )
-                                                : NewJobList(),
-                                            withNavBar: false,
-                                            // OPTIONAL VALUE. True by default.
-                                            pageTransitionAnimation:
-                                            PageTransitionAnimation
-                                                .fade,
-                                          );
-                                        },
-                                        child: Text("View All",
-                                            style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            )))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Container(
-                                  //color: Colors.yellow,
-                                  padding: const EdgeInsets.only(
-                                    bottom: 20,
-                                  ),
-                                  child: ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: const ScrollPhysics(),
-                                      separatorBuilder:
-                                          (BuildContext cxt, int i) {
-                                        return const SizedBox(
-                                          height: 5,
-                                        );
-                                      },
-                                      itemBuilder:
-                                          (BuildContext context, int i) {
-                                        return InkWell(
-                                          onTap: () {},
-                                          child: JobCard(
-                                            joblist: joblist[i],
-                                          ),
-                                        );
-                                      },
-                                      itemCount: joblist.length>=5?5:joblist.length),
-                                )
-                              ],
-                            ),
+                            // joblist.isEmpty
+                            //     ? Container()
+                            //     : Column(
+                            //   children: [
+                            //     Row(
+                            //       mainAxisAlignment:
+                            //       MainAxisAlignment.spaceBetween,
+                            //       children: [
+                            //         Text(
+                            //           "New Tasks",
+                            //           style: GoogleFonts.roboto(
+                            //             color: ColorPalette.black,
+                            //             fontSize: w / 24,
+                            //             fontWeight: FontWeight.w500,
+                            //           ),
+                            //         ),
+                            //         GestureDetector(
+                            //             onTap: () {
+                            //               PersistentNavBarNavigator
+                            //                   .pushNewScreen(
+                            //                 context,
+                            //                 screen: authentication.isAdmin
+                            //                     ? TaskAndOperationHomePage(
+                            //                   newIndex: 0,
+                            //                 )
+                            //                     : NewJobList(),
+                            //                 withNavBar: false,
+                            //                 // OPTIONAL VALUE. True by default.
+                            //                 pageTransitionAnimation:
+                            //                 PageTransitionAnimation
+                            //                     .fade,
+                            //               );
+                            //             },
+                            //             child: Text("View All",
+                            //                 style: GoogleFonts.roboto(
+                            //                   color: ColorPalette.primary,
+                            //                   fontSize: w / 24,
+                            //                   fontWeight: FontWeight.w500,
+                            //                 )))
+                            //       ],
+                            //     ),
+                            //     SizedBox(
+                            //       height: 16,
+                            //     ),
+                            //     Container(
+                            //       //color: Colors.yellow,
+                            //       padding: const EdgeInsets.only(
+                            //         bottom: 20,
+                            //       ),
+                            //       child: ListView.separated(
+                            //           shrinkWrap: true,
+                            //           physics: const ScrollPhysics(),
+                            //           separatorBuilder:
+                            //               (BuildContext cxt, int i) {
+                            //             return const SizedBox(
+                            //               height: 5,
+                            //             );
+                            //           },
+                            //           itemBuilder:
+                            //               (BuildContext context, int i) {
+                            //             return InkWell(
+                            //               onTap: () {},
+                            //               child: JobCard(
+                            //                 joblist: joblist[i],
+                            //               ),
+                            //             );
+                            //           },
+                            //           itemCount: joblist.length>=5?5:joblist.length),
+                            //     )
+                            //   ],
+                            // ),
                           ],
                         ))
                   ],

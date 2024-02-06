@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen:
-                          // EmptyPageCommunication(), 
+                          // EmptyPageCommunication(),
                           DashBoard(
                             index: 1,
                           ),
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       appTitle: "Sidra Learning",
                       appDescription:
-                      "For seamless internal organization task assign and team collaboration.",
+                      "Get the skills you need to succeed by watching video clips, anytime, anywhere.",
                       svgIcon: AppsSvg().sidraLearningIcon,
                     )),
 

@@ -300,7 +300,7 @@ class TaskRepo {
     required String createdBy,
     required String taskName,
     required String discription,
-    required String priorityLeval,
+    required int priorityLeval,
     required String startDate,
     required String endDate,
     required bool isActive,
@@ -381,7 +381,7 @@ class TaskRepo {
     required String createdBy,
     required String taskName,
     required String discription,
-    required String priorityLeval,
+    required int priorityLeval,
     required String startDate,
     required String endDate,
     required bool isActive,
@@ -835,12 +835,16 @@ class TaskRepo {
     required int? id,
     required String? reportStatus,
     required String? replay,
+    required String? replayType,
+    required String? reAssignCode,
   }) async {
     final restAPIresponse = await _dataSource.replayReport(
 
       id: id,
       replay: replay,
-      reportStatus: reportStatus
+      reportStatus: reportStatus,
+      reAssignCode: reAssignCode,
+      replayType: replayType
 
     );
     if (restAPIresponse.data) {

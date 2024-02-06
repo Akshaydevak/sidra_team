@@ -26,6 +26,19 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      parentGroupId: json['parent_group_id'] as int?,
+      assignByDict: json['assigned_by_dict'] == null
+          ? null
+          : PerfomerModel.fromJson(
+              json['assigned_by_dict'] as Map<String, dynamic>),
+      assignToDict: json['assigned_to_dict'] == null
+          ? null
+          : PerfomerModel.fromJson(
+              json['assigned_to_dict'] as Map<String, dynamic>),
+      reportingPersonDict: json['reporting_person_dict'] == null
+          ? null
+          : PerfomerModel.fromJson(
+              json['reporting_person_dict'] as Map<String, dynamic>),
       reviewCount: json['review_count'] as int?,
       groupId: json['group_id'] as int?,
       assignNameCard: json['assigning_name'] as String?,
@@ -137,6 +150,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'tree_id': instance.treeId,
       'level': instance.level,
       'parent': instance.parent,
+      'parent_group_id': instance.parentGroupId,
       'job_id': instance.jobId,
       'image_count': instance.imgCount,
       'review_count': instance.reviewCount,
@@ -145,6 +159,9 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'reporting_person': instance.reportingPerson,
       'location_url': instance.locayionUrl,
       'created_by': instance.createdBy,
+      'assigned_by_dict': instance.assignByDict,
+      'assigned_to_dict': instance.assignToDict,
+      'reporting_person_dict': instance.reportingPersonDict,
     };
 
 GetCountTask _$GetCountTaskFromJson(Map<String, dynamic> json) => GetCountTask(
@@ -509,6 +526,7 @@ Map<String, dynamic> _$ReadMarkReadToJson(ReadMarkRead instance) =>
 PerfomerModel _$PerfomerModelFromJson(Map<String, dynamic> json) =>
     PerfomerModel(
       fName: json['first_name'] as String?,
+      userCode: json['user_code'] as String?,
       lName: json['last_name'] as String?,
       email: json['email'] as String?,
       points: (json['highest_average_points'] as num?)?.toDouble(),
@@ -519,5 +537,6 @@ Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>
       'first_name': instance.fName,
       'last_name': instance.lName,
       'email': instance.email,
+      'user_code': instance.userCode,
       'highest_average_points': instance.points,
     };

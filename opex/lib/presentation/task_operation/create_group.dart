@@ -17,6 +17,7 @@ import '../../../../common_widgets/gradient_button.dart';
 import '../../../../common_widgets/loading.dart';
 
 import '../../core/color_palatte.dart';
+import '../authentication/authentication.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'employee_group_screen.dart';
 import 'group_list.dart';
@@ -93,13 +94,6 @@ class _CreateGroupState extends State<CreateGroup> {
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
             listener: (context, state) {
-              if (state is CreateGroupLoading) {
-                // showSnackBar(context,
-                    // message: "Loading...",
-                    // color: Colors.white,
-                    // // icon: HomeSvg().SnackbarIcon,
-                    // autoDismiss: true);
-              }
 
               if (state is CreateGroupFailed) {
                 showSnackBar(
@@ -241,6 +235,24 @@ class _CreateGroupState extends State<CreateGroup> {
                           return  LottieLoader();
                         }
                         if (state is GetEmployeeListSuccess) {
+                          for (int i = 0;
+                          i <
+                              state
+                                  .assignMeList!
+                                  .length;) {
+                            // print();
+                            if (authentication
+                                .authenticatedUser
+                                .code ==
+                                state
+                                    .assignMeList?[
+                                i]
+                                    .userCode) {
+                              state.assignMeList
+                                  ?.removeAt(i);
+                            }
+                            i++;
+                          }
 
                           print("Success shifu");
 
@@ -263,23 +275,6 @@ class _CreateGroupState extends State<CreateGroup> {
                                 ),
                                 Container(
                                   width: w1,
-                                  // height: h / 2.5,
-                                  // decoration: BoxDecoration(
-                                  //   borderRadius:
-                                  //   BorderRadius.circular(10),
-                                  //   border: Border.all(
-                                  //     color: Color(0xffe6ecf0),
-                                  //     width: 1,
-                                  //   ),
-                                  //   boxShadow: const [
-                                  //     BoxShadow(
-                                  //       color: Color(0x05000000),
-                                  //       blurRadius: 8,
-                                  //       offset: Offset(1, 1),
-                                  //     ),
-                                  //   ],
-                                  //   color: Colors.white,
-                                  // ),
                                   child: ListView.separated(
                                       primary: true,
                                       shrinkWrap: true,

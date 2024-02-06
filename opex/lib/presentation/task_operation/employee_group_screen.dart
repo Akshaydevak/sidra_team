@@ -2,6 +2,11 @@ import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
+import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
+import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
+import 'package:cluster/presentation/comunication_module/chat_screen.dart';
+import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/task_operation/create_group.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
@@ -15,6 +20,8 @@ import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../../../common_widgets/loading.dart';
 import '../../common_widgets/gradient_button.dart';
@@ -36,28 +43,46 @@ class EmployeesGroupScreen extends StatefulWidget {
 class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
   var _listGenderText = ["Users", "Groups"];
   var _tabTextIconIndexSelected = 0;
+  List<CommunicationUserModel> chatlist=[];
+  String email1='';
+  bool val=true;
+  SharedPreferences? pref;
+  String? token;
+  String? loginuserId;
+  IO.Socket? socketCon;
 @override
   void initState() {
   _tabTextIconIndexSelected = widget.newIndex??0;
   _tabTextIconIndexSelected==0?context.read<JobBloc>().add( GetEmployeeListEvent('','','')):
   context.read<JobBloc>().add(GetGroupListEvent());
+  getChatList();
+  
     super.initState();
   }
-  TextEditingController newpassword=TextEditingController();
-  TextEditingController cofirempassword=TextEditingController();
-  onRefresh(){
-    setState(() {
 
-    });
+  void getChatList()async{
+    pref=await SharedPreferences.getInstance();
+    token = pref!.getString("token");
+    loginuserId=pref!.getString("loginuserid");
+    print("tooken ${token}");
+BlocProvider.of<CommunicationBloc>(context).add(
+          GetFilterdChatListEvent(
+            token: token.toString(),
+            chatFilter:"chats"
+          ));
   }
   GetEmployeeList? readEmployee;
   @override
   Widget build(BuildContext context) {
+    final socketpro =context.watch<scoketProvider>();
+     socketCon =socketpro.socket;
     double w1 = MediaQuery.of(context).size.width ;
     double w = w1> 700
         ? 400
         : w1;
     var h=MediaQuery.of(context).size.height;
+    var w22=MediaQuery.of(context).size.width/656;
+    
     return MultiBlocListener(
   listeners: [
     BlocListener<EmployeeBloc, EmployeeState>(
@@ -78,11 +103,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
     ),
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
-        if(state is DeleteEmployeeLoading){
-          // showSnackBar(context,
-          //     message: "User Dele Loading",
-          //     color: ColorPalette.green);
-        }
+
         if(state is DeleteEmployeeSuccess){
           showSnackBar(context,
               message:"User Deleted Successfully",
@@ -130,8 +151,8 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
         }
         if(state is ChagePasswordSuccess){
           Navigator.pop(context);
-          newpassword.clear();
-          cofirempassword.clear();
+          // newpassword.clear();
+          // cofirempassword.clear();
           context.read<JobBloc>().add( GetEmployeeListEvent('','',''));
           showSnackBar(context, message: state.user??"", color: Colors.black);
           setState(() {
@@ -140,8 +161,59 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
         }
       },
     ),
+    BlocListener<CommunicationBloc,CommunicationState>( 
+      listener: (context, state) {
+        print("state found ${state}");
+         if (state is AddAFriendUserSuccess) {
+          print("add friend success");
+          val=false;
+        PersistentNavBarNavigator.pushNewScreen(
+        context,
+        screen: ChatScreen(
+          token: token,
+          loginUserId: loginuserId,
+          socket:socketCon,
+          isGroup:false,
+          chat: true,
+          communicationuser:state.chatListData1,
+        ),
+        );
+          // Navigator.pop(context); 
+          // BlocProvider.of<CommunicationBloc>(context).add(
+          //         GetFilterdChatListEvent(
+          //           token: widget.token ?? "",
+          //           chatFilter: "chats"
+          //         ));                 
+          
+          //           getlist(email1);
+        } else if(state is AddAFriendUserFailed) {
+          showSnackBar(context, message: state.error, color: Colors.red);
+        }
+      },
+      // listenWhen: ,
+     ),
+       BlocListener<CommunicationBloc, CommunicationState>(
+          listener: (context, state) {
+            if (state is GetChatListLoading) {
+             customCupertinoLoading();
+            } 
+            else if (state is GetChatListSuccess) {
+              print("sucesss ${state.chatList[0].email}");
+              chatlist=state.chatList;
+              setState(() {
+              });
+              }
+              else if(state is GetChatListFailed){
+                print("faileddddddd");
+                setState(() {
+                  
+                });
+              }
+          }
+          ),
   ],
   child: Scaffold(
+    backgroundColor: ColorPalette.cardBackground,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(label: _tabTextIconIndexSelected==0? "Users":"Groups",isAction: false,
@@ -213,8 +285,8 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
             child: Column(
               children: [
                 FlutterToggleTab(
-                  width: w / 4,
-                  height: 55,
+                  width: w1 / 4,
+                  height: 55,isShadowEnable: true,
                   borderRadius: 10,
                   selectedBackgroundColors: [
                     ColorPalette.primary
@@ -534,15 +606,102 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                       ),
                                     ),
                                     Divider(),
-                                    Container(
-                                      width: w,
-                                      padding: EdgeInsets.only(top: 5,bottom: 5,right: 10,left: 10),
-                                      child: Text(
-                                        "Message User",
-                                        style: GoogleFonts.roboto(
-                                          color: Colors.grey,
-                                          fontSize: w / 24,
-                                          fontWeight: FontWeight.w500,
+                                    GestureDetector(
+                                      onTap: (){
+                                        email1=readEmployee?.email??"";
+                                             
+                                            setState(()async{
+                                              bool val1=false;
+                                              int id=1;
+                                              int i1=0;
+                                              print("1-------------$val");
+                                            print("llllll${chatlist.length}}");
+                                            if(chatlist.isNotEmpty){
+                                            for(int i=0; i<=chatlist.length;i++){
+                                              print(chatlist[i].users!.length);
+                                              for(int j=0; j<=chatlist[i].users!.length;j++){ 
+                                                print(" $i");
+                                              print(val);
+                                                if(chatlist[i].users?[j].email==email1){ 
+                                                  val1=true;
+                                                  i1=i;
+                                                  BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+                                                  token: token.toString(),
+                                                  
+                                                  grpchatId: "",
+                                                  pageNo: 1, chatId: chatlist[i].id??""));
+                                                  print(",.,.,.,$i...$val1");
+                                                break;
+                                                }
+                                                else{
+                                                  val1=false;
+      
+                                                j++;
+                                                    id++;
+                                                }
+                                                  
+                                                  } 
+                                                  if(val1==true){
+                                                  break; 
+                                                  }
+                                                  else if(id>chatlist.length){
+                                                    break;
+                                                  }
+                                                } 
+                                            }
+                                            else{
+                                              val1=false;
+                                            } 
+                                                print("...$val1");
+                                            print("2-------------$val1");
+                                            
+                                               val1==false? 
+                                                
+                                            BlocProvider.of<
+                                                        CommunicationBloc>(
+                                                    context)
+                                                .add(AddAFriendUserEvent(
+                                              token: token.toString(),
+                                              email: readEmployee?.email ??
+                                                  "",
+                                              fname:readEmployee?.fname ??
+                                                  "",
+                                              photo: readEmployee?.userMete
+                                              ?. profile ??
+                                                  "",
+                                              lname: readEmployee?.lname ??
+                                                  "",
+                                                 usercode: readEmployee?.userCode??"" 
+                                            ))
+                                            :val1==true?
+                                             
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                context,
+                                                screen: ChatScreen(
+                                                  token: token.toString(),
+                                                  loginUserId:loginuserId.toString(),
+                                                  socket:socketCon,
+                                                  isGroup:false,
+                                                  chat: true,
+                                                  communicationuser:chatlist[i1],
+                                                ),
+                                                withNavBar:
+                                                    false, // OPTIONAL VALUE. True by default.
+                                                pageTransitionAnimation:
+                                                    PageTransitionAnimation.fade,
+                                              ):null;
+                                            }); 
+                                      },
+                                      child: Container(
+                                        width: w,
+                                        padding: EdgeInsets.only(top: 5,bottom: 5,right: 10,left: 10),
+                                        child: Text(
+                                          "Message User",
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.black,
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -892,7 +1051,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                                           .start,
                                                       children: [
                                                         SizedBox(
-                                                          // width: w/1.5,
+                                                          width: w/1.8,
                                                           child: Text(
                                                             employee?.email ??
                                                                 "",
@@ -995,6 +1154,19 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
         });
   }
   _showModalBottomChagePass(GetEmployeeList? employee) {
+    TextEditingController newpassword=TextEditingController();
+    TextEditingController cofirempassword=TextEditingController();
+    bool isActive=false;
+    onRefresh(){
+      if(newpassword.text==cofirempassword.text){
+        isActive=true;
+      }
+      else{
+      isActive=false;}
+      setState(() {
+
+      });
+    }
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -1073,6 +1245,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                         isMandatory: false,
                                         onchange: (dd){
                                           onRefresh();
+                                          setState((){});
                                         },
                                       ),
                                       SizedBox(
@@ -1085,6 +1258,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                                         isMandatory: false,
                                         onchange: (dd){
                                           onRefresh();
+                                          setState((){});
                                         },
                                       ),
                                       SizedBox(
@@ -1104,8 +1278,7 @@ class _EmployeesGroupScreenState extends State<EmployeesGroupScreen> {
                         right: 0,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                          child: newpassword.text==cofirempassword.text&&
-                              newpassword.text!=""||cofirempassword.text!=""
+                          child: isActive==true
                               ?GradientButton(
                               color: ColorPalette.primary,
                               onPressed: () {

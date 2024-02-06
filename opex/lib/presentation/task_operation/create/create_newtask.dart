@@ -10,6 +10,7 @@ import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,12 +32,16 @@ class CreateNewTask extends StatefulWidget {
   final bool editTask;
   final int? subTaskId;
   final int? jobId;
+  final String? startDateTime;
+  final String? endDateTime;
   const CreateNewTask(
       {Key? key,
       this.isSubTask = false,
       this.editTask = false,
       this.subTaskId,
-      this.jobId})
+      this.jobId,
+      this.startDateTime,
+      this.endDateTime})
       : super(key: key);
 
   @override
@@ -49,6 +54,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   bool grpval = false;
   bool updateval = false;
   void grpVal(bool val) {
+    validationCheck();
     grpval = val;
     setState(() {});
     print("uuu$grpval");
@@ -56,6 +62,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
   void updatevalue(bool val) {
     updateval = val;
+    validationCheck();
     setState(() {});
   }
 
@@ -79,12 +86,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-      print("searjjj${_range.split(" - ")[1]}");
       startDate = _range.split(" - ")[0];
       startDate2 = _range2.split(" - ")[0];
       ebdDate = _range.split(" - ")[1];
       ebdDate2 = _range2.split(" - ")[1];
     });
+    validationCheck();
   }
 
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
@@ -116,7 +123,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
     startTime = twelveHourFormat.format(dateTime);
     startTime2 = twentyFourHourFormat.format(dateTime);
-
+    validationCheck();
     print(startTime);
   }
 
@@ -142,11 +149,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
     endTime = twelveHourFormat.format(dateTime);
     endTime2 = twentyFourHourFormat.format(dateTime);
-
+    validationCheck();
     print(endTime);
   }
 
-  String PriorityLeval = "";
+  String PriorityLeval = "Low";
   void refreah() {
     setState(() {});
   }
@@ -179,6 +186,22 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     setState(() {});
   }
 
+  bool? isValid = false;
+  validationCheck() {
+    if (taskTitle.text != "" &&
+        discription.text != "" &&
+        _range != "" &&
+        startTime2 != "00:00" &&
+        endTime2 != "00:00" &&
+        taskYype != null &&
+        Variable.assignCode != "") {
+      isValid = true;
+    } else {
+      isValid = false;
+    }
+    print("is valid$isValid");
+  }
+
   GetTaskList? readTask;
   String? taskYype;
   @override
@@ -202,7 +225,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   List<GetTaskTypeList>? typelist;
   List<GetTaskList> taskListNew = [];
 
-  bool createButton = false;
+  bool createButtonLoad = false;
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width;
@@ -229,14 +252,17 @@ class _CreateNewTaskState extends State<CreateNewTask> {
               }
 
               if (state is CreateTaskFailed) {
+                createButtonLoad = false;
                 showSnackBar(
                   context,
                   message: state.error,
                   color: Colors.red,
                   // icon: Icons.admin_panel_settings_outlined
                 );
+                setState(() {});
               }
               if (state is CreateTaskSuccess) {
+                createButtonLoad = false;
                 if (isSubTask == true) {
                   taskId = state.taskId;
                   print("task id for sub task${state.taskId}");
@@ -281,24 +307,18 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is UpdateTaskLoading) {
-                print("task loading");
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
               if (state is UpdateTaskFailed) {
+                createButtonLoad = false;
                 showSnackBar(
                   context,
                   message: state.error,
                   color: Colors.red,
                   // icon: Icons.admin_panel_settings_outlined
                 );
+                setState(() {});
               }
               if (state is UpdateTaskSuccess) {
+                createButtonLoad = false;
                 print("task sucsess");
 
                 Fluttertoast.showToast(
@@ -317,11 +337,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is GetTaskTypeListLoading) {
-                print("task loading");
-              }
-
-              if (state is GetTaskTypeListFailed) {}
               if (state is GetTaskTypeListSuccess) {
                 typelist = state.taskTypeList;
 
@@ -331,7 +346,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is GetTaskReadLoading) {}
               if (state is GetTaskReadSuccess) {
                 readTask = state.getTaskRead;
                 taskTitle.text = readTask?.taskName ?? "";
@@ -389,11 +403,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is GetSubTaskListLoading) {
-                print("task loading");
-              }
-
-              if (state is GetSubTaskListFailed) {}
               if (state is GetSubTaskListSuccess) {
                 print("subtaskkk sucsess${state.taskList}");
 
@@ -423,15 +432,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TaskAndOperationAppBar(
-                  //   label: readTask?.taskName ?? "Create New Task",
-                  //   onTap: (){
-                  //     context.read<TaskBloc>().add(GetTaskListEvent(widget.jobId,'','',''));
-                  //     Navigator.pop(context);
-                  //   },
-                  //
-                  // ),
-                  // SizedBox(height: 50,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Column(
@@ -440,6 +440,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                       children: [
                         GestureDetector(
                           onTap: () {
+                            validationCheck();
                             _showModalBottomSheet(
                                 context, typelist ?? [], taskYype);
                           },
@@ -484,7 +485,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ),
                           ),
                         ),
-
                         SizedBox(
                           height: 5,
                         ),
@@ -515,6 +515,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600),
                                 onChanged: (n) {
+                                  validationCheck();
                                   setState(() {});
                                 },
                                 decoration: InputDecoration(
@@ -541,6 +542,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 maxLines: 4,
                                 minLines: 1,
                                 onChanged: (n) {
+                                  validationCheck();
                                   setState(() {});
                                 },
                                 style: GoogleFonts.roboto(
@@ -602,6 +604,13 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
+                                                surfaceTintColor: Colors.white,
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                ),
                                                 content: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
@@ -855,11 +864,19 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             ],
                           ),
                         ),
+                        Text(
+                          "Job Duration ${widget.startDateTime} - ${widget.endDateTime}",
+                          style: GoogleFonts.roboto(
+                              color: Color(0x66151522),
+                              fontSize: w / 32,
+                              fontWeight: FontWeight.w500),
+                        ),
                         SizedBox(
-                          height: 5,
+                          height: 15,
                         ),
                         GestureDetector(
                           onTap: () {
+                            validationCheck();
                             _showModalBottomSheetPriority(PriorityLeval);
                           },
                           child: Container(
@@ -933,6 +950,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         ),
                         GestureDetector(
                           onTap: () {
+                            validationCheck();
                             context
                                 .read<TaskBloc>()
                                 .add(GetTaskReadListEvent(readTask?.id ?? 0));
@@ -1001,58 +1019,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         SizedBox(
                           height: 15,
                         ),
-
-                        // Container(
-                        //   width: w,
-                        //   decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(4),
-                        //     border: Border.all(
-                        //       color: Color(0xffe6ecf0),
-                        //       width: 1,
-                        //     ),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Color(0x05000000),
-                        //         blurRadius: 8,
-                        //         offset: Offset(1, 1),
-                        //       ),
-                        //     ],
-                        //     color: Colors.white,
-                        //   ),
-                        //   child: AddText(
-                        //     label: "Add Notes",
-                        //     controller: notesController,
-                        //     isActive:  widget.editTask == false ? false : true,
-                        //     hint: "Enter Notes",
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: 1,
-                        // ),
-                        // Container(
-                        //   width: w,
-                        //   decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(4),
-                        //     border: Border.all(
-                        //       color: Color(0xffe6ecf0),
-                        //       width: 1,
-                        //     ),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Color(0x05000000),
-                        //         blurRadius: 8,
-                        //         offset: Offset(1, 1),
-                        //       ),
-                        //     ],
-                        //     color: Colors.white,
-                        //   ),
-                        //   child: AddText(
-                        //       label: "Add Remarks",
-                        //       controller: remarksController,
-                        //       hint: "Enter Remarks",
-                        //       isActive:
-                        //           widget.editTask == false ? false : true),
-                        // ),
                         Container(
                           width: w1,
                           // height: 185,
@@ -1080,6 +1046,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w400),
                                 onChanged: (n) {
+                                  validationCheck();
                                   setState(() {});
                                 },
                                 decoration: InputDecoration(
@@ -1106,6 +1073,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 maxLines: 4,
                                 minLines: 1,
                                 onChanged: (n) {
+                                  validationCheck();
                                   setState(() {});
                                 },
                                 style: GoogleFonts.roboto(
@@ -1139,7 +1107,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           .add(GetGroupListEvent());
                                       PersistentNavBarNavigator.pushNewScreen(
                                         context,
-                                        screen: AssignesUnderGroup(),
+                                        screen: AssignesUnderGroup(
+                                          groupVal: updatevalue,
+                                        ),
                                         withNavBar: true,
                                         // OPTIONAL VALUE. True by default.
                                         pageTransitionAnimation:
@@ -1305,7 +1275,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     ),
                                   )
                             : Container(),
-
                         widget.editTask == true
                             ? Container()
                             : SizedBox(
@@ -1379,7 +1348,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                       notas: notesController
                                                               .text ??
                                                           "",
-                                                      priorityLeval: "1",
+                                                      priorityLeval: 0,
                                                       remarks: remarksController
                                                           .text,
                                                       taskName:
@@ -1397,8 +1366,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                               .code ??
                                                           "",
                                                       isActive: true,
-                                                      priority:
-                                                          Variable.prioritys,
+                                                      priority: PriorityLeval,
                                                       reportingPerson: Variable
                                                                   .reportingCode ==
                                                               ""
@@ -1410,9 +1378,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                               .reportingCode
                                                               .toString(),
                                                       endDate:
-                                                          "${_range.split(" - ")[1]} $endTime2",
+                                                          "$ebdDate ${endTime2}",
                                                       startDate:
-                                                          "${_range.split(" - ")[0]} $startTime2",
+                                                          "$startDate ${startTime2}",
                                                     ));
                                               Variable.taskType == 0 ||
                                                       taskTitle.text == "" ||
@@ -1432,7 +1400,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                           Colors.black,
                                                       textColor: Colors.white)
                                                   : isSubTask = !isSubTask;
-                                              // createButton=false;
                                             });
                                           },
                                         ),
@@ -1475,14 +1442,20 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                                     itemBuilder:
                                                                         (context,
                                                                                 index) =>
-                                                                            Card(
+                                                                            Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.white,
+                                                                                border: Border.all(color: ColorPalette.borderGrey),
+                                                                                borderRadius: BorderRadius.circular(10)
+                                                                              ),
+                                                                              margin: EdgeInsets.all(5),
                                                                               child: Padding(
                                                                                 padding: const EdgeInsets.all(10),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
                                                                                     Text(
-                                                                                      "${index + 1}: ${taskListNew[index].taskName ?? ""}",
+                                                                                      "${index + 1}- ${taskListNew[index].taskName ?? ""}",
                                                                                       style: GoogleFonts.roboto(
                                                                                         color: Color(0xff151522),
                                                                                         fontSize: 18,
@@ -1589,115 +1562,159 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     ],
                                   )
                                 : Container(),
-
                         SizedBox(
                           height: 10,
                         ),
                         SizedBox(
                           height: 10,
                         ),
-                        isSubTask == true
+                        Variable.assignType == "Task_Group"
                             ? Container()
-                            : GradientButton(
-                                color: ColorPalette.primary,
-                                onPressed: () {
-                                  createButton = true;
-                                  widget.editTask || updateval || isSubTask
-                                      ? BlocProvider.of<TaskBloc>(context).add(
-                                          UpdateTaskEvent(
-                                              latitude: readTask?.latitude,
-                                              longitude: readTask?.longitude,
-                                              id: readTask?.id ?? 0,
+                            : isValid == false
+                                ? GradientButton(
+                                    color: ColorPalette.inactiveGrey,
+                                    onPressed: () {},
+                                    gradient: const LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          ColorPalette.inactiveGrey,
+                                          ColorPalette.inactiveGrey
+                                        ]),
+                                    child: Text(
+                                      widget.editTask ? "Update" : "Create",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.roboto(
+                                        color: Colors.white,
+                                        fontSize: w / 22,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ))
+                                : GradientButton(
+                                    color: ColorPalette.primary,
+                                    onPressed: () {
+                                      createButtonLoad = true;
+                                      setState(() {});
+                                      widget.editTask || isSubTask
+                                          ? BlocProvider.of<TaskBloc>(context)
+                                              .add(UpdateTaskEvent(
+                                                  latitude: readTask?.latitude,
+                                                  longitude:
+                                                      readTask?.longitude,
+                                                  id: readTask?.id ?? 0,
+                                                  AssigningCode:
+                                                      Variable.assignCode,
+                                                  AssigningType:
+                                                      Variable.assignType,
+                                                  createdOn:
+                                                      "${_range.split(" - ")[0]} ${startTime2}",
+                                                  jobid: readTask?.jobId,
+                                                  notas: notesController.text ??
+                                                      "",
+                                                  priorityLeval: 0,
+                                                  remarks:
+                                                      remarksController.text ??
+                                                          "",
+                                                  taskName:
+                                                      taskTitle.text ?? "",
+                                                  taskType: Variable.taskType,
+                                                  lastmodified: null,
+                                                  parant: readTask?.parent,
+                                                  statusStagesId:
+                                                      readTask?.statusStagesId,
+                                                  discription:
+                                                      discription.text ?? "",
+                                                  createdBy: authentication
+                                                          .authenticatedUser
+                                                          .code ??
+                                                      "",
+                                                  isActive: true,
+                                                  priority: PriorityLeval,
+                                                  reportingPerson: readTask
+                                                          ?.reportingPersonCode ??
+                                                      "",
+                                                  endDate: "$ebdDate"
+                                                      " "
+                                                      "$endTime2",
+                                                  startDate: "$startDate"
+                                                      " "
+                                                      "$startTime2",
+                                                  img5: readTask
+                                                      ?.metaData?.image5,
+                                                  img1: readTask
+                                                      ?.metaData?.image1,
+                                                  img4: readTask
+                                                      ?.metaData?.image4,
+                                                  img2: readTask
+                                                      ?.metaData?.image2,
+                                                  img3: readTask
+                                                      ?.metaData?.image3,
+                                                  attachmentDescription:
+                                                      readTask?.metaData
+                                                          ?.description,
+                                                  attachmentNote:
+                                                      readTask?.metaData?.note))
+                                          : BlocProvider.of<TaskBloc>(context)
+                                              .add(CreateTaskEvent(
+                                              latitude: null,
+                                              longitude: null,
                                               AssigningCode:
                                                   Variable.assignCode,
                                               AssigningType:
                                                   Variable.assignType,
                                               createdOn:
                                                   "${_range.split(" - ")[0]} ${startTime2}",
-                                              jobid: readTask?.jobId,
-                                              notas: notesController.text ?? "",
-                                              priorityLeval: "1",
-                                              remarks:
-                                                  remarksController.text ?? "",
-                                              taskName: taskTitle.text ?? "",
+                                              jobId: widget.jobId ?? 0,
+                                              notas: notesController.text,
+                                              priorityLeval: 0,
+                                              remarks: remarksController.text,
+                                              taskName: taskTitle.text,
                                               taskType: Variable.taskType,
                                               lastmodified: null,
-                                              parant: readTask?.parent,
+                                              parant: widget.subTaskId,
                                               statusStagesId: null,
-                                              discription:
-                                                  discription.text ?? "",
+                                              discription: discription.text,
                                               createdBy: authentication
                                                       .authenticatedUser.code ??
                                                   "",
                                               isActive: true,
-                                              priority: Variable.prioritys,
-                                              reportingPerson: readTask
-                                                      ?.reportingPersonCode ??
-                                                  "",
-                                              endDate:
-                                                  "$ebdDate" " " "$endTime2",
-                                              startDate: "$startDate"
-                                                  " "
-                                                  "$startTime2",
-                                              img5: readTask?.metaData?.image5,
-                                              img1: readTask?.metaData?.image1,
-                                              img4: readTask?.metaData?.image4,
-                                              img2: readTask?.metaData?.image2,
-                                              img3: readTask?.metaData?.image3,
-                                              attachmentDescription: readTask
-                                                  ?.metaData?.description,
-                                              attachmentNote:
-                                                  readTask?.metaData?.note))
-                                      : BlocProvider.of<TaskBloc>(context)
-                                          .add(CreateTaskEvent(
-                                          latitude: null,
-                                          longitude: null,
-                                          AssigningCode: Variable.assignCode,
-                                          AssigningType: Variable.assignType,
-                                          createdOn:
-                                              "${_range.split(" - ")[0]} ${startTime2}",
-                                          jobId: widget.jobId ?? 0,
-                                          notas: notesController.text,
-                                          priorityLeval: "1",
-                                          remarks: remarksController.text,
-                                          taskName: taskTitle.text,
-                                          taskType: Variable.taskType,
-                                          lastmodified: null,
-                                          parant: widget.subTaskId,
-                                          statusStagesId: null,
-                                          discription: discription.text,
-                                          createdBy: authentication
-                                                  .authenticatedUser.code ??
-                                              "",
-                                          isActive: true,
-                                          priority: Variable.prioritys,
-                                          reportingPerson:
-                                              Variable.reportingCode == ""
-                                                  ? authentication
-                                                      .authenticatedUser.code
-                                                      .toString()
-                                                  : Variable.reportingCode
-                                                      .toString(),
-                                          endDate: "$ebdDate ${endTime2}",
-                                          startDate: "$startDate ${startTime2}",
-                                        ));
-                                },
-                                gradient: const LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      ColorPalette.primary,
-                                      ColorPalette.primary
-                                    ]),
-                                child: Text(
-                                  widget.editTask ? "Update" : "Create",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.roboto(
-                                    color: Colors.white,
-                                    fontSize: w / 22,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )),
+                                              priority: PriorityLeval,
+                                              reportingPerson:
+                                                  Variable.reportingCode == ""
+                                                      ? authentication
+                                                          .authenticatedUser
+                                                          .code
+                                                          .toString()
+                                                      : Variable.reportingCode
+                                                          .toString(),
+                                              endDate: "$ebdDate ${endTime2}",
+                                              startDate:
+                                                  "$startDate ${startTime2}",
+                                            ));
+                                    },
+                                    gradient: const LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          ColorPalette.primary,
+                                          ColorPalette.primary
+                                        ]),
+                                    child: createButtonLoad == true
+                                        ? SpinKitThreeBounce(
+                                            color: Colors.white,
+                                            size: 15.0,
+                                          )
+                                        : Text(
+                                            widget.editTask
+                                                ? "Update"
+                                                : "Create",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.white,
+                                              fontSize: w / 22,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          )),
                       ],
                     ),
                   ),
@@ -1792,6 +1809,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                 taskTypeList[i].id ?? 0;
                                             taskYype =
                                                 taskTypeList[i].typeName ?? "";
+                                            validationCheck();
                                             Navigator.pop(context);
                                             setState(() {});
                                           },

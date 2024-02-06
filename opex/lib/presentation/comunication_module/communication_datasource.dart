@@ -36,10 +36,18 @@ class CommunicationDatasource {
 
   Future<List<GetEmployeeList>> getAllRegisteredUsers(String? token) async {
     List<GetEmployeeList> allRegisteredUsers = [];
-   
-   
+   print("sruthyyy $token");
+  String path="https://api-task-and-operation.hilalcart.com/task-manage/list-user";
+  String api="";
+  if(token == "")
+  {
+    api=path;
+  }else{
+    api="${path}?name=$token";
+  }
+  print(" sruthyyyy $api");
     final response = await client.get(
-      "https://api-task-and-operation.hilalcart.com/task-manage/list-user",
+      api,
       options: Options(
         validateStatus: (status) => true,
         headers: {
@@ -67,8 +75,8 @@ class CommunicationDatasource {
 
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
-    for (var i = 0; i < userIdList!.length; i++) {
-    print("${userIdList[i].userCode}");
+  for (var i = 0; i < userIdList.length; i++) {
+    print("asdd${userIdList.length}");
       map.add({
         "fname": userIdList[i].fname,
         "lname": userIdList[i].lname,
@@ -221,13 +229,21 @@ class CommunicationDatasource {
     return chatListData;
   }
 
-  Future<ChatMessagaeData> getChatScreenData(
-      String token,String chatId,int pageNo) async {
-    ChatMessagaeData chatScreenData =ChatMessagaeData();
+  Future<List<ChatMessagaeData>> getChatScreenData(
+      String token,String chatId,String grpchatId, int pageNo) async {
+   List<ChatMessagaeData>? chatScreenData =[];
+  String api="";
+  if(grpchatId != "")
+  {
+    api="${CommunicationUrls.commentGroupUrl}$grpchatId";
+  }else{
+    api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
+  }
     // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
-        "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
+        // "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
+        api,
         options: Options(
           validateStatus: (status) => true,
           headers: {
@@ -238,10 +254,34 @@ class CommunicationDatasource {
         ));
     print("got it ${response.data}");
     if(response.data['status']=="success"){
-    chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
+    chatScreenData.add(ChatMessagaeData.fromJson(response.data['data']));}
+    //  (response.data['data'] as List).forEach((element) {
+    //   chatScreenData.add(ChatMessagaeData.fromJson(element));
+    // });
+    // if(response.data['status']=="success"){
+    // chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
     return chatScreenData;
   }
-
+  // Future<ChatMessagaeData> getcommentScreen(
+  //     String token,String grpchatId,int pageNo) async {
+  //   ChatMessagaeData chatScreenData =ChatMessagaeData();
+  //   // print(
+  //   //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
+  //   final response = await client.get(
+  //       "${CommunicationUrls.commentGroupUrl}$grpchatId",
+  //       options: Options(
+  //         validateStatus: (status) => true,
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Accept': 'application/json',
+  //           'Authorization': 'Bearer $token',
+  //         },
+  //       ));
+  //   print("got it ${response.data}");
+  //   if(response.data['status']=="success"){
+  //   chatScreenData = ChatMessagaeData.fromJson(response.data['data']);}
+  //   return chatScreenData;
+  // }
   Future<ProfileGetModel> getGroupProfileGetData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;

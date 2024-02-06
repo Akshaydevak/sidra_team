@@ -124,7 +124,7 @@ class CreateTaskEvent extends TaskEvent {
   final String createdBy;
   final String taskName;
   final String discription;
-  final String priorityLeval;
+  final int priorityLeval;
   final String startDate;
   final String endDate;
   final bool isActive;
@@ -198,7 +198,7 @@ class UpdateTaskEvent extends TaskEvent {
   final String createdBy;
   final String taskName;
   final String discription;
-  final String priorityLeval;
+  final int priorityLeval;
   final String startDate;
   final String endDate;
   final bool isActive;
@@ -267,7 +267,7 @@ class UpdateReportingTaskEvent extends TaskEvent {
   final String createdBy;
   final String taskName;
   final String discription;
-  final String priorityLeval;
+  final int priorityLeval;
   final String startDate;
   final String endDate;
   final bool isActive;
@@ -601,10 +601,14 @@ class ReplayReportEvent extends TaskEvent {
   final int? id;
   final String? reportStatus;
   final String? replay;
+  final String replayType;
+  final String reAssignCode;
 
   const ReplayReportEvent(  {
 
     this.id,
+    required this.replayType,
+    required this.reAssignCode,
     required this.replay,
     required this.reportStatus
 

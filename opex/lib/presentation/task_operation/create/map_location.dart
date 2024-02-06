@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -141,9 +142,16 @@ print("new mapp location got ${currentLocation}");
   bool requiredGPS = true;
   LatLng initialCenter = const LatLng(28.612925, 77.229512);
   String address = 'turn on location';
+  bool buttonLoad=false;
 
   @override
   void initState() {
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(5, 5)), 'asset/location_marker.png',)
+    // const ImageConfiguration(size: Size(0.5, 0.5)), 'asset/pin.png',)
+        .then((d) {
+      customIcon = d;
+    });
     if(widget.taskRead?.latitude!=null&&widget.taskRead?.latitude!=""&&widget.taskRead?.longitude!=null&&widget.taskRead?.latitude!=""){
       print("if case run");
       getAddressFromLatLong( LatLng(
@@ -162,6 +170,7 @@ print("new mapp location got ${currentLocation}");
         ),
         icon: customIcon ?? BitmapDescriptor.defaultMarker,
       ));
+
     }else{
       print("else case run");
       getAddressFromLatLong(const LatLng(
@@ -190,12 +199,7 @@ print("new mapp location got ${currentLocation}");
     }
     // BitmapDescriptor.defaultMarker;
     // BitmapDescriptor.defaultMarkerWithHue(50);
-    BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)), 'asset/location_marker.png',)
-        // const ImageConfiguration(size: Size(0.5, 0.5)), 'asset/pin.png',)
-        .then((d) {
-      customIcon = d;
-    });
+
 
     super.initState();
   }
@@ -242,38 +246,31 @@ print("new mapp location got ${currentLocation}");
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     selectedMapType ??= MapType.normal;
-    // final bool layersButtonEnabled = true;
-    // if (requiredGPS) {
-    //   _checkGeolocationPermission();
-    //   if (_currentPosition == null && automaticallyAnimateToCurrentLocation) {
-    //     _initCurrentLocation();
-    //   }
-    // }
     bool darkIcons = ((selectedMapType == MapType.hybrid) ||
         (selectedMapType == MapType.satellite));
     return BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
 
          if (state is UpdateTaskSuccess) {
+           buttonLoad=false;
           Navigator.pop(context);
           context.read<TaskBloc>().add(GetTaskReadListEvent(widget.taskRead?.id ?? 0));
          // Navigator.push(context, MaterialPageRoute(builder: (context) => MoreDetailsScreen(),));
           print("task sucsess");
-          // showSnackBar(
-          //   context,
-          //   message: state.taskId,
-          //   color: Colors.red,
-          //   // icon: Icons.admin_panel_settings_outlined
-          // );
+
         }
 
         else if (state is UpdateTaskFailed) {
+           buttonLoad=false;
           showSnackBar(
             context,
             message: state.error,
             color: Colors.red,
             // icon: Icons.admin_panel_settings_outlined
           );
+          setState(() {
+
+          });
         }
 
       },
@@ -288,25 +285,6 @@ print("new mapp location got ${currentLocation}");
             },
             label: "Select Location",
           )),
-      // appBar: AppBar(
-
-      //   systemOverlayStyle: SystemUiOverlayStyle(
-      //     statusBarColor: Colors.transparent,
-      //     statusBarIconBrightness:
-      //         darkIcons ? Brightness.light : Brightness.dark,
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   iconTheme: Theme.of(context).iconTheme.copyWith(
-      //         color: darkIcons ? Colors.white : null,
-      //       ),
-      //   centerTitle: false,
-      //   titleSpacing: 0,
-      //   title: const Text(
-      //     "Select Location",
-      //     style: TextStyle(color: Colors.black),
-      //   ),
-      // ),
       extendBodyBehindAppBar: true,
       body: SizedBox(
                 // color: Colors.grey,
@@ -612,6 +590,10 @@ print("new mapp location got ${currentLocation}");
                                         left: 16, right: 16, bottom: 45),
                                     child: GradientButton(
                                         onPressed: () {
+                                          buttonLoad=true;
+                                          setState(() {
+
+                                          });
                                           print("lattttt........ ${_lastMapPosition?.latitude}");
                                           print("lattttt++++++ ${_lastMapPosition?.longitude}");
 
@@ -632,13 +614,13 @@ print("new mapp location got ${currentLocation}");
                                                 createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
                                                 jobid: widget.taskRead?.jobId,
                                                 notas: widget.taskRead?.notes??"",
-                                                priorityLeval: "1",
+                                                priorityLeval: 0,
                                                 remarks: widget.taskRead?.remarks??"",
                                                 taskName: widget.taskRead?.taskName??"",
                                                 taskType: widget.taskRead?.taskType??0,
                                                 lastmodified: null,
                                                 parant: widget.taskRead?.parent??null,
-                                                statusStagesId: null,
+                                                statusStagesId: widget.taskRead?.statusStagesId,
                                                 discription:widget.taskRead?.description??"",
                                                 createdBy: widget.taskRead?.createdPersonCode??"",
                                                 isActive: true,
@@ -659,7 +641,10 @@ print("new mapp location got ${currentLocation}");
                                           end: Alignment.bottomCenter,
                                         ),
                                         color: ColorPalette.primary,
-                                        child: const Text(
+                                        child:  buttonLoad==true?SpinKitThreeBounce(
+                                          color: Colors.white,
+                                          size: 15.0,
+                                        ):Text(
                                           "CONFIRM LOCATION",
                                           style: TextStyle(
                                               color: Colors.white,

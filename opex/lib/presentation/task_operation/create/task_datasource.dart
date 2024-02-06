@@ -66,7 +66,7 @@ class TaskDataSource {
       api = prev ?? "";
     } else if (filter == true) {
       api =
-          "${ClusterUrls.taskListUrl + id.toString()}?assigned_to=&reporter=&priority=$priority&task_status=$status";
+          "${ClusterUrls.taskListUrl + id.toString()}?assigned_to=&reporter=&priority=$priority&status=$status";
     } else {
       api = search!.isNotEmpty
           ? "${ClusterUrls.taskListUrl + id.toString()}?name=$search"
@@ -103,7 +103,7 @@ class TaskDataSource {
       String? status,
       String? priority,
       reportingPersonFilter) async {
-    print("URL Task Under Job List:${ClusterUrls.adminAllJobListUrl}");
+    print("ALL Job List:${ClusterUrls.adminAllJobListUrl}");
     List<GetJobList> nationalityModel = [];
     String api = "";
     if (next != "") {
@@ -423,7 +423,7 @@ class TaskDataSource {
     required String createdBy,
     required String taskName,
     required String discription,
-    required String priorityLeval,
+    required int priorityLeval,
     required String startDate,
     required String endDate,
     required bool isActive,
@@ -453,7 +453,7 @@ class TaskDataSource {
     print("taskdetails$AssigningCode");
     print("taskdetails$notas");
     print("taskdetails$remarks");
-    print("taskdetails$priority");
+    print("priority maari$priority");
     print("taskdetails$createdOn");
     print("taskdetails$lastmodified");
     final response = await client.post(
@@ -549,7 +549,7 @@ class TaskDataSource {
     required String createdBy,
     required String taskName,
     required String discription,
-    required String priorityLeval,
+    required int priorityLeval,
     required String startDate,
     required String endDate,
     required bool isActive,
@@ -590,32 +590,31 @@ class TaskDataSource {
     print("taskdetails$img5");
     print("latitude$longitude");
     print("latitude$latitude");
+    print("latitude$attachdescription");
+    print("latitude$attachNote");
     print("update Task:${ClusterUrls.updateTaskUrl + id.toString()}");
 
     final response = await client.patch(
       ClusterUrls.updateTaskUrl + id.toString(),
-      data: {
+      data:
+      {
         "parent": parant,
         "job_id": jobid,
         "task_type": taskType,
-        "status_stages_id": statusStagesId,
-        "reporting_person": reportingPerson,
+        "reporting_person":reportingPerson,
         "created_by": createdBy,
         "task_name": taskName,
         "description": discription,
         "priority_level": priorityLeval,
         "start_date": startDate,
         "end_date": endDate,
-        "is_active": isActive,
+        "is_active": true,
         "assigning_type": AssigningType,
         "assigning_code": AssigningCode,
         "notes": notas,
         "remarks": remarks,
         "priority": priority,
-        "created_on": createdOn,
-        "last_modified": lastmodified,
-        "longitude": longitude,
-        "latitude": latitude,
+        "last_modified": null,
         "image1": img1,
         "image2": img2,
         "image3": img3,
@@ -623,6 +622,9 @@ class TaskDataSource {
         "image5": img5,
         "attachment_note": attachNote,
         "attachment_description": attachdescription,
+        "longitude":longitude,
+        "latitude":latitude,
+        "status_stages_id":statusStagesId
       },
       options: Options(
         headers: {
@@ -696,6 +698,7 @@ class TaskDataSource {
         },
       ),
     );
+    print(" shifas 777777${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
       taskList.add(GetTaskList.fromJson(element));
     });
@@ -1448,11 +1451,15 @@ class TaskDataSource {
     required int? id,
     required String? reportStatus,
     required String? replay,
+    required String? replayType,
+    required String? reAssignCode,
   }) async {
     print("replay Url${ClusterUrls.replayReportUrl + id.toString()}");
     final response = await client.post(
       ClusterUrls.replayReportUrl + id.toString(),
-      data: {"report_status": reportStatus, "reply": replay},
+      data: {"report_status": reportStatus, "reply": replay,
+      "report_reply_type":replayType,
+      "updated_user":reAssignCode},
       options: Options(
         headers: {
           'Content-Type': 'application/json',

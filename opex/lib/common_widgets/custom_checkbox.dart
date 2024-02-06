@@ -151,16 +151,16 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
             ),
             SizedBox(width: 8,),
             SizedBox(
-              width: w1/1.5,
+              width: w1/1.45,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: w1/2,
+                        width: w1/2.2,
                         // color: Colors.yellow,
                         child: Text(
                           "${widget.name}"" ""${widget.lname}",
@@ -173,28 +173,33 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
                           ),
                         ),
                       ),
-                      SizedBox(width:w/16,),
-                      // Container(
-                      //   alignment: Alignment.center,
-                      //   child: Center(
-                      //       child: val
-                      //           ? Container(
-                      //         // color: Colors.black,
-                      //         // padding: EdgeInsets.all(10),
-                      //         child: SvgPicture.string(
-                      //             OrderSvg().checkBoxActiveIcon),
-                      //       )
-                      //           // :
-                      //       // Container(
-                      //       //   color: Colors.red,
-                      //       //   padding: EdgeInsets.all(10),
-                      //       //   child: SvgPicture.string(
-                      //       //       OrderSvg().checkBoxActiveIcon,height: 30,width: 30,),
-                      //       // )
-                      //     : SvgPicture.string(
-                      //     OrderSvg().checkBoxIcon,height: 35,width: 35),
-                      //   ),
-                      // ),
+                      Spacer(),
+                      widget?.role=="Staff"?Container():
+                      widget?.role=="Associative Admin"?Container(
+                        decoration: BoxDecoration(
+                            color: ColorPalette.primary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(2)
+                        ),
+                        padding: EdgeInsets.only(left: 4,right: 4,top: 2,bottom: 2),
+                        child: Text("Ass.admin",
+                          style: GoogleFonts.roboto(
+                              color: ColorPalette.primary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: w/32
+                          ),),
+                      ):widget?.role=="Admin"?Container(
+                        decoration: BoxDecoration(
+                            color: ColorPalette.primary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(2)
+                        ),
+                        padding: EdgeInsets.only(left: 4,right: 4,top: 2,bottom: 2),
+                        child: Text("Admin",
+                          style: GoogleFonts.roboto(
+                              color: ColorPalette.primary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: w/32
+                          ),),
+                      ):Container()
                     ],
                   ),
                   // const SizedBox(height: 2,),

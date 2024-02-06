@@ -87,7 +87,7 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
             createdOn: "${readTask?.createdOn?.split("T")[0]}"" ""${readTask?.createdOn?.split("T")[1].split("+")[0]}",
             jobid: readTask?.jobId,
             notas: readTask?.notes??"",
-            priorityLeval: "1",
+            priorityLeval: 0,
             remarks: readTask?.remarks??"",
             taskName: readTask?.taskName??"",
             taskType: readTask?.taskType??0,

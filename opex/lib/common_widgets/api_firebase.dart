@@ -17,7 +17,8 @@ class FireBaseApi {
         provisional: false,
         sound: true);
     final fcmToken=await _firebaseMessaging.getToken();
-    print("FCM TOKENE.....$fcmToken");
+    print("FCM TOKENE.....$fcmToken......");
+
 
     // BlocProvider.of<EmployeeBloc>(context)
     //     .add(PostImageDiscountEvent(cropImage!));
