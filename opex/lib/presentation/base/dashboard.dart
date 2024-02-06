@@ -228,7 +228,7 @@ class _DashBoardState extends State<DashBoard> {
       PersistentTabController(initialIndex: 0);
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     setState(() {
-
+      context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
       print("internet connected");
       _connectionStatus = result;
     });

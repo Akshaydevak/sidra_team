@@ -115,6 +115,8 @@ class ChatModel extends Equatable {
   final FromUser? fromUser;
   @JsonKey(name: "lastMessageOfDay")
   final bool? lastMessageOfDay;
+  @JsonKey(name: "date")
+  final String? day;
   @JsonKey(name: "seenBy")
   final List<String>? seenBy;
 
@@ -129,6 +131,7 @@ class ChatModel extends Equatable {
       this.createdAt,
       this.updatedAt,
       this.seenBy,
+      this.day,
       this.lastMessageOfDay});
   @override
   List<Object> get props => [];

@@ -98,6 +98,7 @@ ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       updatedAt: json['updatedAt'] as String?,
       seenBy:
           (json['seenBy'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      day: json['date'] as String?,
       lastMessageOfDay: json['lastMessageOfDay'] as bool?,
     );
 
@@ -112,6 +113,7 @@ Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'updatedAt': instance.updatedAt,
       'fromUser': instance.fromUser,
       'lastMessageOfDay': instance.lastMessageOfDay,
+      'date': instance.day,
       'seenBy': instance.seenBy,
     };
 

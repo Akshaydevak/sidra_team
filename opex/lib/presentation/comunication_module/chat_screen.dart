@@ -121,6 +121,7 @@ bool ismount1=true;
   bool isload=false;
   List<GroupUserList> grpmember=[];
   List unseenuser=[];
+  String a="";
   // int messageListLimit = 26;
   SharedPreferences? pref;
   AnimationController? _animationController;
@@ -1504,14 +1505,26 @@ double currentScrollPosition= 0.0;
                                 padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
                                 itemCount: messageList.length,
                                 itemBuilder: (context, index) {
-                                  print("list view reload $index");
+                                  
+                                  print("list view reload $index $a");
+                                  String msgdate = "";
+                                 bool showdate=false;
                                  
                                   String? timestamp = messageList[index].createdAt.toString();
                                   DateTime dateTime = DateTime.parse(timestamp); 
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
-                                   String msgdate = formatMessageTimestamp(dateTime,index);
-                                   msgdate1=formattedDate;
+                                    msgdate = formatMessageTimestamp(dateTime,index);
+                                    print("list...q $a");
+                                  if(messageList[index].lastMessageOfDay == true && messageList[index].day != a) {
+                                    if(messageList[index].day !=null){
+                                      a = "${messageList[index].day}";
+                                    }
+                                   
+                                   print("list... $a");
+                                     msgdate1=msgdate;
+                                     showdate=true;
+                                  }
                                   
                                   return  Column(
                                     crossAxisAlignment:
@@ -1520,7 +1533,7 @@ double currentScrollPosition= 0.0;
                                             ? CrossAxisAlignment.start
                                             : CrossAxisAlignment.end,
                                     children: [
-                                     messageList[index].lastMessageOfDay == true?
+                                     showdate == true ?
                                       Padding(
                                            padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -1535,7 +1548,7 @@ double currentScrollPosition= 0.0;
                                                  children:[ 
                                                   
                                                   Text(
-                                                          "$msgdate",
+                                                      "$msgdate1",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
