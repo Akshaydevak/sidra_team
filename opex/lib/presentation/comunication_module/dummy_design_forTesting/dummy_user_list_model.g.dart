@@ -23,6 +23,7 @@ UserDummyList _$UserDummyListFromJson(Map<String, dynamic> json) =>
       deletedAt: json['deletedAt'] as String?,
       createdBy: json['createdBy'] as String?,
       unreadMessages: json['unreadMessages'] as int?,
+      description: json['description'] as String?,
     );
 
 Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
@@ -33,9 +34,10 @@ Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
       'photoUrl': instance.photo,
       'chatId': instance.chatid,
       'isGroupChat': instance.isgrp,
+      'type': instance.type,
       'groupname': instance.isgrpname,
       'groupId': instance.isgrpid,
-      'type': instance.type,
+      'description': instance.description,
       'latestMessage': instance.latestMessage,
       'latestMessageCreatedAt': instance.latestMessagecreated,
       'isDeleted': instance.isDeleted,
@@ -51,6 +53,7 @@ GroupUserList _$GroupUserListFromJson(Map<String, dynamic> json) =>
       photo: json['PhotoUrl'] as String?,
       connect: json['connected'] as bool?,
       createdBy: json['createdBy'] as String?,
+      isAdmin: json['isAdmin'] as bool?,
     );
 
 Map<String, dynamic> _$GroupUserListToJson(GroupUserList instance) =>
@@ -60,6 +63,7 @@ Map<String, dynamic> _$GroupUserListToJson(GroupUserList instance) =>
       'connected': instance.connect,
       'PhotoUrl': instance.photo,
       'createdBy': instance.createdBy,
+      'isAdmin': instance.isAdmin,
     };
 
 GroupList _$GroupListFromJson(Map<String, dynamic> json) => GroupList(
@@ -69,6 +73,7 @@ GroupList _$GroupListFromJson(Map<String, dynamic> json) => GroupList(
       gname: json['groupName'] as String?,
       gphoto: json['groupPhotoUrl'] as String?,
       createdBy: json['createdBy'] as String?,
+      description: json['description'] as String?,
       addedUsers: json['addedUsers'] as List<dynamic>?,
     );
 
@@ -79,6 +84,7 @@ Map<String, dynamic> _$GroupListToJson(GroupList instance) => <String, dynamic>{
       'groupName': instance.gname,
       'groupPhotoUrl': instance.gphoto,
       'createdBy': instance.createdBy,
+      'description': instance.description,
       'addedUsers': instance.addedUsers,
     };
 

@@ -29,7 +29,8 @@ class UploadAudioEvent extends AttachmentEvent {
 }
 class UploadLiveAudioEvent extends AttachmentEvent {
   final File audio;
-  const UploadLiveAudioEvent({required this.audio});
+  final bool comment;
+  const UploadLiveAudioEvent({required this.audio, required this.comment});
 }
 
 class UploadGroupProfilePicEvent extends AttachmentEvent {

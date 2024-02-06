@@ -17,11 +17,13 @@ class CreateGroupEvent extends GroupEvent {
   final List<GetEmployeeList> userIdList;
   final String groupName;
   final String groupPhotoUrl;
+  final String description;
   const CreateGroupEvent( 
       {required this.groupName,
       required this.userIdList,
       required this.token,
-      required this.groupPhotoUrl});
+      required this.groupPhotoUrl,
+      required this.description});
 }
 
 class GroupProfileGet extends GroupEvent {

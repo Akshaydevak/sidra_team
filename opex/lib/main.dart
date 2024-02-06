@@ -157,6 +157,7 @@ class _MyAppState extends State<MyApp> {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: ((context) => scoketProvider() )),
+              ChangeNotifierProvider(create: ((context) => scoketgrpProvider() )),
               BlocProvider(
                 create: (context) => JobBloc(),
               ),

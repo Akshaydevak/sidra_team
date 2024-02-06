@@ -70,9 +70,11 @@ class CommunicationDatasource {
       {required String token,
       required String groupPicUrl,
       required List<GetEmployeeList>? userIdList,
-      required String groupName}) async {
+      required String groupName,
+      required String description
+      }) async {
         print("asdd${userIdList![0].userCode}");
-
+        print("asdd$description");
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
   for (var i = 0; i < userIdList.length; i++) {
@@ -87,7 +89,7 @@ class CommunicationDatasource {
     }
     final response = await client.post(
       CommunicationUrls.createGroupUrl,
-      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl},
+      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl, "description":description},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -230,16 +232,19 @@ class CommunicationDatasource {
   }
 
   Future<List<ChatMessagaeData>> getChatScreenData(
-      String token,String chatId,String grpchatId, int pageNo) async {
+      String token,String chatId,String grpchatId,int pageNo) async {
    List<ChatMessagaeData>? chatScreenData =[];
   String api="";
+  print("shifas++@@ $grpchatId ..");
   if(grpchatId != "")
   {
-    api="${CommunicationUrls.commentGroupUrl}$grpchatId";
+    print("if grpchatId $grpchatId");
+    api="${CommunicationUrls.commentGroupUrl}$grpchatId?page=$pageNo";
   }else{
+    print("else chatId $chatId ..");
     api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
   }
-    // print(
+   print("display $api "); // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
         // "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
@@ -347,7 +352,7 @@ class CommunicationDatasource {
     return statusCode;
   }
 
-  Future<String> uploadLiveAudioData({File? img}) async {
+  Future<String> uploadLiveAudioData({File? img,bool comment=false}) async {
     String statusCode;
 
     print("total result ${img}");

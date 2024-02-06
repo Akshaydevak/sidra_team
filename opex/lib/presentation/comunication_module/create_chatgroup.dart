@@ -172,11 +172,11 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
         widget.socket!.emit("group.message",{
         "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy.toString().toTitleCase()}\n ${state.list.addedUsers?.join(',').toString().toTitleCase()} are added to the group"
       });
-      BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
-            token: widget.token ?? "",
-            grpchatId: "",
-            chatId:state.list.chatid??"",
-            pageNo: 1));
+      // BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+      //       token: widget.token ?? "",
+      //       grpchatId: "",
+      //       chatId:state.list.chatid??"",
+      //       pageNo: 0));
       PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: ChatScreen(
@@ -265,8 +265,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                         fontWeight: FontWeight.w600
                     ) ,
                     controller: discription,
-                    // maxLines: 4,
-                    // minLines: 1,
+                    maxLength: 150,
+                    maxLines: 2,
+                    minLines: 1,
                     onChanged: (n){
                       validationCheck();
                       setState(() {
@@ -275,7 +276,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                     },
                     focusNode: descriptionfocusNode,
                     decoration:  InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                      contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16),
                       hintText: "Group Description",
                       hintStyle: TextStyle(
                         color: Color(0x66151522),
@@ -294,7 +295,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
             ),
             SizedBox(height: 10,),
           SizedBox(
-            height: h / 1.6,
+            height: h / 1.65,
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -384,7 +385,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                       },
                     ),
 
-                    SizedBox(height: h/10,)
+                    // SizedBox(height: h/10,)
                   ],
                 ),
               ),
@@ -392,14 +393,14 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
           ),
             Padding(
               padding: const EdgeInsets.only(left: 16,right: 16),
-              child: isValid==true?
+              child: isValid==true&&userList.isNotEmpty?
               GradientButton(
                   onPressed: () {
    
                     BlocProvider.of<GroupBloc>(context).add(
                         CreateGroupEvent(
                             groupName: groupName.text,
-                            // discription: discription.text,
+                            description: discription.text,
                             userIdList: userList,
                             token: widget.token ??"",
                             groupPhotoUrl: ""
@@ -448,6 +449,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                     ),
                   )),
             ),
+            SizedBox(height: 5,)
         ])
 
 ),
