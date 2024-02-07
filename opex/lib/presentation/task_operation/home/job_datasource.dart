@@ -315,25 +315,6 @@ class JobDataSource {
     List<GetTaskGroupList> groupList = [];
     print("URL:${ClusterUrls.groupListUrl}");
 
-    try {
-      final response = await client.get(
-        ClusterUrls.groupListUrl,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-          },
-        ),
-      );
-      (response.data['data']['results'] as List).forEach((element) {
-        groupList.add(GetTaskGroupList.fromJson(element));
-      });
-
-      return groupList;
-    } catch (h) {
-      print("SHIFAS ERROR$h");
-    }
     final response = await client.get(ClusterUrls.groupListUrl,
       options: Options(
         headers: {
@@ -343,30 +324,12 @@ class JobDataSource {
         },
       ),
     );
+    print("hai res${response.data}");
     (response.data['data']['results'] as List).forEach((element) {
       groupList.add(GetTaskGroupList.fromJson(element));
     });
     return groupList;
   }
-
-  //assignMe
-  // Future<List<GetJobList>> getAssignedMeList() async {
-  //   List<GetJobList> assignMeList = [];
-  //   print("URL:${ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString()}");
-  //   final response = await client.get(ClusterUrls.assignMeListUrl+authentication.authenticatedUser.code.toString(),
-  //     options: Options(
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
-  //       },
-  //     ),
-  //   );
-  //   (response.data['data']['results'] as List).forEach((element) {
-  //     assignMeList.add(GetJobList.fromJson(element));
-  //   });
-  //   return assignMeList;
-  // }
 
   Future<PaginatedResponse<List<GetJobList>>> getAssignedMeList(
       String? search,String? next,String? prev) async {
