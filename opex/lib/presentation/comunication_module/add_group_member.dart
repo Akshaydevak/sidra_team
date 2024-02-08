@@ -13,6 +13,7 @@ import 'package:cluster/presentation/comunication_module/dummy_design_forTesting
 import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/comunication_module/newgroup.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,12 +32,20 @@ class AddGroupMembers extends StatefulWidget {
   bool isGroup;
   final UserDummyList? communicationUserModel;
   final Socket? socket;
+  final String redirectchatid;
+  final String redirectchatname;
+  final bool chat;
+  final GroupList? communicationuser;
   AddGroupMembers({Key? key, 
   this.token,
   this.chatid,
   this.isGroup = false,
       this.communicationUserModel,
       this.socket,
+      this.redirectchatid="",
+      this.redirectchatname="",
+      this.chat = false,
+      this.communicationuser
   })
       : super(key: key);
 
@@ -50,17 +59,39 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
   String email1='';
   String? uid='';
   bool val=true;
+  List<GroupUserList> grpmember=[];
+  bool isM=true;
+  bool issMount= true;
   // var _listGenderText = ["Users", "Groups"];
   // var _tabTextIconIndexSelected = 0;
   @override
   void initState() {
-    
+    print("redirection id ${widget.redirectchatid}");
        BlocProvider.of<CommunicationBloc>(context).add(
           GetFilterdChatListEvent(
             token: widget.token ?? "",
             chatFilter: "chats"
           ));  
+print("room pofilr ${widget.communicationuser?.description} ${widget.redirectchatid} ${widget.redirectchatname}");
+ widget.socket!.emit("group.members", 
+     widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
+     
+    widget.socket!.on("groupmembers.result", (data){ 
+      print("group members: $data");
+      grpmember.clear();
+    (data as List).forEach((element) {
+    grpmember.add(GroupUserList.fromJson(element));
+   
+      });
+      if(issMount){
+        setState(() {
+          isM=false;
+          print(grpmember.length);
+        });
+      }
+      print("room pofilr ${widget.communicationuser?.description}  ${widget.redirectchatid}");
 
+    });
 
           //  widget.socket!.on("userAddedToGroup", (data) {
 
@@ -78,6 +109,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
     // Remove the socket listener when the widget is disposed
     widget.socket?.off("userAddedToGroup");
     widget.socket?.off("userAlreadyInGroup");
+    issMount=false;
     super.dispose();
   }
 
@@ -97,7 +129,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                     BlocProvider.of<GroupBloc>(context)
               .add(GetAllRegisteredUsersEvent(""));
                     print("success");
-                    widget.socket!.emit("updategroup.list",{widget.chatid,uid});
+                    widget.socket!.emit("updategroup.list",{widget.redirectchatid==""?widget.chatid:widget.redirectchatid,uid});
                     widget.socket!.on("group.update", (data) => print("update"));
                     showSnackBar(context,
                 message: state.successmsg, color: Colors.green);
@@ -116,13 +148,14 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
        ],
                
           child: Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
                leading: BackButton(
                 onPressed: () {
                   print("hello");
                  
                   setState(() {
-                    widget.socket!.emit("group.members",{widget.chatid,uid});
+                    widget.socket!.emit("group.members",{widget.redirectchatid==""?widget.chatid:widget.redirectchatid,uid});
                      widget.socket!.on("groupmembers.result", (data) => print("update"));
                       widget.socket!.emit("update.list",{
                       widget.socket!.on("friends.update", (data) => print(data)),
@@ -138,6 +171,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                 iconTheme: IconThemeData(
                   color: Colors.black, //change your color here
                 ),
+                surfaceTintColor: Colors.white,
                 elevation: 0,
                 systemOverlayStyle: const SystemUiOverlayStyle(
                   systemNavigationBarColor: Colors.white, // Navigation bar
@@ -189,13 +223,17 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                 return customCupertinoLoading();
                               } else if (state is GetAllRegisteredUsersSuccess) {
                                 print("sjsd ${authentication.authenticatedUser.code}");
-                              for(int i=0;i<state.registeresUsers.length;){
+                                for(int j=0;j<grpmember.length;){
+                                  for(int i=0;i<state.registeresUsers.length;){
                                 // print();
-                                if(authentication.authenticatedUser.code==state.registeresUsers[i].userCode){
+                                if(grpmember[j].usercode==state.registeresUsers[i].userCode){
                                         state.registeresUsers.removeAt(i);
                                         }
                                   i++;
                               }
+                              j++;
+                                }
+                              
                                 return Column(
                                   children: [
                                     Align(
@@ -213,7 +251,15 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                         ),
                                       ),
                                     ),
-                                    ListView.separated(
+                                   state.registeresUsers.length ==0?Padding(
+                                     padding: const EdgeInsets.only(top:20),
+                                     child: Container(child: Column(
+                                       children: [
+                                         SvgPicture.string(CommunicationSvg().nolistSvg),
+                                         Text("All contacts are already in group")
+                                       ],
+                                     )),
+                                   ) :ListView.separated(
                                         padding:EdgeInsets.only(left: 16,right: 16) ,
                                         physics: NeverScrollableScrollPhysics(),
                                         shrinkWrap: true,
@@ -223,7 +269,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                  
                                                     widget.socket!.emit("userAddToGroup",{
                                                       "userCode": "${state.registeresUsers[index].userCode}",
-                                                     "chatId": widget.chatid.toString() });
+                                                     "chatId": widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString() });
                                                     
                                                    print("hjkl");
                                                    print("hjkluser1");
@@ -233,8 +279,9 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
                                                    showSnackBar(context,
                                                   message: "User Add To Group Successfully", color: ColorPalette.primary);
                                                    widget.socket!.emit("group.message",{
-                                                    "type": "notify", "chatid": widget.chatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
+                                                    "type": "notify", "chatid": widget.redirectchatid==""?widget.chatid:widget.redirectchatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
                                                   });
+                                                   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                                                   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                   
                                                 } 

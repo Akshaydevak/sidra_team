@@ -60,7 +60,7 @@ class EmployeeCard extends StatelessWidget {
                fontSize: w/22,
                textColor: Colors.white,
                fontWeight: FontWeight.w500,
-               text:"${employeeList?.fname.toString().toUpperCase()} ${employeeList?.lname.toString().toUpperCase()}" ,
+              text:"${employeeList?.fname.toString().toUpperCase()} ${employeeList?.lname.toString().toUpperCase()}" ,
              )
                  :
              CircleAvatar(

@@ -104,6 +104,7 @@ class _DashBoardState extends State<DashBoard> {
           print("wow message: ${messages.notification?.body}");
           print("wow message: ${data['is_group_chat']}");
           print("wow message: ${data['chat_id']}");
+          print("wow message: ${data['to_user_id']}");
           // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
           //   'uid': data["uid"] ,
           //   'serviceUid': data["serviceUid"] ,
@@ -160,20 +161,30 @@ print("if condition");
               pageNo: 1,
               chatId: id,
               grpchatId: ""));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,
+        //     redirectchatid: id,
+        //     redirectchatname:
+        //        messages.notification?.title??"",
+        //     isGroup: data['is_group_chat']=="true"?true:false,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
             redirectchatname:
                messages.notification?.title??"",
+               redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
+          ),));
           }
         },
         backgroundColor: Colors.black,
@@ -276,6 +287,7 @@ print("if condition");
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
+       
       }
 
     });
@@ -344,6 +356,8 @@ print("if condition");
       const NewProfileScreen(),
     ];
   }
+ 
+
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
@@ -364,7 +378,12 @@ print("if condition");
           inactiveIcon: SvgPicture.string(IconConstants().chatIcon,
               color: ColorPalette.inactiveGrey),
           activeColorPrimary: Color(0xff222222),
-          inactiveColorPrimary: ColorPalette.inactiveGrey),
+          inactiveColorPrimary: ColorPalette.inactiveGrey,
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+            initialRoute: '/',
+            defaultTitle: "communication"
+          )
+          ),
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().taskIcon,
