@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
@@ -8,6 +9,9 @@ import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.d
 import 'package:cluster/presentation/task_operation/select_assignees.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
+import 'package:day_night_time_picker/lib/constants.dart';
+import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
+import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -66,36 +70,28 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     setState(() {});
   }
 
-  String _selectedDate1 = '';
-  String _dateCount = '';
   String _range = '';
   String _range2 = '';
-  String _rangeCount = '';
 
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+  _onSelectionChanged(DateTime? startDatePass,DateTime? endDatePass) {
+
     setState(() {
-      if (args.value is PickerDateRange) {
-        _range = '${DateFormat('yyyy-MM-dd').format(args.value.startDate)} -'
-            ' ${DateFormat('yyyy-MM-dd').format(args.value.endDate ?? args.value.startDate)}';
-        _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
-            ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
-      } else if (args.value is DateTime) {
-        _selectedDate1 = args.value.toString();
-      } else if (args.value is List<DateTime>) {
-        _dateCount = args.value.length.toString();
-      } else {
-        _rangeCount = args.value.length.toString();
-      }
-      startDate = _range.split(" - ")[0];
-      startDate2 = _range2.split(" - ")[0];
-      ebdDate = _range.split(" - ")[1];
-      ebdDate2 = _range2.split(" - ")[1];
+      _range = '${DateFormat('yyyy-MM-dd').format(startDatePass!)} -'
+          ' ${DateFormat('yyyy-MM-dd').format(endDatePass!)}';
+
+      _range2 = '${DateFormat('dd-MM-yyyy').format(startDatePass)} -'
+          ' ${DateFormat('dd-MM-yyyy').format(endDatePass)}';
+      startDate=_range.split(" - ")[0];
+      startDate2=_range2.split(" - ")[0];
+      ebdDate=_range.split(" - ")[1];
+      ebdDate2=_range2.split(" - ")[1];
+
+      validationCheck();
     });
-    validationCheck();
   }
 
-  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
-  TimeOfDay _time2 = TimeOfDay(hour: 8, minute: 15);
+  // TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+  // TimeOfDay _time2 = TimeOfDay(hour: 8, minute: 15);
 
   TextEditingController jobtitle = TextEditingController();
   TextEditingController jobdiscription = TextEditingController();
@@ -103,55 +99,72 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   String startTime2 = "00:00";
   String endTime = "Select Time";
   String endTime2 = "00:00";
-  void _selectTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _time,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time = newTime;
-        startTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
-      });
-    }
-    final timeOfDay =
-        TimeOfDay(hour: newTime?.hour ?? 3, minute: newTime?.minute ?? 30);
+  Time _time = Time(hour: 11, minute: 30, second: 20);
+  Time _timeRead = Time(hour: 12, minute: 30, second: 20);
+  bool time1Selected = false;
+  bool time2Selected = false;
+  String time2='';
+  String time3='';
+  void onTimeChanged(Time newTime) {
+    setState(() {
+      _time = newTime;
 
-    final twentyFourHourFormat = DateFormat('HH:mm:00');
-    final twelveHourFormat = DateFormat('h:mm a');
-
-    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
-    startTime = twelveHourFormat.format(dateTime);
-    startTime2 = twentyFourHourFormat.format(dateTime);
-    validationCheck();
-    print(startTime);
+    });
   }
-
-  void _endTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _time2,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time2 = newTime;
-        endTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
-      });
-    }
-    print("TYM${_time2.hour}" ":" "${_time2.minute}");
-    final timeOfDay = TimeOfDay(
-        hour: newTime?.hour ?? 3,
-        minute: newTime?.minute ?? 30); // Example time of day (3:30 PM)
-
-    final twentyFourHourFormat = DateFormat('HH:mm:00');
-    final twelveHourFormat = DateFormat('h:mm a');
-
-    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
-    endTime = twelveHourFormat.format(dateTime);
-    endTime2 = twentyFourHourFormat.format(dateTime);
-    validationCheck();
-    print(endTime);
+  void onTimeChangedEnd(Time newTime) {
+    setState(() {
+      _timeRead = newTime;
+    });
   }
+  // void _selectTime() async {
+  //   final TimeOfDay? newTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: _time,
+  //   );
+  //   if (newTime != null) {
+  //     setState(() {
+  //       _time = newTime;
+  //       startTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
+  //     });
+  //   }
+  //   final timeOfDay =
+  //       TimeOfDay(hour: newTime?.hour ?? 3, minute: newTime?.minute ?? 30);
+  //
+  //   final twentyFourHourFormat = DateFormat('HH:mm:00');
+  //   final twelveHourFormat = DateFormat('h:mm a');
+  //
+  //   final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+  //   startTime = twelveHourFormat.format(dateTime);
+  //   startTime2 = twentyFourHourFormat.format(dateTime);
+  //   validationCheck();
+  //   print(startTime);
+  // }
+
+  // void _endTime() async {
+  //   final TimeOfDay? newTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: _time2,
+  //   );
+  //   if (newTime != null) {
+  //     setState(() {
+  //       _time2 = newTime;
+  //       endTime = "${newTime.hour}" ":" "${newTime.minute}" ":" "00 ";
+  //     });
+  //   }
+  //   print("TYM${_time2.hour}" ":" "${_time2.minute}");
+  //   final timeOfDay = TimeOfDay(
+  //       hour: newTime?.hour ?? 3,
+  //       minute: newTime?.minute ?? 30); // Example time of day (3:30 PM)
+  //
+  //   final twentyFourHourFormat = DateFormat('HH:mm:00');
+  //   final twelveHourFormat = DateFormat('h:mm a');
+  //
+  //   final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+  //   endTime = twelveHourFormat.format(dateTime);
+  //   endTime2 = twentyFourHourFormat.format(dateTime);
+  //   validationCheck();
+  //   print(endTime);
+  // }
 
   String PriorityLeval = "Low";
   void refreah() {
@@ -166,12 +179,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     });
   }
 
-  String startDate = "";
+  String startDate = DateTime.now().toString();
   String startDate2 = "";
-  String ebdDate = "";
+  String ebdDate = DateTime.now().toString();
   String ebdDate2 = "";
-  var endstdDate = "";
-  var startstdDate = "";
 
   int tappedTile = 0;
   bool isSubTask = false;
@@ -190,9 +201,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   validationCheck() {
     if (taskTitle.text != "" &&
         discription.text != "" &&
-        _range != "" &&
-        startTime2 != "00:00" &&
-        endTime2 != "00:00" &&
+        // _range != "" &&
+        // startTime2 != "00:00" &&
+        // endTime2 != "00:00" &&
         taskYype != null &&
         Variable.assignCode != "") {
       isValid = true;
@@ -207,6 +218,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   @override
   void initState() {
     context.read<TaskBloc>().add(const GetTaskTypeListEvent());
+    context.read<TaskBloc>().add(const GetTaskReadCreateEvent());
     Variable.assignName = "";
     Variable.assignCode = "";
     Variable.assignType = "";
@@ -224,8 +236,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
   String? taskId;
   List<GetTaskTypeList>? typelist;
   List<GetTaskList> taskListNew = [];
+  List<String> durationList = [];
 
   bool createButtonLoad = false;
+  String selectedValue = 'Today';
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width;
@@ -242,15 +256,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
         listeners: [
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is CreateTaskLoading) {
-                print("task loading");
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
               if (state is CreateTaskFailed) {
                 createButtonLoad = false;
                 showSnackBar(
@@ -346,8 +351,21 @@ class _CreateNewTaskState extends State<CreateNewTask> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
+              if (state is GetTaskReadCreateSuccess) {
+                durationList=state.createRead.duration??[];
+
+                setState(() {
+
+                });
+                print("task sucsess");
+              }
+            },
+          ),
+          BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) {
               if (state is GetTaskReadSuccess) {
                 readTask = state.getTaskRead;
+                selectedValue=readTask?.duration??"";
                 taskTitle.text = readTask?.taskName ?? "";
                 discription.text = readTask?.description ?? "";
                 taskYype = readTask?.taskTypeName ?? "";
@@ -511,6 +529,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+
                               TextFormField(
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600),
@@ -600,123 +619,265 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       onTap: () {
                                         // focusNode.unfocus();
                                         // descriptionfocusNode.unfocus();
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                surfaceTintColor: Colors.white,
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Container(
-                                                      height: 300,
-                                                      child: Scaffold(
-                                                        body: SfDateRangePicker(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          endRangeSelectionColor:
-                                                              ColorPalette
-                                                                  .primary,
-                                                          startRangeSelectionColor:
-                                                              ColorPalette
-                                                                  .primary,
-                                                          rangeSelectionColor:
-                                                              ColorPalette
-                                                                  .primary
-                                                                  .withOpacity(
-                                                                      0.1),
-                                                          selectionColor:
-                                                              Colors.grey,
-                                                          todayHighlightColor:
-                                                              ColorPalette
-                                                                  .primary,
-                                                          onSelectionChanged:
-                                                              _onSelectionChanged,
-                                                          selectionMode:
-                                                              DateRangePickerSelectionMode
-                                                                  .range,
-                                                          initialSelectedRange: widget
-                                                                  .editTask
-                                                              ? PickerDateRange(
-                                                                  DateTime.parse(
-                                                                      startDate),
-                                                                  DateTime.parse(
-                                                                      ebdDate))
-                                                              : startDate != ""
-                                                                  ? PickerDateRange(
-                                                                      DateTime.parse(
-                                                                          startDate),
-                                                                      DateTime.parse(
-                                                                          ebdDate))
-                                                                  : PickerDateRange(
-                                                                      DateTime
-                                                                          .now(),
-                                                                      DateTime
-                                                                          .now()),
+
+                                      },
+                                      child: DropdownButton<String>(
+                                        value: selectedValue,
+                                        isDense: true,
+                                        dropdownColor: Colors.white,
+                                        padding: EdgeInsets.zero,
+                                        underline: Container(),
+                                        // elevation: 16,
+                                        style: GoogleFonts.roboto(color: ColorPalette.primary,
+                                        fontWeight: FontWeight.w500),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedValue = newValue??"";
+                                            // startDate="";
+                                            // startDate2="";
+                                            // startTime="";
+                                            // startTime2="";
+                                            // endTime2='';
+                                            // endTime='';
+                                            // ebdDate='';
+                                            // ebdDate2='';
+                                            if(selectedValue=="Custom date"){
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      insetPadding:w1>700?  EdgeInsets.all(50): const EdgeInsets.all(15),
+                                                      contentPadding: EdgeInsets.zero,
+
+                                                      content: Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
+                                                        decoration: const BoxDecoration(
+                                                            color: Colors.white,
+
+                                                            borderRadius: BorderRadius.all(Radius.circular(12))),
+                                                        child: Column(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Container(
+                                                              width: w1,
+                                                              child: CalendarDatePicker2WithActionButtons(
+                                                                onOkTapped: (){
+                                                                  Navigator.pop(context);
+                                                                },
+                                                                onCancelTapped: (){
+                                                                  Navigator.pop(context);
+                                                                },
+                                                                onValueChanged: (ff){
+                                                                  print("value changed$ff");
+                                                                  DateTime? dateTime =  DateTime.parse(ff[0].toString());
+                                                                  DateTime? dateTime2 =  DateTime.parse(ff[1].toString());
+                                                                  _onSelectionChanged(dateTime,dateTime2);
+                                                                  // _range = '${DateFormat('yyyy-MM-dd').format(dateTime)} -'
+                                                                  //     ' ${DateFormat('yyyy-MM-dd').format(dateTime2)}';
+                                                                  // _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
+                                                                  //     ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
+                                                                  print("value changed${dateTime}");
+                                                                  print("value changed${dateTime2}");
+                                                                  print("value changed${_range}");
+                                                                  setState(() {
+
+                                                                  });
+                                                                },
+
+                                                                config: CalendarDatePicker2WithActionButtonsConfig(
+                                                                  firstDayOfWeek: 1,firstDate: DateTime.tryParse(startDate),
+                                                                  calendarType: CalendarDatePicker2Type.range,
+                                                                  selectedDayTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                                                                  selectedDayHighlightColor: ColorPalette.primary,
+                                                                  centerAlignModePicker: true,
+                                                                  customModePickerIcon: SizedBox(),
+                                                                ),
+                                                                value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
+                                                              ),
+                                                            ),
+                                                            // Row(
+                                                            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                            //     children: <Widget>[
+                                                            //       GestureDetector(
+                                                            //         onTap: () {
+                                                            //           Navigator.of(context).pop();
+                                                            //         },
+                                                            //         child: Container(
+                                                            //           width: w1 > 700 ? w1 / 3.3 : w / 3.3,
+                                                            //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                            //           decoration: BoxDecoration(
+                                                            //             borderRadius: BorderRadius.circular(5),
+                                                            //             border: Border.all(
+                                                            //                 width: 1,
+                                                            //                 color: const Color(0x26000000)
+                                                            //                     .withOpacity(0.05)),
+                                                            //             // boxShadow: [
+                                                            //             //   BoxShadow(
+                                                            //             //     color: Color(0x26000000),
+                                                            //             //     blurRadius: 3,
+                                                            //             //     offset: Offset(0, 0),
+                                                            //             //   ),
+                                                            //             // ],
+                                                            //             color: Colors.white,
+                                                            //           ),
+                                                            //           child: Center(
+                                                            //             child: Text(
+                                                            //               "Close",
+                                                            //               textAlign: TextAlign.center,
+                                                            //               style: GoogleFonts.inter(
+                                                            //                 color: const Color(0xffa9a8a8),
+                                                            //                 fontSize: w / 26,
+                                                            //                 fontWeight: FontWeight.w500,
+                                                            //               ),
+                                                            //             ),
+                                                            //           ),
+                                                            //         ),
+                                                            //       ),
+                                                            //       GestureDetector(
+                                                            //         onTap: () {
+                                                            //           // BlocProvider.of<SignupBloc>(context).add(
+                                                            //           //     DeactivateAccount(password: password.text));
+                                                            //         },
+                                                            //         child: Container(
+                                                            //           width: w1 > 700 ? w1 / 3.3 : w / 2.5,
+                                                            //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                            //           decoration: BoxDecoration(
+                                                            //             borderRadius: BorderRadius.circular(5),
+                                                            //             color: ColorPalette.primary,
+                                                            //           ),
+                                                            //           child: Text(
+                                                            //             "Deactivate",
+                                                            //             textAlign: TextAlign.center,
+                                                            //             style: GoogleFonts.inter(
+                                                            //               color: Colors.white,
+                                                            //               fontSize: w / 26,
+                                                            //               fontWeight: FontWeight.w500,
+                                                            //             ),
+                                                            //           ),
+                                                            //         ),
+                                                            //       ),
+                                                            //     ]),
+                                                            const SizedBox(height: 16,)
+                                                          ],
                                                         ),
                                                       ),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        if (_range.isEmpty)
-                                                          setState(() {
-                                                            // if (DateTime.now() is PickerDateRange) {
-                                                            _range =
-                                                                '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-                                                            _range2 =
-                                                                '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
-                                                            print(
-                                                                "range is here$_range");
-
-                                                            startDate = _range;
-                                                            startDate2 =
-                                                                _range2;
-                                                            ebdDate = _range;
-                                                            ebdDate2 = _range2;
-
-                                                            // validationCheck();
-                                                          });
-
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Container(
-                                                        height: 25,
-                                                        width: 75,
-                                                        color: ColorPalette
-                                                            .primary,
-                                                        child: Center(
-                                                            child: Text(
-                                                          "Ok",
-                                                          style: GoogleFonts
-                                                              .roboto(
-                                                                  color: Colors
-                                                                      .white),
-                                                        )),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            });
-                                      },
-                                      child: Container(
-                                          padding: EdgeInsets.all(5),
-                                          child: Text(
-                                            "Choose Date",
-                                            style: GoogleFonts.roboto(
-                                                fontSize: w / 24,
-                                                color: ColorPalette.primary,
-                                                fontWeight: FontWeight.w500),
-                                          )),
+                                                    );
+                                                    // return AlertDialog(
+                                                    //   surfaceTintColor: Colors.white,
+                                                    //   backgroundColor: Colors.white,
+                                                    //   shape: RoundedRectangleBorder(
+                                                    //     borderRadius:
+                                                    //         BorderRadius.circular(
+                                                    //             10.0),
+                                                    //   ),
+                                                    //   content: Column(
+                                                    //     mainAxisSize:
+                                                    //         MainAxisSize.min,
+                                                    //     children: [
+                                                    //       Container(
+                                                    //         height: 300,
+                                                    //         child: Scaffold(
+                                                    //           body: SfDateRangePicker(
+                                                    //             backgroundColor:
+                                                    //                 Colors.white,
+                                                    //             endRangeSelectionColor:
+                                                    //                 ColorPalette
+                                                    //                     .primary,
+                                                    //             startRangeSelectionColor:
+                                                    //                 ColorPalette
+                                                    //                     .primary,
+                                                    //             rangeSelectionColor:
+                                                    //                 ColorPalette
+                                                    //                     .primary
+                                                    //                     .withOpacity(
+                                                    //                         0.1),
+                                                    //             selectionColor:
+                                                    //                 Colors.grey,
+                                                    //             todayHighlightColor:
+                                                    //                 ColorPalette
+                                                    //                     .primary,
+                                                    //             onSelectionChanged:
+                                                    //                 _onSelectionChanged,
+                                                    //             selectionMode:
+                                                    //                 DateRangePickerSelectionMode
+                                                    //                     .range,
+                                                    //             initialSelectedRange: widget
+                                                    //                     .editTask
+                                                    //                 ? PickerDateRange(
+                                                    //                     DateTime.parse(
+                                                    //                         startDate),
+                                                    //                     DateTime.parse(
+                                                    //                         ebdDate))
+                                                    //                 : startDate != ""
+                                                    //                     ? PickerDateRange(
+                                                    //                         DateTime.parse(
+                                                    //                             startDate),
+                                                    //                         DateTime.parse(
+                                                    //                             ebdDate))
+                                                    //                     : PickerDateRange(
+                                                    //                         DateTime
+                                                    //                             .now(),
+                                                    //                         DateTime
+                                                    //                             .now()),
+                                                    //           ),
+                                                    //         ),
+                                                    //       ),
+                                                    //       GestureDetector(
+                                                    //         onTap: () {
+                                                    //           if (_range.isEmpty)
+                                                    //             setState(() {
+                                                    //               // if (DateTime.now() is PickerDateRange) {
+                                                    //               _range =
+                                                    //                   '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                    //               _range2 =
+                                                    //                   '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                    //               print(
+                                                    //                   "range is here$_range");
+                                                    //
+                                                    //               startDate = _range;
+                                                    //               startDate2 =
+                                                    //                   _range2;
+                                                    //               ebdDate = _range;
+                                                    //               ebdDate2 = _range2;
+                                                    //
+                                                    //               // validationCheck();
+                                                    //             });
+                                                    //
+                                                    //           Navigator.pop(context);
+                                                    //         },
+                                                    //         child: Container(
+                                                    //           height: 25,
+                                                    //           width: 75,
+                                                    //           color: ColorPalette
+                                                    //               .primary,
+                                                    //           child: Center(
+                                                    //               child: Text(
+                                                    //             "Ok",
+                                                    //             style: GoogleFonts
+                                                    //                 .roboto(
+                                                    //                     color: Colors
+                                                    //                         .white),
+                                                    //           )),
+                                                    //         ),
+                                                    //       )
+                                                    //     ],
+                                                    //   ),
+                                                    // );
+                                                  });
+                                            }
+                                          });
+                                        },
+                                        items: durationList
+                                            .map<DropdownMenuItem<String>>((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
                                     )),
                               ),
+                              selectedValue=="Custom date"?
                               Column(
                                 children: [
                                   Divider(
@@ -835,7 +996,33 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         GestureDetector(
-                                          onTap: _selectTime,
+                                          onTap: (){
+                                            Navigator.of(context).push(
+                                              showPicker(
+                                                showSecondSelector: false,
+                                                context: context,
+                                                value: _time,
+                                                onChange: onTimeChanged,
+                                                minuteInterval: TimePickerInterval.FIVE,
+                                                // Optional onChange to receive value as DateTime
+                                                onChangeDateTime: (DateTime dateTime) {
+                                                  time1Selected=true;
+
+                                                  time2 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                  final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                  final twelveHourFormat = DateFormat('h:mm a');
+                                                  startTime = twelveHourFormat.format(dateTime);
+                                                  startTime2 = twentyFourHourFormat.format(dateTime);
+                                                  print(startTime);
+                                                  print(startTime2);
+                                                  debugPrint("[debug datetime]:  $dateTime");
+                                                  debugPrint("[debug datetime]:  $time2");
+                                                  validationCheck();
+                                                  setState((){});
+                                                },
+                                              ),
+                                            );
+                                          },
                                           child: Text(
                                             startTime,
                                             style: GoogleFonts.roboto(
@@ -846,7 +1033,32 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: _endTime,
+                                          onTap: (){
+                                            Navigator.of(context).push(
+                                              showPicker(
+                                                showSecondSelector: false,
+                                                context: context,
+                                                value: _timeRead,
+                                                onChange: onTimeChangedEnd,
+                                                minuteInterval: TimePickerInterval.FIVE,
+                                                // Optional onChange to receive value as DateTime
+                                                onChangeDateTime: (DateTime dateTime) {
+                                                  time1Selected=true;
+
+                                                  time3 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                  final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                  final twelveHourFormat = DateFormat('h:mm a');
+                                                  endTime = twelveHourFormat.format(dateTime);
+                                                  endTime2 = twentyFourHourFormat.format(dateTime);
+                                                  print(endTime);
+                                                  print(endTime2);
+                                                  debugPrint("[debug datetime]:  $time3");
+                                                  validationCheck();
+                                                  setState((){});
+                                                },
+                                              ),
+                                            );
+                                          },
                                           child: Text(
                                             endTime,
                                             style: GoogleFonts.roboto(
@@ -860,7 +1072,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                     ),
                                   ),
                                 ],
-                              ),
+                              ):Container(),
                             ],
                           ),
                         ),
@@ -1348,6 +1560,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                       notas: notesController
                                                               .text ??
                                                           "",
+                                                      durationOption: selectedValue,
                                                       priorityLeval: 0,
                                                       remarks: remarksController
                                                           .text,
@@ -1568,8 +1781,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         SizedBox(
                           height: 10,
                         ),
-                        Variable.assignType == "Task_Group"
+                        Variable.assignType == "Task_Group"&&widget.editTask==false
                             ? Container()
+
                             : isValid == false
                                 ? GradientButton(
                                     color: ColorPalette.inactiveGrey,
@@ -1598,6 +1812,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       widget.editTask || isSubTask
                                           ? BlocProvider.of<TaskBloc>(context)
                                               .add(UpdateTaskEvent(
+                                        durationOption: selectedValue,
                                                   latitude: readTask?.latitude,
                                                   longitude:
                                                       readTask?.longitude,
@@ -1658,6 +1873,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               .add(CreateTaskEvent(
                                               latitude: null,
                                               longitude: null,
+                                              durationOption: selectedValue,
                                               AssigningCode:
                                                   Variable.assignCode,
                                               AssigningType:

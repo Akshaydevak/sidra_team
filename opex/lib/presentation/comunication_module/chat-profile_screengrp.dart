@@ -514,6 +514,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                 // ),
                                                                 GestureDetector(
                                                                 onTap: (){
+                                                                  Navigator.pop(context);
                                                                   print("hello");
                                                                   uid=grpmember[index].name!;
                                                                  
@@ -780,6 +781,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                               // ),
                                                               GestureDetector(
                                                                 onTap: (){
+                                                                  Navigator.pop(context);
                                                                   print("hello");
                                                                   widget.socket!.emit("update.list",{
                                                                     

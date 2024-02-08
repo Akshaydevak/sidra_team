@@ -614,6 +614,7 @@ print("new mapp location got ${currentLocation}");
                                                 createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
                                                 jobid: widget.taskRead?.jobId,
                                                 notas: widget.taskRead?.notes??"",
+                                                durationOption: widget.taskRead?.duration??'',
                                                 priorityLeval: 0,
                                                 remarks: widget.taskRead?.remarks??"",
                                                 taskName: widget.taskRead?.taskName??"",

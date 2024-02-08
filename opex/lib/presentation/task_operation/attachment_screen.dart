@@ -151,6 +151,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                     });
                     BlocProvider.of<TaskBloc>(context)
                         .add(UpdateReportingTaskEvent(
+                      durationOption: widget.readData?.duration??"",
                       latitude: widget.readData?.latitude ?? "",
                       longitude: widget.readData?.longitude ?? "",
                       img5: picModelAttachment[4].url,

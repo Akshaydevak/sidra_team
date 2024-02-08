@@ -39,6 +39,7 @@ class _AppDrawerState extends State<AppDrawer> {
     var h = MediaQuery.of(context).size.height;
     return Drawer(
       backgroundColor: ColorPalette.white,
+      surfaceTintColor: Colors.white,
       child: SafeArea(
         child: SingleChildScrollView(
           child: Container(

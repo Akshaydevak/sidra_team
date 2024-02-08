@@ -40,6 +40,8 @@ class GetTaskList extends Equatable {
   final String? taskName;
   @JsonKey(name: 'topic')
   final String? topic;
+  @JsonKey(name: 'duration')
+  final String? duration;
   @JsonKey(name: 'task_type_name')
   final String? taskTypeName;
   @JsonKey(name: 'job_title')
@@ -163,6 +165,7 @@ class GetTaskList extends Equatable {
     this.groupId,
     this.assignNameCard,
     this.topic,
+    this.duration,
     this.imgCount,
     this.taskTypeName,
     this.paymentMeta,
@@ -248,6 +251,32 @@ class GetCountTask extends Equatable {
 
   Map<String, dynamic> toJson() => _$GetCountTaskToJson(this);
 }
+
+//readCreat
+@JsonSerializable()
+class GetReadCreateTask extends Equatable {
+
+  @JsonKey(name: 'priority')
+  final List<String>? priority;
+  @JsonKey(name: 'assigning_type')
+  final List<String>? assignType;
+  @JsonKey(name: 'duration_option')
+  final List<String>? duration;
+  const GetReadCreateTask({
+    this.assignType,
+    this.priority,
+    this.duration,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory GetReadCreateTask.fromJson(Map<String, dynamic> json) =>
+      _$GetReadCreateTaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetReadCreateTaskToJson(this);
+}
+
 
 
 //payment
