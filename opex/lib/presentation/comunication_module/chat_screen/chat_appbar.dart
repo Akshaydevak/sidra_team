@@ -1,5 +1,6 @@
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat-profile_screengrp.dart';
 import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
@@ -112,7 +113,58 @@ class _ChatAppBarState extends State<ChatAppBar> {
               GestureDetector(
                   onTap: () {
                     if (widget.isGroup == false) {
-                      if (widget.chat == false) {
+                      if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
+                        widget.socket!.emit("update.list", {print("update")});
+                        widget.socket!.emit("leave.chat", {
+                          "room": widget.roomId ?? "",
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
+                        });
+                        print("user left too");
+
+                        print("user left too");
+                        widget.socket!.on("left.room", (data) {
+                          print("room left $data");
+
+                          if (mounted) {
+                            widget.socket!.off("get.clients");
+                            widget.socket!.emit("get.clients", widget.roomId);
+                            widget.socket!.off("active.length");
+                            widget.socket!.on("active.length", (data) {
+                              saveactiveusers(data);
+                              print("ACTIVE ...length1 $data");
+                            });
+                          }
+                          widget.socket!.on("msg1.seen", (data) {
+                            print("room leave message $data");
+                          });
+                        });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data) {
+                          print("user left");
+
+                          if (data["userid"] == widget.loginUserId) {
+                            print("ACTIVE length sharedprefww");
+                            saveUnreadMessageCount(0, widget.roomId ?? "");
+                            print("user left the room1 ${data["chatid"]}");
+                            setState(() {});
+                          } else {
+                            print("same user id");
+                          }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                      else if (widget.chat == false) {
                         widget.socket!.emit("update.list", {print("update")});
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
@@ -198,7 +250,65 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Navigator.pop(context);
                       }
                     } else {
-                      if (widget.isgrp == false) {
+                       if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
+                        widget.socket!.emit("update.list", {print("update")});
+                        widget.socket!.emit("leave.chat", {
+                          "room": widget.roomId ?? "",
+                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
+                        });
+                        print("user left too");
+
+                        print("user left too");
+                        widget.socket!.on("left.room", (data) {
+                          print("room left $data");
+
+                          if (mounted) {
+                            widget.socket!.off("get.clients");
+                            widget.socket!.emit("get.clients", widget.roomId);
+                            widget.socket!.off("active.length");
+                            widget.socket!.on("active.length", (data) {
+                              saveactiveusers(data);
+                              print("ACTIVE ...length1 $data");
+                            });
+                          }
+                          if (ismount) {
+                            widget.socket
+                                ?.emit("group.message.seen", widget.roomId);
+                            widget.socket?.on("msg.seen.by",
+                                (data) => print("active userss $data"));
+                          }
+
+                          widget.socket!.on("msg1.seen", (data) {
+                            print("room leave message $data");
+                          });
+                        });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data) {
+                          print("user left");
+
+                          if (data["userid"] == widget.loginUserId) {
+                            print("ACTIVE length sharedprefww");
+                            saveUnreadMessageCount(0, widget.roomId ?? "");
+                            print("user left the room1 ${data["chatid"]}");
+                            setState(() {});
+                          } else {
+                            print("same user id");
+                          }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                   else   if (widget.isgrp == false) {
                         widget.socket!.emit("update.list", {print("update")});
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
@@ -352,7 +462,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         fontWeight: FontWeight.w500,
                         text: widget.isGroup == false
                             ? widget.chat == false
-                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
                                 : "${widget.communicationuser?.name.toString().toUpperCase()}"
                             : widget.isgrp == false
                                 ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"

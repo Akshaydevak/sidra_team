@@ -135,15 +135,15 @@ class _CustomCheckBoxDataState extends State<CustomCheckBoxData> {
         ),
         child: Row(
           children: [
-            widget?.profile==""?
+            widget.profile==""?
             TextAvatar(
               shape: Shape.Circular,
               size: 40,
               numberLetters: 2,
-              fontSize: w/16,
+              fontSize: w/22,
               textColor: Colors.white,
               fontWeight: FontWeight.w500,
-              text: widget?.name.toString().toUpperCase(),
+              text:"${widget.name.toString().toUpperCase()} ${widget.lname.toString().toUpperCase()}",
             ):
             CircleAvatar(
               radius: 20,

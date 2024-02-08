@@ -22,6 +22,13 @@ class GroupChatList extends StatefulWidget {
 }
 
 class _GroupChatListState extends State<GroupChatList> {
+  
+  @override
+  void initState() {
+    print("${widget.employeeList?.fname }");
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +79,7 @@ class _GroupChatListState extends State<GroupChatList> {
             
               },
               email: widget.employeeList?.email??"",
-              name: widget.employeeList?.fname ??
-                  "",
+              name: widget.employeeList?.fname ?? "",
             ),
             
          

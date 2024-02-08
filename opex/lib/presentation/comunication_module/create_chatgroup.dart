@@ -105,6 +105,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
               systemNavigationBarColor: Colors.white, // Navigation bar
               statusBarColor: Colors.white, // Status bar
             ),
+            surfaceTintColor: Colors.white,
           elevation: 0,
           backgroundColor: Colors.white,
           centerTitle: false,
@@ -172,11 +173,11 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
         widget.socket!.emit("group.message",{
         "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy.toString().toTitleCase()}\n ${state.list.addedUsers?.join(',').toString().toTitleCase()} are added to the group"
       });
-      // BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
-      //       token: widget.token ?? "",
-      //       grpchatId: "",
-      //       chatId:state.list.chatid??"",
-      //       pageNo: 0));
+      BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+            token: widget.token ?? "",
+            grpchatId: "",
+            chatId:state.list.chatid??"",
+            pageNo: 1));
       PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: ChatScreen(
@@ -365,9 +366,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                                       NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) =>
                                           GroupChatList(
-                                            userUpdateList: userList??[],
+                                            userUpdateList: userList,
                                             userList: userCodeList,
-                                            readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.registeresUsers[index].userCode):false,
+                                            readUser:userCodeList.isNotEmpty? userCodeList.contains(state.registeresUsers[index].userCode):false,
 
                                               listuser: chaneTable,
                                               employeeList: state
@@ -375,7 +376,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                                       separatorBuilder:
                                           (context, index) => Container(),
                                       itemCount:
-                                      state.registeresUsers!.length),
+                                      state.registeresUsers.length),
                                 ),
                               ],
                             ),
