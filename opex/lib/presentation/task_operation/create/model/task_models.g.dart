@@ -43,6 +43,7 @@ GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       groupId: json['group_id'] as int?,
       assignNameCard: json['assigning_name'] as String?,
       topic: json['topic'] as String?,
+      duration: json['duration'] as String?,
       imgCount: json['image_count'] as int?,
       taskTypeName: json['task_type_name'] as String?,
       paymentMeta: json['payment_data'] == null
@@ -106,6 +107,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'id': instance.id,
       'task_name': instance.taskName,
       'topic': instance.topic,
+      'duration': instance.duration,
       'task_type_name': instance.taskTypeName,
       'job_title': instance.jobTitle,
       'job_description': instance.jobDiscription,
@@ -177,6 +179,26 @@ Map<String, dynamic> _$GetCountTaskToJson(GetCountTask instance) =>
       'Task Completed': instance.taskCompleted,
       'Task on Progress': instance.taskOnProgress,
       'Task Pending': instance.taskPending,
+    };
+
+GetReadCreateTask _$GetReadCreateTaskFromJson(Map<String, dynamic> json) =>
+    GetReadCreateTask(
+      assignType: (json['assigning_type'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      priority: (json['priority'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      duration: (json['duration_option'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+    );
+
+Map<String, dynamic> _$GetReadCreateTaskToJson(GetReadCreateTask instance) =>
+    <String, dynamic>{
+      'priority': instance.priority,
+      'assigning_type': instance.assignType,
+      'duration_option': instance.duration,
     };
 
 PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel(

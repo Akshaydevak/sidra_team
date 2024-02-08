@@ -49,29 +49,74 @@ class TaskCard extends StatelessWidget {
             color: const Color(0x33a9a8a8),
             width: 1,
           ),
-          // boxShadow: const [
-          //   BoxShadow(
-          //     color: Color(0x11000000),
-          //     blurRadius: 15,
-          //     offset: Offset(0, 0),
-          //   ),
-          // ],
-          color: Color(0xfff8f7f5),
+          color: Colors.white,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.only(left: 5,right: 5,top: 10,bottom: 5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  taskList?.statusName=="VERIFIED"?
-                  Row(
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Container(
+                    width: w1/1.65,
+                    height: w1>700?50:35,
+                    // color: Colors.red,
+                    child: Text(
+                      taskList?.taskName?.toString().toTitleCase() ?? "",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w / 26,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5,right: 5,top: 10,bottom: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
+                      taskList?.statusName=="VERIFIED"?
+                      Row(
+                        children: [
+                          Container(
+                              // width: 121,
+                              // height: 30,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x05000000),
+                                    blurRadius: 8,
+                                    offset: Offset(1, 1),
+                                  ),
+                                ],
+                                 color: Color(0xff079B16)
+                              ),
+                              child: Text(
+                                "COMPLETED",
+                                style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: w / 36,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+                          SizedBox(width: 3,),
+                          SvgPicture.string(
+                            TaskSvg().tickIcon,
+                            color: Colors.green,
+                            width: 15,
+                            height: 15,
+                          ),
+                        ],
+                      ):Container(
                           // width: 121,
                           // height: 30,
                           padding:
@@ -85,97 +130,43 @@ class TaskCard extends StatelessWidget {
                                 offset: Offset(1, 1),
                               ),
                             ],
-                             color: Color(0xff079B16)
+                             color: taskList?.statusName=="STARTED"?
+                        Color(0xffFF9900):taskList?.statusName=="ON PROGRESS"?
+                        Color(0xff2871AF):taskList?.statusName=="COMPLETED"?
+                        Color(0xff079B16):taskList?.statusName=="PENDING"?
+                        Color(0xffFF0000):Color(0xffFFE5BE),
                           ),
                           child: Text(
-                            "COMPLETED",
+                            taskList?.statusName == null
+                                ? "NOT INITIATED"
+                                : taskList?.statusName ?? "",
                             style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: w / 36,
                               fontWeight: FontWeight.w500,
                             ),
                           )),
-                      SizedBox(width: 3,),
-                      SvgPicture.string(
-                        TaskSvg().tickIcon,
-                        color: Colors.green,
-                        width: 15,
-                        height: 15,
+                      SizedBox(
+                        height: 10,
                       ),
                     ],
-                  ):Container(
-                      // width: 121,
-                      // height: 30,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                         color: taskList?.statusName=="STARTED"?
-                    Color(0xffFF9900):taskList?.statusName=="ON PROGRESS"?
-                    Color(0xff2871AF):taskList?.statusName=="COMPLETED"?
-                    Color(0xff079B16):taskList?.statusName=="PENDING"?
-                    Color(0xffFF0000):Color(0xffFFE5BE),
-                      ),
-                      child: Text(
-                        taskList?.statusName == null
-                            ? "NOT INITIATED"
-                            : taskList?.statusName ?? "",
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: w / 36,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
-                  SizedBox(
-                    height: 10,
                   ),
-                  Container(
-                    padding: EdgeInsets.only(left: 5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: w/2,
-                          height: w1>700?50:35,
-                          // color: Colors.red,
-                          child: Text(
-                            taskList?.taskName?.toString().toTitleCase() ?? "",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: w / 26,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        // SizedBox(height: 10,),
-                        // Image.asset("asset/img_7.png",height: 20,),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: 8,right: 8,bottom: 10),
               child: Row(crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  taskList?.assigningType=="Individual"?
-                  Icon(Icons.person,color: ColorPalette.primary,
-                    size: 13,):
-              Icon(Icons.group,color: ColorPalette.primary,
-              size: 13,),
-                  SizedBox(width: 2,),
-                  Container(width: w/3,
+                Text("Assign To",
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.roboto(
+                  fontSize: w / 28,
+                  fontWeight: FontWeight.w500,
+                ),),
+                  SizedBox(width: 5,),
+                  Container(width: w/3.2,
                     // color: Colors.deepOrange,
                     child: Text(taskList?.assignNameCard??"",
                     overflow: TextOverflow.ellipsis,
@@ -183,42 +174,43 @@ class TaskCard extends StatelessWidget {
                     style: GoogleFonts.roboto(
                       fontSize: w/36,
                       fontWeight: FontWeight.w500,
+                      color: Color(0xff818181)
                     ),),
                   ),
-                ],
-              ),
-            ),
-            Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  // SvgPicture.string(TaskSvg().attachmIcon),
-                  // SizedBox(width: 5,),
-                  // Text(
-                  //   "1",
-                  //   style: GoogleFonts.roboto(
-                  //     color: Color(0xff939393),
-                  //     fontSize: w/25,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // ),
-                  // SizedBox(width: 10,),
-                  SvgPicture.string(TaskSvg().startDateIcon,height: 20,width: 20,),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    endstdDate ?? "",
-                    style: GoogleFonts.roboto(
-                      color:  Colors.black,
-                      fontSize: w / 28,
-                      fontWeight: FontWeight.w500,
+                  Container(
+                    child: Row(
+                      children: [
+
+                        SvgPicture.string(TaskSvg().dueDateIcon,height: 15,width: 15,),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Due on" ?? "",
+                          style: GoogleFonts.roboto(
+                            color:  Colors.black,
+                            fontSize: w / 28,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(width: 2,),
+                        Text(
+                          "${endstdDate}" ?? "",
+                          style: GoogleFonts.roboto(
+                            color: Color(0xff818181),
+                            fontSize: w / 28,
+                            fontWeight: FontWeight.w500,
+
+                          ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
+
+
           ],
         ),
       ),

@@ -74,6 +74,7 @@ class _MoreDetailsScreenState extends State<MoreDetailsScreen> {
           UpdateTaskEvent(
             latitude: null,
             longitude:null,
+            durationOption: readTask?.duration??"",
             img5:  readTask?.metaData?.image5,
             img1: readTask?.metaData?.image1,
             img4: readTask?.metaData?.image4,
