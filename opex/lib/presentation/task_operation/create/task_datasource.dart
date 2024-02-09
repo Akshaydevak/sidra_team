@@ -306,6 +306,27 @@ class TaskDataSource {
     return selectedItemDetails;
   }
 
+  //CREATIONrEAD
+  Future<GetReadCreateTask> getTaskCreationRead() async {
+    GetReadCreateTask selectedItemDetails;
+
+    print("Task Read:${ClusterUrls.createTaskUrl}");
+    final response = await client.get(
+      ClusterUrls.createTaskUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    selectedItemDetails = GetReadCreateTask.fromJson((response.data['data']));
+
+    return selectedItemDetails;
+  }
+
   //readRwards
   Future<ReadRewards> getReadRewards(int id, bool isTask) async {
     ReadRewards selectedItemDetails;
@@ -432,11 +453,13 @@ class TaskDataSource {
     required String notas,
     required String remarks,
     required String priority,
+    required String durationOption,
     required String createdOn,
     required String? lastmodified,
     required String? longitude,
     required String? latitude,
   }) async {
+    print("taskdetails parant$durationOption");
     print("taskdetails parant$parant");
     print("taskdetails jobId$jobId");
     print("taskdetails taskType$taskType");
@@ -456,6 +479,53 @@ class TaskDataSource {
     print("priority maari$priority");
     print("taskdetails$createdOn");
     print("taskdetails$lastmodified");
+    try{
+      final response = await client.post(
+        ClusterUrls.createTaskUrl,
+        data: {
+          "parent": parant,
+          "job_id": jobId,
+          "task_type": taskType,
+          "status_stages_id": statusStagesId,
+          "reporting_person": reportingPerson,
+          "duration_option": durationOption,
+          "created_by": createdBy,
+          "task_name": taskName,
+          "description": discription,
+          "priority_level": priorityLeval,
+          "start_date": null,
+          "end_date": null,
+          "is_active": isActive,
+          "assigning_type": AssigningType,
+          "assigning_code": AssigningCode,
+          "notes": notas,
+          "remarks": remarks,
+          "priority": priority,
+          "created_on": createdOn,
+          "last_modified": lastmodified,
+          "longitude": longitude,
+          "latitude": latitude,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+          },
+        ),
+      );
+
+      print("create response${response}");
+      if (response.data['status'] == 'success') {
+        return DataResponse(
+            data: response.data["status"] == "success",
+            error: response.data['task_id'].toString());
+      } else {
+        return DataResponse(data: false, error: response.data['message']);
+      }
+    }catch(u,l){
+      print("llll$u$l");
+    }
     final response = await client.post(
       ClusterUrls.createTaskUrl,
       data: {
@@ -464,6 +534,7 @@ class TaskDataSource {
         "task_type": taskType,
         "status_stages_id": statusStagesId,
         "reporting_person": reportingPerson,
+        "duration_option": durationOption,
         "created_by": createdBy,
         "task_name": taskName,
         "description": discription,
@@ -552,6 +623,7 @@ class TaskDataSource {
     required int priorityLeval,
     required String startDate,
     required String endDate,
+    required String durationOption,
     required bool isActive,
     required String AssigningType,
     required String AssigningCode,
@@ -601,6 +673,7 @@ class TaskDataSource {
         "parent": parant,
         "job_id": jobid,
         "task_type": taskType,
+        "duration_option": durationOption,
         "reporting_person":reportingPerson,
         "created_by": createdBy,
         "task_name": taskName,

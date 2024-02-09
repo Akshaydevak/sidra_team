@@ -120,8 +120,6 @@ class GetTopicListFailed extends TaskState {}
 
 
 //task read
-class GetTaskReadInitial extends TaskState {}
-
 
 class GetTaskReadLoading extends TaskState {}
 
@@ -134,6 +132,19 @@ class GetTaskReadSuccess extends TaskState {
 
 class GetTaskReadFailed extends TaskState {
   final String error;GetTaskReadFailed(this.error);
+}
+//
+class GetTaskReadCreateLoading extends TaskState {}
+
+class GetTaskReadCreateSuccess extends TaskState {
+  final GetReadCreateTask createRead;
+  GetTaskReadCreateSuccess({required this.createRead});
+
+}
+
+class GetTaskReadCreateFailed extends TaskState {
+  final String error;
+  GetTaskReadCreateFailed(this.error);
 }
 //readRewards
 class GetReadRewadsInitial extends TaskState {}

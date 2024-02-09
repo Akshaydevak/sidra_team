@@ -447,6 +447,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                                 "+")[0]}",
                                                             jobid: widget.readTask
                                                                 ?.jobId,
+                                                            durationOption: widget.readTask?.duration??"",
                                                             notas: widget.readTask
                                                                 ?.notes ?? "",
                                                             priorityLeval: widget

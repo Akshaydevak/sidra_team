@@ -46,18 +46,18 @@ main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // await FireBaseApi().initNotification();
-  AndroidNotificationChannel channel = const AndroidNotificationChannel(
-      'sidra_channel', // id
-      'sidra_bazar', // title
-
-      description: 'This channel is used for important notifications.',
-      importance: Importance.high,
-      enableVibration: true,
-      playSound: true);
-
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  // AndroidNotificationChannel channel = const AndroidNotificationChannel(
+  //     'sidra_channel', // id
+  //     'sidra_bazar', // title
+  //
+  //     description: 'This channel is used for important notifications.',
+  //     importance: Importance.high,
+  //     enableVibration: true,
+  //     playSound: true);
+  //
+  //
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
 
   runApp(MyApp());
 }
@@ -84,60 +84,60 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     // data();
-    print("login init");
-    final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
-    FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings androidinitializationsettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings darwinInitializationSettings =
-    DarwinInitializationSettings();
-    const InitializationSettings initializationSettings =
-    InitializationSettings(
-        android: androidinitializationsettings,
-        iOS: darwinInitializationSettings);
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'messages', 'Messages',
-        description: "This is for flutter firebase",
-        importance: Importance.max);
-    createChannel(channel);
-    flutterlocalnotificationplugins.initialize(initializationSettings);
-    FirebaseMessaging.onMessage.listen((event) async {
-
-      // await ftts.setLanguage("en-US");
-      // await ftts.setSpeechRate(0.5);
-      // await ftts.setVolume(1.0);
-      // await ftts.setPitch(1);
-      //
-      // //play text to sp
-      // var result = await ftts.speak(
-      // "${event.notification?.title ?? ""} ${event.notification?.body}");
-      // if (result == 1) {
-      //
-      // //speaking
-      // } else {
-      // //not speaking
-      // }
-      final notification = event.notification;
-      final android = event.notification?.android;
-      final data = event.data;
-      if (notification != null && android != null) {
-        flutterlocalnotificationplugins.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                android: AndroidNotificationDetails(channel.id, channel.name,
-                    channelDescription: channel.description,
-                    icon: android.smallIcon)));
-      }
-
-    });
-
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   // Handle the incoming message when the app is in the foreground
-    //   print("onMessage: ${message}");
-    //   // _handleNotification(message.data);
+    // print("login init");
+    // final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
+    // FlutterLocalNotificationsPlugin();
+    // const AndroidInitializationSettings androidinitializationsettings =
+    // AndroidInitializationSettings('@mipmap/ic_launcher');
+    // const DarwinInitializationSettings darwinInitializationSettings =
+    // DarwinInitializationSettings();
+    // const InitializationSettings initializationSettings =
+    // InitializationSettings(
+    //     android: androidinitializationsettings,
+    //     iOS: darwinInitializationSettings);
+    // const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    //     'messages', 'Messages',
+    //     description: "This is for flutter firebase",
+    //     importance: Importance.max);
+    // createChannel(channel);
+    // flutterlocalnotificationplugins.initialize(initializationSettings);
+    // FirebaseMessaging.onMessage.listen((event) async {
+    //
+    //   // await ftts.setLanguage("en-US");
+    //   // await ftts.setSpeechRate(0.5);
+    //   // await ftts.setVolume(1.0);
+    //   // await ftts.setPitch(1);
+    //   //
+    //   // //play text to sp
+    //   // var result = await ftts.speak(
+    //   // "${event.notification?.title ?? ""} ${event.notification?.body}");
+    //   // if (result == 1) {
+    //   //
+    //   // //speaking
+    //   // } else {
+    //   // //not speaking
+    //   // }
+    //   final notification = event.notification;
+    //   final android = event.notification?.android;
+    //   final data = event.data;
+    //   if (notification != null && android != null) {
+    //     flutterlocalnotificationplugins.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //             android: AndroidNotificationDetails(channel.id, channel.name,
+    //                 channelDescription: channel.description,
+    //                 icon: android.smallIcon)));
+    //   }
+    //
     // });
+    //
+    // // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // //   // Handle the incoming message when the app is in the foreground
+    // //   print("onMessage: ${message}");
+    // //   // _handleNotification(message.data);
+    // // });
 
     super.initState();
   }

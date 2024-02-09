@@ -615,6 +615,7 @@ class _MyJobCardState extends State<MyJobCard> {
                             changeTappedTile(i);
                             BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(
                                 longitude: widget.tasksList?.longitude,
+                                durationOption: widget.tasksList?.duration??"",
                                 latitude: widget.tasksList?.latitude,
                                 taskType: widget.tasksList?.taskType ?? 0,
                                 discription:

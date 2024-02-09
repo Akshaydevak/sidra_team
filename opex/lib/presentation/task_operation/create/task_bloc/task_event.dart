@@ -73,6 +73,13 @@ class GetTaskReadListEvent extends TaskEvent {
   List<Object> get props => [this.id];
 }
 
+class GetTaskReadCreateEvent extends TaskEvent {
+  // final int id;
+  const GetTaskReadCreateEvent();
+  // @override
+  // List<Object> get props => [this.id];
+}
+
 //readReward
 class GetReadRewardsEvent extends TaskEvent {
   final int id;
@@ -118,6 +125,7 @@ class GetAssignCountEvent extends TaskEvent {
 class CreateTaskEvent extends TaskEvent {
   final int? parant;
   final int jobId;
+  final String durationOption;
   final int taskType;
   final int? statusStagesId;
   final String reportingPerson;
@@ -140,6 +148,7 @@ class CreateTaskEvent extends TaskEvent {
   const CreateTaskEvent(  {
     required this.longitude,
     required this.latitude,
+    required this.durationOption,
     this.parant,
     required this.jobId,
     required this.taskType,
@@ -195,6 +204,7 @@ class UpdateTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String durationOption;
   final String createdBy;
   final String taskName;
   final String discription;
@@ -225,6 +235,7 @@ class UpdateTaskEvent extends TaskEvent {
     required this.latitude,
     required this.img4,
     required this.img3,
+    required this.durationOption,
     required this.img2,
     required this.img5,
     required this.attachmentDescription,
@@ -264,6 +275,7 @@ class UpdateReportingTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String durationOption;
   final String createdBy;
   final String taskName;
   final String discription;
@@ -291,6 +303,7 @@ class UpdateReportingTaskEvent extends TaskEvent {
 
   const UpdateReportingTaskEvent( {
     required this.longitude,
+    required this.durationOption,
     required this.latitude,
     required this.img4,
     required this.img3,

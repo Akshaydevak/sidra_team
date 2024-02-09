@@ -75,6 +75,7 @@ class _TaskTitleState extends State<TaskTitle> {
       BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(
         latitude: null,
         longitude: null,
+        durationOption: getTaskRead?.duration??"",
         img5: getTaskRead?.metaData?.image5,
         img1: getTaskRead?.metaData?.image1,
         img4: getTaskRead?.metaData?.image4,
@@ -3229,6 +3230,7 @@ class _TaskTitleState extends State<TaskTitle> {
                             changeTappedTile(i);
                             BlocProvider.of<TaskBloc>(context).add(
                                 UpdateTaskEvent(
+                                  durationOption: getTaskRead?.duration??"",
                                     longitude: getTaskRead?.longitude ?? "",
                                     latitude: getTaskRead?.latitude ?? "",
                                     taskType: getTaskRead?.taskType ?? 0,
@@ -3414,6 +3416,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   changeTappedTile(i);
                                                   BlocProvider.of<TaskBloc>(context)
                                                       .add(UpdateTaskEvent(
+                                                    durationOption: getTaskRead?.duration??"",
                                                           longitude: getTaskRead
                                                                   ?.longitude ??
                                                               "",
