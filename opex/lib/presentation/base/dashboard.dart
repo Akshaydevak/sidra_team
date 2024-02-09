@@ -134,9 +134,21 @@ print("if condition");
               pageNo: 1,
               chatId: "",
               grpchatId: id));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: logingrpuserId,
+        //     socket: socketCon1,
+        //     grpchatid: id,
+        //     cmntgrpchatname:
+        //        messages.notification?.title??"",
+        //     isGroup: true,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: logingrpuserId,
             socket: socketCon1,
@@ -144,10 +156,7 @@ print("if condition");
             cmntgrpchatname:
                messages.notification?.title??"",
             isGroup: true,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
+          ),));
           }
           else{
             print("else condition");
@@ -246,9 +255,21 @@ print("if condition");
               pageNo: 1,
               chatId: "",
               grpchatId: id));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen: ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen: ChatScreen(
+        //     token: token,
+        //     loginUserId: logingrpuserId,
+        //     socket: socketCon1,
+        //     grpchatid: id,
+        //     cmntgrpchatname:
+        //        message.notification?.title??"",
+        //     isGroup: true,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: logingrpuserId,
             socket: socketCon1,
@@ -256,10 +277,7 @@ print("if condition");
             cmntgrpchatname:
                message.notification?.title??"",
             isGroup: true,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
+          ),));
           }
       else{
         print("else condition");
@@ -273,21 +291,30 @@ print("if condition");
               pageNo: 1,
               chatId: id,
               grpchatId: ""));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,
+        //     redirectchatid: id,
+        //     redirectchatname:
+        //        message.notification?.title??"",
+        //     isGroup: data['is_group_chat']=="true"?true:false,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+       Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
             redirectchatname:
                message.notification?.title??"",
+               redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-       
+          ),));
       }
 
     });

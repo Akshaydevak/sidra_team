@@ -13,11 +13,13 @@ import 'package:cluster/presentation/comunication_module/chat_type_model.dart';
 import 'package:cluster/presentation/comunication_module/com_svg.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
+import 'package:cluster/presentation/comunication_module/imagepreview.dart';
 import 'package:cluster/presentation/comunication_module/videoplayerscreen.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -136,6 +138,9 @@ bool ismount1=true;
   SharedPreferences? pref;
   AnimationController? _animationController;
   String fromuserids="";
+  final ImagePicker picker = ImagePicker();
+  XFile? image;
+  late File _imageFile;
   //Mic Animation
   Animation<double>? _micTranslateTop;
   Animation<double>? _micRotationFirst;
@@ -351,11 +356,11 @@ widget.socket?.emit("group.message.seen",roomId);
          
         });
        }
-       _controller.animateTo(
-      _controller.position.minScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    //    _controller.animateTo(
+    //   _controller.position.minScrollExtent,
+    //   duration: const Duration(milliseconds: 300),
+    //   curve: Curves.easeOut,
+    // );
       // ScrollService.scrollToEnd(
       //       scrollController: _controller, reversed: true);
       });
@@ -687,6 +692,7 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
       });
             }
 }
+FocusNode focus=FocusNode();
 void datagrpmember(data){
 print("group members1: $data");
 print("jhdgfkjhgkrng");
@@ -1534,7 +1540,13 @@ double currentScrollPosition= 0.0;
           })
         ],
         child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            focus.unfocus();
+            setState(() {
+              
+            });
+          },
           child: Scaffold(
             backgroundColor: Color(0xffEFF1F3),
             appBar: PreferredSize(
@@ -1649,8 +1661,6 @@ double currentScrollPosition= 0.0;
                                 padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
                                 itemCount: messageList.length,
                                 itemBuilder: (context, index) {
-                                  
-                                  print("list view reload $index ${messageList.last.firstMessageOfDay}");
                                   String msgdate = "";
                                  
                                  int today=0;
@@ -1976,93 +1986,87 @@ double currentScrollPosition= 0.0;
                                               ],
                                             ),
                                           } else ...{
-                                            Column(children: [
-                                              Align(
-                                                alignment: Alignment.bottomLeft,
-                                                child: ConstrainedBox(
-                                                  constraints: BoxConstraints(
-                                                  minWidth: MediaQuery.of(context)
-                                                            .size
-                                                            .width -
-                                                        300,
-                                                    maxWidth: MediaQuery.of(context)
-                                                            .size
-                                                            .width -
-                                                        95,
+                                            Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                minWidth: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      300,
+                                                  maxWidth: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      95,
+                                                ),
+                                                child: Container(
+                                                  // elevation: 1,
+                                                  decoration: BoxDecoration(
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(0),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(10),
+                                                    ),
+                                                    boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+                                                  // ),
+                                                  color: Colors.white,
                                                   ),
-                                                  child: Card(
-                                                    elevation: 1,
-                                                    shape:
-                                                        const RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(0),
-                                                        topRight: Radius.circular(10),
-                                                        bottomLeft:
-                                                            Radius.circular(10),
-                                                        bottomRight:
-                                                            Radius.circular(10),
-                                                      ),
-                                                    ),
-                                                    color: Colors.white,
-                                                    // margin: const EdgeInsets.symmetric(
-                                                    //     horizontal: 15, vertical: 5),
-                                                    child: Stack(
-                                                      // mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                            left: 10,
-                                                            right:20,
-                                                            top:7,
-                                                            bottom: 17,
-                                                          ),
-                                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Text(
-                                                              messageList[index]
-                                                                      .message ??
-                                                                  "",
-                                                                  textAlign: TextAlign.left,
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors.black),
-                                                              ),
-                                                              SizedBox(height: 5,),
-                                                             
-                                                            ],
-                                                          ),
+                                                  // shape:
+                                                     
+                                                  // margin: const EdgeInsets.symmetric(
+                                                  //     horizontal: 15, vertical: 5),
+                                                  child: Stack(
+                                                    // mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                          left: 10,
+                                                          right:20,
+                                                          top:7,
+                                                          bottom: 17,
                                                         ),
-                                                         Positioned(
-                                                                 right: 5,
-                                                                 bottom: 5,
-                                                                 child: Text(
-                                                                formattedTime,
-                                                                  style: const TextStyle(
-                                                                    fontSize: 8,
-                                                                    color: Color(0xFF6D6D6D),
-                                                                  ),                                                           ),
-                                                               ),
-                                                      ],
-                                                    ),
+                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                            messageList[index]
+                                                                    .message ??
+                                                                "",
+                                                                textAlign: TextAlign.left,
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors.black),
+                                                            ),
+                                                            SizedBox(height: 5,),
+                                                           
+                                                          ],
+                                                        ),
+                                                      ),
+                                                       Positioned(
+                                                               right: 5,
+                                                               bottom: 5,
+                                                               child: Text(
+                                                              formattedTime,
+                                                                style: const TextStyle(
+                                                                  fontSize: 8,
+                                                                  color: Color(0xFF6D6D6D),
+                                                                ),                                                           ),
+                                                             ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
-                                              // Row(
-                                              //   mainAxisAlignment:
-                                              //       MainAxisAlignment.start,
-                                              //   children: [
-                                              //     Text(
-                                              //       messageList[index].createdAt ??
-                                              //           "",
-                                              //       style: const TextStyle(
-                                              //           fontSize: 13,
-                                              //           color: Color(0xFF6D6D6D)),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                            ])
+                                            )
                                           }
                                         } else ...{
                                           if(messageList[index].type=="notify")...{
@@ -2248,7 +2252,6 @@ double currentScrollPosition= 0.0;
                                                   } else if (messageList[index]
                                                           .type ==
                                                       "audio") ...{
-                                                        SizedBox(height: 5,),
                                                         Stack(
                                                           children:[
                                                             VoiceMessage(
@@ -2475,28 +2478,26 @@ double currentScrollPosition= 0.0;
                                                                       .width -
                                                                   90,
                                                         ),
-                                                        child: Card(
-                                                          elevation: 1,
-                                                          shape:
-                                                              const RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.only(
-                                                              topLeft:
-                                                                  Radius.circular(
-                                                                      0),
-                                                              topRight:
-                                                                  Radius.circular(
-                                                                      10),
-                                                              bottomLeft:
-                                                                  Radius.circular(
-                                                                      10),
-                                                              bottomRight:
-                                                                  Radius.circular(
-                                                                      10),
-                                                            ),
-                                                          ),
-                                                          color:
-                                                              Colors.white,
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(0),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(10),
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey.withOpacity(0.5),
+                                                        offset: Offset(0, 1), // changes position of shadow
+                                                      ),
+                                                    ],
+                                                  // ),
+                                                  color: Colors.white,
+                                                  ),
                                                           // margin: const EdgeInsets
                                                           //         .symmetric(
                                                           //     horizontal: 15,
@@ -2606,7 +2607,7 @@ double currentScrollPosition= 0.0;
                                          )  
                                           }
                                        else if (messageList[index].type == "image") ...{
-                                        SizedBox(height:2,),
+                                      
                                           InkWell(
                                               onTap: () {
                                                 Navigator.push(context,
@@ -2717,7 +2718,6 @@ double currentScrollPosition= 0.0;
                                                   )))
                                         } else if (messageList[index].type ==
                                             "audio") ...{
-                                              SizedBox(height:1,),
                                               Stack(
                                                 children:[
                                                    VoiceMessage(
@@ -2777,8 +2777,7 @@ double currentScrollPosition= 0.0;
                                               InkWell(
                                                   onTap: () async {
                                                     final url =
-                                                        messageList[index].message ??
-                                                            "";
+                                                        messageList[index].message.toString();
                                                     if (await canLaunch(url)) {
                                                       await launch(url);
                                                     } else {
@@ -2838,6 +2837,7 @@ double currentScrollPosition= 0.0;
                                                             crossAxisAlignment:
                                                                 CrossAxisAlignment.start,
                                                             children: [
+                                                              SizedBox(height: 15,),
                                                               Text(
                                                                 // messageList[index]
                                                                 //         .message ??
@@ -2849,13 +2849,13 @@ double currentScrollPosition= 0.0;
                                                                   fontSize:13,
                                                                 ),)
                                                               ),
-                                                              // Text(
-                                                              //   "21.54 Mb",
-                                                              //   style: TextStyle(
-                                                              //     color: Color(0xff333333),
-                                                              //     fontSize: 12,
-                                                              //   ),
-                                                              // ),
+                                                              Text(
+                                                                "${ messageList[index].message!.split('?').first.split('.').last.toString().toUpperCase()}",
+                                                                style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize:8,
+                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),
@@ -2954,134 +2954,124 @@ double currentScrollPosition= 0.0;
                                               )
                                           
                                         } else ...{
-                                          Column(
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.centerRight,
-                                                child: ConstrainedBox(
-                                                  constraints: BoxConstraints(
-                                                    minWidth: MediaQuery.of(context)
-                                                            .size
-                                                            .width - 300,
-                                                    maxWidth: MediaQuery.of(context)
-                                                            .size
-                                                            .width - 100,
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                minWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width - 300,
+                                                maxWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width - 100,
+                                              ),
+                                              child: GestureDetector(
+                                                onLongPress: (){
+                                                  if(widget.isGroup==true){
+                                                    // showMenu(context: context, position: RelativeRect.fill, 
+                                                    // items: [
+                                                    //   PopupMenuItem(child: Row(
+                                                    //     children: [
+                                                    //       Text("Read by"),
+                                                    //       IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios))
+                                                    //     ],
+                                                    //   ))
+                                                                        
+                                                    // ]);
+                                                  }
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(10),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(0),
+                                                    ),
+                                                    boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+                                                  // ),
+                                                 color: ColorPalette.primary,
                                                   ),
-                                                  child: GestureDetector(
-                                                    onLongPress: (){
-                                                      if(widget.isGroup==true){
-                                                        // showMenu(context: context, position: RelativeRect.fill, 
-                                                        // items: [
-                                                        //   PopupMenuItem(child: Row(
-                                                        //     children: [
-                                                        //       Text("Read by"),
-                                                        //       IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios))
-                                                        //     ],
-                                                        //   ))
-                              
-                                                        // ]);
-                                                      }
-                                                    },
-                                                    child: Card(
-                                                      elevation: 1,
-                                                      shape:
-                                                          const RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(10),
-                                                          topRight: Radius.circular(10),
-                                                          bottomLeft:
-                                                              Radius.circular(10),
-                                                          bottomRight:
-                                                              Radius.circular(0),
+                                                  
+                                                  // margin:
+                                                  //     const EdgeInsets.symmetric(
+                                                  //         horizontal: 10,
+                                                  //         vertical: 5),
+                                                  child:  Stack(
+                                                    // mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                          left: 10,
+                                                          right:20,
+                                                          top:7,
+                                                          bottom:16,
+                                                        ),
+                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                            messageList[index]
+                                                                    .message ??
+                                                                "",
+                                                                textAlign: TextAlign.left,
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                color: Color.fromARGB(255, 255, 255, 255)),
+                                                            ),
+                                                            
+                                                           SizedBox(height: 5,)
+                                                          ],
                                                         ),
                                                       ),
-                                                      color: ColorPalette.primary,
-                                                      // margin:
-                                                      //     const EdgeInsets.symmetric(
-                                                      //         horizontal: 10,
-                                                      //         vertical: 5),
-                                                      child:  Stack(
-                                                        // mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets.only(
-                                                              left: 10,
-                                                              right:20,
-                                                              top:7,
-                                                              bottom:16,
-                                                            ),
-                                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                            mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                Text(
-                                                                messageList[index]
-                                                                        .message ??
-                                                                    "",
-                                                                    textAlign: TextAlign.left,
-                                                                style: const TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: Color.fromARGB(255, 255, 255, 255)),
-                                                                ),
-                                                                
-                                                               SizedBox(height: 5,)
-                                                              ],
-                                                            ),
-                                                          ),
-                                                           Positioned(
-                                                                   right: 5,
-                                                                   bottom: 5,
-                                                                   child: Row(
-                                                                     children: [
-                                                                       Text(
-                                                                        formattedTime,
-                                                                        style: const TextStyle(
-                                                                          fontSize: 8,
-                                                                          color: Color.fromARGB(255, 211, 209, 209),
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(width: 5,),
-                                                                      if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength >= 2)...{
-                                                                        Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
-                                                                      }
-                                                                      else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
-                                                                        SizedBox()
-                                                                      }
-                                                                      else...{
-                                                                        messageList[index].seenBy!.isEmpty?
-                                                                        SizedBox():
-                                                                      Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
-                                                                                         
-                                                                      }
-                                                                      } else...{
-                                                                        SizedBox()
-                                                                      }
-                                                                      
-                                                                     
-                                                                     ],
-                                                                   ),
-                                                                 ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                       Positioned(
+                                                               right: 5,
+                                                               bottom: 5,
+                                                               child: Row(
+                                                                 children: [
+                                                                   Text(
+                                                                    formattedTime,
+                                                                    style: const TextStyle(
+                                                                      fontSize: 8,
+                                                                      color: Color.fromARGB(255, 211, 209, 209),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(width: 5,),
+                                                                  if(widget.grpchatid=="")...{
+                                                                    if(activeUsersLength >= 2)...{
+                                                                    Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                  }
+                                                                  else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
+                                                                    SizedBox()
+                                                                  }
+                                                                  else...{
+                                                                    messageList[index].seenBy!.isEmpty?
+                                                                    SizedBox():
+                                                                  Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
+                                                                                     
+                                                                  }
+                                                                  } else...{
+                                                                    SizedBox()
+                                                                  }
+                                                                  
+                                                                 
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
-                                              // Row(
-                                              //   mainAxisAlignment:
-                                              //       MainAxisAlignment.end,
-                                              //   children: [
-                                              //     Text(
-                                              //       messageList[index].createdAt ??
-                                              //           "",
-                                              //       style: const TextStyle(
-                                              //           fontSize: 13,
-                                              //           color: Color(0xFF6D6D6D)),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                            ],
+                                            ),
                                           )
                                         }
                                       },
@@ -3120,9 +3110,12 @@ double currentScrollPosition= 0.0;
                                 separatorBuilder: (context, index) {
                                   fromuserids=messageList[index+1].fromuserid!;
                                   oldertimestampp=messageList[index].createdAt??"";
-                                    return messageList[index].fromuserid!=fromuserids? const SizedBox(
+                                    return messageList[index].fromuserid!=fromuserids?  Container(
                                     height: 8,
-                                  ):const SizedBox(height: 1,);
+                                    //  color:Colors.green
+                                  ):Container(height:3, 
+                                  // color:Colors.red
+                                  );
                                   
                                 },
                               ),
@@ -3235,6 +3228,7 @@ double currentScrollPosition= 0.0;
                                       SizedBox(
                                         width: w / 1.25,
                                         child: TextFormField(
+                                          focusNode: focus,
                                           style: const TextStyle(
                                             // height: 1.6,
                                           ),
@@ -3284,7 +3278,7 @@ double currentScrollPosition= 0.0;
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   borderSide: const BorderSide(
-                                                    color: Color(0xffe6ecf0),
+                                                    color: ColorPalette.primary,
                                                   )),
                                               enabledBorder: OutlineInputBorder(
                                                   borderRadius:
@@ -3314,11 +3308,9 @@ double currentScrollPosition= 0.0;
                                                     child: SvgPicture.string(
                                                         TaskSvg().shareIcon),
                                                   )),
-                                              hintText:widget.isGroup==true? activeUsersLength != 0
-                                                  ? "${activeUsersLength.toString()} active users"
-                                                  : micLongPress == true
+                                              hintText:widget.isGroup==true?  micLongPress == true
                                                       ? "Recording, < slide to cancel "
-                                                      : "Message":micLongPress == true
+                                                      : "Message ${activeUsersLength.toString()} active users":micLongPress == true
                                                       ? "Recording, < slide to cancel "
                                                       : "Message",
                                               hintStyle: GoogleFonts.roboto(
@@ -3636,19 +3628,82 @@ String formatMessageTimestamp(DateTime timestamp,int index){
                       text: "Image",
                       color: const Color(0xFF33C658)),
                   onTap: () {
-                    pickFiles("Image", context);
+                   
+       Navigator.pop(context);
+                     showDialog(
+      context: context, builder: (BuildContext parentcontext) {
+        return AlertDialog(
+          content: Container(
+            height: MediaQuery.of(context).size.height/8,
+            child: Padding(
+              padding: const EdgeInsets.only(top:8),
+              child: Column( crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: (){
+                      
+                      pickFiles("Image",parentcontext,"camera");
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          IconButton(onPressed: (){
+                            pickFiles("Image", parentcontext,"camera");
+                            
+                          }, icon: Icon(Icons.camera_alt_outlined,color: ColorPalette.primary,size:25,),),
+                          Text("Camera")
+                        ],
+                      ),
+                    ),
+                    
+                  ),
+                  InkWell(
+                    onTap: (){
+                      pickFiles("Image", parentcontext,"gallery");
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          IconButton(onPressed: (){
+                            pickFiles("Image", parentcontext,"gallery");
+                          }, icon: Icon(Icons.photo_library_outlined,color: ColorPalette.primary,size:25)),
+                          Text("Gallery")
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          // actions: [
+          //   Row( mainAxisAlignment: MainAxisAlignment.end,
+          //     children: [
+          //       TextButton(onPressed: (){
+          //         Navigator.pop(context);
+          //       }, child: Text("Cancel")),
+
+          //     ],
+          //   )
+          // ],
+        );
+      },
+      );
+                    // pickFiles("Image", context);
                   },
                 ),
                 InkWell(
                   onTap: () {
-                    pickFiles("Video", context);
+                    Navigator.pop(context);
+                    pickFiles("Video", context,"");
                   },
                   child: iconCreation(
                       icon: Icons.video_call, text: "Video", color: Colors.red),
                 ),
                 InkWell(
                   onTap: () {
-                    pickFiles("MultipleFile", context);
+                    Navigator.pop(context);
+                    pickFiles("MultipleFile", context,"");
                   },
                   child: iconCreation(
                       icon: Icons.insert_drive_file,
@@ -3671,25 +3726,78 @@ String formatMessageTimestamp(DateTime timestamp,int index){
     );
   }
 
-  void pickFiles(String? filetype, BuildContext context) async {
+  void pickFiles(String? filetype, BuildContext context,String? source) async {
+    print("inside the case");
     switch (filetype) {
       case 'Image':
-        result = await FilePicker.platform
-            .pickFiles(type: FileType.image, allowMultiple: false,allowCompression: true);
+      print("inside the case");
+        // result = await FilePicker.platform
+        //     .pickFiles(type: FileType.image, allowMultiple: false,allowCompression: true);
+        image = await picker.pickImage(source:source=="gallery"? ImageSource.gallery:ImageSource.camera,imageQuality: 50 );
+        _imageFile = File(image!.path);
       // result= await  
-          if (result != null) {
-  for (PlatformFile file in result!.files) {
-    int maxSizeBytes =5 * 1024 * 1024; // Set the maximum size to 1 MB
-    if (file.size <= maxSizeBytes) {
+      int sized =1024;
+      if (image != null) {
+  // for (PlatformFile file in image!.files) {
+    final fileSizeInBytes =await image!.length();
+    final fileSizeInKB = fileSizeInBytes / sized;
+    final fileSizeInMB = fileSizeInKB / sized;
+    print('File size: $fileSizeInKB KB ($fileSizeInMB MB)');
+    int maxSizeBytes = 5 * 1024 * 1024;
+    print("File size: $maxSizeBytes"); 
+    if (fileSizeInMB <= maxSizeBytes) {
+      print('File pathinside: ${image!.path}');
+      setState(() {
+        showDialog(
+          barrierColor: Color.fromARGB(255, 238, 230, 230),
+      context: context, builder: (BuildContext context) {
+        return Builder(
+          builder: (context) {
+            return Container(
+              color: Colors.black,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+                     child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row( mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, icon: Icon(Icons.close,color: Colors.white,size: 30,)),
+                              ],
+                            ),
+                          ),
+                          
+                           Container(
+                            height: MediaQuery.of(context).size.height/1.35,
+                            child: Center(child: Image.file(_imageFile,fit:BoxFit.fitHeight ,))),
+                           Padding(
+                             padding: const EdgeInsets.only(bottom: 20),
+                             child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                               child: IconButton(onPressed: (){
+                                BlocProvider.of<AttachmentBloc>(context)
+                                             .add(UploadPictureEvent(image: _imageFile));
+                                             Navigator.pop(context);
+                               }, icon:Icon(Icons.done),color: Colors.blue,),
+                             ),
+                           )
+                         ],
+                       ),
+                   );
+          }
+        );
+       
+      },
+      );
+      });
+         
       
-      // File size is within the allowed limit
-      print('File path: ${file.path}');
-      print('File size: ${file.size}');
-      BlocProvider.of<AttachmentBloc>(context)
-            .add(UploadPictureEvent(image: result!));
     } else {
-      print('File path: ${file.path}');
-      print('File size: ${file.size}');
+      print('File path: ${image!.path}');
+      print('File size: ${image!.length()}');
       // File size exceeds the allowed limit
       print('File size exceeds the limit.');
       showDialog(
@@ -3711,8 +3819,9 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       );
       // Handle accordingly, for example, show an error message.
     }
-  }
+  // }
 } else {
+  Navigator.pop(context);
   // User canceled the file picking
 }
         // BlocProvider.of<AttachmentBloc>(context)
@@ -3771,6 +3880,7 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       case 'Audio':
         result = await FilePicker.platform
             .pickFiles(type: FileType.audio, allowMultiple: false,allowCompression: true );
+            
         if (result == null) return;
         file = result!.files.first;
         
@@ -3866,6 +3976,7 @@ String formatMessageTimestamp(DateTime timestamp,int index){
         break;
     }
   }
+  
 
 Future<XFile> testCompressAndGetFile(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
