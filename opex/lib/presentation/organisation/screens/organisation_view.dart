@@ -4,7 +4,7 @@ import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart'
 import 'package:cluster/presentation/organisation/screens/contract_details.dart';
 import 'package:cluster/presentation/organisation/screens/operational_unit.dart';
 import 'package:cluster/presentation/organisation/screens/organisation_svg.dart';
-import 'package:cluster/presentation/purchase_app/table_widget.dart';
+// import 'package:cluster/presentation/purchase_app/table_widget.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -164,58 +164,58 @@ class _OrganisationViewState extends State<OrganisationView> {
                       width: 2),
                   children: [
                     TableRow(children: [
-                      TableTitle(
-                        label: "Business Name",
-                      ),
-                      SubTextCard(
-                        label: "Rawabi Market",
-                      ),
+                      // TableTitle(
+                      //   label: "Business Name",
+                      // ),
+                      // SubTextCard(
+                      //   label: "Rawabi Market",
+                      // ),
                     ]),
                     TableRow(children: [
-                      TableTitle(
-                        label: "Industry",
-                      ),
-                      SubTextCard(
-                        label: "Hypermarket",
-                      ),
+                      // TableTitle(
+                      //   label: "Industry",
+                      // ),
+                      // SubTextCard(
+                      //   label: "Hypermarket",
+                      // ),
                     ]),
                     TableRow(children: [
-                      TableTitle(
-                        label: "TRN No.",
-                      ),
-                      SubTextCard(
-                        label: "TR12021NDBXB",
-                      ),
+                      // TableTitle(
+                      //   label: "TRN No.",
+                      // ),
+                      // SubTextCard(
+                      //   label: "TR12021NDBXB",
+                      // ),
                     ]), TableRow(children: [
-                      TableTitle(
-                        label: "Import/Export Code",
-                      ),
-                      SubTextCard(
-                        label: "TR12021NDBXB",
-                      ),
+                      // TableTitle(
+                      //   label: "Import/Export Code",
+                      // ),
+                      // SubTextCard(
+                      //   label: "TR12021NDBXB",
+                      // ),
                     ]), TableRow(children: [
-                      TableTitle(
-                        label: "Business E-Mail",
-                      ),
-                      SubTextCard(
-                        label: "rawabimarket@gmail.com",
-                      ),
+                      // TableTitle(
+                      //   label: "Business E-Mail",
+                      // ),
+                      // SubTextCard(
+                      //   label: "rawabimarket@gmail.com",
+                      // ),
                     ]),
                     TableRow(children: [
-                      TableTitle(
-                        label: "Working Hours",
-                      ),
-                      SubTextCard(
-                        label: "24 Hours",
-                      ),
+                      // TableTitle(
+                      //   label: "Working Hours",
+                      // ),
+                      // SubTextCard(
+                      //   label: "24 Hours",
+                      // ),
                     ]),
                     TableRow(children: [
-                      TableTitle(
-                        label: "Business Phone Number",
-                      ),
-                      SubTextCard(
-                        label: "125454441",
-                      ),
+                      // TableTitle(
+                      //   label: "Business Phone Number",
+                      // ),
+                      // SubTextCard(
+                      //   label: "125454441",
+                      // ),
                     ]),
                   ],
                 ),

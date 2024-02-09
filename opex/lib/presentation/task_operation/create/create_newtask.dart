@@ -34,6 +34,7 @@ import 'model/task_models.dart';
 class CreateNewTask extends StatefulWidget {
   final bool isSubTask;
   final bool editTask;
+  final bool backRead;
   final int? subTaskId;
   final int? jobId;
   final String? startDateTime;
@@ -42,6 +43,7 @@ class CreateNewTask extends StatefulWidget {
       {Key? key,
       this.isSubTask = false,
       this.editTask = false,
+      this.backRead = false,
       this.subTaskId,
       this.jobId,
       this.startDateTime,
@@ -292,8 +294,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         gravity: ToastGravity.BOTTOM,
                         backgroundColor: Colors.black,
                         textColor: Colors.white);
+                    context.read<TaskBloc>().add(
+                        GetTaskReadListEvent(widget.subTaskId ?? 0));
                     Navigator.pop(context);
-                  } else {
+                  }
+
+                  else {
                     Navigator.pop(context);
                     context.read<TaskBloc>().add(
                         GetTaskReadListEvent(int.tryParse(state.taskId) ?? 0));
@@ -1531,7 +1537,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               Variable.taskType == 0 ||
                                                       taskTitle.text == "" ||
                                                       discription.text == "" ||
-                                                      _range == "" ||
                                                       Variable.assignType ==
                                                           "" ||
                                                       Variable.assignCode == ""
@@ -1598,7 +1603,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                               Variable.taskType == 0 ||
                                                       taskTitle.text == "" ||
                                                       discription.text == "" ||
-                                                      _range == "" ||
                                                       Variable.assignType ==
                                                           "" ||
                                                       Variable.assignCode == ""

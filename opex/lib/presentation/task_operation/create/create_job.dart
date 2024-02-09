@@ -283,9 +283,7 @@ class _CreateJobState extends State<CreateJob> {
             ),
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
-                if(state is GetJobReadLoading){
 
-                }
                 if(state is GetJobReadSuccess){
                   JobRead=state.getjobRead;
 

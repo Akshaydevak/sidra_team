@@ -447,7 +447,7 @@ class _TaskTitleState extends State<TaskTitle> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              print("subtaskkk stateee $state");
+
               if (state is GetSubTaskListSuccess) {
                 print("subtaskkk sucsess${state.taskList}");
 
@@ -459,14 +459,6 @@ class _TaskTitleState extends State<TaskTitle> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is DeleteTaskLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
               if (state is DeleteTaskFailed) {
                 showSnackBar(
                   context,
@@ -498,14 +490,6 @@ class _TaskTitleState extends State<TaskTitle> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is PinCreationLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
               if (state is PinCreationFailed) {
                 showSnackBar(
                   context,
@@ -537,40 +521,25 @@ class _TaskTitleState extends State<TaskTitle> {
               }
             },
           ),
+          // BlocListener<TaskBloc, TaskState>(
+          //   listener: (context, state) {
+          //
+          //     if (state is NotificationDueSuccess) {
+          //       showSnackBar(
+          //         context,
+          //         message: "Enabled",
+          //         color: Colors.red,
+          //         // icon: Icons.admin_panel_settings_outlined
+          //       );
+          //       context
+          //           .read<TaskBloc>()
+          //           .add(GetTaskReadListEvent(getTaskRead?.id ?? 0));
+          //     }
+          //     if (state is NotificationDueFailed) {}
+          //   },
+          // ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is NotificationDueLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
-              if (state is NotificationDueSuccess) {
-                showSnackBar(
-                  context,
-                  message: "Enabled",
-                  color: Colors.red,
-                  // icon: Icons.admin_panel_settings_outlined
-                );
-                context
-                    .read<TaskBloc>()
-                    .add(GetTaskReadListEvent(getTaskRead?.id ?? 0));
-              }
-              if (state is NotificationDueFailed) {}
-            },
-          ),
-          BlocListener<TaskBloc, TaskState>(
-            listener: (context, state) {
-              if (state is ReplayReportLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
-
               if (state is ReplayReportSuccess) {
                 showSnackBar(
                   context,
@@ -1128,10 +1097,38 @@ class _TaskTitleState extends State<TaskTitle> {
                                                       color: const Color(
                                                           0xffFFC800),
                                                       svg: CreateSvg().taskIcon,
-                                                      endIcon: Container(),
+                                                      endIcon: Container(
+                                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+                                                          decoration: BoxDecoration(
+                                                            color: ColorPalette.primary,
+                                                              borderRadius: BorderRadius.circular(4)
+
+                                                          ),
+                                                          child: Text("ADD",
+                                                              style: GoogleFonts.roboto(
+                                                                  fontWeight: FontWeight.w500,
+                                                                fontSize: w/28,
+                                                                  color: Colors.white
+                                                              ),)),
                                                       onTap: () {
                                                         setState(() {
-                                                          // isSubTask = !isSubTask;
+                                                          print("shifu");
+                                                          PersistentNavBarNavigator
+                                                              .pushNewScreen(
+                                                            context,
+                                                            screen:
+                                                            CreateNewTask(
+                                                              jobId: getTaskRead?.jobId,
+                                                              isSubTask: true,
+                                                              backRead: true,
+                                                              subTaskId: getTaskRead?.id,
+                                                            ),
+                                                            withNavBar: true,
+                                                            // OPTIONAL VALUE. True by default.
+                                                            pageTransitionAnimation:
+                                                            PageTransitionAnimation
+                                                                .fade,
+                                                          );
                                                         });
                                                       },
                                                     ),
@@ -1704,7 +1701,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   SizedBox(
                                     height: 30,
                                   ),
-                                  widget.isMyJob
+                                getTaskRead?.assigningType=="Task_Group"&&taskListNew.isNotEmpty?Container():widget.isMyJob
                                       ? Column(
                                           children: [
                                             // GestureDetector(
@@ -2219,10 +2216,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 )),
                                           ),
                                         ),
-                                  communicationGroupId==""?Container():SizedBox(
+                                  getTaskRead?.assigningType=="Task_Group"&&taskListNew.isNotEmpty?Container():communicationGroupId==""?Container():SizedBox(
                                     height: 5,
                                   ),
-                                  communicationGroupId==""?Container():
+                                  getTaskRead?.assigningType=="Task_Group"&&taskListNew.isNotEmpty?Container():communicationGroupId==""?Container():
                                   GestureDetector(
                                     onTap: () {
                                       print("grp id $communicationGroupId");
@@ -3415,7 +3412,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             padding: const EdgeInsets.only(),
                                             physics: const ScrollPhysics(),
                                             shrinkWrap: true,
-                                            itemCount: statusList!.length,
+                                            itemCount: statusList.length,
                                             itemBuilder:
                                                 (BuildContext context, int i) {
                                               return GestureDetector(
