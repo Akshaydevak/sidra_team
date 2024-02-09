@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
@@ -48,6 +49,9 @@ class _DashBoardState extends State<DashBoard> {
 
   String? token ='';
   IO.Socket? socketCon;
+  IO.Socket? socketCon1;
+  String? loginuserId;
+  String? logingrpuserId;
   SharedPreferences? pref;
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
@@ -93,18 +97,20 @@ class _DashBoardState extends State<DashBoard> {
       String? descrption=messages.notification?.body;
 
       Flushbar(
-        onTap: (flushbar) {
+        onTap: (flushbar) async {
           print("jjijij: ${data['title']}");
           print("jjijij: ${data['Sidra_teams_key']}");
           print("wow message: ${messages.notification?.title}");
           print("wow message: ${messages.notification?.body}");
+          print("wow message: ${data['is_group_chat']}");
+          print("wow message: ${data['chat_id']}");
           // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
           //   'uid': data["uid"] ,
           //   'serviceUid': data["serviceUid"] ,
           // });
           String id=data['chat_id'];
           if(data['Sidra_teams_key']=="task_and_operation"){
-
+print("if condition");
             context.read<TaskBloc>().add(
                 GetTaskReadListEvent(int.tryParse(id) ?? 0));
             PersistentNavBarNavigator.pushNewScreen(
@@ -114,13 +120,60 @@ class _DashBoardState extends State<DashBoard> {
               pageTransitionAnimation: PageTransitionAnimation.fade,
             );
           }
+          else if(data['Sidra_teams_key']=="comment"){
+
+             print("else condition");
+        pref=await SharedPreferences.getInstance();
+        token = pref!.getString("token");
+        logingrpuserId=pref!.getString("logingrpuserid");
+        print("else condition.. $token $loginuserId");
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id));
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(
+            token: token,
+            loginUserId: logingrpuserId,
+            socket: socketCon1,
+            grpchatid: id,
+            cmntgrpchatname:
+               messages.notification?.title??"",
+            isGroup: true,
+          ),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+          }
           else{
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen:  ChatScreen(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
+            print("else condition");
+        pref=await SharedPreferences.getInstance();
+        token = pref!.getString("token");
+        loginuserId=pref!.getString("loginuserid");
+        print("else condition.. $token $loginuserId");
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: id,
+              grpchatId: ""));
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(
+            token: token,
+            loginUserId: loginuserId,
+            socket: socketCon,
+            redirectchatid: id,
+            redirectchatname:
+               messages.notification?.title??"",
+            isGroup: data['is_group_chat']=="true"?true:false,
+          ),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
           }
         },
         backgroundColor: Colors.black,
@@ -149,7 +202,7 @@ class _DashBoardState extends State<DashBoard> {
     });
 
     // Handle message when the app is opened from the background
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
       print('Message opened while the app was in the background: $message');
       var data=message.data;
       // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
@@ -157,6 +210,7 @@ class _DashBoardState extends State<DashBoard> {
       //   'serviceUid': data["serviceUid"] ,
       // });
       String id=data['chat_id'];
+      print("hahaha$id ..... ${message.notification?.title}");
       if(data['Sidra_teams_key']=="task_and_operation"){
 
         context.read<TaskBloc>().add(
@@ -168,10 +222,57 @@ class _DashBoardState extends State<DashBoard> {
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       }
-      else{
+      else if(data['Sidra_teams_key']=="comment"){
+
+             print("else condition");
+        pref=await SharedPreferences.getInstance();
+        token = pref!.getString("token");
+        logingrpuserId=pref!.getString("logingrpuserid");
+        print("else condition.. $token $logingrpuserId");
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id));
         PersistentNavBarNavigator.pushNewScreen(
           context,
-          screen:  ChatScreen(),
+          screen: ChatScreen(
+            token: token,
+            loginUserId: logingrpuserId,
+            socket: socketCon1,
+            grpchatid: id,
+            cmntgrpchatname:
+               message.notification?.title??"",
+            isGroup: true,
+          ),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+          }
+      else{
+        print("else condition");
+        pref=await SharedPreferences.getInstance();
+        token = pref!.getString("token");
+        loginuserId=pref!.getString("loginuserid");
+        print("else condition.. $token $loginuserId");
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: id,
+              grpchatId: ""));
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(
+            token: token,
+            loginUserId: loginuserId,
+            socket: socketCon,
+            redirectchatid: id,
+            redirectchatname:
+               message.notification?.title??"",
+            isGroup: data['is_group_chat']=="true"?true:false,
+          ),
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
@@ -229,7 +330,7 @@ class _DashBoardState extends State<DashBoard> {
       PersistentTabController(initialIndex: 0);
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     setState(() {
-
+      context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
       print("internet connected");
       _connectionStatus = result;
     });
@@ -326,12 +427,16 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-
+final socketpro =context.watch<scoketProvider>();
+        socketCon = socketpro.socket;
+        final socketpro1 =context.watch<scoketgrpProvider>();
+        socketCon1 = socketpro.socket;
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     return BlocListener<DummyLoginBloc, DummyLoginState>(
       listener: (context, state)  async {
         final socketProvider = context.read<scoketProvider>();
+        final socketgrpProvider = context.read<scoketgrpProvider>();
         if (state is TokenCreationCommunicationLoading) {
         } else if (state is TokenCreationCommunicationSuccess) {
           pref= await SharedPreferences.getInstance();
@@ -342,6 +447,8 @@ class _DashBoardState extends State<DashBoard> {
                       });
 
             socketProvider.connect(state.token.toString());
+            socketgrpProvider.connect(state.token.toString());
+            
 
           }
           else if (state is TokenCreationCommunicationFailed) {

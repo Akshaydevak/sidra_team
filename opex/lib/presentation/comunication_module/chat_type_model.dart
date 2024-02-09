@@ -9,3 +9,8 @@ List<ChatTypeModel> chatTypeList = [
   ChatTypeModel(name: 'Personal', code: "chats"),
   ChatTypeModel(name: 'Group Chat', code: "groups"),
 ];
+
+class Chatdate {
+  String day;
+  Chatdate({required this.day});
+}

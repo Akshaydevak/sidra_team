@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We are using a camera to enable you to upload pictures of documents</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Older devices need location.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We are using location to enable you to know the availability of delivery</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We are using location to enable you to know the availability of delivery</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

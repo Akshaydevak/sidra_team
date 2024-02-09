@@ -8,6 +8,7 @@ import 'package:cluster/presentation/comunication_module/audio_state.dart';
 import 'package:cluster/presentation/comunication_module/bloc/attachment_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
+import 'package:cluster/presentation/comunication_module/chat_type_model.dart';
 import 'package:cluster/presentation/comunication_module/com_svg.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/videoplayerscreen.dart';
@@ -39,12 +40,15 @@ import 'package:voice_message_package/voice_message_package.dart';
 import 'chat_screen/chat_appbar.dart';
 import 'unread.dart';
 import 'globals.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 class ChatScreen extends StatefulWidget {
-  final bool  isGroup;
+  final bool isGroup;
   final bool chat;
   final Socket? socket;
   final String grpchatid;
   final String cmntgrpchatname;
+  final String redirectchatid;
+  final String redirectchatname;
   final String? token;
   final String? loginUserId;
   final UserDummyList? communicationUserModel;
@@ -62,6 +66,8 @@ class ChatScreen extends StatefulWidget {
       this.chat=false,
       this.grpchatid="",
       this.cmntgrpchatname="",
+      this.redirectchatid="",
+      this.redirectchatname="",
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser
@@ -85,11 +91,15 @@ bool ismount1=true;
   bool isseventhMount = true;
   bool iseigthMount = true;
   bool loadmsg=false;
+  bool isadmin=false;
+  bool isgrp=true;
   int totpage=0;
   int activeUsersLength=0;
+  Map<String, String> oldestMessageDateMap = {};
   String? roomId;
   String msgdate1='';
-  int indeex=0;
+  int? indeex;
+  List<Chatdate> day=[];
   final ScrollController _controller = ScrollController();
    TextEditingController typedMessageController = TextEditingController();
   int pageNo = 1;
@@ -98,6 +108,7 @@ bool ismount1=true;
   List<FromUser> seenUsersList = [];
   List<messageSeenList> enter=[];
   List msgfr=[];
+   List<ChatModel> msglist=[];
   FromUser? groupTypingUser;
   bool typing = false;
   FilePickerResult? result;
@@ -108,11 +119,13 @@ bool ismount1=true;
   var username;
   bool isenter=false;
   List seenuser=[];
+  String oldertimestampp="";
   int unreadMessageCount=0;
   int sendMessageCount=0;
   bool isload=false;
   List<GroupUserList> grpmember=[];
   List unseenuser=[];
+  String a="";
   // int messageListLimit = 26;
   SharedPreferences? pref;
   AnimationController? _animationController;
@@ -138,8 +151,9 @@ bool ismount1=true;
   @override
   void initState() {
 
-     print("room id listens atleast ${widget.loginUserId} chatid${widget.grpuser?.chatid}");
+     print("room id listens atleast ${widget.redirectchatid} chatid${widget.grpchatid} ${widget.isGroup}");
     widget.socket?.emit("join.chat", {
+      widget.redirectchatid!=""?widget.redirectchatid:
       widget.grpchatid!=""?widget.grpchatid:  
       widget.chat==false && widget.isg==false
     ? widget.communicationUserModel?.chatid:
@@ -147,22 +161,22 @@ bool ismount1=true;
     widget.socket!.emit("update.list",{
                         print("update ")
                       });
-    if(widget.isGroup ==false){
+    if(widget.isGroup == false && widget.isg==false){
        if(widget.communicationUserModel?.unreadMessages != 0 || widget.communicationuser?.users?[0].chatUser?.unreadMessages != 0) {
         print("unreaded messages....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.chat==false
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
     ? widget.communicationUserModel?.chatid:
     widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
-    }else if(widget.isGroup==true && widget.grpchatid==""){
-        print("unreaded messages....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false
+    }else if(widget.isGroup==true && widget.isg==false){
+        print("unreaded messagess....");
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid: widget.isg==false
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
     }
      
       widget.socket!.on("unread.update1", (data) {
       print("my msg updatess $data");
-      String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.chat==false && widget.isg==false
+      String? chatid= widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid: widget.chat==false && widget.isg==false
     ? "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
     print(chatid);
@@ -186,7 +200,7 @@ bool ismount1=true;
         // widget.socket?.emit("group.message.seen", roomId);
         // widget.socket?.emit("total.in.group", roomId);
      widget.socket!.emit("group.members",
-     widget.isg==false?widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
+     widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid : widget.grpuser?.chatid);
      
     widget.socket!.on("groupmembers.result",datagrpmember);
          
@@ -295,11 +309,11 @@ widget.socket?.emit("group.message.seen",roomId);
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed:totpage<=1? false:true);
             }
             else{
              ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed:totpage<=1? false:true);
               print("my msg");
             }
             }
@@ -317,7 +331,7 @@ widget.socket?.emit("group.message.seen",roomId);
               sendMessageCount=0;
               print("lenght 2");
             }
-             widget.socket?.emit("unread.messages",{'unreadMessageCount':sendMessageCount,'chatid':widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,'userid':widget.loginUserId.toString()});
+             widget.socket?.emit("unread.messages",{'unreadMessageCount':sendMessageCount,'chatid':widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,'userid':widget.loginUserId.toString()});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $sendMessageCount,'userid':${widget.communicationUserModel?.id} ");
            
@@ -338,7 +352,7 @@ widget.socket?.emit("group.message.seen",roomId);
       });
           widget.socket!.on("unread.update", (data) {
             String? chatid= widget.chat==false
-    ? "${widget.communicationUserModel?.chatid}":
+    ?widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
    "${widget.communicationuser?.id}";
            
       print("my msg update $data");
@@ -394,6 +408,7 @@ widget.socket!.emit("update.list",{
       });
      
       widget.socket?.on("group.latest.message", (data) {
+        loadmsg=true;
         // print("total ser listened ${widget.loginUserId} ...${data}");
         // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
       totpage<=1?messageList.add(ChatModel(
@@ -451,7 +466,7 @@ widget.socket!.emit("update.list",{
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: false);
+            scrollController: _controller, reversed:totpage<=1? true:false);
             }
             else{
               print("my msg");
@@ -500,7 +515,7 @@ widget.socket!.emit("update.list",{
               print("lenght 2");
             }
              print("fchgjh $unseenuser");
-             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
+             widget.socket?.emit("unread.messages.group",{'unreadMessageCount':unreadMessageCount,'chatid':widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid:widget.grpuser?.chatid,'userids':unseenuser});
              widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
             print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
           }
@@ -510,12 +525,12 @@ widget.socket!.emit("update.list",{
         }
 
         ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: true);
+            scrollController: _controller, reversed: totpage<=1?false:true);
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
-            String? chatid= widget.grpchatid!=""?widget.grpchatid: widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+            String? chatid= widget.isg==false
+    ? widget.grpchatid!=""?"${widget.grpchatid}":  widget.redirectchatid!=""?widget.redirectchatid:"${widget.communicationUserModel?.chatid}":
    "${widget.grpuser?.chatid}";            
       print("my msg update $data");
       // saveUnreadMessageCount(data,chatid);
@@ -621,8 +636,8 @@ loadUnreadMessageCount();
   }
  
   Future<void> loadUnreadMessageCount() async {
-    String? chatid=widget.grpchatid!=""?widget.grpchatid:widget.chat==false && widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+    String? chatid=widget.chat==false && widget.isg==false
+    ?widget.grpchatid!=""?"${widget.grpchatid}":  widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
      pref = await SharedPreferences.getInstance();
     setState(() {
@@ -650,8 +665,8 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
   saveactiveusers(data);
   loadactiveusers();
   print("ACTIVE length sharedpref");
-  String? chatid=widget.grpchatid!=""?widget.grpchatid:  widget.chat==false && widget.isg==false
-    ? "${widget.communicationUserModel?.chatid}":
+  String? chatid= widget.chat==false && widget.isg==false
+    ?widget.grpchatid!=""?"${widget.grpchatid}": widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
               sendMessageCount=0;
@@ -669,10 +684,22 @@ print("jhdgfkjhgkrng");
       grpmember.clear();
     (data as List).forEach((element) {
     grpmember.add(GroupUserList.fromJson(element));
-   
       });
  print("jhdgfkjhgkrng${grpmember.length}");
+ for(int i=0;i<grpmember.length;i++){
+  if(widget.loginUserId==grpmember[i].id){
+      isadmin=grpmember[i].isAdmin!;
+      
+      break;
+  }
+  print("isadmin+ $isadmin");
  
+ }
+ if(isgrp){
+  setState(() {
+    
+  });
+ }
 }
   void activeuserlist(data) {
    print("active usersss $data");
@@ -713,6 +740,7 @@ Future<void> saveactiveusers(int count) async {
   }
 
   void sendGroupMessage(String message, String chatId) {
+    print("enter the grp $message , $chatId ");
     widget.socket?.emit("group.message",
         {"type": "text","chatid": chatId, "content": message});
        
@@ -750,6 +778,7 @@ Future<void> saveactiveusers(int count) async {
     _controller.dispose();
     isMount = false;
     ismount1=false;
+    isgrp=false;
     isSecondMount = false;
     isThirdMount = false;
     isFourthMount = false;
@@ -761,7 +790,8 @@ Future<void> saveactiveusers(int count) async {
     _animationController?.dispose();
     widget.socket!.off('latest.message');
     widget.socket!.off('group.latest.message');
-    widget.socket!.off("group,members");
+    widget.socket!.off('groupmembers.result');
+    widget.socket!.off('group.members');
     super.dispose();
   }
 double currentScrollPosition= 0.0;
@@ -886,7 +916,7 @@ double currentScrollPosition= 0.0;
                       });
                       widget.socket!.emit("leave.chat",{
                         "room": roomId??"",
-                        "userid":widget.grpchatid!=""?widget.grpchatid:widget.isg==false? widget.communicationUserModel?.id??"":widget.loginUserId??""
+                        "userid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
                       }
                        );
                        print("user left too");
@@ -1005,6 +1035,7 @@ double currentScrollPosition= 0.0;
                  if(widget.communicationUserModel?.isDeleted  == false && widget.communicationUserModel?.deletedAt == null||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt == null)
                  {
                    messageList.add(state.chatData[0].messages![i]);
+                   msglist.add(state.chatData[0].messages![i]);
                  }
                    else if(widget.communicationUserModel?.isDeleted == false && widget.communicationUserModel?.deletedAt != null||widget.communicationuser?.users![0].chatUser?.isDeleted ==false && widget.communicationuser?.users![0].chatUser?.deletedAt != null){
                   String? timestamp = widget.communicationUserModel!.deletedAt.toString();
@@ -1015,6 +1046,7 @@ double currentScrollPosition= 0.0;
                 if( state.chatData[0].messages?[i].createdAt == null )
                   {
                     messageList.add(state.chatData[0].messages![i]);
+                    msglist.add(state.chatData[0].messages![i]);
                  }
                  else {
                  String? timestamp1 = state.chatData[0].messages![i].createdAt;
@@ -1023,6 +1055,7 @@ double currentScrollPosition= 0.0;
 
                   if(formattedTime1 > formattedTime){
                 messageList.add(state.chatData[0].messages![i]);
+                msglist.add(state.chatData[0].messages![i]);
               }
                  }
                
@@ -1032,6 +1065,7 @@ double currentScrollPosition= 0.0;
                
                 else{
                   messageList.add(state.chatData[0].messages![i]);
+                  msglist.add(state.chatData[0].messages![i]);
                 }
 
                  }
@@ -1039,15 +1073,37 @@ double currentScrollPosition= 0.0;
                  setState(() {
                    totpage=state.chatData[0].pagination!.totalpages;
                 print("totalpagess$totpage");
-                  loadmsg=true;
+                loadmsg=true;
+          //       if(messageList.isNotEmpty){
+          //   msglist=msglist.reversed.toList();
+          //   for(int index=0;index<msglist.length;){
+          //   String? timestamp = msglist[index].createdAt.toString();
+          //   DateTime dateTime = DateTime.parse(timestamp); 
+          // String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+          //   String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+          //   print("dayyyyyy$msgdate");
+          //   day.add(Chatdate(day: msgdate));
+          //   print("dayyyyyy ${day[index].day}");
+          //   msgdate1=formattedDate;
+          //   setState(() {
+          //     index++;
+          //   });
+          // }
+      
+          // }
+                  
                 });
-
+               
                state.chatData[0].pagination!.totalpages<=1? 
                messageList = messageList.reversed.toList()
                :null;
-                ScrollService.scrollToEnd(
-              scrollController: _controller, reversed: true);
-               
+              totpage<=1?  _controller.animateTo(
+      _controller.position.maxScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    ):  ScrollService.scrollToEnd(
+              scrollController: _controller, reversed:true);
+              
               }
 
               else if (state is ChatScreenGetFailed){
@@ -1110,6 +1166,21 @@ double currentScrollPosition= 0.0;
     setState(() {});
           }
           }
+          // if(messageList.isNotEmpty){
+          //   List<ChatModel> msglist=messageList.reversed.toList();
+          //   for(int index=0;index<msglist.length;index++){
+          //   String? timestamp = msglist[index].createdAt.toString();
+          //   DateTime dateTime = DateTime.parse(timestamp); 
+          // String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+          //   String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
+          //   print("dayyyyyy$msgdate");
+          //   msglist.add(ChatModel(day: "$msgdate"));
+          //   msgdate1=formattedDate;
+          // }
+          // messageList=msglist.reversed.toList();
+          // }
+          
+          
            
               }
             },
@@ -1123,7 +1194,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "image",
-                  "chatid":widget.chat==false?widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid":widget.chat==false?widget.redirectchatid!=""?"${widget.redirectchatid}":widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1139,7 +1210,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "image",
-                  "chatid":widget.isg==false?widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1165,7 +1236,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "video",
-                  "chatid": widget.chat==false?widget.communicationUserModel?.chatid : widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1181,7 +1252,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "video",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1207,7 +1278,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "file",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1223,7 +1294,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "file",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid": widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1247,7 +1318,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "audio",
-                  "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1263,7 +1334,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":  widget.grpchatid!=""?widget.grpchatid: widget.isg==false? widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
+                  "chatid": widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.grpchatid!=""?widget.grpchatid:  widget.communicationUserModel?.chatid:widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1289,7 +1360,7 @@ double currentScrollPosition= 0.0;
               if (widget.isGroup != true) {
                 widget.socket?.emit("new.message", {
                   "type": "audio",
-                  "chatid": widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.id,
+                  "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.id,
                   "content": state.upload
                 });
                
@@ -1305,7 +1376,7 @@ double currentScrollPosition= 0.0;
               } else {
                 widget.socket?.emit("group.message", {
                   "type": "audio",
-                  "chatid":widget.grpchatid!=""?widget.grpchatid:  widget.isg==false? widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
+                  "chatid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid: widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.grpuser?.chatid,
                   "content": state.upload
                 });
                
@@ -1352,10 +1423,13 @@ double currentScrollPosition= 0.0;
                     roomId: roomId,
                     cmntgrpid: widget.grpchatid,
                     cmntgrpname: widget.cmntgrpchatname,
+                    redirectchatid: widget.redirectchatid,
+                    redirectchatname: widget.redirectchatname,
                     socket: widget.socket,
                     token: widget.token,
                     loginUserId: widget.loginUserId,
                     typing: typing,
+                    isadmin: isadmin,
                     groupTypingUser: groupTypingUser,
                     communicationUserModel: widget.communicationUserModel,
                     communicationuser: widget.communicationuser,
@@ -1407,6 +1481,7 @@ double currentScrollPosition= 0.0;
                                       PaginatedChatGetEvent(
                                           token: widget.token ?? "",
                                           chatId: widget.chat==false?
+                                          widget.redirectchatid!=""?widget.redirectchatid:
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.communicationuser?.id??"",
                                               grpchatId: "",
@@ -1415,7 +1490,8 @@ double currentScrollPosition= 0.0;
                                      BlocProvider.of<PaginatedchatBloc>(context).add(
                                       PaginatedChatGetEvent(
                                           token: widget.token ?? "",
-                                          chatId: widget.grpchatid!=""?widget.grpchatid:widget.isg==false?
+                                          chatId: widget.isg==false?widget.grpchatid!=""?widget.grpchatid:
+                                          widget.redirectchatid!=""?widget.redirectchatid:
                                               widget.communicationUserModel?.chatid ??
                                                   "": widget.grpuser?.chatid??"",
                                               grpchatId:widget.grpchatid!=""?widget.grpchatid:"" ,
@@ -1435,17 +1511,21 @@ double currentScrollPosition= 0.0;
                                 shrinkWrap: true,
                                 controller: _controller,
                                 physics: AlwaysScrollableScrollPhysics(),
-                                padding: const EdgeInsets.only(left: 8, right: 8),
+                                padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
                                 itemCount: messageList.length,
                                 itemBuilder: (context, index) {
-                                  print("list view reload $index ${messageList[index].message}");
                                   
+                                  print("list view reload $index $a");
+                                  String msgdate = "";
+                                 bool showdate=false;
+                                 int today=0;
                                   String? timestamp = messageList[index].createdAt.toString();
                                   DateTime dateTime = DateTime.parse(timestamp); 
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
-                                  String msgdate = formatMessageTimestamp(dateTime,index,msgdate1!=formattedDate?true:false);
-                                  msgdate1=formattedDate;
+                                    msgdate = formatMessageTimestamp(dateTime,index);
+                                 
+                                  
                                   return  Column(
                                     crossAxisAlignment:
                                         messageList[index].fromuserid !=
@@ -1453,7 +1533,7 @@ double currentScrollPosition= 0.0;
                                             ? CrossAxisAlignment.start
                                             : CrossAxisAlignment.end,
                                     children: [
-                                      msgdate != ""?
+                                     messageList[index].firstMessageOfDay == true ?
                                       Padding(
                                            padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -1465,8 +1545,10 @@ double currentScrollPosition= 0.0;
                                                  color: Color.fromARGB(236, 233, 232, 232)
                                                ),
                                                child: Column(
-                                                 children:[ Text(
-                                                          msgdate,
+                                                 children:[ 
+                                                  
+                                                  Text(
+                                                      "$msgdate",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
@@ -1474,11 +1556,12 @@ double currentScrollPosition= 0.0;
                                                              color: Color(0xff151522),
                                                              fontSize: 12,
                                                            ),
-                                                         ),]
+                                                         )
+                                                         ,]
                                                ),
                                              ),
                                            ),
-                                         ):SizedBox(),
+                                         ):Container(),
                                          
                                       if (messageList[index].fromuserid !=
                                           widget.loginUserId) ...{
@@ -2360,7 +2443,7 @@ double currentScrollPosition= 0.0;
                                                  child: Text(
                                                            messageList[index]
                                                                    .message??
-                                                               "",
+                                                               "..",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
                                                                maxLines: 3,
@@ -2852,9 +2935,9 @@ double currentScrollPosition= 0.0;
                                           )
                                         }
                                       },
-                                      // msgdate != msgdate1 && totpage>1?
+                                      // totpage>1 &&  messageList[index].lastMessageOfDay == true?
                                       // Padding(
-                                      //      padding: const EdgeInsets.only(left: 25,right: 25,bottom: 10),
+                                      //      padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                       //      child: Center(
                                       //        child: Container(
                                       //          padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
@@ -2864,8 +2947,10 @@ double currentScrollPosition= 0.0;
                                       //            color: Color.fromARGB(236, 233, 232, 232)
                                       //          ),
                                       //          child: Column(
-                                      //            children:[ Text(
-                                      //                     msgdate,
+                                      //            children:[ 
+                                                  
+                                      //             Text(
+                                      //                     "$msgdate",
                                       //                          textAlign: TextAlign.center,
                                       //                          softWrap: true,
                                       //                          maxLines: 3,
@@ -2873,20 +2958,22 @@ double currentScrollPosition= 0.0;
                                       //                        color: Color(0xff151522),
                                       //                        fontSize: 12,
                                       //                      ),
-                                      //                    ),]
+                                      //                    )
+                                      //                    ,]
                                       //          ),
                                       //        ),
                                       //      ),
-                                      //    ):SizedBox(),
+                                      //    ):Container(),
                                     ],
                                   );
                                 },
                                 separatorBuilder: (context, index) {
-                                  fromuserids=messageList[index+1].fromuserid!;
-                                    return messageList[index].fromuserid!=messageList[index].fromuserid? const SizedBox(
+                                  fromuserids=messageList[index].fromuserid!;
+                                  oldertimestampp=messageList[index].createdAt??"";
+                                    return messageList[index].fromuserid!=fromuserids? const SizedBox(
                                     height: 8,
                                   ):const SizedBox(height: 1,);
-                                   
+                                  
                                 },
                               ),
                             ),
@@ -3137,7 +3224,7 @@ double currentScrollPosition= 0.0;
                                                   if (widget.isGroup == false) {
                                                           sendMessage(
                                                         typedMessageController.text,
-                                                       widget.chat==false? widget.communicationUserModel
+                                                       widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.communicationuser?.id??"");
                                                     widget.socket?.emit(
@@ -3146,16 +3233,17 @@ double currentScrollPosition= 0.0;
                                                   } else {
                                                     print("commentgrpid${widget.grpchatid}");
                                                     if(widget.grpchatid==""){
-                                                      print("commentgrpid${widget.grpchatid}");
+                                                      
                                                       sendGroupMessage(
                                                         typedMessageController.text,
-                                                        widget.isg==false? widget.communicationUserModel
+                                                        widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
                                                                 ?.chatid ??
                                                             "":widget.grpuser?.chatid??"");
                                                     }else{
+                                                      print("commentgrppid${widget.grpchatid}");
                                                       sendGroupMessage(
                                                         typedMessageController.text,
-                                                        widget.grpchatid.toString());
+                                                        widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
                                                     }
                                                     widget.socket?.emit(
                                                         "group.stopped.typing",
@@ -3257,17 +3345,19 @@ double currentScrollPosition= 0.0;
       ),
     );
   }
-String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness){
+String formatMessageTimestamp(DateTime timestamp,int index){
   DateTime now = DateTime.now();
   DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
   DateTime lastWeek = DateTime.now().subtract(Duration(days: DateTime.now().weekday + 6));
-  if (!checkUniqueness==true) {
-    // If checkUniqueness is false, return null without checking the uniqueness of the date.
-    return "";
-  }
+  // if (!checkUniqueness==true) {
+  //   // If checkUniqueness is false, return null without checking the uniqueness of the date.
+  //   return "";
+  // }
   if (timestamp.year == now.year && timestamp.month == now.month && timestamp.day == now.day) {
+   
     return ' Today ';
   } else if (timestamp.year == yesterday.year && timestamp.month == yesterday.month && timestamp.day == yesterday.day) {
+   
     return 'Yesterday ';
   } else if (timestamp.isAfter(lastWeek)) {
     return DateFormat('EEEE').format(timestamp);
@@ -3434,13 +3524,52 @@ String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness)
     switch (filetype) {
       case 'Image':
         result = await FilePicker.platform
-            .pickFiles(type: FileType.image, allowMultiple: false);
-
-        BlocProvider.of<AttachmentBloc>(context)
+            .pickFiles(type: FileType.image, allowMultiple: false,allowCompression: true);
+      // result= await  
+          if (result != null) {
+  for (PlatformFile file in result!.files) {
+    int maxSizeBytes =10 * 1024 * 1024; // Set the maximum size to 1 MB
+    if (file.size <= maxSizeBytes) {
+      
+      // File size is within the allowed limit
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      BlocProvider.of<AttachmentBloc>(context)
             .add(UploadPictureEvent(image: result!));
-        // loadSelectedFiles(result!.files);
+    } else {
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      // File size exceeds the allowed limit
+      print('File size exceeds the limit.');
+      showDialog(
+      context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Image size exceeds the limit"),
+          actions: [
+            Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel")),
 
-        setState(() {});
+              ],
+            )
+          ],
+        );
+      },
+      );
+      // Handle accordingly, for example, show an error message.
+    }
+  }
+} else {
+  // User canceled the file picking
+}
+        // BlocProvider.of<AttachmentBloc>(context)
+        //     .add(UploadPictureEvent(image: result!));
+        // loadSelectedFiles(result!.files);
+  
+        setState(() {
+        });
         break;
       case 'Video':
         result = await FilePicker.platform
@@ -3475,10 +3604,22 @@ String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness)
         break;
     }
   }
+Future<XFile> testCompressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path, targetPath,
+        quality: 88,
+        rotate: 180,
+      );
 
+    print(file.lengthSync());
+    print(result!.length());
+
+    return result;
+  }
   void loadSelectedFiles(List<PlatformFile> files) {
     return null;
   }
+  
 
   Widget iconCreation(
       {required IconData icon, required Color color, required String text}) {
@@ -3503,6 +3644,22 @@ String formatMessageTimestamp(DateTime timestamp,int index,bool checkUniqueness)
       ],
     );
   }
+  void _recordingFinishedCallback(
+  String path,
+  BuildContext context,
+) {
+  print("file is thee $path");
+  final uri = Uri.parse(path);
+  File file = File(uri.path);
+
+  file.length().then(
+    (fileSize) {
+      print("files is this ${file}");
+      BlocProvider.of<AttachmentBloc>(context)
+          .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
+    },
+  );
+}
 }
 
 class ScrollService {
@@ -3516,7 +3673,7 @@ class ScrollService {
         reversed
             ? scrollController.position.minScrollExtent:
              scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds:1000),
+        duration: const Duration(milliseconds:100),
         curve: Curves.easeOut,
       );
       // }
@@ -3563,19 +3720,3 @@ class PositionRetainedScrollPhysics extends ScrollPhysics {
   }
 }
 
-void _recordingFinishedCallback(
-  String path,
-  BuildContext context,
-) {
-  print("file is thee $path");
-  final uri = Uri.parse(path);
-  File file = File(uri.path);
-
-  file.length().then(
-    (fileSize) {
-      print("files is this ${file}");
-      BlocProvider.of<AttachmentBloc>(context)
-          .add(UploadLiveAudioEvent(audio: file));
-    },
-  );
-}

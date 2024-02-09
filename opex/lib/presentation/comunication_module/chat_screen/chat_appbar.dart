@@ -26,6 +26,8 @@ class ChatAppBar extends StatefulWidget {
   final bool isgrp;
   final String? loginUserId;
   final FromUser? groupTypingUser;
+  final String redirectchatid;
+  final String redirectchatname;
   final String? token;
   final Socket? socket;
   final String? roomId;
@@ -34,14 +36,18 @@ class ChatAppBar extends StatefulWidget {
   final String cmntgrpname;
   final GroupList? grpuser;
   List<GroupUserList>? grpmember = [];
+  final bool? isadmin;
   // final VoidCallback ontap;
   ChatAppBar(
       {Key? key,
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser,
+      this.isadmin,
       this.cmntgrpid = "",
       this.cmntgrpname = "",
+      this.redirectchatid="",
+      this.redirectchatname="",
       this.loginUserId,
       this.typing,
       this.socket,
@@ -74,6 +80,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   void initState() {
+    print("isadminn ${widget.isadmin} name ${widget.redirectchatname} ame ${widget.redirectchatid} ${widget.isGroup}");
     // TODO: implement initState
     super.initState();
   }
@@ -109,7 +116,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         widget.socket!.emit("update.list", {print("update")});
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationUserModel?.id ?? ""
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
@@ -154,7 +161,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         widget.socket!.emit("update.list", {print("update")});
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationuser?.users?[0].id ?? ""
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationuser?.users?[0].id ?? ""
                         });
                         print("user left too");
 
@@ -195,7 +202,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         widget.socket!.emit("update.list", {print("update")});
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationUserModel?.id ?? ""
+                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
@@ -297,21 +304,21 @@ class _ChatAppBarState extends State<ChatAppBar> {
               GestureDetector(
                 onTap: () {
                   if (widget.isGroup == false) {
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: ChatProfileScreen(
-                        chat: widget.chat,
-                        token: widget.token,
-                        roomId: widget.roomId,
-                        socket: widget.socket,
-                        isGroup: widget.communicationUserModel?.isgrp ?? false,
-                        communicationUserModel: widget.communicationUserModel,
-                        communicationuser: widget.communicationuser,
-                      ),
-                      withNavBar: true, // OPTIONAL VALUE. True by default.
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
-                  } else {
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: ChatProfileScreen(
+                    //     chat: widget.chat,
+                    //     token: widget.token,
+                    //     roomId: widget.roomId,
+                    //     socket: widget.socket,
+                    //     isGroup: widget.communicationUserModel?.isgrp ?? false,
+                    //     communicationUserModel: widget.communicationUserModel,
+                    //     communicationuser: widget.communicationuser,
+                    //   ),
+                    //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
+                  } else if(widget.cmntgrpid=="") {
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
                       screen: ChatProfileScreen2(
@@ -319,18 +326,23 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         token: widget.token,
                         roomId: widget.roomId,
                         socket: widget.socket,
+                        loginuserid: widget.loginUserId,
                         isGroup: true,
+                        isadmin: widget.isadmin,
+                        redirectchatid: widget.redirectchatid,
+                        redirectchatname: widget.redirectchatname,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
+
                       ),
                       withNavBar: true, // OPTIONAL VALUE. True by default.
                       pageTransitionAnimation: PageTransitionAnimation.fade,
                     );
                   }
                 },
-                child: widget.communicationUserModel?.photo == null ||
-                        widget.communicationUserModel!.photo!.isEmpty
+                child:widget.isGroup==false? widget.communicationUserModel?.photo == null ||
+                        widget.communicationUserModel!.photo!.isEmpty 
                     ? TextAvatar(
                         shape: Shape.Circular,
                         size: h / 95,
@@ -360,6 +372,10 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
                                 ))
                         : CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: Colors.grey,
+                            backgroundImage:
+                                AssetImage("asset/chatgrpimg.png")):CircleAvatar(
                             radius: w / 23,
                             backgroundColor: Colors.grey,
                             backgroundImage:
@@ -394,6 +410,9 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         roomId: widget.roomId,
                         socket: widget.socket,
                         isGroup: true,
+                        redirectchatid: widget.redirectchatid,
+                        redirectchatname: widget.redirectchatname,
+                        isadmin: widget.isadmin,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
@@ -413,8 +432,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             width: w / 1.9,
                             child: Text(
                               widget.chat == false
-                                  ? "${widget.communicationUserModel?.name?.toTitleCase()}"
-                                  : "${widget.communicationuser?.users![0].name?.toTitleCase()}",
+                                  ?  widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                  : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationuser?.users![0].name?.toTitleCase()}",
                               // maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.roboto(
@@ -427,8 +446,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         : widget.cmntgrpid == ""
                             ? Text(
                                 widget.isgrp == false
-                                    ? "${widget.communicationUserModel?.name?.toTitleCase()}"
-                                    : "${widget.grpuser?.gname?.toTitleCase()}",
+                                    ? widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                    : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.grpuser?.gname?.toTitleCase()}",
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.roboto(
                                   color: Colors.white,
@@ -439,7 +458,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             : Container(
                                 width: w / 1.8,
                                 child: Text(
-                                  "${widget.cmntgrpname.toTitleCase()}",
+                                 widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}": "${widget.cmntgrpname.toTitleCase()}",
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.roboto(
                                     color: Colors.white,

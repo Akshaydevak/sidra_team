@@ -68,6 +68,11 @@ BlocProvider.of<CommunicationBloc>(context).add(
          if (state is AddAFriendUserSuccess) {
           print("add friend success");
           val=false;
+          BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+            token: widget.token ?? "",
+            grpchatId: "",
+            pageNo: 1, chatId: state.chatListData1.id??"")
+          );
         PersistentNavBarNavigator.pushNewScreen(
         context,
         screen: ChatScreen(
@@ -115,6 +120,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
       
      ],
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
            leading: BackButton(

@@ -23,6 +23,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
           groupName: event.groupName,
           token: event.token,
           uploadPicGroup: event.groupPhotoUrl,
+          description: event.description,
           userIdList: event.userIdList);
     } else if (event is GroupProfileGet) {
       yield* getGroupProfileDetails(chatId: event.chatid, token: event.token);
@@ -65,13 +66,15 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       {required String groupName,
       required String token,
       required String uploadPicGroup,
+      required String description,
       required List<GetEmployeeList> userIdList}) async* {
     yield CreateGroupLoading();
     final dataResponse = await _productData.createGroupData(
         groupName: groupName,
         token: token,
         userIdList: userIdList,
-        groupPicUrl: uploadPicGroup);
+        groupPicUrl: uploadPicGroup,
+        description: description);
     if (dataResponse.chatid!=null) {
       yield CreateGroupSuccess(list: dataResponse);
     } else {
