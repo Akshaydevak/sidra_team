@@ -46,55 +46,39 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-
-  String? token ='';
+  String? token = '';
   IO.Socket? socketCon;
   IO.Socket? socketCon1;
   String? loginuserId;
   String? logingrpuserId;
   SharedPreferences? pref;
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      developer.log('Couldn\'t check connectivity status', error: e);
-      return;
-    }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     print("onBackgroundMessage: $message");
   }
-  Future<void> getPage()async{
+
+  Future<void> getPage() async {
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-    final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
     _firebaseMessaging.requestPermission();
 
-    final initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/launcher_icon',);
+    final initializationSettingsAndroid = AndroidInitializationSettings(
+      '@mipmap/launcher_icon',
+    );
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-
       iOS: null,
     );
     _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     FirebaseMessaging.onMessage.listen((messages) {
-      var data=messages.data;
-      var message=messages.data;
-      var size=MediaQuery.sizeOf(context);
-      String? titleText=messages.notification?.title;
-      String? descrption=messages.notification?.body;
+      var data = messages.data;
+      var message = messages.data;
+      var size = MediaQuery.sizeOf(context);
+      String? titleText = messages.notification?.title;
+      String? descrption = messages.notification?.body;
 
       Flushbar(
         onTap: (flushbar) async {
@@ -108,133 +92,122 @@ class _DashBoardState extends State<DashBoard> {
           //   'uid': data["uid"] ,
           //   'serviceUid': data["serviceUid"] ,
           // });
-          String id=data['chat_id'];
-          if(data['Sidra_teams_key']=="task_and_operation"){
-print("if condition");
-            context.read<TaskBloc>().add(
-                GetTaskReadListEvent(int.tryParse(id) ?? 0));
+          String id = data['chat_id'];
+          if (data['Sidra_teams_key'] == "task_and_operation") {
+            print("if condition");
+            context
+                .read<TaskBloc>()
+                .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
             PersistentNavBarNavigator.pushNewScreen(
               context,
               screen: TaskTitle(),
               withNavBar: true, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
             );
-          }
-          else if(data['Sidra_teams_key']=="comment"){
-
-             print("else condition");
-        pref=await SharedPreferences.getInstance();
-        token = pref!.getString("token");
-        logingrpuserId=pref!.getString("logingrpuserid");
-        print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
-          ChatScreenGetEvent(
-              token: token.toString(),
-              pageNo: 1,
-              chatId: "",
-              grpchatId: id));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
-            token: token,
-            loginUserId: logingrpuserId,
-            socket: socketCon1,
-            grpchatid: id,
-            cmntgrpchatname:
-               messages.notification?.title??"",
-            isGroup: true,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-          }
-          else{
+          } else if (data['Sidra_teams_key'] == "comment") {
             print("else condition");
-        pref=await SharedPreferences.getInstance();
-        token = pref!.getString("token");
-        loginuserId=pref!.getString("loginuserid");
-        print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
-          ChatScreenGetEvent(
-              token: token.toString(),
-              pageNo: 1,
-              chatId: id,
-              grpchatId: ""));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
-            token: token,
-            loginUserId: loginuserId,
-            socket: socketCon,
-            redirectchatid: id,
-            redirectchatname:
-               messages.notification?.title??"",
-            isGroup: data['is_group_chat']=="true"?true:false,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
+            pref = await SharedPreferences.getInstance();
+            token = pref!.getString("token");
+            logingrpuserId = pref!.getString("logingrpuserid");
+            print("else condition.. $token $loginuserId");
+            context.read<ChatBloc>().add(ChatScreenGetEvent(
+                token: token.toString(), pageNo: 1, chatId: "", grpchatId: id));
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: ChatScreen(
+                token: token,
+                loginUserId: logingrpuserId,
+                socket: socketCon1,
+                grpchatid: id,
+                cmntgrpchatname: messages.notification?.title ?? "",
+                isGroup: true,
+              ),
+              withNavBar: true, // OPTIONAL VALUE. True by default.
+              pageTransitionAnimation: PageTransitionAnimation.fade,
+            );
+          } else {
+            print("else condition");
+            pref = await SharedPreferences.getInstance();
+            token = pref!.getString("token");
+            loginuserId = pref!.getString("loginuserid");
+            print("else condition.. $token $loginuserId");
+            context.read<ChatBloc>().add(ChatScreenGetEvent(
+                token: token.toString(), pageNo: 1, chatId: id, grpchatId: ""));
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: ChatScreen(
+                token: token,
+                loginUserId: loginuserId,
+                socket: socketCon,
+                redirectchatid: id,
+                redirectchatname: messages.notification?.title ?? "",
+                isGroup: data['is_group_chat'] == "true" ? true : false,
+              ),
+              withNavBar: true, // OPTIONAL VALUE. True by default.
+              pageTransitionAnimation: PageTransitionAnimation.fade,
+            );
           }
         },
         backgroundColor: Colors.black,
         titleColor: Colors.black,
-        titleText: Container(child: Row(
-          children: [
-            // Padding(
-            //     padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-            //     child: SizedBox(
-            //       height: size.height*.05,
-            //       child: Image(
-            //         image:
-            //         AssetImage("assets/images/logos/logowithbg.png"),
-            //       ),
-            //     )),
-            Text(titleText==null?"New Notification Received":titleText,style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.bold),)
-          ],
-        ),),
+        // margin: EdgeInsets.symmetric(horizontal: 10),
+        titleText: Container(
+          child: Row(
+            children: [
+              // Padding(
+              //     padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+              //     child: SizedBox(
+              //       height: size.height*.05,
+              //       child: Image(
+              //         image:
+              //         AssetImage("assets/images/logos/logowithbg.png"),
+              //       ),
+              //     )),
+              Text(
+                titleText == null ? "New Notification Received" : titleText,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ),
 
         flushbarPosition: FlushbarPosition.TOP, // Set position to top
-        message:  descrption,
-        duration:  Duration(seconds: 2),
+        message: descrption,
+        duration: Duration(seconds: 2),
       )..show(context);
-
-
     });
 
     // Handle message when the app is opened from the background
     FirebaseMessaging.onMessageOpenedApp.listen((message) async {
       print('Message opened while the app was in the background: $message');
-      var data=message.data;
+      var data = message.data;
       // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
       //   'uid': data["uid"] ,
       //   'serviceUid': data["serviceUid"] ,
       // });
-      String id=data['chat_id'];
+      String id = data['chat_id'];
       print("hahaha$id ..... ${message.notification?.title}");
-      if(data['Sidra_teams_key']=="task_and_operation"){
-
-        context.read<TaskBloc>().add(
-            GetTaskReadListEvent(int.tryParse(id) ?? 0));
+      if (data['Sidra_teams_key'] == "task_and_operation") {
+        context
+            .read<TaskBloc>()
+            .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
         PersistentNavBarNavigator.pushNewScreen(
           context,
           screen: TaskTitle(),
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
-      }
-      else if(data['Sidra_teams_key']=="comment"){
-
-             print("else condition");
-        pref=await SharedPreferences.getInstance();
+      } else if (data['Sidra_teams_key'] == "comment") {
+        print("else condition");
+        pref = await SharedPreferences.getInstance();
         token = pref!.getString("token");
-        logingrpuserId=pref!.getString("logingrpuserid");
+        logingrpuserId = pref!.getString("logingrpuserid");
         print("else condition.. $token $logingrpuserId");
-        context.read<ChatBloc>().add(
-          ChatScreenGetEvent(
-              token: token.toString(),
-              pageNo: 1,
-              chatId: "",
-              grpchatId: id));
+        context.read<ChatBloc>().add(ChatScreenGetEvent(
+            token: token.toString(), pageNo: 1, chatId: "", grpchatId: id));
         PersistentNavBarNavigator.pushNewScreen(
           context,
           screen: ChatScreen(
@@ -242,48 +215,58 @@ print("if condition");
             loginUserId: logingrpuserId,
             socket: socketCon1,
             grpchatid: id,
-            cmntgrpchatname:
-               message.notification?.title??"",
+            cmntgrpchatname: message.notification?.title ?? "",
             isGroup: true,
           ),
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
-          }
-      else{
+      } else {
         print("else condition");
-        pref=await SharedPreferences.getInstance();
+        pref = await SharedPreferences.getInstance();
         token = pref!.getString("token");
-        loginuserId=pref!.getString("loginuserid");
+        loginuserId = pref!.getString("loginuserid");
         print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
-          ChatScreenGetEvent(
-              token: token.toString(),
-              pageNo: 1,
-              chatId: id,
-              grpchatId: ""));
+        context.read<ChatBloc>().add(ChatScreenGetEvent(
+            token: token.toString(), pageNo: 1, chatId: id, grpchatId: ""));
         PersistentNavBarNavigator.pushNewScreen(
           context,
-          screen:  ChatScreen(
+          screen: ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
-            redirectchatname:
-               message.notification?.title??"",
-            isGroup: data['is_group_chat']=="true"?true:false,
+            redirectchatname: message.notification?.title ?? "",
+            isGroup: data['is_group_chat'] == "true" ? true : false,
           ),
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       }
-
     });
   }
 
+  StreamController<String> connectionStatusController =
+      StreamController<String>.broadcast();
+  Future<void> initConnectivity() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    updateConnectionStatus(connectivityResult);
+  }
+
+  void updateConnectionStatus(ConnectivityResult connectivityResult) {
+    if (connectivityResult == ConnectivityResult.mobile) {
+      connectionStatusController.add('Mobile data');
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      connectionStatusController.add('WiFi');
+    } else {
+      connectionStatusController.add('No internet connection');
+    }
+  }
 
   @override
   void initState() {
+    initConnectivity();
+    Connectivity().onConnectivityChanged.listen(updateConnectionStatus);
     _controller = PersistentTabController(initialIndex: widget.index ?? 0);
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     getPage();
@@ -311,30 +294,18 @@ print("if condition");
     //     _handleNotificationClick(_yourId);
     //   }
     // });
-
   }
-  void _handleNotificationClick(int yourId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskTitle(),
-      ),
-    );
+
+  @override
+  void dispose() {
+    connectionStatusController.close();
+    super.dispose();
   }
 
   int newIndex = 0;
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() {
-      context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
-      print("internet connected");
-      _connectionStatus = result;
-    });
-  }
 
   List<Widget> _buildScreens() {
     return [
@@ -405,7 +376,8 @@ print("if condition");
       // ),
     ];
   }
-  bool _doubleBackToExitPressedOnce=false;
+
+  bool _doubleBackToExitPressedOnce = false;
   Future<bool> _onWillPop() async {
     print("new index $newIndex");
     if (_doubleBackToExitPressedOnce) {
@@ -427,204 +399,197 @@ print("if condition");
 
   @override
   Widget build(BuildContext context) {
-final socketpro =context.watch<scoketProvider>();
-        socketCon = socketpro.socket;
-        final socketpro1 =context.watch<scoketgrpProvider>();
-        socketCon1 = socketpro.socket;
+    final socketpro = context.watch<scoketProvider>();
+    socketCon = socketpro.socket;
+    final socketpro1 = context.watch<scoketgrpProvider>();
+    socketCon1 = socketpro.socket;
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
-    return BlocListener<DummyLoginBloc, DummyLoginState>(
-      listener: (context, state)  async {
-        final socketProvider = context.read<scoketProvider>();
-        final socketgrpProvider = context.read<scoketgrpProvider>();
-        if (state is TokenCreationCommunicationLoading) {
-        } else if (state is TokenCreationCommunicationSuccess) {
-          pref= await SharedPreferences.getInstance();
-          await pref!.setString("token", state.token);
+    return StreamBuilder(
+        stream: connectionStatusController.stream,
+        initialData: 'Unknown',
+        builder: (context, snapshot) {
+          print("enthaayiii ${snapshot.data}");
+          return snapshot.data == "WiFi" || snapshot.data == "Mobile data"
+              ? BlocListener<DummyLoginBloc, DummyLoginState>(
+                  listener: (context, state) async {
+                    final socketProvider = context.read<scoketProvider>();
+                    final socketgrpProvider = context.read<scoketgrpProvider>();
+                    if (state is TokenCreationCommunicationSuccess) {
+                      pref = await SharedPreferences.getInstance();
+                      await pref!.setString("token", state.token);
 
-            print("socket token $token");
-                    setState(()  {
-                      });
+                      print("socket token $token");
+                      setState(() {});
 
-            socketProvider.connect(state.token.toString());
-            socketgrpProvider.connect(state.token.toString());
-            
-
-          }
-          else if (state is TokenCreationCommunicationFailed) {
-
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: HomeScreen(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-          }
-      },
-      child: UpgradeAlert(
-
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          child: WillPopScope(
-            onWillPop: newIndex!=0?
-                () async {
-              newIndex=0;
-              setState(() {
-
-              });
-              return true;
-            }:_onWillPop,
-            child: Scaffold(
-              body: Provider.of<InternetConnectionStatus>(context) ==
-                      InternetConnectionStatus.disconnected
-                  ? Center(
-                      child: Column(children: [
-                      Visibility(
-                          visible: Provider.of<InternetConnectionStatus>(context) ==
-                              InternetConnectionStatus.disconnected,
-                          child: const InternetNotAvailable()),
-                      Container(
-                        margin: const EdgeInsets.only(top: 100),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.string(
-                              CartSvg().cartEmptyIcon,
-                              fit: BoxFit.contain,
+                      socketProvider.connect(state.token.toString());
+                      socketgrpProvider.connect(state.token.toString());
+                    } else if (state is TokenCreationCommunicationFailed) {
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen: HomeScreen(),
+                        withNavBar: true, // OPTIONAL VALUE. True by default.
+                        pageTransitionAnimation: PageTransitionAnimation.fade,
+                      );
+                    }
+                  },
+                  child: UpgradeAlert(
+                    child: MediaQuery(
+                      data:
+                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                      child: WillPopScope(
+                        onWillPop: newIndex != 0
+                            ? () async {
+                                newIndex = 0;
+                                setState(() {});
+                                return true;
+                              }
+                            : _onWillPop,
+                        child: Scaffold(
+                          body: PersistentTabView(
+                            context,
+                            padding:
+                                const NavBarPadding.only(left: 10, right: 10),
+                            controller: _controller,
+                            onItemSelected: (value) {
+                              newIndex = value;
+                              setState(() {});
+                              print("llllll$newIndex");
+                              if (newIndex == 0 || newIndex == 3) {
+                                setState(() {});
+                              } else if (newIndex == 2) {
+                                context
+                                    .read<ProfileBloc>()
+                                    .add(GetProfileEvent());
+                              }
+                            },
+                            screens: _buildScreens(),
+                            items: _navBarsItems(),
+                            confineInSafeArea: true,
+                            hideNavigationBarWhenKeyboardShows: true,
+                            backgroundColor: ColorPalette.white,
+                            handleAndroidBackButtonPress: true,
+                            resizeToAvoidBottomInset: true,
+                            stateManagement: false,
+                            decoration: NavBarDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade200.withOpacity(0.8),
+                                blurRadius: 2.0,
+                                spreadRadius: 1, //New
+                              )
+                            ]),
+                            popAllScreensOnTapOfSelectedTab: true,
+                            popActionScreens: PopActionScreensType.all,
+                            itemAnimationProperties:
+                                const ItemAnimationProperties(
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.ease,
                             ),
-                            SizedBox(
-                              height: 20,
+                            navBarStyle: NavBarStyle.style3,
+                            screenTransitionAnimation:
+                                const ScreenTransitionAnimation(
+                              animateTabTransition: false,
+                              curve: Curves.ease,
+                              duration: Duration(milliseconds: 200),
                             ),
-                            Text(
-                              "Network missing",
-                              style: GoogleFonts.roboto(
-                                  fontSize: w / 24,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 30),
-                              child: Text(
-                                "You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.roboto(
-                                    fontSize: w / 28,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xff6D6D6D)),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                              width: w1 / 3.5,
-                              child: GradientButton(
-                                  border: 30,
-                                  onPressed: () {
-                                    _connectivitySubscription = _connectivity
-                                        .onConnectivityChanged
-                                        .listen(_updateConnectionStatus);
-                                        context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: DashBoard(),
-                                      withNavBar:
-                                          false, // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                    );
-                                    setState(() {
-                                    });
-                                  },
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      ColorPalette.primary,
-                                      ColorPalette.primary,
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                  color: ColorPalette.primary,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.refresh,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "Retry",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.roboto(
-                                          color: Colors.white,
-                                          fontSize: w / 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                            )
-                          ],
+                          ),
                         ),
-                      )
-                    ]))
-                  : PersistentTabView(
-                    context,
-                    padding: const NavBarPadding.only(left: 10, right: 10),
-                    controller: _controller,
-                    onItemSelected: (value) {
-                      newIndex = value;
-                      setState(() {
-
-                      });
-                      print("llllll$newIndex");
-                      if (newIndex == 0 || newIndex == 3) {
-
-                        setState(() {});
-                      } else if (newIndex == 2) {
-                        context.read<ProfileBloc>().add(GetProfileEvent());
-                      }
-
-                    },
-                    screens: _buildScreens(),
-                    items: _navBarsItems(),
-                    confineInSafeArea: true,
-                    hideNavigationBarWhenKeyboardShows: true,
-                    backgroundColor: ColorPalette.white,
-                    handleAndroidBackButtonPress: true,
-                    resizeToAvoidBottomInset: true,
-                    stateManagement: false,
-                    decoration: NavBarDecoration(boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200.withOpacity(0.8),
-                        blurRadius: 2.0,
-                        spreadRadius: 1, //New
-                      )
-                    ]),
-                    popAllScreensOnTapOfSelectedTab: true,
-                    popActionScreens: PopActionScreensType.all,
-                    itemAnimationProperties: const ItemAnimationProperties(
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.ease,
-                    ),
-                    navBarStyle: NavBarStyle.style3,
-                    screenTransitionAnimation: const ScreenTransitionAnimation(
-                      animateTabTransition: false,
-                      curve: Curves.ease,
-                      duration: Duration(milliseconds: 200),
+                      ),
                     ),
                   ),
-            ),
-          ),
-        ),
-      ),
-    );
+                )
+              : Scaffold(
+                  backgroundColor: Colors.white,
+                  body: Container(
+                    margin: const EdgeInsets.only(top: 100),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.string(
+                          CartSvg().cartEmptyIcon,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Network missing",
+                          style: GoogleFonts.roboto(
+                              fontSize: w / 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          child: Text(
+                            "You’re not connecting to the internet. try reconnecting to WiFi or switch to mobile data.",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.roboto(
+                                fontSize: w / 28,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff6D6D6D)),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: w1 / 3.5,
+                          child: GradientButton(
+                              border: 30,
+                              onPressed: () {
+                                context
+                                    .read<DummyLoginBloc>()
+                                    .add(TokenCreationCommunicationEvent());
+                                PersistentNavBarNavigator.pushNewScreen(
+                                  context,
+                                  screen: DashBoard(),
+                                  withNavBar:
+                                      false, // OPTIONAL VALUE. True by default.
+                                  pageTransitionAnimation:
+                                      PageTransitionAnimation.fade,
+                                );
+                                setState(() {});
+                              },
+                              gradient: const LinearGradient(
+                                colors: [
+                                  ColorPalette.primary,
+                                  ColorPalette.primary,
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              color: ColorPalette.primary,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.refresh,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Retry",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.roboto(
+                                      color: Colors.white,
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+        });
   }
 }

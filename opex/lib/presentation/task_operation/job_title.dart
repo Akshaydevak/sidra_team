@@ -15,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../core/common_snackBar.dart';
@@ -70,8 +71,8 @@ class _JobTitleState extends State<JobTitle> {
   @override
   void initState() {
     // if(widget.isCreated==true){
-      taskList.clear();
-
+    //   taskList.clear();
+    //
     // }
     // dialog();
     super.initState();
@@ -81,6 +82,35 @@ class _JobTitleState extends State<JobTitle> {
           barrierDismissible: true,
           context: context,
           builder: (context) {
+            player!.setAsset('asset/job.mp3').then((value) {
+              return {
+                player!.playerStateStream.listen((state) {
+                  if (state.playing) {
+                    setState(() {
+                      print("audio,,,,");
+                    });
+                  }
+                  else
+                    switch (state.processingState) {
+                      case ProcessingState.idle:
+                        break;
+                      case ProcessingState.loading:
+                        break;
+                      case ProcessingState.buffering:
+                        break;
+                      case ProcessingState.ready:
+                        setState(() {
+                        });
+                        break;
+                      case ProcessingState.completed:
+                        setState(() {
+                        });
+                        break;
+                    }
+                }),
+                player!.play(),
+              };
+            });
             Future.delayed(Duration(seconds: 2), () {
               Navigator.of(context).pop(true);
             });
@@ -125,129 +155,13 @@ class _JobTitleState extends State<JobTitle> {
                       ),
                     ],
                   ),
-                  // event.data['card_banner'].toString() == "true"
-                  //     ? Container(
-                  //   padding: const EdgeInsets.all(8),
-                  //   width: MediaQuery.of(context).size.width / 1.5,
-                  //   height: MediaQuery.of(context).size.height / 6.5,
-                  //   color: Colors.white,
-                  //   child: Column(
-                  //     // mainAxisAlignment: MainAxisAlignment.end,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Text(
-                  //         event.data['title'] ?? "hi",
-                  //         style: const TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 20,
-                  //           fontFamily: 'Roboto',
-                  //           fontWeight: FontWeight.w600,
-                  //         ),
-                  //       ),
-                  //       Text(
-                  //         event.data['description'] ?? "",
-                  //         style: const TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 14,
-                  //           fontFamily: 'Roboto',
-                  //           fontWeight: FontWeight.w400,
-                  //         ),
-                  //       ),
-                  //       Center(
-                  //         child: Container(
-                  //           width: 160,
-                  //           height: 45,
-                  //           decoration: ShapeDecoration(
-                  //             gradient: const LinearGradient(
-                  //               begin: Alignment(0.00, -1.00),
-                  //               end: Alignment(0, 1),
-                  //               colors: [
-                  //                 Color(0xFFFF9900),
-                  //                 Color(0xFFFF7E07)
-                  //               ],
-                  //             ),
-                  //             shape: RoundedRectangleBorder(
-                  //                 borderRadius:
-                  //                 BorderRadius.circular(5)),
-                  //           ),
-                  //           child: const Center(
-                  //             child: Text(
-                  //               'CHECK NOW',
-                  //               textAlign: TextAlign.center,
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontSize: 18,
-                  //                 fontFamily: 'Roboto',
-                  //                 fontWeight: FontWeight.w600,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       )
-                  //     ],
-                  //   ),
-                  // )
-                  //     : Container()
-                  //  Column(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Text(
-                  //       event.data['title'] ?? "",
-                  //       style: const TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 20,
-                  //         fontFamily: 'Roboto',
-                  //         fontWeight: FontWeight.w600,
-                  //         height: 41,
-                  //       ),
-                  //     ),
-                  //     // const SizedBox(height: 8),
-                  //     Text(
-                  //       event.data['description'] ?? "",
-                  //       style: const TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 14,
-                  //         fontFamily: 'Roboto',
-                  //         fontWeight: FontWeight.w400,
-                  //         height: 22,
-                  //       ),
-                  //     ),
-                  //     // Container(
-                  //     //   // width: 160,
-                  //     //   // height: 45,
-                  //     //   decoration: ShapeDecoration(
-                  //     //     gradient: const LinearGradient(
-                  //     //       begin: Alignment(0.00, -1.00),
-                  //     //       end: Alignment(0, 1),
-                  //     //       colors: [
-                  //     //         Color(0xFFFF9900),
-                  //     //         Color(0xFFFF7E07)
-                  //     //       ],
-                  //     //     ),
-                  //     //     shape: RoundedRectangleBorder(
-                  //     //         borderRadius: BorderRadius.circular(5)),
-                  //     //   ),
-                  //     //   child: const Text(
-                  //     //     'CHECK NOW',
-                  //     //     textAlign: TextAlign.center,
-                  //     //     style: TextStyle(
-                  //     //       color: Colors.white,
-                  //     //       fontSize: 18,
-                  //     //       fontFamily: 'Roboto',
-                  //     //       fontWeight: FontWeight.w600,
-                  //     //       height: 20,
-                  //     //     ),
-                  //     //   ),
-                  //     // )
-                  //   ],
-                  // ) ,
                 ],
               ),
             );
           });
     }):null;
   }
+  AudioPlayer? player = AudioPlayer();
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width ;
@@ -261,6 +175,7 @@ class _JobTitleState extends State<JobTitle> {
             context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
           }
           context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+          taskList.clear();
       return true;},
       child: MultiBlocListener(
         listeners: [
@@ -339,6 +254,7 @@ class _JobTitleState extends State<JobTitle> {
                     context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
                   }
                   context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+                  taskList.clear();
                   Navigator.pop(context);
                 },
                 action: PopupMenuButton(
@@ -448,7 +364,7 @@ class _JobTitleState extends State<JobTitle> {
                           builder: (context, state) {
                             if (state is GetTaskListLoading) {
                               return  Container(
-                                height: h / 4,
+                                height: h / 3,
                                 color: Colors.white.withOpacity(0.5),
                                 alignment: Alignment.center,
                                 child: Column(
@@ -472,9 +388,12 @@ class _JobTitleState extends State<JobTitle> {
                             }
 
                             if (state is GetTaskListSuccess) {
+                              taskList.clear();
                               taskList = state.taskList ?? [];
+
                               nextUrl = state.nextPageUrl ?? "";
                               prevUrl = state.prevPageUrl ?? "";
+
                               return taskList.isEmpty?
                               Stack(
                                 children: [
@@ -522,7 +441,7 @@ class _JobTitleState extends State<JobTitle> {
                                       Container(
                                         padding: EdgeInsets.only(top: 10),
                                         alignment: Alignment.center,
-                                        height: h / 2,
+                                        height: h / 1.85,
                                         child: SvgPicture.string(
                                           TaskSvg().nolistSvg,
                                           height: h / 4.5,
@@ -531,12 +450,16 @@ class _JobTitleState extends State<JobTitle> {
                                     ],
                                   ),
                                   Positioned(
-                                    top: h/2.4,
-                                    left: w1/6,
+                                    top: h/2.3,
+                                    left: w1/4.5,
                                     child:
                                   Container(
                                     alignment: Alignment.center,
-                                    width: w1/1.8,
+                                    width: w1/2.2,
+                                    height: 50,
+                                    // decoration: BoxDecoration(
+                                    //   borderRadius: BorderRadius.circular(15)
+                                    // ),
                                     child: GradientButton(
                                         color: ColorPalette.primary,
                                         onPressed: () {
@@ -562,7 +485,7 @@ class _JobTitleState extends State<JobTitle> {
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
                                             color: Colors.white,
-                                            fontSize: w / 22,
+                                            fontSize: w / 24,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         )),
@@ -614,7 +537,7 @@ class _JobTitleState extends State<JobTitle> {
                                     height: 10,
                                   ),
                                   Container(
-                                    height: h/2.5,
+                                    height: h/2.3,
                                     color: ColorPalette.cardBackground,
                                     child: ListView.separated(
                                         padding: EdgeInsets.zero,
@@ -653,7 +576,7 @@ class _JobTitleState extends State<JobTitle> {
                                   //     itemCount: taskList.length),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                      top: 15,
+                                      top: 5,bottom: 5
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -675,7 +598,7 @@ class _JobTitleState extends State<JobTitle> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 color: ColorPalette.primary,
-                                                fontSize: w / 24),
+                                                fontSize: w / 26),
                                           ),
                                         )
                                             : Container(),
@@ -697,48 +620,50 @@ class _JobTitleState extends State<JobTitle> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 color: ColorPalette.primary,
-                                                fontSize: w / 24),
+                                                fontSize: w / 26),
                                           ),
                                         )
                                             : Text("")
                                       ],
                                     ),
-                                  )
+                                  ),
+                                  GradientButton(
+                                      color: ColorPalette.primary,
+                                      onPressed: () {
+                                        PersistentNavBarNavigator.pushNewScreen(
+                                          context,
+                                          screen: CreateNewTask(
+                                            startDateTime: "${startstdDate}  ${startTime}",
+                                            endDateTime: "$endstdDate  $endTime",
+                                            isSubTask: false,
+                                            jobId: JobRead?.id,
+                                          ),
+                                          withNavBar: true,
+                                          // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                                        );
+                                      },
+                                      gradient: const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [ColorPalette.primary, ColorPalette.primary]),
+                                      child: Text(
+                                        "Create New Task",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.roboto(
+                                          color: Colors.white,
+                                          fontSize: w / 22,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )),
+                                  SizedBox(height: 10,),
                                 ],
                               );
                             }
                             return Container();
                           },
                         ),
-                        taskList.isEmpty?Container():GradientButton(
-                            color: ColorPalette.primary,
-                            onPressed: () {
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-                                screen: CreateNewTask(
-                                  startDateTime: "${startstdDate}  ${startTime}",
-                                  endDateTime: "$endstdDate  $endTime",
-                                  isSubTask: false,
-                                  jobId: JobRead?.id,
-                                ),
-                                withNavBar: true,
-                                // OPTIONAL VALUE. True by default.
-                                pageTransitionAnimation: PageTransitionAnimation.fade,
-                              );
-                            },
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [ColorPalette.primary, ColorPalette.primary]),
-                            child: Text(
-                              "Create New Task",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
+
                       ],
                     ),
                   ),
