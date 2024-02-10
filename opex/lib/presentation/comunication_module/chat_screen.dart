@@ -1542,6 +1542,7 @@ double currentScrollPosition= 0.0;
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () {
+            print("unFocus trigger");
             focus.unfocus();
             setState(() {
               
@@ -1669,7 +1670,7 @@ double currentScrollPosition= 0.0;
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
                                     msgdate = formatMessageTimestamp(dateTime,index);
-                                    print("list view reload firstMessageOfDay $msgdate");
+                                    print("list view reload firstMessageOfDay $msgdate ${messageList[index].message}");
                                  if( totpage<=1){
                                   if(messageList.last.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
                                     showdate=true;
@@ -1708,7 +1709,6 @@ double currentScrollPosition= 0.0;
                                                       "$msgdate",
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
-                                                               maxLines: 3,
                                                            style: const TextStyle(
                                                              color: Color(0xff151522),
                                                              fontSize: 12,
@@ -1843,17 +1843,48 @@ double currentScrollPosition= 0.0;
                                             
                                           } else if (messageList[index].type ==
                                               "video") ...{
-                                                Stack(
+                                                Container(
+                                                   constraints:  BoxConstraints(
+                                                  maxWidth: 277,
+                                                 maxHeight:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .height /
+                                                                  2.5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(0),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(10),
+                                                          
+                                                    ),
+                                                    boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+                                                  // ),
+                                                 color: Colors.white,
+                                                  ),
+                                                  child:Stack(
                                                   children:[
                                                     VideoPlayerScreen(
                                               autoplay: false,
-                                              looping: false,
+                                              looping: true,
                                               me: false,
+                                              videoUrl: messageList[index].message ?? "",
                                               alignmentGeometry: Alignment.topLeft,
-                                              videoPlayerController:
-                                                  VideoPlayerController.network(
-                                                messageList[index].message ?? "",
-                                              ),
+                                              // videoPlayerController:
+                                              //     VideoPlayerController.network(
+                                              //   messageList[index].message ?? "",
+                                              // ),
                                             ),
                                             Positioned(
                                                         right: 6,
@@ -1867,6 +1898,8 @@ double currentScrollPosition= 0.0;
                                                       ),
                                                   ]
                                                 ),
+                                                )
+                                                
                                             
                                           } else if (messageList[index].type ==
                                               "file") ...{
@@ -2074,26 +2107,27 @@ double currentScrollPosition= 0.0;
                                            padding: const EdgeInsets.only(top:10,left: 25,right: 25,bottom: 10),
                                            child: Center(
                                              child: Container(
-                                               padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
+                                               padding: EdgeInsets.only(top:5,bottom:5),
+                                               constraints: const BoxConstraints(
+                                                  maxWidth: 250,
+                                              ),
                                                
                                                decoration: BoxDecoration(
                                                  borderRadius: BorderRadius.circular(20),
                                                  color: Color.fromARGB(236, 233, 232, 232)
                                                ),
-                                               child: Column(
-                                                 children:[ Text(
-                                                           messageList[index]
-                                                                   .message??
-                                                               "",
-                                                               textAlign: TextAlign.center,
-                                                               softWrap: true,
-                                                               maxLines: 3,
-                                                           style: const TextStyle(
-                                                             color: Color(0xff151522),
-                                                             fontSize: 12,
-                                                           ),
-                                                         ),]
-                                               ),
+                                               child: Text(
+                                                "${messageList[index]
+                                                                 .message.toString()}"
+                                                         ,
+                                                             textAlign: TextAlign.center,
+                                                             softWrap: true,
+                                                             maxLines: 5,
+                                                         style: const TextStyle(
+                                                           color: Color(0xff151522),
+                                                           fontSize: 12,
+                                                         ),
+                                                       ),
                                              ),
                                            ),
                                          )
@@ -2430,37 +2464,62 @@ double currentScrollPosition= 0.0;
                                                   } else if (messageList[index]
                                                           .type ==
                                                       "video") ...{
-                                                        Stack(
-                                                          children: [
-                                                            VideoPlayerScreen(
-                                                      me: false,
-                                                      autoplay: false,
-                                                      looping: false,
-                                                      alignmentGeometry:
-                                                          Alignment.topLeft,
-                                                      videoPlayerController:
-                                                          VideoPlayerController
-                                                              .network(
-                                                        messageList[index].message ??
-                                                            "",
-                                                      ),
+                                                        Container(
+                                                   constraints:  BoxConstraints(
+                                                  maxWidth: 277,
+                                                 maxHeight:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .height /
+                                                                  2.5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(0),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(10),
+                                                          
                                                     ),
-                                                    Positioned(
-                                                                 right: 6,
-                                                                 bottom: 0,
-                                                                 child: Text(
-                                                                  formattedTime,
-                                                                //   messageList[index]
-                                                                //     .createdAt ??
-                                                                // "",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 8,
-                                                                    color: Color(0xFF6D6D6D),
-                                                                  ),
-                                                                                                                            ),
-                                                               ),
-                                                          ],
-                                                        )
+                                                    boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+                                                  // ),
+                                                 color: Colors.white,
+                                                  ),
+                                                  child:Stack(
+                                                  children:[
+                                                    VideoPlayerScreen(
+                                              autoplay: false,
+                                              looping: true,
+                                              me: false,
+                                              videoUrl: messageList[index].message ?? "",
+                                              alignmentGeometry: Alignment.topLeft,
+                                              // videoPlayerController:
+                                              //     VideoPlayerController.network(
+                                              //   messageList[index].message ?? "",
+                                              // ),
+                                            ),
+                                            Positioned(
+                                                        right: 6,
+                                                        bottom: 0,
+                                                        child: Text(
+                                                      formattedTime,
+                                                        style: const TextStyle(
+                                                          fontSize: 8,
+                                                          color: Color(0xFF6D6D6D),
+                                                        ),                                                           ),
+                                                      ),
+                                                  ]
+                                                ),
+                                                )
                                                     
                                                   } else ...{
                                                     Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -2579,23 +2638,27 @@ double currentScrollPosition= 0.0;
                                       else ...{
                                         if(messageList[index].type=="notify")...{
                                          Padding(
-                                           padding: const EdgeInsets.only(top:10,left: 25,right: 25,bottom:10),
+                                           padding:  EdgeInsets.only(top:10,left: 25,right: 25,bottom:10),
                                            child: Center(
                                              child: Container(
                                                padding: EdgeInsets.only(top:5,bottom:5,right: 10,left: 10),
-                                               
+                                               constraints: const BoxConstraints(
+                                                  maxWidth: 250,
+                                              ),
+                                                                                      
                                                decoration: BoxDecoration(
                                                  borderRadius: BorderRadius.circular(20),
                                                  color: Color.fromARGB(236, 233, 232, 232)
                                                ),
                                                child: Center(
                                                  child: Text(
-                                                           messageList[index]
-                                                                   .message??
-                                                               "..",
+                                                  "${messageList[index]
+                                                                   .message.toString()}"
+                                                  
+                                                                   ,
                                                                textAlign: TextAlign.center,
                                                                softWrap: true,
-                                                               maxLines: 3,
+                                                               maxLines: 5,
                                                            style: const TextStyle(
                                                              color: Color(0xff151522),
                                                              fontSize: 12,
@@ -2904,17 +2967,52 @@ double currentScrollPosition= 0.0;
                                             ]),
                                         } else if (messageList[index].type ==
                                             "video") ...{
-                                              Stack(
+                                              Container(
+                                               constraints:  BoxConstraints(
+                                                  maxWidth: 277,
+                                                 maxHeight:
+                                                              MediaQuery.of(context)
+                                                                      .size
+                                                                      .height /
+                                                                  2.5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                
+                                                      // RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(10),
+                                                      topRight: Radius.circular(10),
+                                                      bottomLeft:
+                                                          Radius.circular(10),
+                                                      bottomRight:
+                                                          Radius.circular(0),
+                                                          
+                                                    ),
+                                                    boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+                                                  // ),
+                                                 color: ColorPalette.primary,
+                                                  ),
+                                                key: new PageStorageKey(
+                                  "keydata$index",
+                                ),
+                                              child: Stack(
                                                 children:[
                                                   VideoPlayerScreen(
                                             me:true,
                                             autoplay: false,
-                                            looping: false,
+                                            looping: true,
                                             alignmentGeometry: Alignment.topRight,
-                                            videoPlayerController:
-                                                VideoPlayerController.network(
-                                              messageList[index].message ?? "",
-                                            ),
+                                            videoUrl: messageList[index].message ??
+                                                            "",
+                                            // videoPlayerController:
+                                            //     VideoPlayerController.network(
+                                            //   messageList[index].message ?? "",
+                                            // ),
                                           ),
                                           Positioned(
                                                                    right: 5,
@@ -2951,7 +3049,9 @@ double currentScrollPosition= 0.0;
                                                                    ),
                                                                  ),
                                                 ]
-                                              )
+                                              ),
+                                              ),
+                                              
                                           
                                         } else ...{
                                           Align(
@@ -3694,7 +3794,6 @@ String formatMessageTimestamp(DateTime timestamp,int index){
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.pop(context);
                     pickFiles("Video", context,"");
                   },
                   child: iconCreation(
@@ -3702,7 +3801,6 @@ String formatMessageTimestamp(DateTime timestamp,int index){
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.pop(context);
                     pickFiles("MultipleFile", context,"");
                   },
                   child: iconCreation(

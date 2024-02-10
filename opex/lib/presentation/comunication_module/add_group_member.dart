@@ -150,6 +150,7 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+             
                leading: BackButton(
                 onPressed: () {
                   print("hello");
@@ -168,6 +169,7 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                 },
                 color: Colors.black,
               ),
+              
                 iconTheme: IconThemeData(
                   color: Colors.black, //change your color here
                 ),
@@ -178,38 +180,10 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                   statusBarColor: Colors.white, // Status bar
                 ),
                 backgroundColor: Colors.white,
-                title: Container(
-                  height: 44,
-                  // child: TextFormField(
-                  //   onChanged: (val) {
-                  //     if (val.isNotEmpty) {
-                  //       changeUi = true;
-                  //       setState(() {});
-                  //       BlocProvider.of<CommunicationBloc>(context).add(
-                  //           GetSearchedUserEvent(
-                  //               searchQuery: val, token: widget.token ?? ""));
-                  //     }else{
-                  //       changeUi=false;
-                  //     }
-                  //   },
-                  //   textAlign: TextAlign.justify,
-                  //   decoration: InputDecoration(
-                  //       enabledBorder: OutlineInputBorder(
-                  //         borderSide: BorderSide(
-                  //           color: Color(0xffe6ecf0),
-                  //         ),
-                  //       ),
-                  //       filled: true,
-                  //       fillColor: const Color(0xfff8f7f5),
-                  //       hintText: "Search ...",
-                  //       hintStyle: TextStyle(color: Colors.grey),
-                  //       border: OutlineInputBorder(
-                  //           borderSide: BorderSide(
-                  //             color: Colors.transparent,
-                  //           ),
-                  //           borderRadius: BorderRadius.circular(10))),
-                  // ),
-                )),
+                title: Text("Add Member", style:  TextStyle(color: Colors.black,fontSize: w/22),),
+                titleSpacing: 10,
+                ),
+                
             body: ScrollConfiguration(
               behavior: NoGlow(),
               child: SingleChildScrollView(
@@ -238,21 +212,21 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                                   children: [
                                     Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, top: 10, bottom: 16),
-                                        child: Text(
-                                          "${state.registeresUsers.length} Contacts",
-                                          style: GoogleFonts.roboto(
-                                            color: const Color(0xff151522),
-                                            fontSize: w / 22,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
+                                      // child: Container(
+                                      //   padding: const EdgeInsets.only(
+                                      //       left: 16, top: 10, bottom: 16),
+                                      //   child: Text(
+                                      //     "${state.registeresUsers.length} Contacts",
+                                      //     style: GoogleFonts.roboto(
+                                      //       color: const Color(0xff151522),
+                                      //       fontSize: w / 22,
+                                      //       fontWeight: FontWeight.w600,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ),
                                    state.registeresUsers.length ==0?Padding(
-                                     padding: const EdgeInsets.only(top:20),
+                                     padding: const EdgeInsets.only(top:40),
                                      child: Container(child: Column(
                                        children: [
                                          SvgPicture.string(CommunicationSvg().nolistSvg),
