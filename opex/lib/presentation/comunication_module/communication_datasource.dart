@@ -321,7 +321,35 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
+  Future<String> uploadImageData1({File? img}) async {
+    String statusCode;
 
+    print("total result ${img}");
+    String filePath = "";
+
+    if (img != null) filePath = img.path;
+    final mime = lookupMimeType(filePath)!.split("/");
+
+    final fileData = await MultipartFile.fromFile(
+      filePath,
+      contentType: MediaType(mime.first, mime.last),
+    );
+    final FormData formData = FormData.fromMap({"upload": fileData});
+
+    final response = await client.post(
+      CommunicationUrls.uploadImageUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    print("response is here ${response.data}");
+    statusCode = (response.data['data']['upload']);
+    return statusCode;
+  }
   Future<String> uploadImageData({FilePickerResult? img}) async {
     String statusCode;
 

@@ -378,11 +378,72 @@ int unreadCount=0;
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
-                                                 Icon(
-                                                      Icons.attach_file,
-                                                      color: Color.fromARGB(255, 2, 2, 2),
-                                                      size: w/24,
+                                                 Row(
+                                                   children: [
+                                                     Icon(
+                                                          Icons.attach_file,
+                                                          color: Color.fromARGB(255, 2, 2, 2),
+                                                          size: w/24,
+                                                        ),
+                                                        Text(
+                                                    widget.communicationUserModel
+                                                            ?.latestMessage!.split('?').first.split('.').last ??
+                                                        "",
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Color(0xff151522),
+                                                      fontSize: w/30,
+                                                      fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.normal
                                                     ),
+                                                  ),
+                                                   ],
+                                                 ),
+                                                // SizedBox(
+                                                //   width: w/3,
+                                                  
+                                                //   child: Text(
+                                                //         "You have new voice",
+                                                //     maxLines: 1,
+                                                //     overflow: TextOverflow.ellipsis,
+                                                //     style: TextStyle(
+                                                //       color: Color(0xff151522),
+                                                //       fontSize: w/30,
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                                // Text(
+                                                //     widget.communicationUserModel
+                                                //             ?.latestMessagecreated ??
+                                                //         "",
+                                                //         softWrap: true,
+                                                //     overflow: TextOverflow.fade,
+                                                //     style: GoogleFonts.roboto(
+                                                //       color: const Color(0xff6d6d6d),
+                                                //       fontSize: w/35,
+                                                //       fontWeight: FontWeight.w500,
+                                                      
+                                                //     )),
+                                              ],
+                                            ):widget.communicationUserModel?.type=='notify'?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                 SizedBox(
+                                                  width: w1/2,
+                                                  child: Text(
+                                                    widget.communicationUserModel
+                                                            ?.latestMessage ??
+                                                        "",
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Color(0xff151522),
+                                                      fontSize: w/30,
+                                                      fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.normal
+                                                    ),
+                                                  ),
+                                                ),
                                                 // SizedBox(
                                                 //   width: w/3,
                                                   

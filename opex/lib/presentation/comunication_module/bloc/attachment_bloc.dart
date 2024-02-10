@@ -35,9 +35,9 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
   }
 
   Stream<AttachmentState> uploadImageMap(
-      {required FilePickerResult image}) async* {
+      {required File image}) async* {
     yield UploadPictureLoading();
-    final dataResponse = await _productData.uploadImageData(img: image);
+    final dataResponse = await _productData.uploadImageData1(img: image);
     if (dataResponse.isNotEmpty) {
       yield UploadPictureSuccess(upload: dataResponse);
     } else {
