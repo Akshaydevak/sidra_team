@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/comunication_module/audio_state.dart';
 import 'package:cluster/presentation/comunication_module/bloc/attachment_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
 import 'package:cluster/presentation/comunication_module/chat_type_model.dart';
 import 'package:cluster/presentation/comunication_module/com_svg.dart';
+import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/videoplayerscreen.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
@@ -17,6 +19,7 @@ import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart';
@@ -51,6 +54,7 @@ class ChatScreen extends StatefulWidget {
   final String redirectchatname;
   final String? token;
   final String? loginUserId;
+  final String? redirectionsenduserId;
   final UserDummyList? communicationUserModel;
   final CommunicationUserModel? communicationuser;
   final GroupList? grpuser;
@@ -68,6 +72,7 @@ class ChatScreen extends StatefulWidget {
       this.cmntgrpchatname="",
       this.redirectchatid="",
       this.redirectchatname="",
+      this.redirectionsenduserId="",
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser
@@ -94,6 +99,7 @@ bool ismount1=true;
   bool isadmin=false;
   bool isgrp=true;
   int totpage=0;
+  bool showdate=true;
   int activeUsersLength=0;
   Map<String, String> oldestMessageDateMap = {};
   String? roomId;
@@ -166,7 +172,7 @@ bool ismount1=true;
         print("unreaded messages....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
     ? widget.communicationUserModel?.chatid:
-    widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
     }
     }else if(widget.isGroup==true && widget.isg==false){
         print("unreaded messagess....");
@@ -267,12 +273,15 @@ widget.socket?.emit("group.message.seen",roomId);
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
-            fromuserid: data['fromuserid'])): 
+            fromuserid: data['fromuserid'],
+            firstMessageOfDay: data['firstMessageOfDay'])): 
             messageList.insert(0,ChatModel(
             type: data['type'],
             message: data['message'],
             createdAt: data['createdAt'],
-            fromuserid: data['fromuserid']));  
+            fromuserid: data['fromuserid'],
+            firstMessageOfDay: data['firstMessageOfDay']
+            ));  
             print("...msglist${messageList.length}");
             if(isenter==true){
               // unreadMessageCount++;
@@ -309,11 +318,11 @@ widget.socket?.emit("group.message.seen",roomId);
                 };
               });
               ScrollService.scrollToEnd(
-            scrollController: _controller, reversed:totpage<=1? false:true);
+            scrollController: _controller, reversed:totpage<=1? true:true);
             }
             else{
              ScrollService.scrollToEnd(
-            scrollController: _controller, reversed:totpage<=1? false:true);
+            scrollController: _controller, reversed:totpage<=1? true:true);
               print("my msg");
             }
             }
@@ -409,7 +418,7 @@ widget.socket!.emit("update.list",{
      
       widget.socket?.on("group.latest.message", (data) {
         loadmsg=true;
-        // print("total ser listened ${widget.loginUserId} ...${data}");
+        print("total ser listened $loadmsg ${widget.loginUserId} ...${data}");
         // print(",,,,,lesting${data['fromuserid']}${widget.loginUserId}");
       totpage<=1?messageList.add(ChatModel(
             message: data['message'],
@@ -525,7 +534,7 @@ widget.socket!.emit("update.list",{
         }
 
         ScrollService.scrollToEnd(
-            scrollController: _controller, reversed: totpage<=1?false:true);
+            scrollController: _controller, reversed: totpage<=1?true:true);
       });
         widget.socket!.on("unread.update", (data) {
             // ignore: unused_local_variable
@@ -661,7 +670,7 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
  
   }
   void handleActiveLength(data) {
-  print("ACTIVE length sharedpref");
+  print("ACTIVE length sharedpref  $data");
   saveactiveusers(data);
   loadactiveusers();
   print("ACTIVE length sharedpref");
@@ -728,10 +737,10 @@ Future<void> saveactiveusers(int count) async {
      pref = await SharedPreferences.getInstance();
     await pref!.setInt('activeuser', count);
   }
-  void sendMessage(String message, String chatId) {
+  void sendMessage(String message, String chatId, bool day) {
    
     widget.socket?.emit(
-        "new.message", {"type": "text", "chatid": chatId, "content": message});
+        "new.message", {"type": "text", "chatid": chatId, "content": message ,"firstMessageOfDay":day});
      
             widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
 
@@ -807,7 +816,65 @@ double currentScrollPosition= 0.0;
     return WillPopScope(
       onWillPop: () {
         if(widget.isGroup==false){
-                     if( widget.chat==false){
+          if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
+                       widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": roomId??"",
+                        "userid":widget.communicationUserModel?.id??""
+                      }
+                       );
+                       print("user left too");
+                     
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                   
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
+                   widget.socket!.on("msg1.seen", (data) {
+                    print("room leave message $data");
+                 
+                   
+                   } );
+                  });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                         
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount1(0,roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                           
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                    else if( widget.chat==false){
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
@@ -910,7 +977,75 @@ double currentScrollPosition= 0.0;
                    
                     }
                     else{
-                      // if( widget.isg==false){
+                      if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
+                       widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": roomId??"",
+                        "userid":widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
+                      }
+                       );
+                       print("user left too");
+                     
+    print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
+                   
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
+                    if(ismount1){
+                      widget.socket?.emit("group.message.seen",roomId);
+                    widget.socket?.on("msg.seen.by", (data){
+                      print("active userss $data");
+                      setState(() {
+                        
+                      });
+                      });
+                    }
+                   
+                   widget.socket!.on("msg1.seen", (data) {
+                    print("room leave message $data");
+                 
+                   
+                   } );
+                  });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
+                         
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount1(0,roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
+                           
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                    else if( widget.isg==false){
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
@@ -967,57 +1102,57 @@ double currentScrollPosition= 0.0;
                         });
                    
                   Navigator.pop(context);
-                  //    }else{
-                  // widget.socket!.emit("update.list",{
-                  //       print("update")
-                  //     });
-                  //     widget.socket!.emit("leave.chat",{
-                  //       "room": roomId??"",
-                  //       "userid":widget.loginUserId ??""
-                  //     }
-                  //      );
-                  //      print("user left too");
-                  // widget.socket!.on("left.room", (data) {
-                  //   print("room left $data");
+                     }else{
+                  widget.socket!.emit("update.list",{
+                        print("update")
+                      });
+                      widget.socket!.emit("leave.chat",{
+                        "room": roomId??"",
+                        "userid":widget.loginUserId ??""
+                      }
+                       );
+                       print("user left too");
+                  widget.socket!.on("left.room", (data) {
+                    print("room left $data");
                    
-                  //   if(mounted){
-                  //   widget.socket!.off("get.clients");
-                  //    widget.socket!.emit("get.clients",roomId);
-                  //    widget.socket!.off("active.length");
-                  //     widget.socket!.on("active.length", (data) {
-                  //     saveactiveusers(data);
-                  //   print("ACTIVE ...length1 $data");
-                  // } );
-                  //   }
-                  //  widget.socket!.on("msg1.seen", (data) {
-                  //   print("room leave message $data");
+                    if(mounted){
+                    widget.socket!.off("get.clients");
+                     widget.socket!.emit("get.clients",roomId);
+                     widget.socket!.off("active.length");
+                      widget.socket!.on("active.length", (data) {
+                      saveactiveusers(data);
+                    print("ACTIVE ...length1 $data");
+                  } );
+                    }
+                   widget.socket!.on("msg1.seen", (data) {
+                    print("room leave message $data");
                  
                    
-                  //  } );
-                  // });
-                  //       widget.socket!.off("user.left");
-                  //       widget.socket!.on("user.left", (data){
-                  //         print("user left");
+                   } );
+                  });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data){
+                          print("user left");
                          
-                  //         if(data["userid"] == widget.loginUserId){
-                  //            print("ACTIVE length sharedprefww");
-                  //             saveUnreadMessageCount1(0,roomId??"");
-                  //         print("user left the room1 ${data["chatid"]}");
-                  //         setState(() {
+                          if(data["userid"] == widget.loginUserId){
+                             print("ACTIVE length sharedprefww");
+                              saveUnreadMessageCount1(0,roomId??"");
+                          print("user left the room1 ${data["chatid"]}");
+                          setState(() {
                            
-                  //         });
-                  //       }else{
-                  //         print("same user id");
-                  //       }
-                  //       });
-                  // Navigator.pop(context);
-                  //    }
-            //           PersistentNavBarNavigator.pushNewScreen(
-            //   context,
-            //   screen: CommunicationModule(),
-            //   withNavBar: true, // OPTIONAL VALUE. True by default.
-            //   pageTransitionAnimation: PageTransitionAnimation.fade,
-            // );
+                          });
+                        }else{
+                          print("same user id");
+                        }
+                        });
+                  Navigator.pop(context);
+                     }
+                      PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: CommunicationModule(),
+              withNavBar: true, // OPTIONAL VALUE. True by default.
+              pageTransitionAnimation: PageTransitionAnimation.fade,
+            );
                     }
         return Future.value(false);
       },
@@ -1515,17 +1650,29 @@ double currentScrollPosition= 0.0;
                                 itemCount: messageList.length,
                                 itemBuilder: (context, index) {
                                   
-                                  print("list view reload $index $a");
+                                  print("list view reload $index ${messageList.last.firstMessageOfDay}");
                                   String msgdate = "";
-                                 bool showdate=false;
+                                 
                                  int today=0;
                                   String? timestamp = messageList[index].createdAt.toString();
                                   DateTime dateTime = DateTime.parse(timestamp); 
                                   String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
                                   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
                                     msgdate = formatMessageTimestamp(dateTime,index);
-                                 
-                                  
+                                    print("list view reload firstMessageOfDay $msgdate");
+                                 if( totpage<=1){
+                                  if(messageList.last.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
+                                    showdate=true;
+                                   }else{
+                                    showdate=false;
+                                   }
+                                  }else{
+                                    if(messageList.first.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
+                                    showdate=true;
+                                   }else{
+                                    showdate=false;
+                                   }
+                                  }
                                   return  Column(
                                     crossAxisAlignment:
                                         messageList[index].fromuserid !=
@@ -1776,12 +1923,12 @@ double currentScrollPosition= 0.0;
                                                                       .start,
                                                               children: [
                                                                 Text(
-                                                                  messageList[index]
-                                                                          .message ??
-                                                                      "",
+                                                                  // messageList[index].message ??
+                                                                      "${ messageList[index].message!.split('?').first.split('/').last}",
+                                                                      overflow: TextOverflow.ellipsis,
                                                                   style: GoogleFonts.roboto(textStyle:TextStyle(
                                                                     color: Colors.black,
-                                                                    fontSize: 8,
+                                                                    fontSize: 13,
                                                                   ),)
                                                                 ),
                                                                 const SizedBox(height: 4),
@@ -2214,14 +2361,15 @@ double currentScrollPosition= 0.0;
                                                                               .start,
                                                                       children: [
                                                                         Text(
-                                                                          messageList[index]
-                                                                                  .message ??
-                                                                              "",
+                                                                          // messageList[index]
+                                                                          //         .message ??
+                                                                              "${ messageList[index].message!.split('?').first.split('/').last}",
+                                                                              overflow: TextOverflow.ellipsis,
                                                                           style:
                                                                               GoogleFonts.roboto(textStyle: TextStyle(
                                                                             color: Colors
                                                                                 .black,
-                                                                            fontSize: 8,
+                                                                            fontSize:13,
                                                                           ),
                                                                               ),
                                                                         ),
@@ -2548,7 +2696,7 @@ double currentScrollPosition= 0.0;
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength == 2)...{
+                                                                        if(activeUsersLength >= 2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
                                                                       else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2576,7 +2724,7 @@ double currentScrollPosition= 0.0;
                                             audioSrc:
                                                 messageList[index].message ?? "",
                                             played:
-                                                false, // To show played badge or not.
+                                                true, // To show played badge or not.
                                             me: true, // Set message side.
                                             onPlay:
                                                 () {}, // Do something when voice played.
@@ -2595,7 +2743,7 @@ double currentScrollPosition= 0.0;
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength == 2)...{
+                                                                        if(activeUsersLength <= 2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
                                                                       else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2691,12 +2839,14 @@ double currentScrollPosition= 0.0;
                                                                 CrossAxisAlignment.start,
                                                             children: [
                                                               Text(
-                                                                messageList[index]
-                                                                        .message ??
-                                                                    "",
+                                                                // messageList[index]
+                                                                //         .message ??
+                                                                    "${ messageList[index].message!.split('?').first.split('/').last}",
+                                                                    overflow:TextOverflow.ellipsis ,
+                                                                    // textScaler:TextScaler.linear(textScaleFactor) ,
                                                                 style:GoogleFonts.roboto (textStyle: TextStyle(
                                                                   color: Colors.white,
-                                                                  fontSize:10,
+                                                                  fontSize:13,
                                                                 ),)
                                                               ),
                                                               // Text(
@@ -2725,7 +2875,7 @@ double currentScrollPosition= 0.0;
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength == 2)...{
+                                                                        if(activeUsersLength >= 2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
                                                                       else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2780,7 +2930,7 @@ double currentScrollPosition= 0.0;
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength == 2)...{
+                                                                        if(activeUsersLength >= 2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
                                                                       else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2892,7 +3042,7 @@ double currentScrollPosition= 0.0;
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(activeUsersLength == 2)...{
+                                                                        if(activeUsersLength >= 2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
                                                                       else if(activeUsersLength ==1 && messageList[index].seenBy == null )...{
@@ -2968,7 +3118,7 @@ double currentScrollPosition= 0.0;
                                   );
                                 },
                                 separatorBuilder: (context, index) {
-                                  fromuserids=messageList[index].fromuserid!;
+                                  fromuserids=messageList[index+1].fromuserid!;
                                   oldertimestampp=messageList[index].createdAt??"";
                                     return messageList[index].fromuserid!=fromuserids? const SizedBox(
                                     height: 8,
@@ -3226,7 +3376,8 @@ double currentScrollPosition= 0.0;
                                                         typedMessageController.text,
                                                        widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
                                                                 ?.chatid ??
-                                                            "":widget.communicationuser?.id??"");
+                                                            "":widget.communicationuser?.id??"",
+                                                            showdate);
                                                     widget.socket?.emit(
                                                         "stopped.typing", roomId);    
                                                        
@@ -3528,7 +3679,7 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       // result= await  
           if (result != null) {
   for (PlatformFile file in result!.files) {
-    int maxSizeBytes =10 * 1024 * 1024; // Set the maximum size to 1 MB
+    int maxSizeBytes =5 * 1024 * 1024; // Set the maximum size to 1 MB
     if (file.size <= maxSizeBytes) {
       
       // File size is within the allowed limit
@@ -3573,20 +3724,94 @@ String formatMessageTimestamp(DateTime timestamp,int index){
         break;
       case 'Video':
         result = await FilePicker.platform
-            .pickFiles(type: FileType.video, allowMultiple: false);
+            .pickFiles(type: FileType.video, allowMultiple: false,allowCompression: true);
         // if (result == null) return;
         // file = result!.files.first;
-        BlocProvider.of<AttachmentBloc>(context)
+        
+             if (result != null) {
+  for (PlatformFile file in result!.files) {
+    int maxSizeBytes =15 * 1024 * 1024; // Set the maximum size to 1 MB
+    if (file.size <= maxSizeBytes) {
+      
+      // File size is within the allowed limit
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      BlocProvider.of<AttachmentBloc>(context)
             .add(UploadVideoEvent(video: result!));
+    } else {
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      // File size exceeds the allowed limit
+      print('File size exceeds the limit.');
+      showDialog(
+      context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Vedio size exceeds the limit"),
+          actions: [
+            Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel")),
+
+              ],
+            )
+          ],
+        );
+      },
+      );
+      // Handle accordingly, for example, show an error message.
+    }
+  }
+} else {
+  // User canceled the file picking
+}
         setState(() {});
         break;
       case 'Audio':
         result = await FilePicker.platform
-            .pickFiles(type: FileType.audio, allowMultiple: false);
+            .pickFiles(type: FileType.audio, allowMultiple: false,allowCompression: true );
         if (result == null) return;
         file = result!.files.first;
-        BlocProvider.of<AttachmentBloc>(context)
+        
+                if (result != null) {
+  for (PlatformFile file in result!.files) {
+    int maxSizeBytes =10 * 1024 * 1024; // Set the maximum size to 1 MB
+    if (file.size <= maxSizeBytes) {
+      
+      // File size is within the allowed limit
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      BlocProvider.of<AttachmentBloc>(context)
             .add(UploadAudioEvent(audio: result!));
+    } else {
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      // File size exceeds the allowed limit
+      print('File size exceeds the limit.');
+      showDialog(
+      context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Audio size exceeds the limit"),
+          actions: [
+            Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel")),
+
+              ],
+            )
+          ],
+        );
+      },
+      );
+      // Handle accordingly, for example, show an error message.
+    }
+  }
+} else {
+  // User canceled the file picking
+}
         setState(() {});
         break;
       case 'All':
@@ -3596,14 +3821,52 @@ String formatMessageTimestamp(DateTime timestamp,int index){
         setState(() {});
         break;
       case 'MultipleFile':
-        result = await FilePicker.platform.pickFiles(allowMultiple: false);
-        BlocProvider.of<AttachmentBloc>(context)
+        result = await FilePicker.platform.pickFiles(allowMultiple: false,allowCompression: true);
+       
+                if (result != null) {
+  for (PlatformFile file in result!.files) {
+    int maxSizeBytes =5 * 1024 * 1024; // Set the maximum size to 1 MB
+    if (file.size <= maxSizeBytes) {
+      
+      // File size is within the allowed limit
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      BlocProvider.of<AttachmentBloc>(context)
             .add(UploadFilesEvent(files: result!));
+    } else {
+      print('File path: ${file.path}');
+      print('File size: ${file.size}');
+      // File size exceeds the allowed limit
+      print('File size exceeds the limit.');
+      showDialog(
+      context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Media size exceeds the limit"),
+          actions: [
+            Row( mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel")),
+
+              ],
+            )
+          ],
+        );
+      },
+      );
+      // Handle accordingly, for example, show an error message.
+    }
+  }
+} else {
+  // User canceled the file picking
+}
         // if (result == null) return;
         // loadSelectedFiles(result!.files);
         break;
     }
   }
+
 Future<XFile> testCompressAndGetFile(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
         file.absolute.path, targetPath,

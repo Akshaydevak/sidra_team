@@ -57,10 +57,12 @@ class GroupUserList extends Equatable {
   final String? photo;
   @JsonKey(name: "createdBy")
   final String? createdBy;
+  @JsonKey(name: "user_code")
+  final String? usercode;
   @JsonKey(name: "isAdmin")
   final bool? isAdmin;
 
-  const GroupUserList({this.id,this.name,this.photo,this.connect,this.createdBy,this.isAdmin});
+  const GroupUserList({this.id,this.name,this.photo,this.connect,this.createdBy,this.isAdmin,this.usercode});
   @override
   List<Object> get props => [];
 
