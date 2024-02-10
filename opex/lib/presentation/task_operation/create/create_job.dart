@@ -593,6 +593,11 @@ class _CreateJobState extends State<CreateJob> {
                                                       child: Column(
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
+                                                          Text("Please select start date & end date",
+                                                          style: GoogleFonts.roboto(
+                                                            color: ColorPalette.subtextGrey,
+                                                            fontSize: w/28
+                                                          ),),
                                                           Container(
                                                             width: w1,
                                                             child: CalendarDatePicker2WithActionButtons(
@@ -630,6 +635,7 @@ class _CreateJobState extends State<CreateJob> {
                                                               value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
                                                             ),
                                                           ),
+
                                                           // Row(
                                                           //     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                           //     children: <Widget>[
@@ -692,7 +698,7 @@ class _CreateJobState extends State<CreateJob> {
                                                           //         ),
                                                           //       ),
                                                           //     ]),
-                                                          const SizedBox(height: 16,)
+                                                          // const SizedBox(height: 16,)
                                                         ],
                                                       ),
                                                     ),
@@ -1109,6 +1115,11 @@ class _CreateJobState extends State<CreateJob> {
                                                       child: Column(
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
+                                                          Text("Please select start date & end date",
+                                                            style: GoogleFonts.roboto(
+                                                                color: ColorPalette.subtextGrey,
+                                                                fontSize: w/28
+                                                            ),),
                                                           Container(
                                                             width: w1,
                                                             child: CalendarDatePicker2WithActionButtons(
@@ -1208,7 +1219,7 @@ class _CreateJobState extends State<CreateJob> {
                                                           //         ),
                                                           //       ),
                                                           //     ]),
-                                                          const SizedBox(height: 16,)
+                                                          // const SizedBox(height: 16,)
                                                         ],
                                                       ),
                                                     ),

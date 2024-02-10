@@ -388,7 +388,7 @@ class _JobTitleState extends State<JobTitle> {
                             }
 
                             if (state is GetTaskListSuccess) {
-                              taskList.clear();
+                              // taskList.clear();
                               taskList = state.taskList ?? [];
 
                               nextUrl = state.nextPageUrl ?? "";
@@ -397,60 +397,64 @@ class _JobTitleState extends State<JobTitle> {
                               return taskList.isEmpty?
                               Stack(
                                 children: [
-                                  Column(
-                                    children: [
-                                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Task List",
-                                            style: GoogleFonts.roboto(
-                                              color: ColorPalette.black,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: (){
-                                              _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
-                                            },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
-                                              decoration: BoxDecoration(
-                                                  color: ColorPalette.primary,
-                                                  borderRadius: BorderRadius.circular(4)
+                                  Container(
+                                    height: h / 1.85,
+                                    child: Column(
+                                      children: [
+                                        widget.isCreated==true?Container():
+                                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Task List",
+                                              style: GoogleFonts.roboto(
+                                                color: ColorPalette.black,
+                                                fontSize: w / 24,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    "Filter",
+                                            ),
+                                            GestureDetector(
+                                              onTap: (){
+                                                _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
+                                                decoration: BoxDecoration(
+                                                    color: ColorPalette.primary,
+                                                    borderRadius: BorderRadius.circular(4)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Filter",
 
-                                                    style: GoogleFonts.roboto(
-                                                      color: ColorPalette.white,
-                                                      fontSize: w / 28,
-                                                      fontWeight: FontWeight.w500,
+                                                      style: GoogleFonts.roboto(
+                                                        color: ColorPalette.white,
+                                                        fontSize: w / 28,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  // SizedBox(width: 8,),
-                                                  // SvgPicture.string(TaskSvg().filterSvg),
-                                                ],
+                                                    // SizedBox(width: 8,),
+                                                    // SvgPicture.string(TaskSvg().filterSvg),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(top: 10),
-                                        alignment: Alignment.center,
-                                        height: h / 1.85,
-                                        child: SvgPicture.string(
-                                          TaskSvg().nolistSvg,
-                                          height: h / 4.5,
+                                          ],
                                         ),
-                                      ),
-                                    ],
+                                        Container(
+                                          padding: EdgeInsets.only(top: 10),
+                                          alignment: Alignment.center,
+                                          height: h / 4,
+                                          child: SvgPicture.string(
+                                            TaskSvg().nolistSvg,
+                                            height: h / 4.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Positioned(
-                                    top: h/2.3,
+                                    top: h/3,
                                     left: w1/4.5,
                                     child:
                                   Container(

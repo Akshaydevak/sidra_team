@@ -37,8 +37,8 @@ class CreateNewTask extends StatefulWidget {
   final bool backRead;
   final int? subTaskId;
   final int? jobId;
-  final String? startDateTime;
-  final String? endDateTime;
+  final String startDateTime;
+  final String endDateTime;
   const CreateNewTask(
       {Key? key,
       this.isSubTask = false,
@@ -46,8 +46,8 @@ class CreateNewTask extends StatefulWidget {
       this.backRead = false,
       this.subTaskId,
       this.jobId,
-      this.startDateTime,
-      this.endDateTime})
+      this.startDateTime="",
+      this.endDateTime=""})
       : super(key: key);
 
   @override
@@ -224,6 +224,9 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     Variable.assignName = "";
     Variable.assignCode = "";
     Variable.assignType = "";
+    Variable.reportingEmail = "";
+    Variable.reportingName = "";
+    Variable.typeAss = "IND";
     clearIndexVal();
     super.initState();
   }
@@ -234,6 +237,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     await pref.remove('index2');
     Variable.isselected = true;
   }
+  void refreshPage(){
+
+    setState((){});
+  }
 
   String? taskId;
   List<GetTaskTypeList>? typelist;
@@ -242,6 +249,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
 
   bool createButtonLoad = false;
   String selectedValue = 'Today';
+  popFunction() {
+    context.read<TaskBloc>().add(GetTaskListEvent(
+        widget.jobId, '', '', '', false, '', ''));
+    Navigator.pop(context);
+  }
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width;
@@ -249,10 +261,136 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     var h = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
-        context
-            .read<TaskBloc>()
-            .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
-        return true;
+        if(taskListNew.isEmpty&&Variable.assignType=="Task_Group"){
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                surfaceTintColor: Colors.white,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      width: w,
+                      // height: h/7,
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Confirm",
+                        style: GoogleFonts.roboto(
+                          color: ColorPalette.black,
+                          fontSize: w / 24,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Divider(),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "You are not added a subtask for this task. Do you want to continue?",
+                      style: GoogleFonts.roboto(
+                        color: ColorPalette.black,
+                        fontSize: w / 28,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              width: w / 3.3,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Color(0x26000000).withOpacity(0.05)),
+                                // boxShadow: [
+                                //   BoxShadow(
+                                //     color: Color(0x26000000),
+                                //     blurRadius: 0,
+                                //     offset: Offset(0, 0),
+                                //   ),
+                                // ],
+                                color: ColorPalette.primary,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Cancel",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: w / 26,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              popFunction();
+                              //
+                            },
+                            child: Container(
+                              width: w / 3.1,
+                              padding: EdgeInsets.symmetric(vertical: 13),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Color(0x26000000).withOpacity(0.05)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    ColorPalette.white,
+                                    ColorPalette.white,
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                "Confirm",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(
+                                  color: Colors.grey,
+                                  fontSize: w / 26,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]),
+                    SizedBox(
+                      height: h / 80,
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+          return false;
+        }
+        else{
+          context
+              .read<TaskBloc>()
+              .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
+
+          return true;
+        }
+
       },
       child: MultiBlocListener(
         listeners: [
@@ -377,6 +515,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 taskYype = readTask?.taskTypeName ?? "";
                 startDate = readTask?.startDate?.split("T")[0] ?? "";
                 ebdDate = readTask?.endDate?.split("T")[0] ?? "";
+                Variable.reportingEmail =
+                    readTask?.reportingPersonDict?.email??"";
+                Variable.reportingName =
+                    readTask?.reportingPersonDict?.fName??"";
+                Variable
+                    .reportingCode = readTask?.reportingPersonDict?.userCode?? "";
                 startTime =
                     readTask?.startDate?.split("T")[1].split("+")[0] ?? "";
                 endTime = readTask?.endDate?.split("T")[1].split("+")[0] ?? "";
@@ -445,9 +589,134 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                   isAction: false,
                   isBack: false,
                   onTap: () {
-                    context.read<TaskBloc>().add(GetTaskListEvent(
-                        widget.jobId, '', '', '', false, '', ''));
-                    Navigator.pop(context);
+                    if(taskListNew.isEmpty&&Variable.assignType=="Task_Group"){
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            surfaceTintColor: Colors.white,
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  width: w,
+                                  // height: h/7,
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Confirm",
+                                    style: GoogleFonts.roboto(
+                                      color: ColorPalette.black,
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Divider(),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "You are not added a subtask for this task. Do you want to continue?",
+                                  style: GoogleFonts.roboto(
+                                    color: ColorPalette.black,
+                                    fontSize: w / 28,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Container(
+                                          width: w / 3.3,
+                                          padding: EdgeInsets.symmetric(vertical: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                                width: 1,
+                                                color: Color(0x26000000).withOpacity(0.05)),
+                                            // boxShadow: [
+                                            //   BoxShadow(
+                                            //     color: Color(0x26000000),
+                                            //     blurRadius: 0,
+                                            //     offset: Offset(0, 0),
+                                            //   ),
+                                            // ],
+                                            color: ColorPalette.primary,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Cancel",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.white,
+                                                fontSize: w / 26,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          popFunction();
+                                          //
+                                        },
+                                        child: Container(
+                                          width: w / 3.1,
+                                          padding: EdgeInsets.symmetric(vertical: 13),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                                width: 1,
+                                                color: Color(0x26000000).withOpacity(0.05)),
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                ColorPalette.white,
+                                                ColorPalette.white,
+                                              ],
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Confirm",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.grey,
+                                              fontSize: w / 26,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                SizedBox(
+                                  height: h / 80,
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    else{
+                      context
+                          .read<TaskBloc>()
+                          .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
+
+                    }
+
                   },
                 )),
             body: SingleChildScrollView(
@@ -664,6 +933,11 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                         child: Column(
                                                           mainAxisSize: MainAxisSize.min,
                                                           children: <Widget>[
+                                                            Text("Please select start date & end date",
+                                                              style: GoogleFonts.roboto(
+                                                                  color: ColorPalette.subtextGrey,
+                                                                  fontSize: w/28
+                                                              ),),
                                                             Container(
                                                               width: w1,
                                                               child: CalendarDatePicker2WithActionButtons(
@@ -763,7 +1037,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                             //         ),
                                                             //       ),
                                                             //     ]),
-                                                            const SizedBox(height: 16,)
+                                                            // const SizedBox(height: 16,)
                                                           ],
                                                         ),
                                                       ),
@@ -1181,6 +1455,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                       readTask: readTask,
                                       task: true,
                                       job: false,
+                                      refresh: refreshPage,
                                     ),
                                     withNavBar:
                                         true, // OPTIONAL VALUE. True by default.
@@ -1190,6 +1465,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 : PersistentNavBarNavigator.pushNewScreen(
                                     context,
                                     screen: ReportingPerson(
+                                      refresh: refreshPage,
                                       editTask: true,
                                       readTask: readTask,
                                       task: true,
@@ -1225,13 +1501,52 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                 label: "Reporting Person",
                                 svg: TaskSvg().personIcon,
                                 onTap: () {
-                                  //    ReportingPerson
+                                  validationCheck();
+                                  context
+                                      .read<TaskBloc>()
+                                      .add(GetTaskReadListEvent(readTask?.id ?? 0));
+                                  print(readTask?.id);
+                                  readTask?.id == null
+                                      ? PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: ReportingPerson(
+                                      editTask: false,
+                                      readTask: readTask,
+                                      task: true,
+                                      job: false,
+                                      refresh: refreshPage,
+                                    ),
+                                    withNavBar:
+                                    true, // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.fade,
+                                  )
+                                      : PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: ReportingPerson(
+                                      refresh: refreshPage,
+                                      editTask: true,
+                                      readTask: readTask,
+                                      task: true,
+                                      job: false,
+                                    ),
+                                    withNavBar:
+                                    true, // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.fade,
+                                  );
                                 },
-                                endIcon: Icon(
+                                endIcon: Variable.reportingEmail == ""?Icon(
                                   Icons.arrow_forward_ios_sharp,
                                   color: ColorPalette.primary,
                                   size: 18,
-                                )),
+                                ):Container(
+                                  width: w1/4,
+                                    alignment: Alignment.centerRight,
+                                    // color: Colors.orange,
+                                    child: Text(Variable.reportingName??"",
+                                    overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,))),
                           ),
                         ),
                         SizedBox(
@@ -1327,6 +1642,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                         context,
                                         screen: AssignesUnderGroup(
                                           groupVal: updatevalue,
+                                          groupId: readTask?.groupId??0,
                                         ),
                                         withNavBar: true,
                                         // OPTIONAL VALUE. True by default.
@@ -1726,6 +2042,8 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                                   CreateNewTask(
                                                                 jobId: widget
                                                                     .jobId,
+                                                                    startDateTime: "${startDate2}  ${startTime}",
+                                                                    endDateTime: "$ebdDate2  $endTime",
                                                                 isSubTask: true,
                                                                 subTaskId:
                                                                     int.tryParse(
