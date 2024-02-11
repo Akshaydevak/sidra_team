@@ -49,10 +49,13 @@ class _SelectAssigneesState extends State<SelectAssignees> {
     });
   }
 
+
   @override
   void initState() {
     getData();
-    context.read<JobBloc>().add(const GetEmployeeListEvent('','',''));
+    Variable.typeAss=="IND"?context.read<JobBloc>().add(const GetEmployeeListEvent('','',''))
+        :context.read<JobBloc>().add(GetGroupListEvent());;
+
     setState(() {});
     super.initState();
   }
@@ -99,7 +102,11 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
+                              Variable.assignName = "";
+                              Variable.assignCode = "";
+                              Variable.assignType = "";
                               Variable.isselected = !Variable.isselected;
+                              Variable.typeAss="IND";
                               context.read<JobBloc>().add(GetEmployeeListEvent('','',''));
                             });
                           },
@@ -172,7 +179,11 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
+                              Variable.assignName = "";
+                              Variable.assignCode = "";
+                              Variable.assignType = "";
                               Variable.isselected = !Variable.isselected;
+                              Variable.typeAss="GRP";
                               context.read<JobBloc>().add(GetGroupListEvent());
 
                               groupActived = true;
@@ -450,7 +461,7 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                         final SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
-                                            prefs.setInt('index', index!);
+                                            prefs.setInt('index', index);
                                             setState(() {
                                               groupActived = false;
                                               indValue = index;
@@ -687,7 +698,8 @@ class _SelectAssigneesState extends State<SelectAssignees> {
 
 class AssignesUnderGroup extends StatefulWidget {
   final Function(bool val)? groupVal;
-  const AssignesUnderGroup({Key? key, this.groupVal}) : super(key: key);
+  final int groupId;
+  const AssignesUnderGroup({Key? key, this.groupVal, required this.groupId}) : super(key: key);
 
   @override
   State<AssignesUnderGroup> createState() => _AssignesUnderGroupState();
@@ -710,7 +722,7 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
 
   @override
   void initState() {
-    context.read<JobBloc>().add(const GetUserUderGroupEvent());
+    context.read<JobBloc>().add( GetUserUderGroupEvent());
     grouid();
     super.initState();
   }
@@ -719,8 +731,7 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
 
   @override
   Widget build(BuildContext context) {
-    print("GroupID$groupId");
-    // print("GroupID${Variable.groupId}");
+
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
     return Scaffold(

@@ -11,10 +11,12 @@ class Variable{
   static String perfomanceName="";
   static String? reportingCode="";
   static String? reportingEmail="";
+  static String? reportingName="";
   static bool isselected=true;
   static String locationUrl="";
   static String errorMessage="";
   static String profilePic="";
+  static String typeAss="IND";
 
   static int offerGroupId=0;
   static String typeData="";

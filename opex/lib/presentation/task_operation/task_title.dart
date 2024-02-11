@@ -1110,9 +1110,14 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                 fontSize: w/28,
                                                                   color: Colors.white
                                                               ),)),
-                                                      onTap: () {
+                                                      onTap: () async{
+                                                        final SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
                                                         setState(() {
-                                                          print("shifu");
+
+                                                          prefs.setInt('groupId',
+                                                              getTaskRead?.groupId ?? 0);
                                                           PersistentNavBarNavigator
                                                               .pushNewScreen(
                                                             context,
@@ -1141,147 +1146,145 @@ class _TaskTitleState extends State<TaskTitle> {
                                                       const SizedBox(
                                                         height: 2,
                                                       ),
-                                                      TaskTitleCard(
-                                                        widget: Column(
-                                                          children: [
-                                                            ListView.separated(
-                                                              physics:
-                                                                  NeverScrollableScrollPhysics(),
-                                                              itemBuilder: (context,
-                                                                      index) =>
-                                                                  GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        context
-                                                                            .read<
-                                                                                TaskBloc>()
-                                                                            .add(GetTaskReadListEvent(taskListNew[index].id ??
-                                                                                0));
-                                                                        PersistentNavBarNavigator
-                                                                            .pushNewScreen(
-                                                                          context,
-                                                                          screen:
-                                                                              TaskTitle(
-                                                                            isMyJob:
-                                                                                true,
+                                                      Column(
+                                                        children: [
+                                                          ListView.separated(
+                                                            physics:
+                                                                NeverScrollableScrollPhysics(),
+                                                            itemBuilder: (context,
+                                                                    index) =>
+                                                                GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      context
+                                                                          .read<
+                                                                              TaskBloc>()
+                                                                          .add(GetTaskReadListEvent(taskListNew[index].id ??
+                                                                              0));
+                                                                      PersistentNavBarNavigator
+                                                                          .pushNewScreen(
+                                                                        context,
+                                                                        screen:
+                                                                            TaskTitle(
+                                                                          isMyJob:
+                                                                              true,
+                                                                        ),
+                                                                        withNavBar:
+                                                                            false, // OPTIONAL VALUE. True by default.
+                                                                        pageTransitionAnimation:
+                                                                            PageTransitionAnimation.fade,
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                          decoration: BoxDecoration(
+                                                                            border: Border.all(color: ColorPalette.borderGrey),
+                                                                            color: Colors.white,
+                                                                              borderRadius: BorderRadius.circular(4)
                                                                           ),
-                                                                          withNavBar:
-                                                                              false, // OPTIONAL VALUE. True by default.
-                                                                          pageTransitionAnimation:
-                                                                              PageTransitionAnimation.fade,
-                                                                        );
-                                                                      },
                                                                       child:
-                                                                          Card(
-                                                                        elevation:
-                                                                            1,
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(4),
-                                                                        ),
-                                                                        color: Colors
-                                                                            .white,
-                                                                        surfaceTintColor:
-                                                                            Colors.white,
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical: 8,
+                                                                            horizontal: 8),
                                                                         child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              vertical: 8,
-                                                                              horizontal: 8),
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Row(
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        'Task Name : ',
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Row(
+                                                                                  children: [
+                                                                                    // Text(
+                                                                                    //   'Task Name : ',
+                                                                                    //   style: GoogleFonts.roboto(
+                                                                                    //     color: Colors.black87,
+                                                                                    //     fontSize: w / 28,
+                                                                                    //     fontWeight: FontWeight.w500,
+                                                                                    //   ),
+                                                                                    // ),
+                                                                                    Container(
+                                                                                      width: w1 / 1.7,
+                                                                                      // color: Colors.orange,
+                                                                                      child: Text(
+
+                                                                                        '${taskListNew[index].taskName.toString().toTitleCase()}',
+                                                                                        maxLines: 2,
+                                                                                        overflow: TextOverflow.ellipsis,
                                                                                         style: GoogleFonts.roboto(
-                                                                                          color: Colors.black87,
+                                                                                          color: ColorPalette.primary,
                                                                                           fontSize: w / 28,
                                                                                           fontWeight: FontWeight.w500,
                                                                                         ),
                                                                                       ),
-                                                                                      Container(
-                                                                                        width: w1 / 2.55,
-                                                                                        child: Text(
-                                                                                          '${taskListNew[index].taskName.toString().toTitleCase()}',
-                                                                                          style: GoogleFonts.roboto(
-                                                                                            color: ColorPalette.primary,
-                                                                                            fontSize: w / 30,
-                                                                                            fontWeight: FontWeight.w500,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                  SizedBox(height: 2),
-                                                                                  Row(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        'Description : ',
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                SizedBox(height: 2),
+                                                                                Row(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    // Text(
+                                                                                    //   'Description : ',
+                                                                                    //   style: GoogleFonts.roboto(
+                                                                                    //     color: Colors.black87,
+                                                                                    //     fontSize: w / 28,
+                                                                                    //     fontWeight: FontWeight.w500,
+                                                                                    //   ),
+                                                                                    // ),
+                                                                                    Container(
+                                                                                      width: w1 / 1.7,
+                                                                                      // color: Colors.red,
+                                                                                      child: Text(
+                                                                                        '${taskListNew[index].description.toString().toTitleCase()}',
+                                                                                        maxLines: 2,
+                                                                                        overflow: TextOverflow.ellipsis,
                                                                                         style: GoogleFonts.roboto(
-                                                                                          color: Colors.black87,
-                                                                                          fontSize: w / 28,
-                                                                                          fontWeight: FontWeight.w500,
+                                                                                          color: ColorPalette.primary,
+                                                                                          fontSize: w / 30,
+                                                                                          // fontWeight: FontWeight.w500,
                                                                                         ),
                                                                                       ),
-                                                                                      Container(
-                                                                                        width: w1 / 2.55,
-                                                                                        // color: Colors.red,
-                                                                                        child: Text(
-                                                                                          '${taskListNew[index].description.toString().toTitleCase()}',
-                                                                                          style: GoogleFonts.roboto(
-                                                                                            color: ColorPalette.primary,
-                                                                                            fontSize: w / 30,
-                                                                                            fontWeight: FontWeight.w500,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              Container(
-                                                                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                                                                decoration: BoxDecoration(
-                                                                                  color: ColorPalette.primary,
-                                                                                  borderRadius: BorderRadius.circular(4),
+                                                                                    ),
+                                                                                  ],
                                                                                 ),
-                                                                                child: Text(
-                                                                                  taskListNew[index].statusName.toString() == "null" ? "Not Started" : "${taskListNew[index].statusName.toString().toTitleCase()}",
-                                                                                  style: GoogleFonts.roboto(
-                                                                                    color: Colors.white,
-                                                                                    fontSize: w / 32,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                  ),
+                                                                              ],
+                                                                            ),
+                                                                            Container(
+                                                                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                                                              decoration: BoxDecoration(
+                                                                                color: ColorPalette.primary,
+                                                                                borderRadius: BorderRadius.circular(4),
+                                                                              ),
+                                                                              child: Text(
+                                                                                taskListNew[index].statusName.toString() == "null" ? "Not Started" : "${taskListNew[index].statusName.toString().toTitleCase()}",
+                                                                                style: GoogleFonts.roboto(
+                                                                                  color: Colors.white,
+                                                                                  fontSize: w / 32,
+                                                                                  fontWeight: FontWeight.w500,
                                                                                 ),
                                                                               ),
-                                                                            ],
-                                                                          ),
+                                                                            ),
+                                                                          ],
                                                                         ),
-                                                                      )),
-                                                              primary: true,
-                                                              shrinkWrap: true,
-                                                              itemCount:
-                                                                  taskListNew
-                                                                      .length,
-                                                              separatorBuilder:
-                                                                  (context,
-                                                                          index) =>
-                                                                      SizedBox(),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                                      ),
+                                                                    )),
+                                                            primary: true,
+                                                            shrinkWrap: true,
+                                                            itemCount:
+                                                                taskListNew
+                                                                    .length,
+                                                            separatorBuilder:
+                                                                (context,
+                                                                        index) =>
+                                                                    SizedBox(),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   )
@@ -2440,6 +2443,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
+                                                  surfaceTintColor: Colors.white,
+                                                  backgroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10.0),),
                                                   content: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
