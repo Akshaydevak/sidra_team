@@ -125,6 +125,10 @@ class PostImageAllEvent extends EmployeeEvent {
   final File image;
   const PostImageAllEvent(this.image);
 }
+class PostImageOnlyProfileEvent extends EmployeeEvent {
+  final File image;
+  const PostImageOnlyProfileEvent(this.image);
+}
 //
 class PostImageAll2Event extends EmployeeEvent {
   final File image;

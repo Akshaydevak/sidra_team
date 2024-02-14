@@ -64,13 +64,6 @@ class _AppBarState extends State<AppBarScreen> {
         BlocListener<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state is ProfileSuccess) {
-              // readEmployee = state.user;
-              // nameController = TextEditingController(text: state.user.fname);
-              // mobileController =
-              //     TextEditingController(text: "${state.user.primaryMobile}");
-              // emailController = TextEditingController(text: state.user.email);
-              // profilePic = state.user.userMete?.profile ?? '';
-              // imageId = state.user.userMete?.profile ?? '';
               Variable.profilePic = state.user.userMete?.profile ?? '';
 
               setState(() {});
