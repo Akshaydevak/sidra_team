@@ -30,6 +30,13 @@ class UpdateProfilePicEvent extends ProfileEvent {
   final dynamic? pic;
   const UpdateProfilePicEvent({this.profilePic,this.pic});
 }
+
+class UpdateProfilePicCommunicationEvent extends ProfileEvent {
+  final String? userCode;
+  final dynamic? pic;
+  final String? token;
+  const UpdateProfilePicCommunicationEvent({this.userCode,this.pic,this.token});
+}
 class UpdateOrgProfilePicEvent extends ProfileEvent {
   final File? profilePic;
   final int? id;

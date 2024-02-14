@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/common_snackBar.dart';
 import '../../authentication/authentication.dart';
@@ -47,10 +48,19 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
   TextEditingController emailController = TextEditingController();
   String profilePic = '';
   dynamic imageId = 0;
+  SharedPreferences? pref;
+  String token='';
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
+    tokenFuction();
     super.initState();
+  }
+  tokenFuction()async{
+    print("token maari$token");
+    pref=await SharedPreferences.getInstance();
+    token = pref?.getString("token")??"";
+    print("token maari$token");
   }
 
   final picker = ImagePicker();
@@ -76,7 +86,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
             if (state is UpdateProfilePicSuccess) {
               showSnackBar(context,
                   message: state.success, color: ColorPalette.green);
-              // context.read<ProfileBloc>().add(GetProfileEvent());
+              context.read<ProfileBloc>().add(UpdateProfilePicCommunicationEvent(pic: profilePic,userCode: authentication.authenticatedUser.code,
+              token: token));
             }
           },
         ),
