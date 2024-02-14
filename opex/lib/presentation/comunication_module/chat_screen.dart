@@ -3381,7 +3381,7 @@ double currentScrollPosition= 0.0;
                                 "${groupTypingUser?.name} typing",
                                 style: const TextStyle(
                                   color: Color(0xff151522),
-                                  fontSize: 16,
+                                  fontSize:12,
                                 ),
                               ),
                             ],

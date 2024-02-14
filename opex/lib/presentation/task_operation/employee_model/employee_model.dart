@@ -12,6 +12,8 @@ class GetEmployeeList extends Equatable {
   final String? email;
   @JsonKey(name: 'contact_number')
   final String? primaryMobile;
+  @JsonKey(name: 'whatsapp_number')
+  final String? whatsapp;
   @JsonKey(name: 'first_name')
   final String? fname;
   @JsonKey(name: 'last_name')
@@ -58,11 +60,18 @@ class GetEmployeeList extends Equatable {
   final String? role;
   @JsonKey(name: 'user_meta')
   final UserMete? userMete;
+  @JsonKey(name: 'contact_number_details')
+  final ContactModel? contactNum;
+  @JsonKey(name: 'whatsapp_number_details')
+  final ContactModel? WhatsappNum;
 
   const GetEmployeeList( {
       this.gender,
       this.userMete,
+      this.whatsapp,
       this.userCode,
+      this.contactNum,
+      this.WhatsappNum,
       this.departmentCode,
       this.orgCode,
       this.id,
@@ -386,4 +395,24 @@ class createTaskGroupChat extends Equatable {
       _$createTaskGroupChatFromJson(json);
 
   Map<String, dynamic> toJson() => _$createTaskGroupChatToJson(this);
+}
+
+
+@JsonSerializable()
+class ContactModel extends Equatable {
+
+  @JsonKey(name: 'country_code')
+  final String? countryCode;
+  @JsonKey(name: 'number')
+  final String? number;
+
+  const ContactModel( {
+    this.countryCode, this.number
+  });
+  @override
+  List<Object> get props => [];
+  factory ContactModel.fromJson(Map<String, dynamic> json) =>
+      _$ContactModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ContactModelToJson(this);
 }

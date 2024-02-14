@@ -293,7 +293,7 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  TextAvatar(
+                                                  employee[i]?.userMete?.profile==null?TextAvatar(
                                                     shape: Shape.Circular,
                                                     size: 40,
                                                     numberLetters: 2,
@@ -301,7 +301,10 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                                     textColor: Colors.white,
                                                     fontWeight: FontWeight.w500,
                                                     text:employee[i].email.toString().toUpperCase() ,
-                                                  ),
+                                                  ):  CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: NetworkImage(employee[i]?.userMete?.profile??"",),
+                                      ),
                                                   SizedBox(
                                                     width: 10,
                                                   ),

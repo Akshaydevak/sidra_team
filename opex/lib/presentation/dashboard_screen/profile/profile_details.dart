@@ -139,8 +139,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               if (state is ProfileSuccess) {
                                 nameController =
                                     TextEditingController(text: state.user.fname);
-                                mobileController =
-                                    TextEditingController(text: state.user.mobile);
+                                // mobileController =
+                                //     TextEditingController(text: state.user.mobile);
                                 emailController =
                                     TextEditingController(text: state.user.email);
 
@@ -169,7 +169,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                               color: Colors.grey,
                                               borderRadius: BorderRadius.circular(20),
                                               image: DecorationImage(
-                                                  image: NetworkImage(state.user.prflImage??""),
+                                                  image: NetworkImage(state.user.userMete?.profile??""),
                                                   fit: BoxFit.fill),
                                               border: Border.all(
                                                 color: Colors.white,

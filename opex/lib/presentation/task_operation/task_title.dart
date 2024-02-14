@@ -9,6 +9,7 @@ import 'package:cluster/presentation/order_app/activity_log.dart';
 import 'package:cluster/presentation/task_operation/payment_option.dart';
 import 'package:cluster/presentation/task_operation/performance_appraisal/performance_appraisal.dart';
 import 'package:cluster/presentation/task_operation/rewards_screen.dart';
+import 'package:cluster/presentation/task_operation/select_assignees.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/attachment_card.dart';
 import 'package:cluster/presentation/task_operation/task_title/task_title_card.dart';
@@ -52,10 +53,12 @@ class TaskTitle extends StatefulWidget {
   bool isReported;
   bool isPinnJob;
   bool isPendingJob;
+  int? groupId;
 
   TaskTitle(
       {Key? key,
       this.isMyJob = false,
+      this.groupId,
       this.isPendingJob = false,
       this.isPinnJob = false,
       this.isReporter = false,
@@ -202,6 +205,19 @@ class _TaskTitleState extends State<TaskTitle> {
     //   setState(() {});
     // });
   }
+  bool grpval = false;
+  bool updateval = false;
+
+  void grpVal(bool val) {
+    grpval = val;
+    setState(() {});
+    print("uuu$grpval");
+  }
+  void updatevalue(bool val) {
+    updateval = val;
+    // validationCheck();
+    setState(() {});
+  }
 
   List<GetEmployeeList> listEmployee = [];
 
@@ -249,6 +265,19 @@ class _TaskTitleState extends State<TaskTitle> {
             listener: (context, state) {
               if (state is GetTaskReadSuccess) {
                 getTaskRead = state.getTaskRead;
+                Variable.assignType=getTaskRead?.assigningType??"";
+                Variable.assignCode=getTaskRead?.assigningCode??"";
+                Variable.assignName=getTaskRead?.assignToName??"";
+                print("Type ASS Printed${getTaskRead?.assigningType}");
+                if(getTaskRead?.assigningType=="Individual"){
+                  Variable.typeAss="IND";
+                  Variable.isselected=true;
+                }else{
+                  Variable.typeAss="GRP";
+                  Variable.isselected=false;
+
+                }
+                print("Type ASS Printed${Variable.typeAss}");
                 if (getTaskRead?.assigningType == "Individual") {
                   userList?.add(FriendListModel(
                       userCode: getTaskRead?.assignToDict?.userCode ?? "",
@@ -935,7 +964,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 padding: const EdgeInsets.only(
                                                     top: 3),
                                                 child: Text(
-                                                  "Status : ",
+                                                  "Status ",
                                                   style: GoogleFonts.roboto(
                                                     color:
                                                         const Color(0xff151522),
@@ -944,7 +973,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   ),
                                                 ),
                                               ),
-                                              // Spacer(),
+                                              Spacer(),
                                               getTaskRead?.statusName ==
                                                       "VERIFIED"
                                                   ? Padding(
@@ -984,104 +1013,247 @@ class _TaskTitleState extends State<TaskTitle> {
                                             const SizedBox(
                                               height: 15,
                                             ),
-                                            getTaskRead?.assigningType ==
-                                                    "Individual"
-                                                ? Container(
-                                                    width: w1,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              4),
-                                                      border: Border.all(
-                                                        color: const Color(
-                                                            0xffe6ecf0),
-                                                        width: 1,
-                                                      ),
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                          color:
-                                                              Color(0x05000000),
-                                                          blurRadius: 8,
-                                                          offset: Offset(1, 1),
-                                                        ),
-                                                      ],
-                                                      color: Color(0xfff8f7f5),
+                                            getTaskRead?.assigningType=="Task_Group"?
+                                            GestureDetector(
+                                              onTap: (){
+                                                print("task Group");
+                                                getTaskRead?.assigningType=="Task_Group"&&taskListNew.isEmpty?
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen:
+                                                  SelectAssignees(groupVal: grpVal,
+                                                      taskRead: getTaskRead,
+                                                      updateAssign: true),
+                                                  withNavBar: true,
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                ):Fluttertoast.showToast(
+                                                    msg: "Already Added Subtask Below",
+                                                    toastLength:
+                                                    Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                    ColorPalette.black,
+                                                    textColor: Colors.white);
+                                              },
+                                              child: Container(
+                                                width: w1,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      4),
+                                                  border: Border.all(
+                                                    color: const Color(
+                                                        0xffe6ecf0),
+                                                    width: 1,
+                                                  ),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                      color:
+                                                      Color(0x05000000),
+                                                      blurRadius: 8,
+                                                      offset: Offset(1, 1),
                                                     ),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                height: 28,
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  color: const Color(
-                                                                      0xff33c658),
-                                                                ),
-                                                                child: SvgPicture
-                                                                    .string(CreateSvg()
-                                                                        .assignIcon),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Text(
-                                                                "Assign To : ",
-                                                                style:
-                                                                    GoogleFonts
-                                                                        .roboto(
-                                                                  color: const Color(
-                                                                      0xff151522),
-                                                                  fontSize:
-                                                                      w / 24,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                              // SizedBox(
-                                                              //   width: w / 4,
-                                                              // ),
-                                                              Container(
-                                                                  width:
-                                                                      w / 2.25,
-                                                                  child: Text(
-                                                                    getTaskRead
-                                                                            ?.assignToName ??
-                                                                        "",
-                                                                    maxLines: 1,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style: GoogleFonts
-                                                                        .roboto(),
-                                                                  )),
-                                                            ],
+                                                  ],
+                                                  color: Color(0xfff8f7f5),
+                                                ),
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 10),
+                                                child: Row(
+                                                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      height: 28,
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(8),
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            5),
+                                                        color: const Color(
+                                                            0xff33c658),
+                                                      ),
+                                                      child: SvgPicture
+                                                          .string(CreateSvg()
+                                                          .assignIcon),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      "Assign To ",
+                                                      style:
+                                                      GoogleFonts
+                                                          .roboto(
+                                                        color: const Color(
+                                                            0xff151522),
+                                                        fontSize:
+                                                        w / 24,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .w500,
+                                                      ),
+                                                    ),
+                                                    // SizedBox(
+                                                    //   width: w / 4,
+                                                    // ),
+
+                                                    Spacer(),
+                                                    Container(
+                                                        alignment: Alignment.centerRight,
+                                                        width:
+                                                        w / 2.25,
+                                                        child: Text(
+                                                          getTaskRead
+                                                              ?.assignToName ??
+                                                              "",
+                                                          maxLines: 1,
+                                                          overflow:
+                                                          TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .roboto(
+                                                              color: ColorPalette.primary,
+                                                            fontSize: w/26,
+                                                            fontWeight: FontWeight.w500
                                                           ),
+                                                        )),
+                                                    // Icon(
+                                                    //   Icons
+                                                    //       .arrow_forward_ios_sharp,
+                                                    //   size: 18,
+                                                    //   color: ColorPalette
+                                                    //       .primary,
+                                                    // ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ):
+                                            GestureDetector(
+                                              onTap: (){
+                                                print("group id${getTaskRead?.groupId}");
+                                                widget.groupId!=null?
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: AssignesUnderGroup(
+                                                    groupVal: updatevalue,
+                                                    taskRead: getTaskRead,
+                                                    updateAssign: true,
+                                                    groupId: getTaskRead?.groupId??0,
+                                                  ),
+                                                  withNavBar: true,
+                                                  // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                ):
+                                                PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen:
+                                                  SelectAssignees(groupVal: grpVal,
+                                                      taskRead: getTaskRead,
+                                                      updateAssign: true),
+                                                  withNavBar: true,
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                );
+                                                    // :null;
+                                              },
+                                              child: Container(
+                                                      width: w1,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                4),
+                                                        border: Border.all(
+                                                          color: const Color(
+                                                              0xffe6ecf0),
+                                                          width: 1,
+                                                        ),
+                                                        boxShadow: const [
+                                                          BoxShadow(
+                                                            color:
+                                                                Color(0x05000000),
+                                                            blurRadius: 8,
+                                                            offset: Offset(1, 1),
+                                                          ),
+                                                        ],
+                                                        color: Color(0xfff8f7f5),
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 10),
+                                                      child: Row(
+                                                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Container(
+                                                            height: 28,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              color: const Color(
+                                                                  0xff33c658),
+                                                            ),
+                                                            child: SvgPicture
+                                                                .string(CreateSvg()
+                                                                    .assignIcon),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            "Assign To ",
+                                                            style:
+                                                                GoogleFonts
+                                                                    .roboto(
+                                                              color: const Color(
+                                                                  0xff151522),
+                                                              fontSize:
+                                                                  w / 24,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                          // SizedBox(
+                                                          //   width: w / 4,
+                                                          // ),
+
+                                                          Spacer(),
+                                                          Container(
+                                                              alignment: Alignment.centerRight,
+                                                              width:
+                                                                  w / 2.25,
+                                                              child: Text(
+                                                                getTaskRead
+                                                                        ?.assignToName ??
+                                                                    "",
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts.roboto(
+                                                                    color: ColorPalette.primary,
+                                                                    fontSize: w/26,
+                                                                    fontWeight: FontWeight.w500
+                                                                ),
+                                                              )),
                                                         ],
                                                       ),
                                                     ),
-                                                  )
-                                                : Container(),
+                                            ),
                                             const SizedBox(
                                               height: 5,
                                             ),
@@ -1168,6 +1340,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                             TaskTitle(
                                                                           isMyJob:
                                                                               true,
+                                                                              groupId: getTaskRead?.groupId??0,
                                                                         ),
                                                                         withNavBar:
                                                                             false, // OPTIONAL VALUE. True by default.

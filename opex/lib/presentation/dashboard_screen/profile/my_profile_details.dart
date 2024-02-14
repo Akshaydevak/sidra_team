@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/color_palatte.dart';
 import '../../User_Model/user_models.dart';
+import '../../task_operation/employee_model/employee_model.dart';
 import '../../task_operation/task_svg.dart';
 import '../home_screen/homescreen_widget/appbar.dart';
 
@@ -18,7 +19,7 @@ class MyProfileDetailsScreen extends StatefulWidget {
 }
 
 class _MyProfileDetailsScreenState extends State<MyProfileDetailsScreen> {
-  User? userData;
+  GetEmployeeList? userData;
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
@@ -73,7 +74,7 @@ class _MyProfileDetailsScreenState extends State<MyProfileDetailsScreen> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundImage: NetworkImage(
-                      userData?.prflImage??""),
+                      userData?.userMete?.profile??""),
                 )),
             SizedBox(
               height: 10,

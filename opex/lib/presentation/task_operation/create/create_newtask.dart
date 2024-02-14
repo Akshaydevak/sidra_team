@@ -1814,299 +1814,296 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             : SizedBox(
                                 height: 5,
                               ),
-                        widget.isSubTask
-                            ? Container()
-                            : grpval == true
-                                ? Column(
-                                    children: [
-                                      Container(
-                                        width: w,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          border: Border.all(
-                                            color: Color(0xffe6ecf0),
-                                            width: 1,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Color(0x05000000),
-                                              blurRadius: 8,
-                                              offset: Offset(1, 1),
-                                            ),
-                                          ],
-                                          color: Colors.white,
-                                        ),
-                                        child: SingleRow(
-                                          label: "Subtasks",
-                                          color: Color(0xffFFC800),
-                                          svg: CreateSvg().taskIcon,
-                                          endIcon: isSubTask
-                                              ? SvgPicture.string(
-                                                  HomeSvg().toggleActive)
-                                              : SvgPicture.string(
-                                                  HomeSvg().toggleInActive),
-                                          onTap: () {
-                                            setState(() {
-                                              Variable.taskType == 0 ||
-                                                      taskTitle.text == "" ||
-                                                      discription.text == "" ||
-                                                      Variable.assignType ==
-                                                          "" ||
-                                                      Variable.assignCode == ""
-                                                  ? Fluttertoast.showToast(
-                                                      msg:
-                                                          'Please fill the fields',
-                                                      toastLength:
-                                                          Toast.LENGTH_SHORT,
-                                                      gravity:
-                                                          ToastGravity.BOTTOM,
-                                                      backgroundColor:
-                                                          Colors.black,
-                                                      textColor: Colors.white)
-                                                  : BlocProvider.of<TaskBloc>(
-                                                          context)
-                                                      .add(CreateTaskEvent(
-                                                      latitude: null,
-                                                      longitude: null,
-                                                      AssigningCode:
-                                                          Variable.assignCode,
-                                                      AssigningType:
-                                                          Variable.assignType,
-                                                      createdOn:
-                                                          "${_range.split(" - ")[0]} $startTime2",
-                                                      jobId: widget.jobId ?? 0,
-                                                      notas: notesController
-                                                              .text ??
-                                                          "",
-                                                      durationOption: selectedValue,
-                                                      priorityLeval: 0,
-                                                      remarks: remarksController
-                                                          .text,
-                                                      taskName:
-                                                          taskTitle.text ?? "",
-                                                      taskType:
-                                                          Variable.taskType,
-                                                      lastmodified: null,
-                                                      parant: null,
-                                                      statusStagesId: null,
-                                                      discription:
-                                                          discription.text ??
-                                                              "",
-                                                      createdBy: authentication
-                                                              .authenticatedUser
-                                                              .code ??
-                                                          "",
-                                                      isActive: true,
-                                                      priority: PriorityLeval,
-                                                      reportingPerson: Variable
-                                                                  .reportingCode ==
-                                                              ""
-                                                          ? authentication
-                                                              .authenticatedUser
-                                                              .code
-                                                              .toString()
-                                                          : Variable
-                                                              .reportingCode
-                                                              .toString(),
-                                                      endDate:
-                                                          "$ebdDate ${endTime2}",
-                                                      startDate:
-                                                          "$startDate ${startTime2}",
-                                                    ));
-                                              Variable.taskType == 0 ||
-                                                      taskTitle.text == "" ||
-                                                      discription.text == "" ||
-                                                      Variable.assignType ==
-                                                          "" ||
-                                                      Variable.assignCode == ""
-                                                  ? Fluttertoast.showToast(
-                                                      msg:
-                                                          'Please fill the fields',
-                                                      toastLength:
-                                                          Toast.LENGTH_SHORT,
-                                                      gravity:
-                                                          ToastGravity.BOTTOM,
-                                                      backgroundColor:
-                                                          Colors.black,
-                                                      textColor: Colors.white)
-                                                  : isSubTask = !isSubTask;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      isSubTask == true
-                                          ? Container(
-                                              width: w,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                border: Border.all(
-                                                  color: Color(0xffe6ecf0),
-                                                  width: 1,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Color(0x05000000),
-                                                    blurRadius: 8,
-                                                    offset: Offset(1, 1),
-                                                  ),
-                                                ],
-                                                color: Colors.white,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    width: w,
-                                                    child: taskListNew.isEmpty
-                                                        ? Container()
-                                                        : Container(
-                                                            child: ListView
-                                                                .separated(
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    physics:
-                                                                        NeverScrollableScrollPhysics(),
-                                                                    itemBuilder:
-                                                                        (context,
-                                                                                index) =>
-                                                                            Container(
-                                                                              decoration: BoxDecoration(
-                                                                                color: Colors.white,
-                                                                                border: Border.all(color: ColorPalette.borderGrey),
-                                                                                borderRadius: BorderRadius.circular(10)
-                                                                              ),
-                                                                              margin: EdgeInsets.all(5),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(10),
-                                                                                child: Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      "${index + 1}- ${taskListNew[index].taskName ?? ""}",
-                                                                                      style: GoogleFonts.roboto(
-                                                                                        color: Color(0xff151522),
-                                                                                        fontSize: 18,
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                      ),
-                                                                                    ),
-                                                                                    // Row(
-                                                                                    //   children: [
-                                                                                    //     Text(taskListNew[index].assigningCode??""),
-                                                                                    //     SizedBox(
-                                                                                    //       width: 10,
-                                                                                    //     ),
-                                                                                    //     // Icon(
-                                                                                    //     //     Icons
-                                                                                    //     //         .arrow_forward_ios_sharp)
-                                                                                    //   ],
-                                                                                    // )
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                    separatorBuilder:
-                                                                        (context,
-                                                                            index) {
-                                                                      return SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      );
-                                                                    },
-                                                                    itemCount:
-                                                                        taskListNew
-                                                                            .length),
-                                                          ),
-                                                  ),
-                                                  // Divider(
-                                                  //   color: Color(0xffE6ECF0)
-                                                  //       .withOpacity(0.5),
-                                                  //   thickness: 1,
-                                                  // ),
-                                                  isSubTask == true
-                                                      ? GestureDetector(
-                                                          onTap: () {
-                                                            print(
-                                                                "SUbtask$taskId");
-                                                            // Variable.taskIdForSubtask =
-                                                            //     int.tryParse(taskId!) ?? 0;
-                                                            PersistentNavBarNavigator
-                                                                .pushNewScreen(
-                                                              context,
-                                                              screen:
-                                                                  CreateNewTask(
-                                                                jobId: widget
-                                                                    .jobId,
-                                                                    startDateTime: "${startDate2}  ${startTime}",
-                                                                    endDateTime: "$ebdDate2  $endTime",
-                                                                isSubTask: true,
-                                                                subTaskId:
-                                                                    int.tryParse(
-                                                                            taskId!) ??
-                                                                        0,
-                                                              ),
-                                                              withNavBar: true,
-                                                              // OPTIONAL VALUE. True by default.
-                                                              pageTransitionAnimation:
-                                                                  PageTransitionAnimation
-                                                                      .fade,
-                                                            );
-                                                          },
-                                                          child: Container(
-                                                              width: w,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4),
-                                                                color: Color(
-                                                                    0xffF4F4F4),
-                                                              ),
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          16,
-                                                                      vertical:
-                                                                          10),
-                                                              child: Text(
-                                                                "Add Subtask",
-                                                                style: TextStyle(
-                                                                    color: ColorPalette
-                                                                        .primary,
-                                                                    fontSize:
-                                                                        w / 24,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
-                                                              )),
-                                                        )
-                                                      : Container(),
-                                                ],
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  )
-                                : Container(),
+                        // widget.isSubTask
+                        //     ? Container()
+                        //     : grpval == true
+                        //         ? Column(
+                        //             children: [
+                        //               Container(
+                        //                 width: w,
+                        //                 padding: EdgeInsets.symmetric(
+                        //                     horizontal: 16, vertical: 10),
+                        //                 decoration: BoxDecoration(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(5),
+                        //                   border: Border.all(
+                        //                     color: Color(0xffe6ecf0),
+                        //                     width: 1,
+                        //                   ),
+                        //                   boxShadow: [
+                        //                     BoxShadow(
+                        //                       color: Color(0x05000000),
+                        //                       blurRadius: 8,
+                        //                       offset: Offset(1, 1),
+                        //                     ),
+                        //                   ],
+                        //                   color: Colors.white,
+                        //                 ),
+                        //                 child: SingleRow(
+                        //                   label: "Subtasks",
+                        //                   color: Color(0xffFFC800),
+                        //                   svg: CreateSvg().taskIcon,
+                        //                   endIcon: isSubTask
+                        //                       ? SvgPicture.string(
+                        //                           HomeSvg().toggleActive)
+                        //                       : SvgPicture.string(
+                        //                           HomeSvg().toggleInActive),
+                        //                   onTap: () {
+                        //                     setState(() {
+                        //                       Variable.taskType == 0 ||
+                        //                               taskTitle.text == "" ||
+                        //                               discription.text == "" ||
+                        //                               Variable.assignType ==
+                        //                                   "" ||
+                        //                               Variable.assignCode == ""
+                        //                           ? Fluttertoast.showToast(
+                        //                               msg:
+                        //                                   'Please fill the fields',
+                        //                               toastLength:
+                        //                                   Toast.LENGTH_SHORT,
+                        //                               gravity:
+                        //                                   ToastGravity.BOTTOM,
+                        //                               backgroundColor:
+                        //                                   Colors.black,
+                        //                               textColor: Colors.white)
+                        //                           : BlocProvider.of<TaskBloc>(
+                        //                                   context)
+                        //                               .add(CreateTaskEvent(
+                        //                               latitude: null,
+                        //                               longitude: null,
+                        //                               AssigningCode:
+                        //                                   Variable.assignCode,
+                        //                               AssigningType:
+                        //                                   Variable.assignType,
+                        //                               createdOn:
+                        //                                   "${_range.split(" - ")[0]} $startTime2",
+                        //                               jobId: widget.jobId ?? 0,
+                        //                               notas: notesController
+                        //                                       .text ??
+                        //                                   "",
+                        //                               durationOption: selectedValue,
+                        //                               priorityLeval: 0,
+                        //                               remarks: remarksController
+                        //                                   .text,
+                        //                               taskName:
+                        //                                   taskTitle.text ?? "",
+                        //                               taskType:
+                        //                                   Variable.taskType,
+                        //                               lastmodified: null,
+                        //                               parant: null,
+                        //                               statusStagesId: null,
+                        //                               discription:
+                        //                                   discription.text ??
+                        //                                       "",
+                        //                               createdBy: authentication
+                        //                                       .authenticatedUser
+                        //                                       .code ??
+                        //                                   "",
+                        //                               isActive: true,
+                        //                               priority: PriorityLeval,
+                        //                               reportingPerson: Variable
+                        //                                           .reportingCode ==
+                        //                                       ""
+                        //                                   ? authentication
+                        //                                       .authenticatedUser
+                        //                                       .code
+                        //                                       .toString()
+                        //                                   : Variable
+                        //                                       .reportingCode
+                        //                                       .toString(),
+                        //                               endDate:
+                        //                                   "$ebdDate ${endTime2}",
+                        //                               startDate:
+                        //                                   "$startDate ${startTime2}",
+                        //                             ));
+                        //                       Variable.taskType == 0 ||
+                        //                               taskTitle.text == "" ||
+                        //                               discription.text == "" ||
+                        //                               Variable.assignType ==
+                        //                                   "" ||
+                        //                               Variable.assignCode == ""
+                        //                           ? Fluttertoast.showToast(
+                        //                               msg:
+                        //                                   'Please fill the fields',
+                        //                               toastLength:
+                        //                                   Toast.LENGTH_SHORT,
+                        //                               gravity:
+                        //                                   ToastGravity.BOTTOM,
+                        //                               backgroundColor:
+                        //                                   Colors.black,
+                        //                               textColor: Colors.white)
+                        //                           : isSubTask = !isSubTask;
+                        //                     });
+                        //                   },
+                        //                 ),
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               isSubTask == true
+                        //                   ? Container(
+                        //                       width: w,
+                        //                       decoration: BoxDecoration(
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(4),
+                        //                         border: Border.all(
+                        //                           color: Color(0xffe6ecf0),
+                        //                           width: 1,
+                        //                         ),
+                        //                         boxShadow: [
+                        //                           BoxShadow(
+                        //                             color: Color(0x05000000),
+                        //                             blurRadius: 8,
+                        //                             offset: Offset(1, 1),
+                        //                           ),
+                        //                         ],
+                        //                         color: Colors.white,
+                        //                       ),
+                        //                       child: Column(
+                        //                         children: [
+                        //                           Container(
+                        //                             width: w,
+                        //                             child: taskListNew.isEmpty
+                        //                                 ? Container()
+                        //                                 : Container(
+                        //                                     child: ListView
+                        //                                         .separated(
+                        //                                             shrinkWrap:
+                        //                                                 true,
+                        //                                             physics:
+                        //                                                 NeverScrollableScrollPhysics(),
+                        //                                             itemBuilder:
+                        //                                                 (context,
+                        //                                                         index) =>
+                        //                                                     Container(
+                        //                                                       decoration: BoxDecoration(
+                        //                                                         color: Colors.white,
+                        //                                                         border: Border.all(color: ColorPalette.borderGrey),
+                        //                                                         borderRadius: BorderRadius.circular(10)
+                        //                                                       ),
+                        //                                                       margin: EdgeInsets.all(5),
+                        //                                                       child: Padding(
+                        //                                                         padding: const EdgeInsets.all(10),
+                        //                                                         child: Row(
+                        //                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //                                                           children: [
+                        //                                                             Text(
+                        //                                                               "${index + 1}- ${taskListNew[index].taskName ?? ""}",
+                        //                                                               style: GoogleFonts.roboto(
+                        //                                                                 color: Color(0xff151522),
+                        //                                                                 fontSize: 18,
+                        //                                                                 fontWeight: FontWeight.w500,
+                        //                                                               ),
+                        //                                                             ),
+                        //                                                             // Row(
+                        //                                                             //   children: [
+                        //                                                             //     Text(taskListNew[index].assigningCode??""),
+                        //                                                             //     SizedBox(
+                        //                                                             //       width: 10,
+                        //                                                             //     ),
+                        //                                                             //     // Icon(
+                        //                                                             //     //     Icons
+                        //                                                             //     //         .arrow_forward_ios_sharp)
+                        //                                                             //   ],
+                        //                                                             // )
+                        //                                                           ],
+                        //                                                         ),
+                        //                                                       ),
+                        //                                                     ),
+                        //                                             separatorBuilder:
+                        //                                                 (context,
+                        //                                                     index) {
+                        //                                               return SizedBox(
+                        //                                                 height:
+                        //                                                     5,
+                        //                                               );
+                        //                                             },
+                        //                                             itemCount:
+                        //                                                 taskListNew
+                        //                                                     .length),
+                        //                                   ),
+                        //                           ),
+                        //                           // Divider(
+                        //                           //   color: Color(0xffE6ECF0)
+                        //                           //       .withOpacity(0.5),
+                        //                           //   thickness: 1,
+                        //                           // ),
+                        //                           isSubTask == true
+                        //                               ? GestureDetector(
+                        //                                   onTap: () {
+                        //                                     print(
+                        //                                         "SUbtask$taskId");
+                        //                                     // Variable.taskIdForSubtask =
+                        //                                     //     int.tryParse(taskId!) ?? 0;
+                        //                                     PersistentNavBarNavigator
+                        //                                         .pushNewScreen(
+                        //                                       context,
+                        //                                       screen:
+                        //                                           CreateNewTask(
+                        //                                         jobId: widget
+                        //                                             .jobId,
+                        //                                             startDateTime: "${startDate2}  ${startTime}",
+                        //                                             endDateTime: "$ebdDate2  $endTime",
+                        //                                         isSubTask: true,
+                        //                                         subTaskId:
+                        //                                             int.tryParse(
+                        //                                                     taskId!) ??
+                        //                                                 0,
+                        //                                       ),
+                        //                                       withNavBar: true,
+                        //                                       // OPTIONAL VALUE. True by default.
+                        //                                       pageTransitionAnimation:
+                        //                                           PageTransitionAnimation
+                        //                                               .fade,
+                        //                                     );
+                        //                                   },
+                        //                                   child: Container(
+                        //                                       width: w,
+                        //                                       alignment:
+                        //                                           Alignment
+                        //                                               .center,
+                        //                                       decoration:
+                        //                                           BoxDecoration(
+                        //                                         borderRadius:
+                        //                                             BorderRadius
+                        //                                                 .circular(
+                        //                                                     4),
+                        //                                         color: Color(
+                        //                                             0xffF4F4F4),
+                        //                                       ),
+                        //                                       padding: EdgeInsets
+                        //                                           .symmetric(
+                        //                                               horizontal:
+                        //                                                   16,
+                        //                                               vertical:
+                        //                                                   10),
+                        //                                       child: Text(
+                        //                                         "Add Subtask",
+                        //                                         style: TextStyle(
+                        //                                             color: ColorPalette
+                        //                                                 .primary,
+                        //                                             fontSize:
+                        //                                                 w / 24,
+                        //                                             fontWeight:
+                        //                                                 FontWeight
+                        //                                                     .w500),
+                        //                                       )),
+                        //                                 )
+                        //                               : Container(),
+                        //                         ],
+                        //                       ),
+                        //                     )
+                        //                   : Container()
+                        //             ],
+                        //           )
+                        //         : Container(),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
                         SizedBox(
                           height: 10,
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Variable.assignType == "Task_Group"&&widget.editTask==false
-                            ? Container()
-
-                            : isValid == false
+                      isValid == false
                                 ? GradientButton(
                                     color: ColorPalette.inactiveGrey,
                                     onPressed: () {},

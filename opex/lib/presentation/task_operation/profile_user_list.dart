@@ -89,11 +89,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
     ),
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
-        if(state is DeleteEmployeeLoading){
-          // showSnackBar(context,
-          //     message: "User Dele Loading",
-          //     color: ColorPalette.green);
-        }
+
         if(state is DeleteEmployeeSuccess){
           showSnackBar(context,
               message:"User Deleted Successfully",
@@ -112,11 +108,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
     ),
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
-        if(state is UpdateEmployeeLoading){
-          showSnackBar(context,
-              message: "User Updation Loading",
-              color: ColorPalette.green);
-        }
+
         if(state is UpdateEmployeeSuccess){
           showSnackBar(context,
               message:state.user,
@@ -135,10 +127,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
     ),
     BlocListener<EmployeeBloc, EmployeeState>(
       listener: (context, state) {
-        // print(object)
-        if(state is ChagePasswordLoading){
 
-        }
         if(state is ChagePasswordSuccess){
           Navigator.pop(context);
           newpassword.clear();
@@ -418,7 +407,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         context.read<EmployeeBloc>().add( GetEmployeeReadEvent(employee?.id??0));
                                         PersistentNavBarNavigator.pushNewScreen(
                                           context,
-                                          screen: CreateUser(edit: true,),
+                                          screen: CreateUser(edit: true,
+                                          readEmployee: readEmployee),
                                           withNavBar: true,
                                           // OPTIONAL VALUE. True by default.
                                           pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -444,7 +434,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -466,8 +457,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -594,7 +586,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         child: Text(
                                           "Message User",
                                           style: GoogleFonts.roboto(
-                                            color: Colors.grey,
+                                            color: Colors.black,
                                             fontSize: w / 24,
                                             fontWeight: FontWeight.w500,
                                           ),
