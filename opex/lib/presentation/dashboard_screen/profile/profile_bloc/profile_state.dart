@@ -28,10 +28,11 @@ class UpdateProfileFailed extends ProfileState {
 class UpdateProfilePicLoading extends ProfileState {}
 
 class UpdateProfilePicSuccess extends ProfileState {
+  final String success;
   // final List<ListOrdersModel> ordersList;
 
   const UpdateProfilePicSuccess(
-      // this.ordersList
+      this.success
       );
 }
 
@@ -64,7 +65,7 @@ class ProfilePicFailed extends ProfileState {}
 class ProfileLoading extends ProfileState {}
 
 class ProfileSuccess extends ProfileState {
-  final User user;
+  final GetEmployeeList user;
 
   const ProfileSuccess(
       this.user

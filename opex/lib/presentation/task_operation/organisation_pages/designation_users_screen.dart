@@ -520,8 +520,9 @@ class _UsersListUnderDesignationState extends State<UsersListUnderDesignation> {
                                         if(employee?.role=="Staff"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -544,8 +545,9 @@ class _UsersListUnderDesignationState extends State<UsersListUnderDesignation> {
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -587,7 +589,7 @@ class _UsersListUnderDesignationState extends State<UsersListUnderDesignation> {
                                       child: Text(
                                         "Message User",
                                         style: GoogleFonts.roboto(
-                                          color: Colors.grey,
+                                          color: Colors.black,
                                           fontSize: w / 24,
                                           fontWeight: FontWeight.w500,
                                         ),

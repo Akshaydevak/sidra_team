@@ -27,7 +27,8 @@ class GetProfilePicEvent extends ProfileEvent {
 }
 class UpdateProfilePicEvent extends ProfileEvent {
   final File? profilePic;
-  const UpdateProfilePicEvent({this.profilePic});
+  final dynamic? pic;
+  const UpdateProfilePicEvent({this.profilePic,this.pic});
 }
 class UpdateOrgProfilePicEvent extends ProfileEvent {
   final File? profilePic;

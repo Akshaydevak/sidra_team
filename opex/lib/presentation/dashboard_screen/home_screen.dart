@@ -102,22 +102,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: AppHomeCard(
                       onTap: () {
+
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
-                          screen:
-                          // EmptyPageCommunication(),
-                          DashBoard(
+                          screen: DashBoard(
                             index: 1,
                           ),
                           withNavBar: false,
                           pageTransitionAnimation: PageTransitionAnimation.fade,
                         );
-                        //   CommunicationModule(
-                        //     token: authentication.authenticatedUser.token ?? "",
-                        //   ),
-                        //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                        // );
                       },
                       appTitle: "Communication",
                       appDescription:

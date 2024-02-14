@@ -55,23 +55,23 @@ class ProfileDataSource {
         response.data['status'] == "success", response.data['message']);
   }
   //profile get
-  Future<User> getProfile() async {
-    User authenticatedUser;
+  Future<GetEmployeeList> getProfile() async {
+
     print(
-        "heyyyy login url  ${ProfileUrls.updateUrl}");
+        "heyyyy profile read url  ${ClusterUrls.userReadProfileDataUrl}");
     final response = await client.get(
-      ProfileUrls.updateUrl,
+      ClusterUrls.userReadProfileDataUrl,
 
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': "token ${authentication.authenticatedUser.token}",
+          'Authorization': "${authentication.authenticatedUser.token}",
         },
       ),
     );
 print(response);
-    return User.fromJson((response.data['data']));
+    return GetEmployeeList.fromJson((response.data['data']));
   }
 
 
@@ -101,42 +101,43 @@ print(response);
 
 
 
- Future<DoubleResponse> UpdateProfilePic(
-     File? profilePic) async {
-    User authenticatedUser;
-    String filePath = "";
-    print(
-        "heyyyy login url  ${ProfileUrls.updateUrl}");
-    if (profilePic != null) filePath = profilePic.path;
-    final mime = lookupMimeType(filePath)!.split("/");
-    final fileData = await MultipartFile.fromFile(
-      filePath,
-      contentType: MediaType(mime.first, mime.last),
-    );
-    final FormData formData = FormData.fromMap({"profile_pic": fileData});
-    print("////////$formData");
-    final response = await client.put(
-      ProfileUrls.profilePicUrl+authentication.authenticatedUser.loginId.toString(),
-      data: formData,
+ Future<DataResponse> UpdateProfilePic(
+     File? profilePic,dynamic? pic) async {
+    // User authenticatedUser;
+    // String filePath = "";
+    // print(
+    //     "heyyyy login url  ${ProfileUrls.updateUrl}");
+    // if (profilePic != null) filePath = profilePic.path;
+    // final mime = lookupMimeType(filePath)!.split("/");
+    // final fileData = await MultipartFile.fromFile(
+    //   filePath,
+    //   contentType: MediaType(mime.first, mime.last),
+    // );
+    // final FormData formData = FormData.fromMap({"profile_pic": fileData});
+    print("////////$pic");
+    final response = await client.post(
+      "https://api-task-and-operation.hilalcart.com/task-manage/user-profile-update",
+      data: {
+        "profile_pic":pic
+      },
 
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': "token ${authentication.authenticatedUser.token}",
+          'Authorization': "${authentication.authenticatedUser.token}",
         },
       ),
     );
     print(response.data);
-    if (response.data['profile_pic']!=null||response.data['profile_pic']!="") {
-      print(response.data);
+    if (response.data['status'] == 'success') {
+      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
 
-
-      return DoubleResponse(
-          response.data['profile_pic'], "Success");
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
     }
-    return DoubleResponse(
-        response.data['profile_pic'],"failed");
   }
 
   //

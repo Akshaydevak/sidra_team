@@ -50,9 +50,7 @@ class _AppBarState extends State<AppBarScreen> {
       listeners:[ 
         BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
-      if(state is GetNotificationListLoading){
-    
-      }
+
       if(state is GetNotificationListSuccess){
         notification=state.notificationList;
         countNoti=notification?[0].count??0;
@@ -63,16 +61,22 @@ class _AppBarState extends State<AppBarScreen> {
       }
       // TODO: implement listener
       },),
-      BlocListener<ProfileBloc, ProfileState>(
-  listener: (context, state) {
-     if (state is ProfilePicSuccess) {
-      Variable.profilePic=state.profilePic;
-      setState(() {
-        
-      });
-                       
-     }
-  },)
+        BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfileSuccess) {
+              // readEmployee = state.user;
+              // nameController = TextEditingController(text: state.user.fname);
+              // mobileController =
+              //     TextEditingController(text: "${state.user.primaryMobile}");
+              // emailController = TextEditingController(text: state.user.email);
+              // profilePic = state.user.userMete?.profile ?? '';
+              // imageId = state.user.userMete?.profile ?? '';
+              Variable.profilePic = state.user.userMete?.profile ?? '';
+
+              setState(() {});
+            }
+          },
+        ),
       ],
       child: Column(
         children: [

@@ -12,7 +12,16 @@ GetEmployeeList _$GetEmployeeListFromJson(Map<String, dynamic> json) =>
       userMete: json['user_meta'] == null
           ? null
           : UserMete.fromJson(json['user_meta'] as Map<String, dynamic>),
+      whatsapp: json['whatsapp_number'] as String?,
       userCode: json['user_code'] as String?,
+      contactNum: json['contact_number_details'] == null
+          ? null
+          : ContactModel.fromJson(
+              json['contact_number_details'] as Map<String, dynamic>),
+      WhatsappNum: json['whatsapp_number_details'] == null
+          ? null
+          : ContactModel.fromJson(
+              json['whatsapp_number_details'] as Map<String, dynamic>),
       departmentCode: json['department_code'] as String?,
       orgCode: json['organization_code'] as String?,
       id: json['id'] as int?,
@@ -45,6 +54,7 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
       'primary_mail': instance.primaryMail,
       'email': instance.email,
       'contact_number': instance.primaryMobile,
+      'whatsapp_number': instance.whatsapp,
       'first_name': instance.fname,
       'last_name': instance.lname,
       'gender': instance.gender,
@@ -68,6 +78,8 @@ Map<String, dynamic> _$GetEmployeeListToJson(GetEmployeeList instance) =>
       'user_login': instance.userLogin,
       'role': instance.role,
       'user_meta': instance.userMete,
+      'contact_number_details': instance.contactNum,
+      'whatsapp_number_details': instance.WhatsappNum,
     };
 
 GetTaskGroupList _$GetTaskGroupListFromJson(Map<String, dynamic> json) =>
@@ -271,4 +283,15 @@ Map<String, dynamic> _$createTaskGroupChatToJson(
       'groupid': instance.groupid,
       'groupName': instance.groupName,
       'createdBy': instance.createdBy,
+    };
+
+ContactModel _$ContactModelFromJson(Map<String, dynamic> json) => ContactModel(
+      countryCode: json['country_code'] as String?,
+      number: json['number'] as String?,
+    );
+
+Map<String, dynamic> _$ContactModelToJson(ContactModel instance) =>
+    <String, dynamic>{
+      'country_code': instance.countryCode,
+      'number': instance.number,
     };
