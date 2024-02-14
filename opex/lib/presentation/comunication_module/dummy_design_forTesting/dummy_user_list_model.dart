@@ -12,6 +12,8 @@ class UserDummyList extends Equatable {
   final bool? connect;
   @JsonKey(name: "photoUrl")
   final String? photo;
+  @JsonKey(name: "photo")
+  final String? photoindividual;
   @JsonKey(name: "chatId")
   final String? chatid;
   @JsonKey(name: "isGroupChat")
@@ -34,9 +36,30 @@ class UserDummyList extends Equatable {
   final String? deletedAt;
   @JsonKey(name: "createdBy")
   final String? createdBy;
+  @JsonKey(name: "fromUserName")
+  final String? fromusername;
   @JsonKey(name: "unreadMessages")
   final int? unreadMessages;
-  const UserDummyList({this.id,this.name,this.connect,this.photo,this.chatid,this.isgrp,this.type,this.isgrpname,this.isgrpid,this.latestMessage,this.latestMessagecreated,this.isDeleted,this.deletedAt,this.createdBy,this.unreadMessages,this.description});
+  const UserDummyList({
+    this.id,
+    this.name,
+    this.connect,
+    this.photo,
+    this.chatid,
+    this.isgrp,
+    this.type,
+    this.isgrpname,
+    this.isgrpid,
+    this.latestMessage,
+    this.latestMessagecreated,
+    this.isDeleted,
+    this.deletedAt,
+    this.createdBy,
+    this.unreadMessages,
+    this.description,
+    this.fromusername,
+    this.photoindividual
+    });
   @override
   List<Object> get props => [];
 

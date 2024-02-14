@@ -21,6 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../core/color_palatte.dart';
@@ -65,6 +66,7 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isM=true;
   bool issMount= true;
   String uid='';
+  SharedPreferences? preff;
     @override
   void initState() {
     
@@ -153,21 +155,29 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
       },
     ),
     BlocListener<GroupBloc, GroupState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         print("state found ${state}");
         if (state is GroupMemberDeleteLoading) {
           print("group delete loading");
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
-           
+           preff = await SharedPreferences.getInstance();
         widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                     widget.socket!.on("groupmembers.result", (data) {
-                      print("update");
-                      isM=false;
-                      });
+                      
+        widget.socket!.emit("user.deleted",{
+          'chatId':widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid??"":widget.communicationuser?.chatid,
+          'userId':state.successmsg
+        });
+        //  widget.socket!.emit("leave.chat",{
+        //                 "room": widget.roomId??"",
+        //                 "userid":state.successmsg
+        //               }
+        //                );
        
+                      String? chatidd=widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid;
+       preff!.setString(chatidd??"",state.successmsg);
                     showSnackBar(context,
-              message: state.successmsg, color: Colors.green);
+              message: "User removed from the group successfully", color: Colors.green);
               // BlocProvider.of<CommunicationBloc>(context).add(
               //   GetChatListEvent(token: widget.token??"")
               // );
@@ -196,6 +206,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
             surfaceTintColor: Colors.white,
             leading: IconButton(
               onPressed: () {
+                 widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                 Navigator.pop(context);
               },
               icon: const Icon(
@@ -524,21 +535,28 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                   }, child: Text("Cancel",style: TextStyle(color: Colors.blue),)),
                                                                                   TextButton(onPressed: (){
                                                                                      setState(() {
-                                                                                    widget.socket!.emit("removeUserFromGroup",
-                                                                                {"userId":grpmember[index].id??"",
-                                                                                "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
-                                                                                }
+                                                                                        String? chattid = widget.chat==false? widget.redirectchatid!=""?widget.redirectchatid.toString():  widget.communicationUserModel?.chatid.toString():widget.communicationuser?.chatid.toString();
+                                                                                          BlocProvider.of<GroupBloc>(context).add( GroupMemberDeleteEvent(
+                                                                                    token:widget.token??"", 
+                                                                                    chatId: chattid??"" , 
+                                                                                    userId:grpmember[index].id??"")
                                                                                 );
-                                                                                widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                                widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                                  widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                                  showSnackBar(context, message: data, color: Colors.black);
-                                                                                } );
+                                                                                //     widget.socket!.emit("removeUserFromGroup",
+                                                                                // {"userId":grpmember[index].id??"",
+                                                                                // "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
+                                                                                // }
+                                                                                // );
+                                                                                // widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                // widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                //   showSnackBar(context, message: data, color: Colors.black);
+                                                                                // } );
                                                                                 widget.socket!.emit("group.message",{
                                                                                   "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
                                                                                 }); 
+                                                                                isM=true;
                                                                                 Navigator.pop(context);
-                                                                                 isM=true;
+                                                                                 
                                                                                 
                                                                                   });
                                                                           
@@ -750,13 +768,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                   });
                                                                 } );
                                                               uid=grpmember[index].id!;
-                                                              // BlocProvider.of<GroupBloc>(context).add(
-                                                          
-                                                                //   GroupMemberDeleteEvent(
-                                                                //     token:widget.token??"", 
-                                                                //     chatId: widget.communicationUserModel!.chatid??"", 
-                                                                //     userId:grpmember[index].id??"")
-                                                                // );
+                                                              
                                                                 showDialog(
                                                                         context: context, builder: (BuildContext context) {
                                                                           return AlertDialog(
@@ -769,16 +781,22 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                   }, child: Text("Cancel",style: TextStyle(color: ColorPalette.primary),)),
                                                                                   TextButton(onPressed: (){
                                                                                      setState(() {
-                                                                                    widget.socket!.emit("removeUserFromGroup",
-                                                                                {"userId":grpmember[index].id??"",
-                                                                                "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
-                                                                                }
+                                                                                      String? chattid = widget.chat==false? widget.redirectchatid!=""?widget.redirectchatid.toString():  widget.communicationUserModel?.chatid.toString():widget.communicationuser?.chatid.toString();
+                                                                                //     widget.socket!.emit("removeUserFromGroup",
+                                                                                // {"userId":grpmember[index].id??"",
+                                                                                // "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
+                                                                                // }
+                                                                                // );
+                                                                                // widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                // widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                //   showSnackBar(context, message: data, color: Colors.black);
+                                                                                // } );
+                                                                                BlocProvider.of<GroupBloc>(context).add( GroupMemberDeleteEvent(
+                                                                                    token:widget.token??"", 
+                                                                                    chatId: chattid??"" , 
+                                                                                    userId:grpmember[index].id??"")
                                                                                 );
-                                                                                widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                                widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                                  widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                                  showSnackBar(context, message: data, color: Colors.black);
-                                                                                } );
                                                                                 widget.socket!.emit("group.message",{
                                                                                   "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content":"${grpmember[index].name.toString().toTitleCase()} is removed from this group "
                                                                                 }); 
@@ -1152,7 +1170,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
     showDialog(
       context: context, builder: (BuildContext context) {
         return AlertDialog(
-          content: Text("Remove to leave this group"),
+          content: Text("Remove user from this group"),
           actions: [
             Row( mainAxisAlignment: MainAxisAlignment.end,
               children: [

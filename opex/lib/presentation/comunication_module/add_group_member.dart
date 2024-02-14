@@ -62,6 +62,7 @@ class _AddGroupMembersState extends State<AddGroupMembers> {
   List<GroupUserList> grpmember=[];
   bool isM=true;
   bool issMount= true;
+  String? addusername="";
   // var _listGenderText = ["Users", "Groups"];
   // var _tabTextIconIndexSelected = 0;
   @override
@@ -129,8 +130,11 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                     BlocProvider.of<GroupBloc>(context)
               .add(GetAllRegisteredUsersEvent(""));
                     print("success");
-                    widget.socket!.emit("updategroup.list",{widget.redirectchatid==""?widget.chatid:widget.redirectchatid,uid});
-                    widget.socket!.on("group.update", (data) => print("update"));
+                    widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                    widget.socket!.emit("group.message",{
+                        "type": "notify", "chatid": widget.redirectchatid==""?widget.chatid:widget.redirectchatid, "content": "$addusername is added to group"
+                      });
                     showSnackBar(context,
                 message: state.successmsg, color: Colors.green);
                   }
@@ -226,11 +230,12 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                                       // ),
                                     ),
                                    state.registeresUsers.length ==0?Padding(
-                                     padding: const EdgeInsets.only(top:40),
+                                     padding: const EdgeInsets.only(top:150),
                                      child: Container(child: Column(
                                        children: [
                                          SvgPicture.string(CommunicationSvg().nolistSvg),
                                          Text("All contacts are already in group")
+                                         
                                        ],
                                      )),
                                    ) :ListView.separated(
@@ -239,38 +244,41 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                                         shrinkWrap: true,
                                         itemBuilder: (context, index) => GestureDetector(
                                               onTap: () {
-                                                
+                                                addusername= "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname.toString().toTitleCase()}";
+                                                       BlocProvider.of<GroupBloc>(context).add( 
+                                                        GroupMemberAddEvent(token: widget.token??"", chatId: widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString(), userId: "${state.registeresUsers[index].userCode}")
+                                                                                );
                                                  
-                                                    widget.socket!.emit("userAddToGroup",{
-                                                      "userCode": "${state.registeresUsers[index].userCode}",
-                                                     "chatId": widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString() });
+                                              //       widget.socket!.emit("userAddToGroup",{
+                                              //         "userCode": "${state.registeresUsers[index].userCode}",
+                                              //        "chatId": widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString() });
                                                     
-                                                   print("hjkl");
-                                                   print("hjkluser1");
-                                                 widget.socket!.on("userAddedToGroup", (data) {     
-                                                  print("hjkluser $data");
+                                              //      print("hjkl");
+                                              //      print("hjkluser1");
+                                              //    widget.socket!.on("userAddedToGroup", (data) {     
+                                              //     print("hjkluser $data");
                                                   
-                                                   showSnackBar(context,
-                                                  message: "User Add To Group Successfully", color: ColorPalette.primary);
-                                                   widget.socket!.emit("group.message",{
-                                                    "type": "notify", "chatid": widget.redirectchatid==""?widget.chatid:widget.redirectchatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname} is added to group"
-                                                  });
-                                                   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                  widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                              //      showSnackBar(context,
+                                              //     message: "User Add To Group Successfully", color: ColorPalette.primary);
+                                              //      widget.socket!.emit("group.message",{
+                                              //       "type": "notify", "chatid": widget.redirectchatid==""?widget.chatid:widget.redirectchatid, "content": "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname.toString().toTitleCase()} is added to group"
+                                              //     });
+                                              //      widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                              //     widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
                                                   
-                                                } 
+                                              //   } 
                                                
-                                              );
-                                                widget.socket!.on("userAlreadyInGroup", (data) {
-                                                  print("hjkluser2 $data");
+                                              // );
+                                              //   widget.socket!.on("userAlreadyInGroup", (data) {
+                                              //     print("hjkluser2 $data");
                                                   
-                                                  showSnackBar(context,
-                                                  message: "Already in Group", color: ColorPalette.primary);
-                                                  setState(() {
+                                              //     showSnackBar(context,
+                                              //     message: "Already in Group", color: ColorPalette.primary);
+                                              //     setState(() {
                                                     
-                                                  });
+                                              //     });
                                                 
-                                                }); 
+                                              //   }); 
                                                 
                                               },
                                               child: EmployeeCard(employeeList: state.registeresUsers[index],isCommunicate:true,)

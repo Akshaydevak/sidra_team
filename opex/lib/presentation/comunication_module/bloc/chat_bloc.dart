@@ -12,13 +12,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   @override
   Stream<ChatState>mapEventToState(ChatEvent event)async*{
     if(event is ChatScreenGetEvent){
-      yield* getChatScreen(token: event.token,pageNo: event.pageNo,chatId: event.chatId,grpchatId: event.grpchatId);
+      yield* getChatScreen(token: event.token,pageNo: event.pageNo,chatId: event.chatId,grpchatId: event.grpchatId,userId:event.userId);
     }
   }
   Stream<ChatState> getChatScreen(
-      {required String token,required String chatId,required String grpchatId, required int pageNo}) async* {
+      {required String token,required String chatId,required String grpchatId, required int pageNo,required String userId}) async* {
         yield ChatScreenGetLoading();
-        final dataResponse=await _productData.getChatScreenData(token, chatId,grpchatId,pageNo);
+        final dataResponse=await _productData.getChatScreenData(token, chatId,grpchatId,pageNo,userId);
         if(dataResponse.isNotEmpty){
           yield ChatScreenGetSuccess(chatData: dataResponse);
         }else{

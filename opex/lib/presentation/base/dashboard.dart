@@ -52,7 +52,7 @@ class _DashBoardState extends State<DashBoard> {
   String? loginuserId;
   String? logingrpuserId;
   SharedPreferences? pref;
-
+String _previousConnectionState = 'Unknown';
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     print("onBackgroundMessage: $message");
@@ -81,6 +81,7 @@ class _DashBoardState extends State<DashBoard> {
       String? descrption = messages.notification?.body;
 
       Flushbar(
+
         onTap: (flushbar) async {
           print("jjijij: ${data['title']}");
           print("jjijij: ${data['Sidra_teams_key']}");
@@ -113,12 +114,13 @@ class _DashBoardState extends State<DashBoard> {
         token = pref!.getString("token");
         logingrpuserId=pref!.getString("logingrpuserid");
         print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
+          context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
               pageNo: 1,
               chatId: "",
-              grpchatId: id));
+              grpchatId: id,
+              userId:logingrpuserId??"" ));
         // PersistentNavBarNavigator.pushNewScreen(
         //   context,
         //   screen:  ChatScreen(
@@ -142,6 +144,7 @@ class _DashBoardState extends State<DashBoard> {
                messages.notification?.title??"",
             isGroup: true,
           ),));
+        
           }
           else{
             print("else condition");
@@ -149,12 +152,14 @@ class _DashBoardState extends State<DashBoard> {
         token = pref!.getString("token");
         loginuserId=pref!.getString("loginuserid");
         print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
+        
+           context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
               pageNo: 1,
               chatId: id,
-              grpchatId: ""));
+              grpchatId: "",
+              userId: loginuserId??""));
         // PersistentNavBarNavigator.pushNewScreen(
         //   context,
         //   screen:  ChatScreen(
@@ -179,7 +184,7 @@ class _DashBoardState extends State<DashBoard> {
                redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
           ),));
-          }
+        }
         },
         backgroundColor: Colors.black,
         titleColor: Colors.black,
@@ -209,6 +214,7 @@ class _DashBoardState extends State<DashBoard> {
 
         flushbarPosition: FlushbarPosition.TOP, // Set position to top
         message: descrption,
+        
         duration: Duration(seconds: 2),
       )..show(context);
     });
@@ -239,12 +245,14 @@ class _DashBoardState extends State<DashBoard> {
         token = pref!.getString("token");
         logingrpuserId = pref!.getString("logingrpuserid");
         print("else condition.. $token $logingrpuserId");
-        context.read<ChatBloc>().add(
+        if(!Navigator.canPop(context)){
+          context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
               pageNo: 1,
               chatId: "",
-              grpchatId: id));
+              grpchatId: id,
+              userId: logingrpuserId??""));
         // PersistentNavBarNavigator.pushNewScreen(
         //   context,
         //   screen: ChatScreen(
@@ -267,6 +275,8 @@ class _DashBoardState extends State<DashBoard> {
             cmntgrpchatname: message.notification?.title ?? "",
             isGroup: true,
           ),));
+        }
+        
           }
       else{
         print("else condition");
@@ -274,12 +284,14 @@ class _DashBoardState extends State<DashBoard> {
         token = pref!.getString("token");
         loginuserId = pref!.getString("loginuserid");
         print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(
+        if(!Navigator.canPop(context)){
+          context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
               pageNo: 1,
               chatId: id,
-              grpchatId: ""));
+              grpchatId: "",
+              userId: loginuserId??""));
         // PersistentNavBarNavigator.pushNewScreen(
         //   context,
         //   screen:  ChatScreen(
@@ -304,6 +316,8 @@ class _DashBoardState extends State<DashBoard> {
                redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
           ),));
+        }
+        
       }
     });
   }
@@ -471,7 +485,7 @@ class _DashBoardState extends State<DashBoard> {
     final socketpro = context.watch<scoketProvider>();
     socketCon = socketpro.socket;
     final socketpro1 = context.watch<scoketgrpProvider>();
-    socketCon1 = socketpro.socket;
+    socketCon1 = socketpro1.socket;
     double w1 = MediaQuery.of(context).size.width;
     double w = w1 > 700 ? 400 : w1;
     return StreamBuilder(
@@ -479,6 +493,15 @@ class _DashBoardState extends State<DashBoard> {
         initialData: 'Unknown',
         builder: (context, snapshot) {
           print("enthaayiii ${snapshot.data}");
+                _previousConnectionState = snapshot.data.toString();
+
+          if (_previousConnectionState != 'WiFi' &&
+            _previousConnectionState != 'Mobile data' &&
+            (snapshot.data == 'WiFi' || snapshot.data == 'Mobile data')) {
+          // Trigger event to connect to the socket only if there was no internet connection before
+          context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+        }
+          // context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
           return snapshot.data == "WiFi" || snapshot.data == "Mobile data"
               ? BlocListener<DummyLoginBloc, DummyLoginState>(
                   listener: (context, state) async {

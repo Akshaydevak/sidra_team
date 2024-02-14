@@ -629,9 +629,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                   i1=i;
                                                   BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
                                                   token: token.toString(),
-                                                  
                                                   grpchatId: "",
-                                                  pageNo: 1, chatId: chatlist[i].id??""));
+                                                  pageNo: 1, chatId: chatlist[i].id??"",userId:loginuserId??"" ));
                                                   print(",.,.,.,$i...$val1");
                                                 break;
                                                 }
