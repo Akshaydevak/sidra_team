@@ -108,7 +108,7 @@ String _previousConnectionState = 'Unknown';
             );
           }
           else if(data['Sidra_teams_key']=="comment"){
-
+print("inside the notifaction comment flush");
              print("else condition");
         pref=await SharedPreferences.getInstance();
         token = pref!.getString("token");
@@ -148,6 +148,7 @@ String _previousConnectionState = 'Unknown';
           }
           else{
             print("else condition");
+            print("inside the notifaction flush");
         pref=await SharedPreferences.getInstance();
         token = pref!.getString("token");
         loginuserId=pref!.getString("loginuserid");
@@ -240,12 +241,13 @@ String _previousConnectionState = 'Unknown';
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       } else if (data['Sidra_teams_key'] == "comment") {
+        print("background the notifaction comment");
         print("else condition");
         pref = await SharedPreferences.getInstance();
         token = pref!.getString("token");
         logingrpuserId = pref!.getString("logingrpuserid");
         print("else condition.. $token $logingrpuserId");
-        if(!Navigator.canPop(context)){
+        // if(!Navigator.canPop(context)){    
           context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
@@ -275,7 +277,7 @@ String _previousConnectionState = 'Unknown';
             cmntgrpchatname: message.notification?.title ?? "",
             isGroup: true,
           ),));
-        }
+        // }
         
           }
       else{
@@ -284,7 +286,8 @@ String _previousConnectionState = 'Unknown';
         token = pref!.getString("token");
         loginuserId = pref!.getString("loginuserid");
         print("else condition.. $token $loginuserId");
-        if(!Navigator.canPop(context)){
+        // if(!Navigator.canPop(context)){
+          print("background the notifaction");
           context.read<ChatBloc>().add(
           ChatScreenGetEvent(
               token: token.toString(),
@@ -292,6 +295,7 @@ String _previousConnectionState = 'Unknown';
               chatId: id,
               grpchatId: "",
               userId: loginuserId??""));
+        
         // PersistentNavBarNavigator.pushNewScreen(
         //   context,
         //   screen:  ChatScreen(
@@ -316,7 +320,7 @@ String _previousConnectionState = 'Unknown';
                redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
           ),));
-        }
+        // }
         
       }
     });

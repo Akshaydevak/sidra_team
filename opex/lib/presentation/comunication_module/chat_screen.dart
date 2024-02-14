@@ -370,8 +370,8 @@ widget.socket?.emit("group.message.seen",roomId);
     //   duration: const Duration(milliseconds: 300),
     //   curve: Curves.easeOut,
     // );
-      // ScrollService.scrollToEnd(
-      //       scrollController: _controller, reversed: true);
+      ScrollService.scrollToEnd(
+            scrollController: _controller, reversed:totpage<=1? false:true);
       });
           widget.socket!.on("unread.update", (data) {
             String? chatid= widget.chat==false
