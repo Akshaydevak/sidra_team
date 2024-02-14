@@ -8,6 +8,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        
         backgroundColor: ColorPalette.primary,
       ),
       body: GestureDetector(

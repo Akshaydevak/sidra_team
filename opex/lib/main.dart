@@ -213,7 +213,6 @@ class _MyAppState extends State<MyApp> {
               ),
 
               home: SplashScreen(),
-              builder: EasyLoading.init(),
               // home:  HomeApp(),
             ),
           );

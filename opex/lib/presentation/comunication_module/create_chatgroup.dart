@@ -177,7 +177,8 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
             token: widget.token ?? "",
             grpchatId: "",
             chatId:state.list.chatid??"",
-            pageNo: 1));
+            pageNo: 1,
+            userId: widget.loginUserId??""));
       PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: ChatScreen(

@@ -12,5 +12,6 @@ class ChatScreenGetEvent extends ChatEvent {
   final String chatId;
   final String token;
   final int pageNo;
-  const ChatScreenGetEvent({required this.token,required this.pageNo,required this.chatId,required this.grpchatId});
+  final String userId;
+  const ChatScreenGetEvent({required this.token,required this.pageNo,required this.chatId,required this.grpchatId,required this.userId});
 }
