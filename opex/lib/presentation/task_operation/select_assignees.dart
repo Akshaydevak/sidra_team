@@ -15,18 +15,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../common_widgets/loading.dart';
+import '../../core/common_snackBar.dart';
 import 'create/create_svg.dart';
+import 'create/model/task_models.dart';
+import 'create/task_bloc/task_bloc.dart';
 import 'employee_model/employee_model.dart';
 import 'group_list.dart';
 
 class SelectAssignees extends StatefulWidget {
   final Function(bool val)? groupVal;
+  final bool? updateAssign;
+  final GetTaskList? taskRead;
 
-  const SelectAssignees({Key? key, this.groupVal}) : super(key: key);
+  const SelectAssignees({Key? key, this.groupVal, this.updateAssign=false, this.taskRead}) : super(key: key);
 
   @override
   State<SelectAssignees> createState() => _SelectAssigneesState();
@@ -64,7 +70,37 @@ class _SelectAssigneesState extends State<SelectAssignees> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return   BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is UpdateTaskFailed) {
+          // createButtonLoad = false;
+          showSnackBar(
+            context,
+            message: state.error,
+            color: Colors.red,
+            // icon: Icons.admin_panel_settings_outlined
+          );
+          setState(() {});
+        }
+        if (state is UpdateTaskSuccess) {
+
+          Fluttertoast.showToast(
+              msg: 'Assignee Changed Successfully',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.black,
+              textColor: Colors.white);
+          Variable.assignType='';
+          Variable.assignCode='';
+          Variable.assignName='';
+
+          context
+              .read<TaskBloc>()
+              .add(GetTaskReadListEvent(widget.taskRead?.id ?? 0));
+          Navigator.pop(context);
+        }
+      },
+  child: Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(
@@ -253,20 +289,6 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                     Variable.isselected
                         ? Container(
                       width: w,
-                      // // height: 577,
-                      // decoration: BoxDecoration(
-                      //   borderRadius: BorderRadius.circular(10),
-                      //   border: Border.all(
-                      //     color: Color(0xffe6ecf0), width: 1,),
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: Color(0x05000000),
-                      //       blurRadius: 8,
-                      //       offset: Offset(1, 1),
-                      //     ),
-                      //   ],
-                      //   color: Colors.white,
-                      // ),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -299,163 +321,7 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                     physics: NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.only(bottom: 30),
                                     itemBuilder: (context, index) =>
-                                        // GestureDetector(
-                                        //   onTap: () async {
-                                        //     final SharedPreferences prefs =
-                                        //     await SharedPreferences
-                                        //         .getInstance();
-                                        //     prefs.setInt('index', index!);
-                                        //     setState(() {
-                                        //       groupActived = false;
-                                        //       indValue = index;
-                                        //       grpValue;
-                                        //
-                                        //       Variable.assignType =
-                                        //       "Individual";
-                                        //       Variable.assignName =
-                                        //           employeeList[index].fname ??
-                                        //               "";
-                                        //       Variable.assignCode =
-                                        //           employeeList[index].userCode ??
-                                        //               "";
-                                        //     });
-                                        //     widget.groupVal!(groupActived);
-                                        //     Navigator.pop(context);
-                                        //   },
-                                        //   child: Container(
-                                        //     decoration: BoxDecoration(
-                                        //       borderRadius:
-                                        //       BorderRadius.circular(10),
-                                        //       border: Border.all(
-                                        //         color: index == indValue
-                                        //             ? ColorPalette.primary
-                                        //             : Color(0xffe6ecf0),
-                                        //         width: 1,
-                                        //       ),
-                                        //       boxShadow: [
-                                        //         BoxShadow(
-                                        //           color: Color(0x05000000),
-                                        //           blurRadius: 8,
-                                        //           offset: Offset(1, 1),
-                                        //         ),
-                                        //       ],
-                                        //       color: Colors.white,
-                                        //     ),
-                                        //     child: Padding(
-                                        //       padding: const EdgeInsets.only(
-                                        //           left: 0,
-                                        //           right: 10,
-                                        //           top: 10,
-                                        //           bottom: 10),
-                                        //       child: Row(
-                                        //         mainAxisAlignment:
-                                        //         MainAxisAlignment.start,
-                                        //         crossAxisAlignment:
-                                        //         CrossAxisAlignment.start,
-                                        //         children: [
-                                        //           Radio(
-                                        //             value: index,
-                                        //             groupValue: indValue,
-                                        //             activeColor:
-                                        //             ColorPalette.primary,
-                                        //             onChanged:
-                                        //                 (int? value) async {
-                                        //               final SharedPreferences
-                                        //               prefs =
-                                        //               await SharedPreferences
-                                        //                   .getInstance();
-                                        //               prefs.setInt(
-                                        //                   'index', value!);
-                                        //               setState(() {
-                                        //                 groupActived = false;
-                                        //                 indValue = value;
-                                        //                 grpValue;
-                                        //
-                                        //                 Variable.assignType =
-                                        //                 "Individual";
-                                        //                 Variable.assignCode =
-                                        //                     employeeList[index]
-                                        //                         .code ??
-                                        //                         "";
-                                        //               });
-                                        //             },
-                                        //           ),
-                                        //           Row(
-                                        //             mainAxisAlignment:
-                                        //             MainAxisAlignment.start,
-                                        //             crossAxisAlignment:
-                                        //             CrossAxisAlignment
-                                        //                 .start,
-                                        //             children: [
-                                        //               employeeList[index]
-                                        //                   .profile !=
-                                        //                   ""
-                                        //                   ? CircleAvatar(
-                                        //                 backgroundColor:
-                                        //                 ColorPalette
-                                        //                     .inactiveGrey,
-                                        //                 backgroundImage:
-                                        //                 NetworkImage(
-                                        //                     employeeList[index]
-                                        //                         .profile ??
-                                        //                         ""),
-                                        //               )
-                                        //                   : TextAvatar(
-                                        //                 textColor:
-                                        //                 Colors.white,
-                                        //                 shape: Shape
-                                        //                     .Circular,
-                                        //                 text:
-                                        //                 "${employeeList[index].fname![0].toUpperCase()} ",
-                                        //                 numberLetters: 2,
-                                        //               ),
-                                        //               SizedBox(
-                                        //                 width: 14,
-                                        //               ),
-                                        //               Column(
-                                        //                 crossAxisAlignment:
-                                        //                 CrossAxisAlignment
-                                        //                     .start,
-                                        //                 children: [
-                                        //                   Text(
-                                        //                     employeeList[index]
-                                        //                         .fname ??
-                                        //                         "",
-                                        //                     style: TextStyle(
-                                        //                       color:
-                                        //                       ColorPalette
-                                        //                           .black,
-                                        //                       fontSize: w / 22,
-                                        //                     ),
-                                        //                   ),
-                                        //                   SizedBox(
-                                        //                     height: 5,
-                                        //                   ),
-                                        //                   Container(
-                                        //                     width: w / 1.8,
-                                        //                     child: Text(
-                                        //                       employeeList[
-                                        //                       index]
-                                        //                           .primaryMail ??
-                                        //                           "",
-                                        //                       style: TextStyle(
-                                        //                         color:
-                                        //                         ColorPalette
-                                        //                             .black,
-                                        //                         fontSize:
-                                        //                         w / 24,
-                                        //                       ),
-                                        //                     ),
-                                        //                   ),
-                                        //                 ],
-                                        //               )
-                                        //             ],
-                                        //           ),
-                                        //         ],
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
+
                                     GestureDetector(
                                       onTap: ()async{
                                         final SharedPreferences prefs =
@@ -477,10 +343,67 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                                       "";
                                             });
                                             widget.groupVal!(groupActived);
-                                            Navigator.pop(context);
+                                            if(widget.updateAssign==true){
+                                              BlocProvider.of<TaskBloc>(context)
+                                                  .add(UpdateTaskEvent(
+                                                  durationOption: widget.taskRead?.duration??"",
+                                                  latitude: widget.taskRead?.latitude,
+                                                  longitude:
+                                                  widget.taskRead?.longitude,
+                                                  id: widget.taskRead?.id ?? 0,
+                                                  AssigningCode:
+                                                  Variable.assignCode,
+                                                  AssigningType:
+                                                  Variable.assignType,
+                                                  createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                                  jobid: widget.taskRead?.jobId,
+                                                  notas: widget.taskRead?.notes ??
+                                                      "",
+                                                  priorityLeval: 0,
+                                                  remarks:
+                                                  widget.taskRead?.remarks ??
+                                                      "",
+                                                  taskName:
+                                                  widget.taskRead?.taskName ?? "",
+                                                  taskType: widget.taskRead?.taskType??0,
+                                                  lastmodified: null,
+                                                  parant: widget.taskRead?.parent,
+                                                  statusStagesId:
+                                                  widget.taskRead?.statusStagesId,
+                                                  discription:
+                                                  widget.taskRead?.description ?? "",
+                                                  createdBy: widget.taskRead?.createdPersonCode ??
+                                                      "",
+                                                  isActive: true,
+                                                  priority: widget.taskRead?.priority??"",
+                                                  reportingPerson: widget.taskRead
+                                                      ?.reportingPersonCode ??
+                                                      "",
+                                                  endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+                                                  startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                  img5: widget.taskRead
+                                                      ?.metaData?.image5,
+                                                  img1: widget.taskRead
+                                                      ?.metaData?.image1,
+                                                  img4: widget.taskRead
+                                                      ?.metaData?.image4,
+                                                  img2: widget.taskRead
+                                                      ?.metaData?.image2,
+                                                  img3: widget.taskRead
+                                                      ?.metaData?.image3,
+                                                  attachmentDescription:
+                                                  widget.taskRead?.metaData
+                                                      ?.description,
+                                                  attachmentNote:
+                                                  widget.taskRead?.metaData?.note));
+                                            }
+                                            else{
+                                              Navigator.pop(context);
+                                            }
+
                                       },
                                       child: EmployeeCard(
-                                        isSelect: Variable.isselected == index,
+                                        isSelect: Variable.assignCode == employeeList[index].userCode,
                                         employeeList: employeeList[index],
                                       ),
                                     ),
@@ -499,22 +422,6 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                     )
                         : Container(
                       width: w,
-                      // height: 577,
-                      // decoration: BoxDecoration(
-                      //   borderRadius: BorderRadius.circular(10),
-                      //   border: Border.all(
-                      //     color: Color(0xffe6ecf0),
-                      //     width: 1,
-                      //   ),
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: Color(0x05000000),
-                      //       blurRadius: 8,
-                      //       offset: Offset(1, 1),
-                      //     ),
-                      //   ],
-                      //   color: Colors.white,
-                      // ),
                       child: Container(
                         child: BlocBuilder<JobBloc, JobState>(
                           builder: (context, state) {
@@ -565,14 +472,72 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                               print("grpVal$groupActived");
                                               print("grpVal${Variable.assignType}");
                                               print("grpVal${Variable.assignCode}");
-                                              Navigator.pop(context);
+                                              if(widget.updateAssign==true){
+                                                BlocProvider.of<TaskBloc>(context)
+                                                    .add(UpdateTaskEvent(
+                                                    durationOption: widget.taskRead?.duration??"",
+                                                    latitude: widget.taskRead?.latitude,
+                                                    longitude:
+                                                    widget.taskRead?.longitude,
+                                                    id: widget.taskRead?.id ?? 0,
+                                                    AssigningCode:
+                                                    Variable.assignCode,
+                                                    AssigningType:
+                                                    Variable.assignType,
+                                                    createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                                    jobid: widget.taskRead?.jobId,
+                                                    notas: widget.taskRead?.notes ??
+                                                        "",
+                                                    priorityLeval: 0,
+                                                    remarks:
+                                                    widget.taskRead?.remarks ??
+                                                        "",
+                                                    taskName:
+                                                    widget.taskRead?.taskName ?? "",
+                                                    taskType: widget.taskRead?.taskType??0,
+                                                    lastmodified: null,
+                                                    parant: widget.taskRead?.parent,
+                                                    statusStagesId:
+                                                    widget.taskRead?.statusStagesId,
+                                                    discription:
+                                                    widget.taskRead?.description ?? "",
+                                                    createdBy: widget.taskRead?.createdPersonCode ??
+                                                        "",
+                                                    isActive: true,
+                                                    priority: widget.taskRead?.priority??"",
+                                                    reportingPerson: widget.taskRead
+                                                        ?.reportingPersonCode ??
+                                                        "",
+                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                    img5: widget.taskRead
+                                                        ?.metaData?.image5,
+                                                    img1: widget.taskRead
+                                                        ?.metaData?.image1,
+                                                    img4: widget.taskRead
+                                                        ?.metaData?.image4,
+                                                    img2: widget.taskRead
+                                                        ?.metaData?.image2,
+                                                    img3: widget.taskRead
+                                                        ?.metaData?.image3,
+                                                    attachmentDescription:
+                                                    widget.taskRead?.metaData
+                                                        ?.description,
+                                                    attachmentNote:
+                                                    widget.taskRead?.metaData?.note));
+                                              }
+                                              else{
+                                                Navigator.pop(context);
+                                              }
+                                              // Navigator.pop(context);
                                               setState(() {});
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                 BorderRadius.circular(4),
-                                                border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                border: Border.all(color: grouplist[index].groupCode == Variable.assignCode?ColorPalette.primary:
+                                                Color(0xffe6ecf0), width: 1, ),
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Color(0x05000000),
@@ -580,7 +545,7 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                                     offset: Offset(1, 1),
                                                   ),
                                                 ],
-                                                color: index == grpValue?
+                                                color: grouplist[index].groupCode == Variable.assignCode?
                                                 ColorPalette.cardBackground:Colors.white,
                                               ),
                                               child: Padding(
@@ -689,17 +654,21 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                 )
               ],
             ),
+            
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }
 
 class AssignesUnderGroup extends StatefulWidget {
   final Function(bool val)? groupVal;
   final int groupId;
-  const AssignesUnderGroup({Key? key, this.groupVal, required this.groupId}) : super(key: key);
+  final bool? updateAssign;
+  final GetTaskList? taskRead;
+  const AssignesUnderGroup({Key? key, this.groupVal, required this.groupId, this.updateAssign=false, this.taskRead}) : super(key: key);
 
   @override
   State<AssignesUnderGroup> createState() => _AssignesUnderGroupState();
@@ -734,7 +703,39 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
 
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is UpdateTaskFailed) {
+          // createButtonLoad = false;
+          showSnackBar(
+            context,
+            message: state.error,
+            color: Colors.red,
+            // icon: Icons.admin_panel_settings_outlined
+          );
+          setState(() {});
+        }
+        if (state is UpdateTaskSuccess) {
+          // createButtonLoad = false;
+          print("task sucsess");
+
+          Fluttertoast.showToast(
+              msg: 'Assignee Changed Successfully',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.black,
+              textColor: Colors.white);
+          Variable.assignType='';
+          Variable.assignCode='';
+          Variable.assignName='';
+
+          context
+              .read<TaskBloc>()
+              .add(GetTaskReadListEvent(widget.taskRead?.id ?? 0));
+          Navigator.pop(context);
+        }
+      },
+  child: Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
@@ -783,12 +784,68 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                   setState(() {
                                     indValue = index;
                                     Variable.assignType = "Individual";
-                                    // Variable.assignName = state.userlist[index].code??"";
+                                    Variable.assignName = state.userlist[index].fName??"";
                                     Variable.assignCode =
                                         state.userlist[index].code ?? "";
                                     widget.groupVal!(true);
 
-                                    Navigator.pop(context);
+                                    if(widget.updateAssign==true){
+                                      BlocProvider.of<TaskBloc>(context)
+                                          .add(UpdateTaskEvent(
+                                          durationOption: widget.taskRead?.duration??"",
+                                          latitude: widget.taskRead?.latitude,
+                                          longitude:
+                                          widget.taskRead?.longitude,
+                                          id: widget.taskRead?.id ?? 0,
+                                          AssigningCode:
+                                          Variable.assignCode,
+                                          AssigningType:
+                                          Variable.assignType,
+                                          createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                          jobid: widget.taskRead?.jobId,
+                                          notas: widget.taskRead?.notes ??
+                                              "",
+                                          priorityLeval: 0,
+                                          remarks:
+                                          widget.taskRead?.remarks ??
+                                              "",
+                                          taskName:
+                                          widget.taskRead?.taskName ?? "",
+                                          taskType: widget.taskRead?.taskType??0,
+                                          lastmodified: null,
+                                          parant: widget.taskRead?.parent,
+                                          statusStagesId:
+                                          widget.taskRead?.statusStagesId,
+                                          discription:
+                                          widget.taskRead?.description ?? "",
+                                          createdBy: widget.taskRead?.createdPersonCode ??
+                                              "",
+                                          isActive: true,
+                                          priority: widget.taskRead?.priority??"",
+                                          reportingPerson: widget.taskRead
+                                              ?.reportingPersonCode ??
+                                              "",
+                                          endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+                                          startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                          img5: widget.taskRead
+                                              ?.metaData?.image5,
+                                          img1: widget.taskRead
+                                              ?.metaData?.image1,
+                                          img4: widget.taskRead
+                                              ?.metaData?.image4,
+                                          img2: widget.taskRead
+                                              ?.metaData?.image2,
+                                          img3: widget.taskRead
+                                              ?.metaData?.image3,
+                                          attachmentDescription:
+                                          widget.taskRead?.metaData
+                                              ?.description,
+                                          attachmentNote:
+                                          widget.taskRead?.metaData?.note));
+                                    }
+                                    else{
+                                      Navigator.pop(context);
+                                    }
                                   });
                                 },
                                 child: EmployeeCardUnderGroup(
@@ -810,6 +867,7 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }

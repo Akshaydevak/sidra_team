@@ -545,8 +545,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         if(employee?.role=="Staff"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                             profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -569,8 +570,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",

@@ -26,6 +26,7 @@ class EmployeeRepo {
     required List<String> roleNameList,
     required String roleName,
     required dynamic profilePic,
+    required String whatsapp,
   }) async {
     final restAPIresponse = await _dataSource.employeeCreate(
       email: email,
@@ -35,6 +36,7 @@ class EmployeeRepo {
       designationCode:designationCode,
       firstName: firstName,
       profilePic: profilePic,
+      whatsapp: whatsapp,
       lastName: lastName,
       contact: contact,
       userRole: userRole,
@@ -198,10 +200,12 @@ class EmployeeRepo {
     required bool isActive,
     required int id,
     required dynamic profilePic,
+    required String whatsapp,
   }) async {
     final restAPIresponse = await _dataSource.updateEmployee(
       email: email,profilePic: profilePic,
       departCode: departCode,
+      whatsapp: whatsapp,
       gender: gender,
       orgCode: orgCode,
       designationCode:designationCode,

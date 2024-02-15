@@ -6,6 +6,7 @@ import 'package:cluster/presentation/order_app/data/order_repo.dart';
 import 'package:cluster/presentation/order_app/model/order_model.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../task_operation/employee_model/employee_model.dart';
 import '../data/profile_repo.dart';
 
 part 'profile_event.dart';
@@ -30,7 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield* getProfilePic();
     }
     if (event is UpdateProfilePicEvent) {
-      yield* updateProfilePic(event.profilePic);
+      yield* updateProfilePic(event.profilePic,event.pic);
     }
     if (event is UpdateOrgProfilePicEvent) {
       yield* updateOrgProfilePic(event.profilePic,event.id);
@@ -86,16 +87,21 @@ print(dataResponse.data);
     }
   }
 
-  Stream<ProfileState> updateProfilePic(File? profilePic) async* {
+  Stream<ProfileState> updateProfilePic(File? profilePic,dynamic? pic) async* {
     yield UpdateProfilePicLoading();
 
-    final dataResponse = await _profileRepo.updateProfilePic(profilePic);
-
-    if (dataResponse.data != null&&dataResponse.data.isNotEmpty) {
-      yield UpdateProfilePicSuccess();
+    final dataResponse = await _profileRepo.updateProfilePic(profilePic,pic);
+    if (dataResponse.data) {
+      yield UpdateProfilePicSuccess(dataResponse.error??"",);
     } else {
       yield UpdateProfilePicFailed();
     }
+
+    // if (dataResponse.data != null&&dataResponse.data.isNotEmpty) {
+    //   yield UpdateProfilePicSuccess();
+    // } else {
+    //   yield UpdateProfilePicFailed();
+    // }
   }
 
   Stream<ProfileState> updateOrgProfilePic(File? profilePic,int? id) async* {

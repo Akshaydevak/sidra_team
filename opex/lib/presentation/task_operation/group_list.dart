@@ -39,7 +39,7 @@ class _GroupListState extends State<GroupList> {
         child: CustomCheckBoxData(
           role: widget.employeeList?.role??"",
 
-          profile: widget.employeeList?.profile??"",
+          profile: widget.employeeList?.userMete?.profile??"",
           lname: widget.employeeList?.lname??"",
           key: UniqueKey(),
           value: widget.readUser,

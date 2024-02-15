@@ -216,6 +216,18 @@ class PicSuccess extends EmployeeState {
 }
 
 class PicFailed extends EmployeeState {}
+//
+class Pic2Loading extends EmployeeState {}
+
+class Pic2Success extends EmployeeState {
+  final int data;
+  final String url;
+  // final List<ListOrdersModel> ordersList;
+
+  const Pic2Success(this.data,this.url);
+}
+
+class Pic2Failed extends EmployeeState {}
 
 //
 class ChangePasswordLoading extends EmployeeState {}

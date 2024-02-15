@@ -66,7 +66,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                   builder: (context, state) {
                                 print("..................$state");
                                 if (state is ProfileSuccess) {
-                                  print(state.user.prflImage);
+                                  // print(state.user.prflImage);
                                   return Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -75,7 +75,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                       CircleAvatar(
                                         radius: 35,
                                         backgroundImage: NetworkImage(
-                                            state.user.prflImage ?? ""),
+                                            state.user.userMete?.profile ?? ""),
                                       ),
                                       const SizedBox(
                                         height: 10,
@@ -104,7 +104,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                         height: 5,
                                       ),
                                       Text(
-                                        " ${state.user.mobile}",
+                                        " {state.user.mobile}",
                                         style: GoogleFonts.roboto(
                                           color: ColorPalette.subtextGrey,
                                           fontSize: w / 24,
