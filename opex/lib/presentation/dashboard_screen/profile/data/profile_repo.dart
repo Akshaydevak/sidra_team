@@ -71,6 +71,16 @@ class ProfileRepo {
       return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
     }
   }
+  //
+
+  Future<DataResponse> UpdateProfilePicForCommunication(String? userCode,dynamic? pic,String? token)async {
+    final apiResponse = await _dataSource.UpdateProfilePicForCommunication(userCode,pic,token);
+    if (apiResponse.data) {
+      return DataResponse(error: apiResponse.error,data: apiResponse.data);
+    } else {
+      return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
+    }
+  }
 
   //
   Future<DataResponse> updateOrgProfilePic(File? profilePic,int? id)async {

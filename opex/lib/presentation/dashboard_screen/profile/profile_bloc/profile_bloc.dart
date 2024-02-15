@@ -33,6 +33,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is UpdateProfilePicEvent) {
       yield* updateProfilePic(event.profilePic,event.pic);
     }
+    if (event is UpdateProfilePicCommunicationEvent) {
+      yield* UpdateProfilePicForCommunication(event.userCode,event.pic,event.token);
+    }
     if (event is UpdateOrgProfilePicEvent) {
       yield* updateOrgProfilePic(event.profilePic,event.id);
     }
@@ -95,6 +98,24 @@ print(dataResponse.data);
       yield UpdateProfilePicSuccess(dataResponse.error??"",);
     } else {
       yield UpdateProfilePicFailed();
+    }
+
+    // if (dataResponse.data != null&&dataResponse.data.isNotEmpty) {
+    //   yield UpdateProfilePicSuccess();
+    // } else {
+    //   yield UpdateProfilePicFailed();
+    // }
+  }
+
+  //
+  Stream<ProfileState> UpdateProfilePicForCommunication(String? userCode,dynamic? pic,String? token) async* {
+    yield UpdateProfilePicCommunicationLoading();
+
+    final dataResponse = await _profileRepo.UpdateProfilePicForCommunication(userCode,pic,token);
+    if (dataResponse.data) {
+      yield UpdateProfilePicCommunicationSuccess(dataResponse.error??"",);
+    } else {
+      yield UpdateProfilePicCommunicationFailed();
     }
 
     // if (dataResponse.data != null&&dataResponse.data.isNotEmpty) {

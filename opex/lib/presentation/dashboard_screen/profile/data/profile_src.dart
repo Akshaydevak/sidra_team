@@ -140,6 +140,48 @@ print(response);
     }
   }
 
+  //commu profilr
+  Future<DataResponse> UpdateProfilePicForCommunication(String? userCode,dynamic? pic,String? token) async {
+    // User authenticatedUser;
+    // String filePath = "";
+    // print(
+    //     "heyyyy login url  ${ProfileUrls.updateUrl}");
+    // if (profilePic != null) filePath = profilePic.path;
+    // final mime = lookupMimeType(filePath)!.split("/");
+    // final fileData = await MultipartFile.fromFile(
+    //   filePath,
+    //   contentType: MediaType(mime.first, mime.last),
+    // );
+    // final FormData formData = FormData.fromMap({"profile_pic": fileData});
+    print("////////$pic");
+    print("////////$userCode");
+    print("////////$token");
+    final response = await client.post(
+      "https://api-communication-application.hilalcart.com/api/inventory/inventory-profile-pic",
+      data: {
+        "photo_url":pic,
+        "user_code":userCode
+      },
+
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print("afthab abid API${response.data}");
+    if (response.data['status'] == 'success') {
+      // employeeDetails = GetEmployeeList.fromJson(response.data['data']);
+
+      return DataResponse(
+          data: response.data["status"]=="success", error: response.data['message']);
+    } else {
+      return DataResponse(data: false, error: response.data['message']);
+    }
+  }
+
   //
   Future<DoubleResponse> updateOrgProfilePic(
       File? profilePic,

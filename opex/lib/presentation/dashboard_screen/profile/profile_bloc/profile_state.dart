@@ -38,6 +38,21 @@ class UpdateProfilePicSuccess extends ProfileState {
 
 class UpdateProfilePicFailed extends ProfileState {}
 
+//comm
+class UpdateProfilePicCommunicationLoading extends ProfileState {}
+
+class UpdateProfilePicCommunicationSuccess extends ProfileState {
+  final String success;
+  // final List<ListOrdersModel> ordersList;
+
+  const UpdateProfilePicCommunicationSuccess(
+      this.success
+      );
+}
+
+class UpdateProfilePicCommunicationFailed extends ProfileState {}
+
+
 class UpdateOrgProfilePicLoading extends ProfileState {}
 
 class UpdateOrgProfilePicSuccess extends ProfileState {
