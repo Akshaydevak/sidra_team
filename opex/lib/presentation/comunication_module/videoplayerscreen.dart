@@ -93,6 +93,7 @@ dispose(){
                       videoPlayerController: videoPlayerController!,
                       aspectRatio: 4/ 5,
                       maxScale: 3.5,
+                      allowedScreenSleep: false,
                       // Prepare the video to be played and display the first frame
                       autoInitialize: true,
                       looping: false,

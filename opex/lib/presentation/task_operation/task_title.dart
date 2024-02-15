@@ -54,13 +54,17 @@ class TaskTitle extends StatefulWidget {
   bool isPinnJob;
   bool isPendingJob;
   int? groupId;
+  int? parant;
+  bool? subTask;
 
   TaskTitle(
       {Key? key,
       this.isMyJob = false,
       this.groupId,
+      this.parant,
       this.isPendingJob = false,
       this.isPinnJob = false,
+      this.subTask = false,
       this.isReporter = false,
       this.isReported = false})
       : super(key: key);
@@ -241,7 +245,16 @@ class _TaskTitleState extends State<TaskTitle> {
               .read<JobBloc>()
               .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
           context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-        } else if (widget.isReported == true) {
+        }
+        else if(widget.subTask==true){
+          print("sub task back${getTaskRead?.parent}");
+          context
+              .read<
+              TaskBloc>()
+              .add(GetTaskReadListEvent(getTaskRead?.parent ??
+              0));
+        }
+        else if (widget.isReported == true) {
           print("popScope hhhhh");
           context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
         } else if (widget.isPendingJob == true) {
@@ -600,7 +613,14 @@ class _TaskTitleState extends State<TaskTitle> {
                       .read<JobBloc>()
                       .add(GetJobReadListEvent(getTaskRead?.jobId ?? 0));
                   context.read<JobBloc>().add(GetReorterListEvent('', '', ''));
-                } else if (widget.isReported == true) {
+                }
+                else if(widget.subTask==true){
+                  print("sub task back${getTaskRead?.parent}");
+                  context
+                      .read<
+                      TaskBloc>().add(GetTaskReadListEvent(getTaskRead?.parent ?? 0));
+                }
+                else if (widget.isReported == true) {
                   print("popScope hhhhh");
                   context.read<TaskBloc>().add(ReportListAdminEvent("", ""));
                 } else if (widget.isPendingJob == true) {
@@ -1276,7 +1296,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               borderRadius: BorderRadius.circular(4)
 
                                                           ),
-                                                          child: Text("ADD",
+                                                          child: Text("ADD NEW",
                                                               style: GoogleFonts.roboto(
                                                                   fontWeight: FontWeight.w500,
                                                                 fontSize: w/28,
@@ -1338,8 +1358,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                         context,
                                                                         screen:
                                                                             TaskTitle(
-                                                                          isMyJob:
-                                                                              true,
+                                                                          isMyJob: true,
+                                                                              subTask: true,
+                                                                              parant: getTaskRead?.parent,
                                                                               groupId: getTaskRead?.groupId??0,
                                                                         ),
                                                                         withNavBar:

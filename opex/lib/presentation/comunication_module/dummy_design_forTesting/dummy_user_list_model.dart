@@ -76,7 +76,7 @@ class GroupUserList extends Equatable {
   final String? name;
   @JsonKey(name: "connected")
   final bool? connect;
-  @JsonKey(name: "PhotoUrl")
+  @JsonKey(name: "photo")
   final String? photo;
   @JsonKey(name: "createdBy")
   final String? createdBy;

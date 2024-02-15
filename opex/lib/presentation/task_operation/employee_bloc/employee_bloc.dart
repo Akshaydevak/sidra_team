@@ -92,6 +92,8 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     }
     else if (event is PostImageEvent) {
       yield* postImageInTaskState(img: event.image);}
+    else if (event is PostImageOnlyProfileEvent) {
+      yield* postImageInAll(img: event.image);}
     else if (event is PostImageAllEvent) {
       yield* postImageInAll(img: event.image);}
     else if (event is PostImageAll2Event) {
@@ -399,6 +401,16 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield PicSuccess(dataResponse.data1,dataResponse.data2);
     } else {
       yield PicFailed();
+    }
+  }
+  Stream<EmployeeState> postImageOnlyProfilr(
+      {required File img}) async* {
+    yield PicOnlyProfileLoading();
+    final dataResponse = await _employeeDataSource.postImageInAll(img: img);
+    if (dataResponse.data1 != null) {
+      yield PicOnlyProfileSuccess(dataResponse.data1,dataResponse.data2);
+    } else {
+      yield PicOnlyProfileFailed();
     }
   }
   //

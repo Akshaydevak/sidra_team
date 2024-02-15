@@ -12,6 +12,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:voice_message_package/voice_message_package.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+
 
 class MyChatList extends StatefulWidget {
   final ChatModel? messageList;
@@ -111,7 +113,7 @@ class _MyChatListState extends State<MyChatList> {
                                                                 MediaQuery.of(context)
                                                                         .size
                                                                         .height /
-                                                                    3,
+                                                                    2.5,
                                                           ),
                                                           width: w,
                                                           child: ClipRRect(
@@ -128,39 +130,41 @@ class _MyChatListState extends State<MyChatList> {
                                                                         Radius
                                                                             .circular(
                                                                                 6)),
-                                                            child: CachedNetworkImage(
-                                                             height: MediaQuery.of(
-                                                                                context)
-                                                                            .size
-                                                                            .height /
-                                                                        3 ,
-                                                                  imageUrl: "${widget.messageList!.message}",
-                                                                  placeholder: (context, url) => Padding(
-                                                                    padding: const EdgeInsets.all(200),
-                                                                    child: CircularProgressIndicator(color: ColorPalette.primary,),
-                                                                  ),
-                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                                  fit: BoxFit.cover,
-                                                              ),
-                                                            // Image(
-                                                            //     loadingBuilder: (context,
-                                                            //         child,
-                                                            //         loadingProgress) {
-                                                            //       if (loadingProgress ==
-                                                            //           null)
-                                                            //         return child;
-                                                            //       return const SizedBox(
-                                                            //         child: Center(
-                                                            //             child: CircularProgressIndicator(
-                                                            //                 color: Colors
-                                                            //                     .white)),
-                                                            //       );
-                                                            //     },
-                                                            //     fit: BoxFit.cover,
-                                                            //     image: NetworkImage(
-                                                            //         messageList[index]
-                                                            //                 .message ??
-                                                            //             "")),
+                                                            child: 
+                                                            // CachedNetworkImage(
+                                                            //  height: MediaQuery.of(
+                                                            //                     context)
+                                                            //                 .size
+                                                            //                 .height /
+                                                            //             3 ,
+                                                            //       imageUrl: "${widget.messageList!.message}",
+                                                            //       placeholder: (context, url) => Padding(
+                                                            //         padding: const EdgeInsets.all(200),
+                                                            //         child: CircularProgressIndicator(color: ColorPalette.primary,),
+                                                            //       ),
+                                                            //       errorWidget: (context, url, error) => Icon(Icons.error),
+                                                            //       fit: BoxFit.cover,
+                                                            //   ),
+                                                            Image(
+                                                                loadingBuilder: (context,
+                                                                    child,
+                                                                    loadingProgress) {
+                                                                  if (loadingProgress ==
+                                                                      null)
+                                                                    return child;
+                                                                  return const SizedBox(
+                                                                    child: Center(
+                                                                        child: CircularProgressIndicator(
+                                                                            color: Colors
+                                                                                .white)),
+                                                                  );
+                                                                },
+                                                                fit: BoxFit.fill,
+                                                                image:ResizeImage( NetworkImage(
+                                                                    widget.messageList!
+                                                                            .message ??
+                                                                        ""),width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
+                                                                ),
                                                           ),
                                                         ),
                                                         const SizedBox(
@@ -600,10 +604,9 @@ class _MyChatListState extends State<MyChatList> {
                                                                                 context)
                                                                             .size
                                                                             .height /
-                                                                        3,
+                                                                        2.5,
                                                                   ),
-                                                                  width: w,
-                                                                  child: ClipRRect(
+                                                                  decoration: BoxDecoration(
                                                                     borderRadius: const BorderRadius
                                                                             .only(
                                                                         topLeft: Radius
@@ -618,45 +621,28 @@ class _MyChatListState extends State<MyChatList> {
                                                                         bottomRight: Radius
                                                                             .circular(
                                                                                 6)),
-                                                                                
-                                                                    child: CachedNetworkImage(
-                                                                      height:MediaQuery.of(
-                                                                                context)
-                                                                            .size
-                                                                            .height /
-                                                                        3 ,
-                                                                  imageUrl: "${widget.messageList!.message}",
-                                                                  placeholder: (context, url) => Padding(
-                                                                    padding: const EdgeInsets.all(200),
-                                                                    child: CircularProgressIndicator(color: ColorPalette.primary,),
                                                                   ),
-                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                                  fit:BoxFit.cover ,
-                                                                  
-                                                              ),
-                                                                    // Image(
-                                                                    //     loadingBuilder:
-                                                                    //         (context,
-                                                                    //             child,
-                                                                    //             loadingProgress) {
-                                                                    //       if (loadingProgress ==
-                                                                    //           null)
-                                                                    //         return child;
-                                                                    //       return const SizedBox(
-                                                                    //         child: Center(
-                                                                    //             child: CircularProgressIndicator(
-                                                                    //           color: Colors
-                                                                    //               .white,
-                                                                    //         )),
-                                                                    //       );
-                                                                    //     },
-                                                                    //     fit: BoxFit
-                                                                    //         .cover,
-                                                                    //     image: NetworkImage(
-                                                                    //         messageList[index]
-                                                                    //                 .message ??
-                                                                    //             "")),
-                                                                  ),
+                                                                  width: w,
+                                                                  child: Image(
+                                                                      loadingBuilder:
+                                                                          (context,
+                                                                              child,
+                                                                              loadingProgress) {
+                                                                        if (loadingProgress ==
+                                                                            null)
+                                                                          return child;
+                                                                        return const SizedBox(
+                                                                          child: Center(
+                                                                              child: CircularProgressIndicator(
+                                                                            color: Colors.blue,
+                                                                          )),
+                                                                        );
+                                                                      },
+                                                                      fit: BoxFit.fill,
+                                                                      image: ResizeImage(policy:ResizeImagePolicy.fit,  NetworkImage(
+                                                                  widget.messageList!
+                                                                          .message ??
+                                                                      ""),width:500,height:500,allowUpscaling: true)),
                                                                 ),
                                                                 const SizedBox(
                                                                   height: 3,
@@ -1108,12 +1094,10 @@ class _MyChatListState extends State<MyChatList> {
                                                               MediaQuery.of(context)
                                                                       .size
                                                                       .height /
-                                                                  3,
+                                                                  2.5,
                                                         ),
-                                                        width: w,
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius.only(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
                                                                   topLeft:
                                                                       Radius.circular(
                                                                           6),
@@ -1126,43 +1110,29 @@ class _MyChatListState extends State<MyChatList> {
                                                                   bottomRight:
                                                                       Radius.circular(
                                                                           0)),
-                                                          child: CachedNetworkImage(
-                                                            height: MediaQuery.of(
-                                                                                context)
-                                                                            .size
-                                                                            .height /
-                                                                        3 ,
-                                                                  imageUrl: "${widget.messageList!.message}",
-                                                                  placeholder: (context, url) => Padding(
-                                                                    padding: const EdgeInsets.all(200),
-                                                                    child: CircularProgressIndicator(color: ColorPalette.primary,),
-                                                                  ),
-                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                                  fit:BoxFit.cover ,
-                                                                  
-                                                              ),
-                                                          // Image(
-                                                          //     loadingBuilder: (context,
-                                                          //         child,
-                                                          //         loadingProgress) {
-                                                          //       if (loadingProgress ==
-                                                          //           null)
-                                                          //         return child;
-                                                          //       return const SizedBox(
-                                                          //         child: Center(
-                                                          //             child:
-                                                          //                 CircularProgressIndicator(
-                                                          //           color:
-                                                          //               Colors.white,
-                                                          //         )),
-                                                          //       );
-                                                          //     },
-                                                          //     fit: BoxFit.cover,
-                                                          //     image: NetworkImage(
-                                                          //        widget.messageList!
-                                                          //                 .message ??
-                                                          //             "")),
                                                         ),
+                                                        width: w,
+                                                        child: Image(
+                                                                      loadingBuilder:
+                                                                          (context,
+                                                                              child,
+                                                                              loadingProgress) {
+                                                                        if (loadingProgress ==
+                                                                            null)
+                                                                          return child;
+                                                                        return const SizedBox(
+                                                                          child: Center(
+                                                                              child: CircularProgressIndicator(
+                                                                            color: Color.fromRGBO(255, 255, 255, 1),
+                                                                          )),
+                                                                        );
+                                                                      },
+                                                                      fit: BoxFit.cover,
+                                                                      image: ResizeImage(policy:ResizeImagePolicy.fit,  
+                                                                      NetworkImage(
+                                                                  widget.messageList!
+                                                                          .message ??
+                                                                      ""),width:500,height:500,allowUpscaling: true)),
                                                       ),
                                                       const SizedBox(
                                                         height: 3,
@@ -1204,8 +1174,8 @@ class _MyChatListState extends State<MyChatList> {
                                               Stack(
                                                 children:[
                                                    Container(
-                                                    key: new PageStorageKey(
-                                  "image ${widget.roomid}${widget.messageList!.message}",),
+                                                  key: new PageStorageKey(
+                                "image ${widget.roomid}${widget.messageList!.message}",),
                                                      child: VoiceMessage(
                                                         audioSrc:
                                                             widget.messageList!.message ?? "",
