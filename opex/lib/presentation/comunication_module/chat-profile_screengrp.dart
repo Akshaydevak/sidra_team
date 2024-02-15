@@ -22,7 +22,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 
@@ -1144,9 +1144,9 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
       },
       );
   }
-Future<void> loading(){
-return EasyLoading.show();
-}
+// Future<void> loading(){
+// return EasyLoading.show();
+// }
 
     alertbox2(){
     showDialog(

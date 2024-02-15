@@ -19,7 +19,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -213,7 +213,7 @@ class _MyAppState extends State<MyApp> {
               ),
 
               home: SplashScreen(),
-              builder: EasyLoading.init(),
+              // builder: EasyLoading.init(),
               // home:  HomeApp(),
             ),
           );
