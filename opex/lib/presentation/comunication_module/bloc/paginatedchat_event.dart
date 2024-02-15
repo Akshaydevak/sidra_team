@@ -12,6 +12,7 @@ class PaginatedChatGetEvent extends PaginatedchatEvent {
   final String chatId;
   final String token;
   final int pageNo;
+  final String userId;
   const PaginatedChatGetEvent(
-      {required this.token,required this.grpchatId, required this.pageNo, required this.chatId});
+      {required this.token,required this.grpchatId, required this.pageNo, required this.chatId,required this.userId});
 }

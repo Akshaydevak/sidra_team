@@ -36,6 +36,7 @@ class ChatAppBar extends StatefulWidget {
   final String cmntgrpid;
   final String cmntgrpname;
   final GroupList? grpuser;
+  final String? redirectionsenduserId;
   List<GroupUserList>? grpmember = [];
   final bool? isadmin;
   // final VoidCallback ontap;
@@ -52,6 +53,7 @@ class ChatAppBar extends StatefulWidget {
       this.loginUserId,
       this.typing,
       this.socket,
+      this.redirectionsenduserId="",
       this.isGroup,
       this.token,
       this.roomId,
@@ -116,6 +118,9 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       if(widget.redirectchatid != ""){
                         print("push notificstion redirection");
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
@@ -166,6 +171,9 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       }
                       else if (widget.chat == false) {
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
@@ -211,6 +219,9 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 chatFilter: "chats"));
                         Navigator.pop(context);
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationuser?.users?[0].id ?? ""
@@ -253,6 +264,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                        if(widget.redirectchatid != ""){
                         print("push notificstion redirection");
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
@@ -310,6 +323,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       }
                    else   if (widget.isgrp == false) {
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
@@ -357,6 +372,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Navigator.pop(context);
                       } else {
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid": widget.loginUserId ?? ""
@@ -451,8 +468,37 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     );
                   }
                 },
-                child:widget.isGroup==false? widget.communicationUserModel?.photo == null ||
-                        widget.communicationUserModel!.photo!.isEmpty 
+                child:widget.isGroup==false? 
+             widget.chat==true?widget.communicationuser?.photoUrl ==null||widget.communicationuser!.photoUrl!.isEmpty?
+             TextAvatar(
+                        shape: Shape.Circular,
+                        size: h / 95,
+                        numberLetters: 2,
+                        fontSize: w / 22,
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        text: widget.isGroup == false
+                            ? widget.chat == false
+                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                            : widget.isgrp == false
+                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                : widget.cmntgrpid == ""
+                                    ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                    : "${widget.cmntgrpname.toString().toUpperCase()}",
+                      )
+                    :  CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage(
+                                    widget.communicationuser?.photoUrl ?? ""
+                                //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                // "${widget.communicationUserModel?.photo}"
+                                // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                ))
+             
+                :widget.communicationUserModel?.photoindividual == null ||
+                        widget.communicationUserModel!.photoindividual!.isEmpty 
                     ? TextAvatar(
                         shape: Shape.Circular,
                         size: h / 95,
@@ -470,22 +516,20 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                     ? "${widget.grpuser?.gname.toString().toUpperCase()}"
                                     : "${widget.cmntgrpname.toString().toUpperCase()}",
                       )
-                    : widget.isGroup == false
-                        ? CircleAvatar(
+                    :  CircleAvatar(
                             radius: w / 23,
                             backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(widget.chat == false
-                                    ? widget.communicationUserModel?.photo ?? ""
-                                    : widget.communicationuser?.photoUrl ?? ""
+                            backgroundImage: NetworkImage(widget.communicationUserModel?.photoindividual ?? ""
                                 //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
                                 // "${widget.communicationUserModel?.photo}"
                                 // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
                                 ))
-                        : CircleAvatar(
-                            radius: w / 23,
-                            backgroundColor: Colors.grey,
-                            backgroundImage:
-                                AssetImage("asset/chatgrpimg.png")):CircleAvatar(
+                        // : CircleAvatar(
+                        //     radius: w / 23,
+                        //     backgroundColor: Colors.grey,
+                        //     backgroundImage:
+                        //         AssetImage("asset/chatgrpimg.png"))
+                                :CircleAvatar(
                             radius: w / 23,
                             backgroundColor: Colors.grey,
                             backgroundImage:

@@ -61,7 +61,7 @@ class scoketgrpProvider extends ChangeNotifier{
     );
 
     _socket!.connect();
-      _socket!.on('connect', (_) => print('connectt success: ${_socket!.id}'));
+      _socket!.on('connect', (_) => print('connectwt success: ${_socket!.id}'));
       _socket!.on('user.id', (data) {
       //loginuserId = data;
       print("vgyvgvh$data");
@@ -83,4 +83,15 @@ class scoketgrpProvider extends ChangeNotifier{
  pref = await SharedPreferences.getInstance();
 pref!.setString("logingrpuserid", data);
 }
+}
+
+class FocusState extends ChangeNotifier {
+  bool _shouldFocus = false;
+
+  bool get shouldFocus => _shouldFocus;
+
+  void setFocus(bool value) {
+    _shouldFocus = value;
+    notifyListeners();
+  }
 }

@@ -71,7 +71,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
           BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
             token: widget.token ?? "",
             grpchatId: "",
-            pageNo: 1, chatId: state.chatListData1.id??"")
+            pageNo: 1, chatId: state.chatListData1.id??"",userId: widget.loginUserId??"")
           );
         PersistentNavBarNavigator.pushNewScreen(
         context,
@@ -308,7 +308,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                   BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
                                                   token: widget.token ?? "",
                                                   grpchatId: "",
-                                                  pageNo: 1, chatId: chatlist[i].id??""));
+                                                  pageNo: 1, chatId: chatlist[i].id??"",userId:widget.loginUserId??""));
                                                   print(",.,.,.,$i...$val1");
                                                 break;
                                                 }

@@ -901,7 +901,6 @@ class _CommunicationModuleState extends State<CommunicationModule> {
   
  
  
- 
     socketCon!.on('online', (data) {
       print("online anutto ${data}");
       onlineUsers.add(data['id']);
@@ -931,11 +930,9 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                 userlist.clear();
                   (data as List).forEach((element) { 
                   userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
+                  
                    });
-                  // if(mounted){
+                  if(mounted){
                      print("hgfjh");
                      
                     setState(() {
@@ -951,7 +948,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                       }
                        
                   });
-                  // }
+                  }
                
                 // userlist=userlist.toSet().toList();
                
@@ -988,11 +985,8 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                   (data as List).forEach((element) {
                     
                   userlist.add(UserDummyList.fromJson(element));
-                  setState(() {
-                    
-                  });
                    });
-                  // if(mounted){
+                  if(mounted){
                      print("hgfjh");
                     setState(() {
                       if(userlist.isNotEmpty){
@@ -1004,7 +998,7 @@ class _CommunicationModuleState extends State<CommunicationModule> {
                       }
                        
                   });
-                  // }
+                  }
                
                 // userlist=userlist.toSet().toList();
                

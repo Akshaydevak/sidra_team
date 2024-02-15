@@ -130,7 +130,7 @@ class CommunicationDatasource {
     print("....$chatId...$userId");
     final response = await client.post(
       CommunicationUrls.addGroupMember+chatId,
-      data: {"userId": userId},
+      data: {"userCode": userId},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ class CommunicationDatasource {
         },
       ),
     );
-    print(response.data);
+    print("add memmej ${response.data}");
     return DoubleResponse(
         response.data['status'] == 'success', response.data['message']);
   }
@@ -159,7 +159,7 @@ class CommunicationDatasource {
     );
     print("response at datasource ${response.data}");
     return DoubleResponse(
-        response.data['status'] == 'success', response.data['message']);
+        response.data['status'] == 'success', response.data['userid']);
   }
 
   Future<CommunicationUserModel> addAFriendUser(String token, String fname,
@@ -232,10 +232,10 @@ class CommunicationDatasource {
   }
 
   Future<List<ChatMessagaeData>> getChatScreenData(
-      String token,String chatId,String grpchatId,int pageNo) async {
+      String token,String chatId,String grpchatId,int pageNo,String userId) async {
    List<ChatMessagaeData>? chatScreenData =[];
   String api="";
-  print("shifas++@@ $grpchatId ..");
+  print("shifas++@@ $grpchatId, userid $userId ..");
   if(grpchatId != "")
   {
     print("if grpchatId $grpchatId");

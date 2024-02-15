@@ -66,12 +66,13 @@ int unreadCount=0;
         ? 400
         : w1;
     var h=MediaQuery.of(context).size.height;
-    return SwipeActionCell(
-      backgroundColor: Colors.transparent,
-      key: ObjectKey(widget.communicationUserModel?.chatid),
-      trailingActions: [SwipeAction(
-        title: "Delete",
-        onTap: (CompletionHandler){
+    return 
+    // SwipeActionCell(
+      // backgroundColor: Colors.transparent,
+      // key: ObjectKey(widget.communicationUserModel?.chatid),
+      // trailingActions: [SwipeAction(
+      //   title: "Delete",
+      //   onTap: (CompletionHandler){
         //    setState(() {
         // //       print("hello delete${widget.communicationUserModel?.chatid}");
         // // widget.socket?.emit("delete.chat",{
@@ -99,10 +100,11 @@ int unreadCount=0;
         //         } );
         //   });
         //   });
-      },
-      color: ColorPalette.primary
-      )],
-      child: GestureDetector(
+      // },
+      // color: ColorPalette.primary
+      // )],
+      // child: 
+      GestureDetector(
         onTap: () {
           ismsg=true;
           setState(() {
@@ -115,7 +117,8 @@ int unreadCount=0;
               token: widget.token ?? "",
               chatId: widget.communicationUserModel?.chatid??"",
               grpchatId: "",
-              pageNo: 1));
+              pageNo: 1,
+              userId: widget.loginUserId??""));
           PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: ChatScreen(
@@ -153,8 +156,14 @@ int unreadCount=0;
                           // );
                         },
                         child:
-                        widget.communicationUserModel?.photo==null||
-                        widget.communicationUserModel!.photo!.isEmpty 
+                         widget.isGroup?
+                     CircleAvatar(
+                          radius: 24,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                              AssetImage("asset/chatgrpimg.png")
+                        ):widget.communicationUserModel?.photoindividual==null||
+                        widget.communicationUserModel!.photoindividual!.isEmpty 
                         ?TextAvatar(
                             shape: Shape.Circular,
                             size: 48,
@@ -164,19 +173,13 @@ int unreadCount=0;
                             fontWeight: FontWeight.w500,
                             text:"${widget.communicationUserModel?.name.toString().toUpperCase()}" ,
                           )
-                        : widget.isGroup?
-                     CircleAvatar(
-                          radius: 24,
-                          backgroundColor: ColorPalette.inactiveGrey,
-                          backgroundImage:  
-                              AssetImage("asset/chatgrpimg.png")
-                        ):
+                        :
                          CircleAvatar(
                           radius: 24,
                           backgroundColor: ColorPalette.inactiveGrey,
                           backgroundImage:  
                            NetworkImage(
-                              widget.communicationUserModel?.photo ?? ""
+                              widget.communicationUserModel?.photoindividual ?? ""
                               // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
                               // "${widget.communicationUserModel?.photo}"
                               ),
@@ -239,7 +242,57 @@ int unreadCount=0;
                                   ? widget.communicationUserModel!.latestMessage!.isNotEmpty
                                       ? widget.communicationUserModel!
                                                   .type == "text"
-                                          ? Row(
+                                          ?widget.isGroup==true?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Container(
+                                                  width: w1/2.3,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${widget.communicationUserModel?.fromusername.toString().toTitleCase().split(' ')[0]}: ",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Color(0xff151522),
+                                                          fontSize: w/30,
+                                                          
+                                                          fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.w400
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: w1/4,
+                                                        child: Text(
+                                                          widget.communicationUserModel
+                                                                  ?.latestMessage ??
+                                                              "",
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: TextStyle(
+                                                            color: Color(0xff151522),
+                                                            fontSize: w/30,
+                                                            fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.normal
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                // Text(
+                                                //     widget.communicationUserModel
+                                                //             ?.latestMessagecreated ??
+                                                //         "",
+                                                //         softWrap: true,
+                                                //     overflow: TextOverflow.fade,
+                                                //     style: GoogleFonts.roboto(
+                                                //       color: const Color(0xff6d6d6d),
+                                                //       fontSize: w/35,
+                                                //       fontWeight: FontWeight.w500,
+                                                      
+                                                //     )),
+                                              ],
+                                            ): Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -271,7 +324,48 @@ int unreadCount=0;
                                                       
                                                 //     )),
                                               ],
-                                            ):widget.communicationUserModel?.type=='image'? Row(
+                                            ):widget.communicationUserModel?.type=='image'? 
+                                            widget.isGroup==true?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: w1/3,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${widget.communicationUserModel?.fromusername.toString().toTitleCase().split(' ')[0]}: ",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Color(0xff151522),
+                                                          fontSize: w/30,
+                                                          
+                                                          fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.w400
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                      Icons.image,
+                                                      color: Color.fromARGB(255, 2, 2, 2),
+                                                      size: w/24,
+                                                    ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                // Text(
+                                                //     widget.communicationUserModel
+                                                //             ?.latestMessagecreated ??
+                                                //         "",
+                                                //         softWrap: true,
+                                                //     overflow: TextOverflow.fade,
+                                                //     style: GoogleFonts.roboto(
+                                                //       color: const Color(0xff6d6d6d),
+                                                //       fontSize: w/35,
+                                                //       fontWeight: FontWeight.w500,
+                                                      
+                                                //     )),
+                                              ],
+                                            ):Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -285,31 +379,54 @@ int unreadCount=0;
                                                     SizedBox(
                                                       width: 3,
                                                     ),
-                                                    // Text(
-                                                    //   widget.communicationUserModel!
-                                                    //         .latestMessage ??
-                                                    //     "",
-                                                    //     maxLines: 1,
-                                                    //     overflow: TextOverflow.ellipsis,
-                                                    //     style: TextStyle(
-                                                    //       fontWeight:ismsg==false? FontWeight.bold:FontWeight.normal
-                                                    //     ),
-                                                    //     )
+                                                    
                                                   ],
                                                 ),
-                                                // Text(
-                                                //     widget.communicationUserModel
-                                                //             ?.latestMessagecreated ??
-                                                //         "",
-                                                //         softWrap: true,
-                                                //     overflow: TextOverflow.clip,
-                                                //     style: GoogleFonts.roboto(
-                                                //       color: Color.fromARGB(255, 159, 157, 157),
-                                                //       fontSize: w/35,
-                                                //       fontWeight: FontWeight.w500,
-                                                //     )),
+                                               
                                               ],
-                                            ):widget.communicationUserModel?.type =='audio'? 
+                                            ):widget.communicationUserModel?.type =='audio'?
+                                            widget.isGroup==true?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: w1/2.3,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${widget.communicationUserModel?.fromusername.toString().toTitleCase().split(' ')[0]}: ",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Color(0xff151522),
+                                                          fontSize: w/30,
+                                                          
+                                                          fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.w400
+                                                        ),
+                                                      ),
+                                                      Row(
+                                              children: [
+                                                 Icon(
+                                                      Icons.mic,
+                                                      color: Color.fromARGB(255, 2, 2, 2),
+                                                      size: w1/24,
+                                                    ),
+                                                Text(
+                                                      "voice message",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Color(0xff151522),
+                                                    fontSize: w1/30,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ): 
                                             Row(
                                               children: [
                                                  Icon(
@@ -326,20 +443,37 @@ int unreadCount=0;
                                                     fontSize: w1/30,
                                                   ),
                                                 ),
-                                                // Text(
-                                                //     widget.communicationUserModel
-                                                //             ?.latestMessagecreated ??
-                                                //         "",
-                                                //         softWrap: true,
-                                                //     overflow: TextOverflow.fade,
-                                                //     style: GoogleFonts.roboto(
-                                                //       color: const Color(0xff6d6d6d),
-                                                //       fontSize: w/35,
-                                                //       fontWeight: FontWeight.w500,
-                                                      
-                                                //     )),
                                               ],
-                                            ):widget.communicationUserModel?.type=='video'?Row(
+                                            ):widget.communicationUserModel?.type=='video'?
+                                            widget.isGroup==true?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: w1/2.3,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${widget.communicationUserModel?.fromusername.toString().toTitleCase().split(' ')[0]}: ",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Color(0xff151522),
+                                                          fontSize: w/30,
+                                                          
+                                                          fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.w400
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                      Icons.video_library,
+                                                      color: Color.fromARGB(255, 2, 2, 2),
+                                                      size: w1/24,
+                                                    ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ): Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -374,7 +508,52 @@ int unreadCount=0;
                                                       
                                                 //     )),
                                               ],
-                                            ):widget.communicationUserModel?.type=='file'?Row(
+                                            ):widget.communicationUserModel?.type=='file'?
+                                            widget.isGroup==true?Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  width: w1/2.3,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${widget.communicationUserModel?.fromusername.toString().toTitleCase().split(' ')[0]}: ",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          color: Color(0xff151522),
+                                                          fontSize: w/30,
+                                                          
+                                                          fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.w400
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                   children: [
+                                                     Icon(
+                                                          Icons.attach_file,
+                                                          color: Color.fromARGB(255, 2, 2, 2),
+                                                          size: w/24,
+                                                        ),
+                                                        Text(
+                                                    widget.communicationUserModel
+                                                            ?.latestMessage!.split('?').first.split('.').last ??
+                                                        "",
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Color(0xff151522),
+                                                      fontSize: w/30,
+                                                      fontWeight: widget.communicationUserModel?.unreadMessages != 0? FontWeight.bold:FontWeight.normal
+                                                    ),
+                                                  ),
+                                                   ],
+                                                 ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ):Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -647,7 +826,7 @@ int unreadCount=0;
             ],
           ),
           ),
-      ),
+      // ),
     );
   }
 }

@@ -24,6 +24,8 @@ UserDummyList _$UserDummyListFromJson(Map<String, dynamic> json) =>
       createdBy: json['createdBy'] as String?,
       unreadMessages: json['unreadMessages'] as int?,
       description: json['description'] as String?,
+      fromusername: json['fromUserName'] as String?,
+      photoindividual: json['photo'] as String?,
     );
 
 Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
@@ -32,6 +34,7 @@ Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
       'name': instance.name,
       'connected': instance.connect,
       'photoUrl': instance.photo,
+      'photo': instance.photoindividual,
       'chatId': instance.chatid,
       'isGroupChat': instance.isgrp,
       'type': instance.type,
@@ -43,6 +46,7 @@ Map<String, dynamic> _$UserDummyListToJson(UserDummyList instance) =>
       'isDeleted': instance.isDeleted,
       'deletedAt': instance.deletedAt,
       'createdBy': instance.createdBy,
+      'fromUserName': instance.fromusername,
       'unreadMessages': instance.unreadMessages,
     };
 
