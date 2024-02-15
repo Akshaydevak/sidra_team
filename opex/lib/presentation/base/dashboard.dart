@@ -105,7 +105,45 @@ class _DashBoardState extends State<DashBoard> {
               withNavBar: true, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
             );
-          } else if (data['Sidra_teams_key'] == "comment") {
+          }
+          else if(data['Sidra_teams_key']=="comment"){
+
+             print("else condition");
+        pref=await SharedPreferences.getInstance();
+        token = pref!.getString("token");
+        logingrpuserId=pref!.getString("logingrpuserid");
+        print("else condition.. $token $loginuserId");
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id));
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: logingrpuserId,
+        //     socket: socketCon1,
+        //     grpchatid: id,
+        //     cmntgrpchatname:
+        //        messages.notification?.title??"",
+        //     isGroup: true,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+            token: token,
+            loginUserId: logingrpuserId,
+            socket: socketCon1,
+            grpchatid: id,
+            cmntgrpchatname:
+               messages.notification?.title??"",
+            isGroup: true,
+          ),));
+          }
+          else{
             print("else condition");
         pref=await SharedPreferences.getInstance();
         token = pref!.getString("token");
@@ -201,43 +239,71 @@ class _DashBoardState extends State<DashBoard> {
         token = pref!.getString("token");
         logingrpuserId = pref!.getString("logingrpuserid");
         print("else condition.. $token $logingrpuserId");
-        context.read<ChatBloc>().add(ChatScreenGetEvent(
-            token: token.toString(), pageNo: 1, chatId: "", grpchatId: id));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen: ChatScreen(
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id));
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen: ChatScreen(
+        //     token: token,
+        //     loginUserId: logingrpuserId,
+        //     socket: socketCon1,
+        //     grpchatid: id,
+        //     cmntgrpchatname:
+        //        message.notification?.title??"",
+        //     isGroup: true,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: logingrpuserId,
             socket: socketCon1,
             grpchatid: id,
             cmntgrpchatname: message.notification?.title ?? "",
             isGroup: true,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-      } else {
+          ),));
+          }
+      else{
         print("else condition");
         pref = await SharedPreferences.getInstance();
         token = pref!.getString("token");
         loginuserId = pref!.getString("loginuserid");
         print("else condition.. $token $loginuserId");
-        context.read<ChatBloc>().add(ChatScreenGetEvent(
-            token: token.toString(), pageNo: 1, chatId: id, grpchatId: ""));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen: ChatScreen(
+        context.read<ChatBloc>().add(
+          ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: id,
+              grpchatId: ""));
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,
+        //     redirectchatid: id,
+        //     redirectchatname:
+        //        message.notification?.title??"",
+        //     isGroup: data['is_group_chat']=="true"?true:false,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+       Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
-            redirectchatname: message.notification?.title ?? "",
-            isGroup: data['is_group_chat'] == "true" ? true : false,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-       
+            redirectchatname:
+               message.notification?.title??"",
+               redirectionsenduserId: data['to_user_id'],
+            isGroup: data['is_group_chat']=="true"?true:false,
+          ),));
       }
     });
   }

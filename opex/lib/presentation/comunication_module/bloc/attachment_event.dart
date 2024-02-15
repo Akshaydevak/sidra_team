@@ -8,7 +8,7 @@ abstract class AttachmentEvent extends Equatable {
 }
 
 class UploadPictureEvent extends AttachmentEvent {
-  final FilePickerResult image;
+  final File image;
 
   const UploadPictureEvent({required this.image});
 }
