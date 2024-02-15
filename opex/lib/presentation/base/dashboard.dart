@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
@@ -9,6 +10,7 @@ import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/new_profile_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
 import 'package:cluster/presentation/task_operation/create/create_job.dart';
+import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/task_operation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
@@ -327,9 +329,14 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   void initState() {
+    newIndex=widget.index??0;
+    setState(() {
+
+    });
     initConnectivity();
     Connectivity().onConnectivityChanged.listen(updateConnectionStatus);
     _controller = PersistentTabController(initialIndex: widget.index ?? 0);
+    context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     getPage();
 
@@ -480,7 +487,9 @@ class _DashBoardState extends State<DashBoard> {
         builder: (context, snapshot) {
           print("enthaayiii ${snapshot.data}");
           return snapshot.data == "WiFi" || snapshot.data == "Mobile data"
-              ? BlocListener<DummyLoginBloc, DummyLoginState>(
+              ? MultiBlocListener(
+  listeners: [
+    BlocListener<DummyLoginBloc, DummyLoginState>(
                   listener: (context, state) async {
                     final socketProvider = context.read<scoketProvider>();
                     final socketgrpProvider = context.read<scoketgrpProvider>();
@@ -502,7 +511,21 @@ class _DashBoardState extends State<DashBoard> {
                       );
                     }
                   },
-                  child: UpgradeAlert(
+),
+    BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if(state is ProfileSuccess){
+          Variable.profilePic=state.user.userMete?.profile??"";
+          print("profile vannu${Variable.profilePic}");
+          setState(() {
+
+          });
+        }
+        // TODO: implement listener
+      },
+    ),
+  ],
+  child: UpgradeAlert(
                     child: MediaQuery(
                       data:
                           MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -566,7 +589,7 @@ class _DashBoardState extends State<DashBoard> {
                       ),
                     ),
                   ),
-                )
+)
               : Scaffold(
                   backgroundColor: Colors.white,
                   body: Container(

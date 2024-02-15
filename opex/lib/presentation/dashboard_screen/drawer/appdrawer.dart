@@ -104,7 +104,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                         height: 5,
                                       ),
                                       Text(
-                                        " {state.user.mobile}",
+                                        "${state.user.primaryMobile}",
                                         style: GoogleFonts.roboto(
                                           color: ColorPalette.subtextGrey,
                                           fontSize: w / 24,

@@ -105,7 +105,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if (state is PicSuccess) {
+            if (state is PicOnlyProfileSuccess) {
               print("Inside Success${state.data}\t${state.url}");
               setState(() {
                 imageId = state.data;
@@ -1040,7 +1040,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
           // Uint8List imageBytes = await croppedFile.readAsBytes();
           // Variable.imageTyp=pickedFile?.name??"";
 
-          BlocProvider.of<EmployeeBloc>(context).add(PostImageAllEvent(file));
+          BlocProvider.of<EmployeeBloc>(context).add(PostImageOnlyProfileEvent(file));
         }
       }
     } catch (e) {

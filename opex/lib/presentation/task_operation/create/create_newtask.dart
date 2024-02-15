@@ -858,6 +858,28 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         SizedBox(
                           height: 15,
                         ),
+                        // Container(
+                        //   width: w1,
+                        //   decoration: BoxDecoration(
+                        //     color: Color(0xffFFDC5A).withOpacity(0.2),
+                        //     borderRadius: BorderRadius.circular(10)
+                        //   ),
+                        //   child: Row(
+                        //     children: [
+                        //       SvgPicture.string(
+                        //         TaskSvg().infoIcon,
+                        //         color: ColorPalette.black,
+                        //       ),
+                        //       Container(
+                        //         width: w1/1.3,
+                        //           child: Text("Please attention that, Job duration is from 12 Jan 2024 to 15 Jan 2024",
+                        //           style: GoogleFonts.roboto(
+                        //             fontSize: w/28,
+                        //             color: Colorp
+                        //           ),))
+                        //     ],
+                        //   ),
+                        // ),
                         Container(
                           width: w1,
                           // height: 120,
