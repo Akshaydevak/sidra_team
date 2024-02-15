@@ -90,9 +90,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
   listeners: [
       BlocListener<EmployeeBloc, EmployeeState>(
         listener: (context, state) {
-          if(state is PicLoading){
-            print("Inside Loading");
-          }
+
           if(state is PicSuccess){
             print("Inside Success${state.data}\t${state.url}");
             setState(() {
@@ -269,6 +267,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ):
                 GestureDetector(
                   onTap: (){
+                    HapticFeedback.heavyImpact();
                     widget.update?BlocProvider.of<TaskBloc>(context)
                         .add(UpdateRewardTaskEvent(
                         isActive: true,

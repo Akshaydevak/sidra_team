@@ -91,160 +91,160 @@ class _MyProfileDetailsScreenState extends State<MyProfileDetailsScreen> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              width: w1,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.string(
-                    TaskSvg().chatmsgIcon,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    "Chat Now",
-                    style: GoogleFonts.roboto(
-                        fontWeight: FontWeight.w500,
-                        fontSize: w / 28,
-                        color: ColorPalette.primary),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: w1,
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              padding: EdgeInsets.symmetric(vertical: 15),
-              decoration: BoxDecoration(
-                  color: Color(0xff2871AF).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(4)),
-              child: Column(
-                children: [
-                  Text(
-                    "YOUR SCORE",
-                    style: GoogleFonts.roboto(
-                        fontSize: w / 22, fontWeight: FontWeight.w400),
-                  ),
-                  Text(
-                    "90/100",
-                    style: GoogleFonts.roboto(
-                        fontSize: w / 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Last evaluated on 21-Jan-2023",
-                    style: GoogleFonts.roboto(
-                        fontSize: w / 28,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff6D6D6D)),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: w1 / 3.5,
-                      height: h / 7,
-                      decoration: BoxDecoration(
-                          color: Color(0xff3284CA).withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(4)),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Code Wise\nEvaluation",
-                            style: GoogleFonts.roboto(
-                                fontSize: w / 24,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Text(
-                              "30/40",
-                              style: GoogleFonts.roboto(
-                                  fontSize: w / 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: w1 / 3.5,
-                      height: h / 7,
-                      decoration: BoxDecoration(
-                          color: Color(0xffE599C6).withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(4)),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Communication",
-                            style: GoogleFonts.roboto(
-                                fontSize: w / 24,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Text(
-                              "20/30",
-                              style: GoogleFonts.roboto(
-                                  fontSize: w / 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: w1 / 3.5,
-                      height: h / 7,
-                      decoration: BoxDecoration(
-                          color: Color(0xff99E5C0).withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(4)),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Behavioural\Pattern",
-                            style: GoogleFonts.roboto(
-                                fontSize: w / 24,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Text(
-                              "20/30",
-                              style: GoogleFonts.roboto(
-                                  fontSize: w / 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
+            // Container(
+            //   width: w1,
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       SvgPicture.string(
+            //         TaskSvg().chatmsgIcon,
+            //       ),
+            //       SizedBox(
+            //         width: 5,
+            //       ),
+            //       Text(
+            //         "Chat Now",
+            //         style: GoogleFonts.roboto(
+            //             fontWeight: FontWeight.w500,
+            //             fontSize: w / 28,
+            //             color: ColorPalette.primary),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // Container(
+            //   width: w1,
+            //   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            //   padding: EdgeInsets.symmetric(vertical: 15),
+            //   decoration: BoxDecoration(
+            //       color: Color(0xff2871AF).withOpacity(0.2),
+            //       borderRadius: BorderRadius.circular(4)),
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "YOUR SCORE",
+            //         style: GoogleFonts.roboto(
+            //             fontSize: w / 22, fontWeight: FontWeight.w400),
+            //       ),
+            //       Text(
+            //         "90/100",
+            //         style: GoogleFonts.roboto(
+            //             fontSize: w / 16, fontWeight: FontWeight.bold),
+            //       ),
+            //       SizedBox(
+            //         height: 10,
+            //       ),
+            //       Text(
+            //         "Last evaluated on 21-Jan-2023",
+            //         style: GoogleFonts.roboto(
+            //             fontSize: w / 28,
+            //             fontWeight: FontWeight.w500,
+            //             color: Color(0xff6D6D6D)),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // Container(
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(left: 16, right: 16),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Container(
+            //           width: w1 / 3.5,
+            //           height: h / 7,
+            //           decoration: BoxDecoration(
+            //               color: Color(0xff3284CA).withOpacity(0.5),
+            //               borderRadius: BorderRadius.circular(4)),
+            //           padding: EdgeInsets.symmetric(
+            //               horizontal: 10, vertical: 10),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 "Code Wise\nEvaluation",
+            //                 style: GoogleFonts.roboto(
+            //                     fontSize: w / 24,
+            //                     fontWeight: FontWeight.w500),
+            //               ),
+            //               Spacer(),
+            //               Align(
+            //                 alignment: Alignment.bottomRight,
+            //                 child: Text(
+            //                   "30/40",
+            //                   style: GoogleFonts.roboto(
+            //                       fontSize: w / 20,
+            //                       fontWeight: FontWeight.bold),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         Container(
+            //           width: w1 / 3.5,
+            //           height: h / 7,
+            //           decoration: BoxDecoration(
+            //               color: Color(0xffE599C6).withOpacity(0.5),
+            //               borderRadius: BorderRadius.circular(4)),
+            //           padding: EdgeInsets.symmetric(
+            //               horizontal: 10, vertical: 10),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 "Communication",
+            //                 style: GoogleFonts.roboto(
+            //                     fontSize: w / 24,
+            //                     fontWeight: FontWeight.w500),
+            //               ),
+            //               Spacer(),
+            //               Align(
+            //                 alignment: Alignment.bottomRight,
+            //                 child: Text(
+            //                   "20/30",
+            //                   style: GoogleFonts.roboto(
+            //                       fontSize: w / 20,
+            //                       fontWeight: FontWeight.bold),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         Container(
+            //           width: w1 / 3.5,
+            //           height: h / 7,
+            //           decoration: BoxDecoration(
+            //               color: Color(0xff99E5C0).withOpacity(0.5),
+            //               borderRadius: BorderRadius.circular(4)),
+            //           padding: EdgeInsets.symmetric(
+            //               horizontal: 10, vertical: 10),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 "Behavioural\Pattern",
+            //                 style: GoogleFonts.roboto(
+            //                     fontSize: w / 24,
+            //                     fontWeight: FontWeight.w500),
+            //               ),
+            //               Spacer(),
+            //               Align(
+            //                 alignment: Alignment.bottomRight,
+            //                 child: Text(
+            //                   "20/30",
+            //                   style: GoogleFonts.roboto(
+            //                       fontSize: w / 20,
+            //                       fontWeight: FontWeight.bold),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // )
 
           ],
         ),

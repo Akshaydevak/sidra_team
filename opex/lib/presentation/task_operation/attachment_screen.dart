@@ -145,6 +145,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                 )
                     : GestureDetector(
                   onTap: () {
+                    HapticFeedback.heavyImpact();
                     buttonLoad=true;
                     setState(() {
 

@@ -10,6 +10,7 @@ import 'package:cluster/presentation/task_operation/task_card.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -948,6 +949,7 @@ class _JobTitleState extends State<JobTitle> {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  HapticFeedback.vibrate();
                                   context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
                                   PersistentNavBarNavigator.pushNewScreen(
                                     context,
@@ -983,6 +985,7 @@ class _JobTitleState extends State<JobTitle> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  HapticFeedback.vibrate();
                                   context
                                       .read<JobBloc>()
                                       .add(GetJobReadListEvent(JobRead?.id??0));
@@ -1096,6 +1099,7 @@ class _JobTitleState extends State<JobTitle> {
                         widget.isAllJob?SizedBox(height: 5,):Container(),
                         GestureDetector(
                           onTap: () {
+                            HapticFeedback.vibrate();
                             JobRead?.paymentId != null
                                 ? context.read<TaskBloc>().add(
                                     GetPaymentReadListEvent(
@@ -1154,6 +1158,7 @@ class _JobTitleState extends State<JobTitle> {
                         ),
                         GestureDetector(
                           onTap: () {
+                            HapticFeedback.vibrate();
                             JobRead?.rewardId != null
                                 ? context.read<TaskBloc>().add(
                                     GetReadRewardsEvent(JobRead?.id ?? 0, false))
@@ -1376,6 +1381,7 @@ class _JobTitleState extends State<JobTitle> {
                         ),
                         GestureDetector(
                           onTap: () {
+                            HapticFeedback.heavyImpact();
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {

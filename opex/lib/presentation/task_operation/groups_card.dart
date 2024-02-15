@@ -3,6 +3,7 @@ import 'package:cluster/presentation/task_operation/update_group.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -24,6 +25,7 @@ class GroupCard extends StatelessWidget {
     var h=MediaQuery.of(context).size.height;
     return InkWell(
       onTap: (){
+        HapticFeedback.vibrate();
         context.read<EmployeeBloc>().add(
             GetGroupTReadEvent(groupList?.id?? 0));
         PersistentNavBarNavigator.pushNewScreen(
