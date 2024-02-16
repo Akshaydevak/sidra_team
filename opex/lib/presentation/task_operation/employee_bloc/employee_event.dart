@@ -12,6 +12,7 @@ class RegisterEmployeeEvent extends EmployeeEvent {
   final String orgCode;
   final String netCode;
   final String designationCode;
+  final String whatsapp;
   final String depatCode;
   final String firstName;
   final String lastName;
@@ -40,6 +41,7 @@ class RegisterEmployeeEvent extends EmployeeEvent {
     required this.officialRole,
     required this.nationality,
     required this.netCode,
+    required this.whatsapp,
     required this.userRole,
     required this.roleName,
     required this.roleNameList,
@@ -123,6 +125,15 @@ class PostImageAllEvent extends EmployeeEvent {
   final File image;
   const PostImageAllEvent(this.image);
 }
+class PostImageOnlyProfileEvent extends EmployeeEvent {
+  final File image;
+  const PostImageOnlyProfileEvent(this.image);
+}
+//
+class PostImageAll2Event extends EmployeeEvent {
+  final File image;
+  const PostImageAll2Event(this.image);
+}
 //readgroup
 class GetGroupTReadEvent extends EmployeeEvent {
   final int id;
@@ -143,6 +154,7 @@ class UpdateEmployeeEvent extends EmployeeEvent {
   final String emailID;
   final String orgCode;
   final String netCode;
+  final String whatsapp;
   final String designationCode;
   final String depatCode;
   final String firstName;
@@ -161,6 +173,7 @@ class UpdateEmployeeEvent extends EmployeeEvent {
   const UpdateEmployeeEvent(
       {
         required this.emailID,
+        required this.whatsapp,
         required this.profileImg,
         required this.netCode, required this.nationality,
   required this.officialRole, required this.userRole, required this.additionalRole,

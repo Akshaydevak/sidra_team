@@ -17,7 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../authentication/authentication.dart';
 import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
-import '../../purchase_app/table_widget.dart';
+// import '../../purchase_app/table_widget.dart';
 import '../new_seller_admin.dart';
 import '../profile_pic.dart';
 import '../seller_admin_bloc/seller_admin_bloc.dart';
@@ -221,52 +221,52 @@ class _BasicDetailsState extends State<BasicDetails> {
                             width: 2),
                         children: [
                           TableRow(children: [
-                            TableTitle(
-                              label: "Business Name",
-                            ),
-                            SubTextCard(
-                              label: widget.readData?.name,
-                            ),
+                            // TableTitle(
+                            //   label: "Business Name",
+                            // ),
+                            // SubTextCard(
+                            //   label: widget.readData?.name,
+                            // ),
                           ]),
                           TableRow(children: [
-                            TableTitle(
-                              label: "Industry",
-                            ),
-                            SubTextCard(
-                              label: widget.readData?.categoryName??"",
-                            ),
+                            // TableTitle(
+                            //   label: "Industry",
+                            // ),
+                            // SubTextCard(
+                            //   label: widget.readData?.categoryName??"",
+                            // ),
                           ]),
                           TableRow(children: [
-                            TableTitle(
-                              label: "TRN No.",
-                            ),
-                            SubTextCard(
-                              label: "TR12021NDBXB",
-                            ),
+                            // TableTitle(
+                            //   label: "TRN No.",
+                            // ),
+                            // SubTextCard(
+                            //   label: "TR12021NDBXB",
+                            // ),
                           ]),
                           TableRow(children: [
-                            TableTitle(
-                              label: "Import/Export Code",
-                            ),
-                            SubTextCard(
-                              label: "TR12021NDBXB",
-                            ),
+                            // TableTitle(
+                            //   label: "Import/Export Code",
+                            // ),
+                            // SubTextCard(
+                            //   label: "TR12021NDBXB",
+                            // ),
                           ]),
                           TableRow(children: [
-                            TableTitle(
-                              label: "Business E-Mail",
-                            ),
-                            SubTextCard(
-                              label: widget.readData?.email,
-                            ),
+                            // TableTitle(
+                            //   label: "Business E-Mail",
+                            // ),
+                            // SubTextCard(
+                            //   label: widget.readData?.email,
+                            // ),
                           ]),
                           TableRow(children: [
-                            TableTitle(
-                              label: "Business Phone Number",
-                            ),
-                            SubTextCard(
-                              label: widget.readData?.contact?.primary,
-                            ),
+                            // TableTitle(
+                            //   label: "Business Phone Number",
+                            // ),
+                            // SubTextCard(
+                            //   label: widget.readData?.contact?.primary,
+                            // ),
                           ]),
 
 

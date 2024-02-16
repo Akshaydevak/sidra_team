@@ -15,6 +15,7 @@ import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -307,6 +308,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                   // icons: _listIconTabToggle,
                   selectedIndex: _tabTextIconIndexSelected,
                   selectedLabelIndex: (index) {
+                    HapticFeedback.heavyImpact();
                     setState(() {
                       _tabTextIconIndexSelected = index;
                       print(".........."+_tabTextIconIndexSelected.toString());
@@ -355,6 +357,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
+                                  HapticFeedback.vibrate();
                                   context.read<EmployeeBloc>().add( GetEmployeeReadEvent(state.assignMeList?[i].id??0));
                                   // _showModalBottomAdditionalRole(state.assignMeList?[i]);
                                 },
@@ -406,7 +409,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
-
+                                  HapticFeedback.vibrate();
                                   print("tapped grou");
                                 },
                                 child: GroupCard(groupList:state.groupList[i] ),
@@ -545,8 +548,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         if(employee?.role=="Staff"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                             profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -569,8 +573,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                         else if(employee?.role=="Associative Admin"){
                                           context.read<EmployeeBloc>()
                                               .add( UpdateEmployeeEvent(
+                                              whatsapp: "${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}",
+                                              contact:"${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}",
                                               profileImg: readEmployee?.userMete?.profile,
-                                              contact:readEmployee?.primaryMobile??"",
                                               officialRole: readEmployee?.userMete?.roleId??0,
                                               roleName: readEmployee?.userMete?.roleName??"",
                                               nationality: readEmployee?.country??"",
@@ -627,9 +632,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                   i1=i;
                                                   BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
                                                   token: token.toString(),
-                                                  
                                                   grpchatId: "",
-                                                  pageNo: 1, chatId: chatlist[i].id??""));
+                                                  pageNo: 1, chatId: chatlist[i].id??"",userId:loginuserId??"" ));
                                                   print(",.,.,.,$i...$val1");
                                                 break;
                                                 }

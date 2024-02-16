@@ -63,20 +63,23 @@ class ProfileRepo {
 
 
   //updateProfilePic
-  Future<DataResponse> updateProfilePic(File? profilePic)async {
-    final apiResponse = await _dataSource.UpdateProfilePic(profilePic);
-    try {
-      if (apiResponse.data1) {
-        return DataResponse(data: apiResponse.data2,error: "error Text");
-      } else {
-        return DataResponse(data:null, error: apiResponse.data2);
-      }
-    } catch (e) {
-      debugPrint("error Text$e");
+  Future<DataResponse> updateProfilePic(File? profilePic,dynamic? pic)async {
+    final apiResponse = await _dataSource.UpdateProfilePic(profilePic,pic);
+    if (apiResponse.data) {
+      return DataResponse(error: apiResponse.error,data: apiResponse.data);
+    } else {
+      return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
     }
-    return DataResponse(
-        data: apiResponse.data2,
-        error: "error Text");
+  }
+  //
+
+  Future<DataResponse> UpdateProfilePicForCommunication(String? userCode,dynamic? pic,String? token)async {
+    final apiResponse = await _dataSource.UpdateProfilePicForCommunication(userCode,pic,token);
+    if (apiResponse.data) {
+      return DataResponse(error: apiResponse.error,data: apiResponse.data);
+    } else {
+      return DataResponse(error: apiResponse.error ?? "",data: apiResponse.data);
+    }
   }
 
   //

@@ -10,11 +10,13 @@ import 'package:cluster/presentation/task_operation/task_card.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../../core/common_snackBar.dart';
@@ -69,10 +71,10 @@ class _JobTitleState extends State<JobTitle> {
   }
   @override
   void initState() {
-    // if(widget.isCreated==true){
-      taskList.clear();
+    if(widget.isCreated==true){
+      taskList=[];
 
-    // }
+    }
     // dialog();
     super.initState();
     widget.isCreated==true?WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -81,6 +83,35 @@ class _JobTitleState extends State<JobTitle> {
           barrierDismissible: true,
           context: context,
           builder: (context) {
+            player!.setAsset('asset/job.mp3').then((value) {
+              return {
+                player!.playerStateStream.listen((state) {
+                  if (state.playing) {
+                    setState(() {
+                      print("audio,,,,");
+                    });
+                  }
+                  else
+                    switch (state.processingState) {
+                      case ProcessingState.idle:
+                        break;
+                      case ProcessingState.loading:
+                        break;
+                      case ProcessingState.buffering:
+                        break;
+                      case ProcessingState.ready:
+                        setState(() {
+                        });
+                        break;
+                      case ProcessingState.completed:
+                        setState(() {
+                        });
+                        break;
+                    }
+                }),
+                player!.play(),
+              };
+            });
             Future.delayed(Duration(seconds: 2), () {
               Navigator.of(context).pop(true);
             });
@@ -125,129 +156,13 @@ class _JobTitleState extends State<JobTitle> {
                       ),
                     ],
                   ),
-                  // event.data['card_banner'].toString() == "true"
-                  //     ? Container(
-                  //   padding: const EdgeInsets.all(8),
-                  //   width: MediaQuery.of(context).size.width / 1.5,
-                  //   height: MediaQuery.of(context).size.height / 6.5,
-                  //   color: Colors.white,
-                  //   child: Column(
-                  //     // mainAxisAlignment: MainAxisAlignment.end,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Text(
-                  //         event.data['title'] ?? "hi",
-                  //         style: const TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 20,
-                  //           fontFamily: 'Roboto',
-                  //           fontWeight: FontWeight.w600,
-                  //         ),
-                  //       ),
-                  //       Text(
-                  //         event.data['description'] ?? "",
-                  //         style: const TextStyle(
-                  //           color: Colors.black,
-                  //           fontSize: 14,
-                  //           fontFamily: 'Roboto',
-                  //           fontWeight: FontWeight.w400,
-                  //         ),
-                  //       ),
-                  //       Center(
-                  //         child: Container(
-                  //           width: 160,
-                  //           height: 45,
-                  //           decoration: ShapeDecoration(
-                  //             gradient: const LinearGradient(
-                  //               begin: Alignment(0.00, -1.00),
-                  //               end: Alignment(0, 1),
-                  //               colors: [
-                  //                 Color(0xFFFF9900),
-                  //                 Color(0xFFFF7E07)
-                  //               ],
-                  //             ),
-                  //             shape: RoundedRectangleBorder(
-                  //                 borderRadius:
-                  //                 BorderRadius.circular(5)),
-                  //           ),
-                  //           child: const Center(
-                  //             child: Text(
-                  //               'CHECK NOW',
-                  //               textAlign: TextAlign.center,
-                  //               style: TextStyle(
-                  //                 color: Colors.white,
-                  //                 fontSize: 18,
-                  //                 fontFamily: 'Roboto',
-                  //                 fontWeight: FontWeight.w600,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       )
-                  //     ],
-                  //   ),
-                  // )
-                  //     : Container()
-                  //  Column(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Text(
-                  //       event.data['title'] ?? "",
-                  //       style: const TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 20,
-                  //         fontFamily: 'Roboto',
-                  //         fontWeight: FontWeight.w600,
-                  //         height: 41,
-                  //       ),
-                  //     ),
-                  //     // const SizedBox(height: 8),
-                  //     Text(
-                  //       event.data['description'] ?? "",
-                  //       style: const TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 14,
-                  //         fontFamily: 'Roboto',
-                  //         fontWeight: FontWeight.w400,
-                  //         height: 22,
-                  //       ),
-                  //     ),
-                  //     // Container(
-                  //     //   // width: 160,
-                  //     //   // height: 45,
-                  //     //   decoration: ShapeDecoration(
-                  //     //     gradient: const LinearGradient(
-                  //     //       begin: Alignment(0.00, -1.00),
-                  //     //       end: Alignment(0, 1),
-                  //     //       colors: [
-                  //     //         Color(0xFFFF9900),
-                  //     //         Color(0xFFFF7E07)
-                  //     //       ],
-                  //     //     ),
-                  //     //     shape: RoundedRectangleBorder(
-                  //     //         borderRadius: BorderRadius.circular(5)),
-                  //     //   ),
-                  //     //   child: const Text(
-                  //     //     'CHECK NOW',
-                  //     //     textAlign: TextAlign.center,
-                  //     //     style: TextStyle(
-                  //     //       color: Colors.white,
-                  //     //       fontSize: 18,
-                  //     //       fontFamily: 'Roboto',
-                  //     //       fontWeight: FontWeight.w600,
-                  //     //       height: 20,
-                  //     //     ),
-                  //     //   ),
-                  //     // )
-                  //   ],
-                  // ) ,
                 ],
               ),
             );
           });
     }):null;
   }
+  AudioPlayer? player = AudioPlayer();
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width ;
@@ -261,6 +176,7 @@ class _JobTitleState extends State<JobTitle> {
             context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
           }
           context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+          taskList.clear();
       return true;},
       child: MultiBlocListener(
         listeners: [
@@ -339,6 +255,7 @@ class _JobTitleState extends State<JobTitle> {
                     context.read<TaskBloc>().add(const GetAllJobsListEvent('', '', '',false,'','',''));
                   }
                   context.read<JobBloc>().add(const GetAssignedMeListEvent('', '', ''));
+                  taskList.clear();
                   Navigator.pop(context);
                 },
                 action: PopupMenuButton(
@@ -358,6 +275,7 @@ class _JobTitleState extends State<JobTitle> {
                           children: [
                             InkWell(
                               onTap: () {
+                                Navigator.pop(context);
                                 print("EdIT");
                                 context.read<JobBloc>().add(
                                     GetJobReadListEvent(JobRead?.id??0));
@@ -394,39 +312,6 @@ class _JobTitleState extends State<JobTitle> {
                             Divider(
                               indent: 30,
                             ),
-                            // Container(
-                            //   padding: EdgeInsets.only(left: 10),
-                            //   child: Row(
-                            //     children: [
-                            //       SvgPicture.string(TaskSvg().msgSendIcon),
-                            //       SizedBox(width: 10,),
-                            //       Text(
-                            //         'Share by message',
-                            //         style: GoogleFonts.poppins(
-                            //             color: ColorPalette.black,
-                            //             fontSize: 13,
-                            //             fontWeight: FontWeight.w500),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // Divider(indent: 30,),
-                            // Container(
-                            //   padding: EdgeInsets.only(left: 10),
-                            //   child: Row(
-                            //     children: [
-                            //       SvgPicture.string(TaskSvg().shareJobIcon),
-                            //       SizedBox(width: 10,),
-                            //       Text(
-                            //         'Share this Job',
-                            //         style: GoogleFonts.poppins(
-                            //             color: ColorPalette.black,
-                            //             fontSize: 13,
-                            //             fontWeight: FontWeight.w500),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ), Divider(indent: 30,),
                             GestureDetector(
                                 onTap: () {
                                   context.read<EmployeeBloc>().add(
@@ -468,127 +353,152 @@ class _JobTitleState extends State<JobTitle> {
           body: ScrollConfiguration(
             behavior: NoGlow(),
             child: SingleChildScrollView(
-              child: Container(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: w1,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: const Color(0x4ca9a8a8),
-                          width: 1,
-                        ),
-                        color: const Color(0xfff8f7f5),
-                      ),
-                      padding:
-                      const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
-                      child: Column(
-                        children: [
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Start On",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 15,right: 15),
+                    color: ColorPalette.cardBackground,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10,),
+                        BlocBuilder<TaskBloc, TaskState>(
+                          builder: (context, state) {
+                            if (state is GetTaskListLoading) {
+                              return  Container(
+                                height: h / 3,
+                                color: Colors.white.withOpacity(0.5),
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Lottie.asset(
+                                      'asset/loadingteams.json',
+                                    ),
+                                    Text(
+                                      "Loading...",
+                                      style: GoogleFonts.roboto(
+                                        fontSize: w / 24,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              "${startstdDate}  ${startTime}" ,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
-                          const SizedBox(height: 5,),
-                          Row(children: [
-                            Container(
-                              width: w/3.5,
-                              child: const Text(
-                                "Due On",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 16,
-                              child: const Text(":",
-                                style: TextStyle(
-                                  color: Color(0xff6d6d6d),
-                                  fontSize: 15,
-                                ),),
-                            ),
-                            Text(
-                              "$endstdDate  $endTime",
-                              style: GoogleFonts.roboto(
-                                color: Colors.black,
-                                fontSize: 15,
+                                // Image.asset('asset/Logo'),
+                                //child: SvgPicture.string(IconConstants().SplashIcon),
+                              );
+                            }
 
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          ],),
+                            if (state is GetTaskListSuccess) {
+                              // taskList.clear();
+                              taskList = state.taskList ?? [];
 
+                              nextUrl = state.nextPageUrl ?? "";
+                              prevUrl = state.prevPageUrl ?? "";
 
+                              return taskList.isEmpty?
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: h / 1.85,
+                                    child: Column(
+                                      children: [
+                                        widget.isCreated==true?Container():
+                                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Task List",
+                                              style: GoogleFonts.roboto(
+                                                color: ColorPalette.black,
+                                                fontSize: w / 24,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: (){
+                                                _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
+                                                decoration: BoxDecoration(
+                                                    color: ColorPalette.primary,
+                                                    borderRadius: BorderRadius.circular(4)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Filter",
 
-
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    BlocBuilder<TaskBloc, TaskState>(
-                      builder: (context, state) {
-                        if (state is GetTaskListLoading) {
-                          return  Container(
-                            height: h / 4,
-                            color: Colors.white.withOpacity(0.5),
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Lottie.asset(
-                                  'asset/loadingteams.json',
-                                ),
-                                Text(
-                                  "Loading...",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: w / 24,
+                                                      style: GoogleFonts.roboto(
+                                                        color: ColorPalette.white,
+                                                        fontSize: w / 28,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    // SizedBox(width: 8,),
+                                                    // SvgPicture.string(TaskSvg().filterSvg),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(top: 10),
+                                          alignment: Alignment.center,
+                                          height: h / 4,
+                                          child: SvgPicture.string(
+                                            TaskSvg().nolistSvg,
+                                            height: h / 4.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
-                            // Image.asset('asset/Logo'),
-                            //child: SvgPicture.string(IconConstants().SplashIcon),
-                          );
-                        }
+                                  Positioned(
+                                    top: h/3,
+                                    left: w1/4.5,
+                                    child:
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: w1/2.2,
+                                    height: 50,
+                                    // decoration: BoxDecoration(
+                                    //   borderRadius: BorderRadius.circular(15)
+                                    // ),
+                                    child: GradientButton(
+                                        color: ColorPalette.primary,
+                                        onPressed: () {
+                                          PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen: CreateNewTask(
+                                              startDateTime: "${startstdDate}  ${startTime}",
+                                              endDateTime: "$endstdDate  $endTime",
+                                              isSubTask: false,
+                                              jobId: JobRead?.id,
+                                            ),
+                                            withNavBar: true,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation: PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [ColorPalette.primary, ColorPalette.primary]),
+                                        child: Text(
+                                          "Create new Task",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.white,
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )),
+                                  ),)
 
-                        if (state is GetTaskListSuccess) {
-                          taskList = state.taskList ?? [];
-                          nextUrl = state.nextPageUrl ?? "";
-                          prevUrl = state.prevPageUrl ?? "";
-                          return taskList.isEmpty?
-                              Column(
+                                ],
+                              ):
+                              Column(crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
@@ -605,9 +515,9 @@ class _JobTitleState extends State<JobTitle> {
                                           _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.all(5),
+                                          padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                                           decoration: BoxDecoration(
-                                              color: Color(0xff086DB5).withOpacity(0.1),
+                                              color: ColorPalette.primary,
                                               borderRadius: BorderRadius.circular(4)
                                           ),
                                           child: Row(
@@ -615,799 +525,411 @@ class _JobTitleState extends State<JobTitle> {
                                               Text(
                                                 "Filter",
                                                 style: GoogleFonts.roboto(
-                                                  color: ColorPalette.primary,
+                                                  color: ColorPalette.white,
                                                   fontSize: w / 28,
-                                                  // fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                              SizedBox(width: 8,),
-                                              SvgPicture.string(TaskSvg().filterSvg),
+                                              // SizedBox(width: 8,),
+                                              // SvgPicture.string(TaskSvg().filterSvg),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   Container(
-                                    padding: EdgeInsets.only(top: 10),
-                                    alignment: Alignment.center,
-                                    height: h / 3,
-                                    child: SvgPicture.string(
-                                      TaskSvg().nolistSvg,
-                                      height: h / 4.5,
-                                    ),
-                                  ),
-                                ],
-                              ):
-                          Column(crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Task List",
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 24,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: (){
-                                      _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xff086DB5).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Filter",
-                                            style: GoogleFonts.roboto(
-                                              color: ColorPalette.primary,
-                                              fontSize: w / 28,
-                                              // fontWeight: FontWeight.w500,
+                                    height: h/2.3,
+                                    color: ColorPalette.cardBackground,
+                                    child: ListView.separated(
+                                        padding: EdgeInsets.zero,
+                                        physics: AlwaysScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) =>
+                                            TaskCard(
+                                              isMylist: widget.isMyJob,
+                                              taskList: taskList[index],
                                             ),
-                                          ),
-                                          SizedBox(width: 8,),
-                                          SvgPicture.string(TaskSvg().filterSvg),
-                                        ],
-                                      ),
-                                    ),
+                                        separatorBuilder: (context, index) => SizedBox(
+                                          height: 5,
+                                        ),
+                                        itemCount:  taskList.length),
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              GridView.builder(
-                                  shrinkWrap: true,
-                                  // scrollDirection: Axis.horizontal,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          // childAspectRatio: 1.1,
-                                          // crossAxisCount: 2,
-                                          mainAxisSpacing: 10,
-                                      crossAxisCount: w1 > 700 ? 3 : 2,
-                                      childAspectRatio: w1 > 700 ? 1.5 : 1.1,
-                                          crossAxisSpacing: 10),
-                                  itemBuilder: (BuildContext context, int i) {
-                                    return InkWell(
-                                      onTap: () {},
-                                      child: TaskCard(
-                                        isMylist: widget.isMyJob,
-                                        taskList: taskList[i],
-                                      ),
-                                    );
-                                  },
-                                  itemCount: taskList.length),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: 15,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
+                                  // GridView.builder(
+                                  //     shrinkWrap: true,
+                                  //     // scrollDirection: Axis.horizontal,
+                                  //     physics: NeverScrollableScrollPhysics(),
+                                  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  //             // childAspectRatio: 1.1,
+                                  //             // crossAxisCount: 2,
+                                  //             mainAxisSpacing: 10,
+                                  //         crossAxisCount: w1 > 700 ? 3 : 2,
+                                  //         childAspectRatio: w1 > 700 ? 1.5 : 1.1,
+                                  //             crossAxisSpacing: 10),
+                                  //     itemBuilder: (BuildContext context, int i) {
+                                  //       return InkWell(
+                                  //         onTap: () {},
+                                  //         child: TaskCard(
+                                  //           isMylist: widget.isMyJob,
+                                  //           taskList: taskList[i],
+                                  //         ),
+                                  //       );
+                                  //     },
+                                  //     itemCount: taskList.length),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 5,bottom: 5
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    prevUrl != ""
-                                        ? GestureDetector(
-                                            onTap: () {
+                                      children: [
+                                        prevUrl != ""
+                                            ? GestureDetector(
+                                          onTap: () {
+                                            context.read<TaskBloc>().add(
+                                                GetTaskListEvent(
+                                                    JobRead?.id,
+                                                    '',
+                                                    '',
+                                                    prevUrl,false,'',''));
+                                            // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
+                                          },
+                                          child: Text(
+                                            "Previous",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: ColorPalette.primary,
+                                                fontSize: w / 26),
+                                          ),
+                                        )
+                                            : Container(),
+                                        nextUrl != ""
+                                            ? GestureDetector(
+                                          onTap: () {
+                                            // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                            setState(() {
                                               context.read<TaskBloc>().add(
                                                   GetTaskListEvent(
                                                       JobRead?.id,
                                                       '',
-                                                      '',
-                                                      prevUrl,false,'',''));
-                                              // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
-                                            },
-                                            child: Text(
-                                              "Previous",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: ColorPalette.primary,
-                                                  fontSize: w / 24),
-                                            ),
-                                          )
-                                        : Container(),
-                                    nextUrl != ""
-                                        ? GestureDetector(
-                                            onTap: () {
-                                              // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
-                                              setState(() {
-                                                context.read<TaskBloc>().add(
-                                                    GetTaskListEvent(
-                                                        JobRead?.id,
-                                                        '',
-                                                        nextUrl,
-                                                        "",false,'',''));
-                                              });
-                                            },
-                                            child: Text(
-                                              "Next",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: ColorPalette.primary,
-                                                  fontSize: w / 24),
-                                            ),
-                                          )
-                                        : Text("")
-                                  ],
-                                ),
-                              )
-                            ],
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    GradientButton(
-                        color: ColorPalette.primary,
-                        onPressed: () {
-                          PersistentNavBarNavigator.pushNewScreen(
-                            context,
-                            screen: CreateNewTask(
-                              startDateTime: "${startstdDate}  ${startTime}",
-                              endDateTime: "$endstdDate  $endTime",
-                              isSubTask: false,
-                              jobId: JobRead?.id,
-                            ),
-                            withNavBar: true,
-                            // OPTIONAL VALUE. True by default.
-                            pageTransitionAnimation: PageTransitionAnimation.fade,
-                          );
-                        },
-                        gradient: const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [ColorPalette.primary, ColorPalette.primary]),
-                        child: Text(
-                          "Create New Task",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: w / 22,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     PersistentNavBarNavigator.pushNewScreen(
-                    //       context,
-                    //       screen: CreateNewTask(
-                    //         isSubTask: false,
-                    //       ),
-                    //       withNavBar: true,
-                    //       // OPTIONAL VALUE. True by default.
-                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
-                    //     );
-                    //   },
-                    //   child: Container(
-                    //     width: w,
-                    //     padding: EdgeInsets.all(16),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       border: Border.all(
-                    //         color: Color(0xffe6ecf0),
-                    //         width: 1,
-                    //       ),
-                    //       boxShadow: [
-                    //         BoxShadow(
-                    //           color: Color(0x05000000),
-                    //           blurRadius: 8,
-                    //           offset: Offset(1, 1),
-                    //         ),
-                    //       ],
-                    //       color: Colors.white,
-                    //     ),
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         Row(
-                    //           children: [
-                    //             Icon(
-                    //               Icons.add,
-                    //               color: Color(0xffe70c0c),
-                    //             ),
-                    //             SizedBox(
-                    //               width: 10,
-                    //             ),
-                    //             Text(
-                    //               "Create New Task",
-                    //               textAlign: TextAlign.center,
-                    //               style: TextStyle(
-                    //                 color: Color(0xffe70c0c),
-                    //                 fontSize: w / 22,
-                    //               ),
-                    //             )
-                    //           ],
-                    //         ),
-                    //         Icon(
-                    //           Icons.arrow_forward_ios_sharp,
-                    //           color: Colors.black,
-                    //           size: 18,
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 26,
-                    ),
-                    Container(
-                      width: w1,
-                      // padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-                                screen: ReportingPersonJob(),
-                                withNavBar: true,
-                                // OPTIONAL VALUE. True by default.
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.fade,
-                              );
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  left: 16, right: 16, bottom: 10, top: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4)
-                              ),
-                              child: SingleRow(
-                                label: "Reporting Person",
-                                color: Color(0xffAD51E0),
-                                svg: TaskSvg().personIcon,
-                                endIcon: Container(),
-                                onTap: () {
-                                  setState(() {
-                                    // isReporting = !isReporting;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Divider(
-                            indent: 10,
-                            height: 2,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              context
-                                  .read<JobBloc>()
-                                  .add(GetJobReadListEvent(JobRead?.id??0));
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-
-                                screen: ReportingPersonJob(),
-
-                                withNavBar:
-                                    true, // OPTIONAL VALUE. True by default.
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.fade,
-                              );
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  left: 16, right: 16, bottom: 16, top: 10),
-                              child: Row(
-                                children: [
-                                  SvgPicture.string(TaskSvg().profileReporting),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      JobRead?.reportingMail ?? "",
-                                      style: TextStyle(
-                                        color: ColorPalette.primary,
-                                        fontSize: 16,
-                                      ),
+                                                      nextUrl,
+                                                      "",false,'',''));
+                                            });
+                                          },
+                                          child: Text(
+                                            "Next",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: ColorPalette.primary,
+                                                fontSize: w / 26),
+                                          ),
+                                        )
+                                            : Text("")
+                                      ],
                                     ),
                                   ),
+                                  GradientButton(
+                                      color: ColorPalette.primary,
+                                      onPressed: () {
+                                        PersistentNavBarNavigator.pushNewScreen(
+                                          context,
+                                          screen: CreateNewTask(
+                                            startDateTime: "${startstdDate}  ${startTime}",
+                                            endDateTime: "$endstdDate  $endTime",
+                                            isSubTask: false,
+                                            jobId: JobRead?.id,
+                                          ),
+                                          withNavBar: true,
+                                          // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                                        );
+                                      },
+                                      gradient: const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [ColorPalette.primary, ColorPalette.primary]),
+                                      child: Text(
+                                        "Create New Task",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.roboto(
+                                          color: Colors.white,
+                                          fontSize: w / 22,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )),
+                                  SizedBox(height: 10,),
                                 ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    widget.isAllJob?Container(
-                      width: w1,
-                      // padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Color(0xffe6ecf0),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 16, right: 16, bottom: 10, top: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4)
-                            ),
-                            child: SingleRow(
-                              label: "Created Person",
-                              color: Color(0xffAD51E0),
-                              svg: TaskSvg().personIcon,
-                              endIcon: Container(),
-                              onTap: () {
-                                setState(() {
-                                  // isReporting = !isReporting;
-                                });
-                              },
-                            ),
-                          ),
-                          Divider(
-                            indent: 10,
-                            height: 2,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 16, right: 16, bottom: 16, top: 10),
-                            child: Row(
+                              );
+                            }
+                            return Stack(
                               children: [
-                                SvgPicture.string(TaskSvg().profileReporting),
-                                SizedBox(
-                                  width: 10,
-                                ),
                                 Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    JobRead?.createdPerson ?? "",
-                                    style: TextStyle(
-                                      color: ColorPalette.black,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ):Container(),
-                    widget.isAllJob?SizedBox(height: 5,):Container(),
-                    GestureDetector(
-                      onTap: () {
-                        JobRead?.paymentId != null
-                            ? context.read<TaskBloc>().add(
-                                GetPaymentReadListEvent(
-                                    JobRead?.id ?? 0, false))
-                            : null;
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: PaymentOption(
-                            currencyCode: JobRead?.currency,
-                            isJob: true,
-                            isTask: false,
-                            update: JobRead?.paymentId == null ? false : true,
-                            jobId: JobRead?.id,
-                            paymentId: JobRead?.paymentId ?? 0,
-                            joblist: JobRead,
-                          ),
-                          withNavBar: true, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        width: w1,
-                        padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: SingleRow(
-                          label: "Payment Option",
-                          color: Color(0xff519BE0),
-                          svg: TaskSvg().walletIcon,
-                          endIcon: JobRead?.paymentId!=null?
-                          SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):
-                          Icon(
-                            Icons.arrow_forward_ios_sharp,
-                            size: 18,
-                            color: ColorPalette.primary,
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        JobRead?.rewardId != null
-                            ? context.read<TaskBloc>().add(
-                                GetReadRewardsEvent(JobRead?.id ?? 0, false))
-                            : null;
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: RewardsScreen(
-                              type: "Job",
-                              typeId: JobRead?.id ?? 0,
-                              update: JobRead?.rewardId == null
-                                  ? false
-                                  : JobRead?.rewardId == null
-                                      ? false
-                                      : true),
-                          withNavBar: true, // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
-                      child: Container(
-                        width: w1,
-                        padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Color(0xffe6ecf0),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x05000000),
-                              blurRadius: 8,
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          color: Colors.white,
-                        ),
-                        child: SingleRow(
-                          label: "Rewards",
-                          color: Color(0xffE051B8),
-                          svg: TaskSvg().walletIcon,
-                          endIcon: JobRead?.rewardId!=null?
-                          SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
-                            Icons.arrow_forward_ios_sharp,
-                            color: ColorPalette.primary,
-                            size: 18,
-                          ),
-                          onTap: () {
-                            //  RewardsScreen
-                          },
-                        ),
-                      ),
-                    ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: (){
-                    //     PersistentNavBarNavigator.pushNewScreen(
-                    //       context,
-                    //       screen: PerformanceAppraisal(tasklist: ),
-                    //       withNavBar: true, // OPTIONAL VALUE. True by default.
-                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
-                    //     );
-                    //   },
-                    //   child: Container(
-                    //     width: w,
-                    //     padding: EdgeInsets.all(16),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       border: Border.all(
-                    //         color: Color(0xffe6ecf0),
-                    //         width: 1,
-                    //       ),
-                    //       boxShadow: [
-                    //         BoxShadow(
-                    //           color: Color(0x05000000),
-                    //           blurRadius: 8,
-                    //           offset: Offset(1, 1),
-                    //         ),
-                    //       ],
-                    //       color: Colors.white,
-                    //     ),
-                    //     child: SingleRow(
-                    //       label: "Performance Appraisal",
-                    //       color: Color(0xffE05151),
-                    //       svg: TaskSvg().performanceIcon,
-                    //       endIcon: Icon(Icons.arrow_forward_ios_sharp),
-                    //       onTap: () {
-                    //
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     print("EdIT");
-                    //     context
-                    //         .read<JobBloc>()
-                    //         .add(GetJobReadListEvent(Variable.jobReadId));
-                    //     PersistentNavBarNavigator.pushNewScreen(
-                    //       context,
-                    //       screen: const CreateJob(
-                    //         edit: true,
-                    //       ),
-                    //       withNavBar: true, // OPTIONAL VALUE. True by default.
-                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
-                    //     );
-                    //   },
-                    //   child: Container(
-                    //     width: w,
-                    //     padding: EdgeInsets.all(16),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       border: Border.all(
-                    //         color: Color(0xffe6ecf0),
-                    //         width: 1,
-                    //       ),
-                    //       boxShadow: [
-                    //         BoxShadow(
-                    //           color: Color(0x05000000),
-                    //           blurRadius: 8,
-                    //           offset: Offset(1, 1),
-                    //         ),
-                    //       ],
-                    //       color: Colors.white,
-                    //     ),
-                    //     child: SingleRow(
-                    //       label: "Edit this Job",
-                    //       color: Color(0xff0094FF),
-                    //       svg: TaskSvg().editIcon,
-                    //       endIcon: Icon(
-                    //         Icons.arrow_forward_ios_sharp,
-                    //         size: 18,
-                    //       ),
-                    //       onTap: () {},
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // // Container(
-                    // //   width: w,
-                    // //   padding: EdgeInsets.all(16),
-                    // //   decoration: BoxDecoration(
-                    // //     borderRadius: BorderRadius.circular(10),
-                    // //     border: Border.all(
-                    // //       color: Color(0xffe6ecf0),
-                    // //       width: 1,
-                    // //     ),
-                    // //     boxShadow: [
-                    // //       BoxShadow(
-                    // //         color: Color(0x05000000),
-                    // //         blurRadius: 8,
-                    // //         offset: Offset(1, 1),
-                    // //       ),
-                    // //     ],
-                    // //     color: Colors.white,
-                    // //
-                    // //   ),
-                    // //   child: SingleRow(
-                    // //     label: "Notify me on due date",
-                    // //     color: Color(0xffFFC800),
-                    // //     svg: TaskSvg().notificationIcon,
-                    // //     endIcon: isNotify
-                    // //         ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
-                    // //         : SvgPicture.string(HomeSvg().toggleInActive,height: 22),
-                    // //     onTap: () {
-                    // //       setState(() {
-                    // //         isNotify = !isNotify;
-                    // //       });
-                    // //     },
-                    // //   ),
-                    // //
-                    // // ),
-                    // // SizedBox(height: 30,),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     context.read<EmployeeBloc>().add(
-                    //         GetActivityLogListingEvent(Variable.jobReadId));
-                    //     PersistentNavBarNavigator.pushNewScreen(
-                    //       context,
-                    //       screen: ActivityLog(),
-                    //       withNavBar: false, // OPTIONAL VALUE. True by default.
-                    //       pageTransitionAnimation: PageTransitionAnimation.fade,
-                    //     );
-                    //   },
-                    //   child: Container(
-                    //       width: w,
-                    //       height: 60,
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(
-                    //           color: Color(0xffe6ecf0),
-                    //           width: 1,
-                    //         ),
-                    //         boxShadow: [
-                    //           BoxShadow(
-                    //             color: Color(0x05000000),
-                    //             blurRadius: 8,
-                    //             offset: Offset(1, 1),
-                    //           ),
-                    //         ],
-                    //         color: Colors.white,
-                    //       ),
-                    //       child: Center(
-                    //         child: Text("View Activity Logs",
-                    //             style: GoogleFonts.roboto(
-                    //               color: Colors.black,
-                    //               fontSize: w / 24,
-                    //               fontWeight: FontWeight.w400,
-                    //             )),
-                    //       )),
-                    // ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                surfaceTintColor: Colors.white,
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      "Are you Sure ?",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Color(0xff151522),
-                                        fontSize: w/22,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-                                    Text(
-                                      "Did you wants to delete this job",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Color(0xff6d6d6d),
-                                        fontSize: w/26,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Container(
-                                              width: w / 3.3,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 10),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                border: Border.all(
-                                                  color: ColorPalette.primary,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                              child: const Center(
-                                                  child: Text(
-                                                "Cancel",
-                                                style: TextStyle(
-                                                  color: ColorPalette.primary,
-                                                  fontSize: 18,
-                                                ),
-                                              )),
+                                  height: h / 1.85,
+                                  child: Column(
+                                    children: [
+                                      widget.isCreated==true?Container():
+                                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Task List",
+                                            style: GoogleFonts.roboto(
+                                              color: ColorPalette.black,
+                                              fontSize: w / 24,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () {
-                                              BlocProvider.of<JobBloc>(context)
-                                                  .add(DeleteJobEvent(
-                                                  JobRead?.id??0));
-                                              Navigator.pop(context);
+                                            onTap: (){
+                                              _showModalBottomAdditionalRole(priorityFilter,statusFilter,"");
                                             },
                                             child: Container(
-                                                width: w / 3.1,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
+                                              padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
+                                              decoration: BoxDecoration(
                                                   color: ColorPalette.primary,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Delete",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
+                                                  borderRadius: BorderRadius.circular(4)
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "Filter",
+
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.white,
+                                                      fontSize: w / 28,
+                                                      fontWeight: FontWeight.w500,
                                                     ),
                                                   ),
-                                                )),
+                                                  // SizedBox(width: 8,),
+                                                  // SvgPicture.string(TaskSvg().filterSvg),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ])
-                                  ],
+                                        ],
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(top: 10),
+                                        alignment: Alignment.center,
+                                        height: h / 4,
+                                        child: SvgPicture.string(
+                                          TaskSvg().nolistSvg,
+                                          height: h / 4.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              );
-                            });
-                      },
-                      child: Container(
+                                Positioned(
+                                  top: h/3,
+                                  left: w1/4.5,
+                                  child:
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: w1/2.2,
+                                    height: 50,
+                                    // decoration: BoxDecoration(
+                                    //   borderRadius: BorderRadius.circular(15)
+                                    // ),
+                                    child: GradientButton(
+                                        color: ColorPalette.primary,
+                                        onPressed: () {
+                                          PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen: CreateNewTask(
+                                              startDateTime: "${startstdDate}  ${startTime}",
+                                              endDateTime: "$endstdDate  $endTime",
+                                              isSubTask: false,
+                                              jobId: JobRead?.id,
+                                            ),
+                                            withNavBar: true,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation: PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [ColorPalette.primary, ColorPalette.primary]),
+                                        child: Text(
+                                          "Create new Task",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.white,
+                                            fontSize: w / 24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )),
+                                  ),)
+
+                              ],
+                            );
+                          },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  Container(
+                    // color: ColorPalette.cardBackground,
+                    padding:
+                        EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Container(
+                        //   width: w1,
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(4),
+                        //     border: Border.all(
+                        //       color: const Color(0x4ca9a8a8),
+                        //       width: 1,
+                        //     ),
+                        //     color: const Color(0xfff8f7f5),
+                        //   ),
+                        //   padding:
+                        //   const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+                        //   child: Column(
+                        //     children: [
+                        //       Row(children: [
+                        //         Container(
+                        //           width: w/3.5,
+                        //           child: const Text(
+                        //             "Start On",
+                        //             style: TextStyle(
+                        //               color: Color(0xff6d6d6d),
+                        //               fontSize: 15,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         Container(
+                        //           width: 16,
+                        //           child: const Text(":",
+                        //             style: TextStyle(
+                        //               color: Color(0xff6d6d6d),
+                        //               fontSize: 15,
+                        //             ),),
+                        //         ),
+                        //         Text(
+                        //           "${startstdDate}  ${startTime}" ,
+                        //           style: const TextStyle(
+                        //             color: Colors.black,
+                        //             fontSize: 15,
+                        //             fontFamily: "Roboto",
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         )
+                        //       ],),
+                        //       const SizedBox(height: 5,),
+                        //       Row(children: [
+                        //         Container(
+                        //           width: w/3.5,
+                        //           child: const Text(
+                        //             "Due On",
+                        //             style: TextStyle(
+                        //               color: Color(0xff6d6d6d),
+                        //               fontSize: 15,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         Container(
+                        //           width: 16,
+                        //           child: const Text(":",
+                        //             style: TextStyle(
+                        //               color: Color(0xff6d6d6d),
+                        //               fontSize: 15,
+                        //             ),),
+                        //         ),
+                        //         Text(
+                        //           "$endstdDate  $endTime",
+                        //           style: GoogleFonts.roboto(
+                        //             color: Colors.black,
+                        //             fontSize: 15,
+                        //
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         )
+                        //       ],),
+                        //
+                        //
+                        //
+                        //
+                        //     ],
+                        //   ),
+                        // ),
+
+
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     PersistentNavBarNavigator.pushNewScreen(
+                        //       context,
+                        //       screen: CreateNewTask(
+                        //         isSubTask: false,
+                        //       ),
+                        //       withNavBar: true,
+                        //       // OPTIONAL VALUE. True by default.
+                        //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //     width: w,
+                        //     padding: EdgeInsets.all(16),
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: Color(0xffe6ecf0),
+                        //         width: 1,
+                        //       ),
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Color(0x05000000),
+                        //           blurRadius: 8,
+                        //           offset: Offset(1, 1),
+                        //         ),
+                        //       ],
+                        //       color: Colors.white,
+                        //     ),
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //       children: [
+                        //         Row(
+                        //           children: [
+                        //             Icon(
+                        //               Icons.add,
+                        //               color: Color(0xffe70c0c),
+                        //             ),
+                        //             SizedBox(
+                        //               width: 10,
+                        //             ),
+                        //             Text(
+                        //               "Create New Task",
+                        //               textAlign: TextAlign.center,
+                        //               style: TextStyle(
+                        //                 color: Color(0xffe70c0c),
+                        //                 fontSize: w / 22,
+                        //               ),
+                        //             )
+                        //           ],
+                        //         ),
+                        //         Icon(
+                        //           Icons.arrow_forward_ios_sharp,
+                        //           color: Colors.black,
+                        //           size: 18,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(
+                          height: 26,
+                        ),
+                        Container(
                           width: w1,
-                          // height: 60,
-                          padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                          // padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -1423,20 +945,574 @@ class _JobTitleState extends State<JobTitle> {
                             ],
                             color: Colors.white,
                           ),
-                          child: Center(
-                            child: Text("Delete this Job",
-                                style: GoogleFonts.roboto(
-                                  color: Color(0xffe70c0c),
-                                  fontSize: w / 24,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                          )),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.vibrate();
+                                  context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: ReportingPersonJob(),
+                                    withNavBar: true,
+                                    // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.fade,
+                                  );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 16, right: 16, bottom: 10, top: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4)
+                                  ),
+                                  child: SingleRow(
+                                    label: "Reporting Person",
+                                    color: Color(0xffAD51E0),
+                                    svg: TaskSvg().personIcon,
+                                    endIcon: Container(),
+                                    onTap: () {
+                                      setState(() {
+                                        // isReporting = !isReporting;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                indent: 10,
+                                height: 2,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.vibrate();
+                                  context
+                                      .read<JobBloc>()
+                                      .add(GetJobReadListEvent(JobRead?.id??0));
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+
+                                    screen: ReportingPersonJob(),
+
+                                    withNavBar:
+                                        true, // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.fade,
+                                  );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 16, right: 16, bottom: 16, top: 10),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.string(TaskSvg().profileReporting),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          JobRead?.reportingMail ?? "",
+                                          style: TextStyle(
+                                            color: ColorPalette.primary,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        widget.isAllJob?Container(
+                          width: w1,
+                          // padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: Color(0xffe6ecf0),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x05000000),
+                                blurRadius: 8,
+                                offset: Offset(1, 1),
+                              ),
+                            ],
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 10, top: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4)
+                                ),
+                                child: SingleRow(
+                                  label: "Created Person",
+                                  color: Color(0xffAD51E0),
+                                  svg: TaskSvg().personIcon,
+                                  endIcon: Container(),
+                                  onTap: () {
+                                    setState(() {
+                                      // isReporting = !isReporting;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Divider(
+                                indent: 10,
+                                height: 2,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 16, top: 10),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.string(TaskSvg().profileReporting),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        JobRead?.createdPerson ?? "",
+                                        style: TextStyle(
+                                          color: ColorPalette.black,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ):Container(),
+                        widget.isAllJob?SizedBox(height: 5,):Container(),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.vibrate();
+                            JobRead?.paymentId != null
+                                ? context.read<TaskBloc>().add(
+                                    GetPaymentReadListEvent(
+                                        JobRead?.id ?? 0, false))
+                                : null;
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: PaymentOption(
+                                currencyCode: JobRead?.currency,
+                                isJob: true,
+                                isTask: false,
+                                update: JobRead?.paymentId == null ? false : true,
+                                jobId: JobRead?.id,
+                                paymentId: JobRead?.paymentId ?? 0,
+                                joblist: JobRead,
+                              ),
+                              withNavBar: true, // OPTIONAL VALUE. True by default.
+                              pageTransitionAnimation: PageTransitionAnimation.fade,
+                            );
+                          },
+                          child: Container(
+                            width: w1,
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Color(0xffe6ecf0),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
+                                ),
+                              ],
+                              color: Colors.white,
+                            ),
+                            child: SingleRow(
+                              label: "Payment Option",
+                              color: Color(0xff519BE0),
+                              svg: TaskSvg().walletIcon,
+                              endIcon: JobRead?.paymentId!=null?
+                              SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):
+                              Icon(
+                                Icons.arrow_forward_ios_sharp,
+                                size: 18,
+                                color: ColorPalette.primary,
+                              ),
+                              onTap: () {},
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.vibrate();
+                            JobRead?.rewardId != null
+                                ? context.read<TaskBloc>().add(
+                                    GetReadRewardsEvent(JobRead?.id ?? 0, false))
+                                : null;
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: RewardsScreen(
+                                  type: "Job",
+                                  typeId: JobRead?.id ?? 0,
+                                  update: JobRead?.rewardId == null
+                                      ? false
+                                      : JobRead?.rewardId == null
+                                          ? false
+                                          : true),
+                              withNavBar: true, // OPTIONAL VALUE. True by default.
+                              pageTransitionAnimation: PageTransitionAnimation.fade,
+                            );
+                          },
+                          child: Container(
+                            width: w1,
+                            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Color(0xffe6ecf0),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x05000000),
+                                  blurRadius: 8,
+                                  offset: Offset(1, 1),
+                                ),
+                              ],
+                              color: Colors.white,
+                            ),
+                            child: SingleRow(
+                              label: "Rewards",
+                              color: Color(0xffE051B8),
+                              svg: TaskSvg().walletIcon,
+                              endIcon: JobRead?.rewardId!=null?
+                              SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,):Icon(
+                                Icons.arrow_forward_ios_sharp,
+                                color: ColorPalette.primary,
+                                size: 18,
+                              ),
+                              onTap: () {
+                                //  RewardsScreen
+                              },
+                            ),
+                          ),
+                        ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // GestureDetector(
+                        //   onTap: (){
+                        //     PersistentNavBarNavigator.pushNewScreen(
+                        //       context,
+                        //       screen: PerformanceAppraisal(tasklist: ),
+                        //       withNavBar: true, // OPTIONAL VALUE. True by default.
+                        //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //     width: w,
+                        //     padding: EdgeInsets.all(16),
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: Color(0xffe6ecf0),
+                        //         width: 1,
+                        //       ),
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Color(0x05000000),
+                        //           blurRadius: 8,
+                        //           offset: Offset(1, 1),
+                        //         ),
+                        //       ],
+                        //       color: Colors.white,
+                        //     ),
+                        //     child: SingleRow(
+                        //       label: "Performance Appraisal",
+                        //       color: Color(0xffE05151),
+                        //       svg: TaskSvg().performanceIcon,
+                        //       endIcon: Icon(Icons.arrow_forward_ios_sharp),
+                        //       onTap: () {
+                        //
+                        //       },
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     print("EdIT");
+                        //     context
+                        //         .read<JobBloc>()
+                        //         .add(GetJobReadListEvent(Variable.jobReadId));
+                        //     PersistentNavBarNavigator.pushNewScreen(
+                        //       context,
+                        //       screen: const CreateJob(
+                        //         edit: true,
+                        //       ),
+                        //       withNavBar: true, // OPTIONAL VALUE. True by default.
+                        //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //     width: w,
+                        //     padding: EdgeInsets.all(16),
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: Color(0xffe6ecf0),
+                        //         width: 1,
+                        //       ),
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Color(0x05000000),
+                        //           blurRadius: 8,
+                        //           offset: Offset(1, 1),
+                        //         ),
+                        //       ],
+                        //       color: Colors.white,
+                        //     ),
+                        //     child: SingleRow(
+                        //       label: "Edit this Job",
+                        //       color: Color(0xff0094FF),
+                        //       svg: TaskSvg().editIcon,
+                        //       endIcon: Icon(
+                        //         Icons.arrow_forward_ios_sharp,
+                        //         size: 18,
+                        //       ),
+                        //       onTap: () {},
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // // Container(
+                        // //   width: w,
+                        // //   padding: EdgeInsets.all(16),
+                        // //   decoration: BoxDecoration(
+                        // //     borderRadius: BorderRadius.circular(10),
+                        // //     border: Border.all(
+                        // //       color: Color(0xffe6ecf0),
+                        // //       width: 1,
+                        // //     ),
+                        // //     boxShadow: [
+                        // //       BoxShadow(
+                        // //         color: Color(0x05000000),
+                        // //         blurRadius: 8,
+                        // //         offset: Offset(1, 1),
+                        // //       ),
+                        // //     ],
+                        // //     color: Colors.white,
+                        // //
+                        // //   ),
+                        // //   child: SingleRow(
+                        // //     label: "Notify me on due date",
+                        // //     color: Color(0xffFFC800),
+                        // //     svg: TaskSvg().notificationIcon,
+                        // //     endIcon: isNotify
+                        // //         ? SvgPicture.string(HomeSvg().toggleActive,height: 22)
+                        // //         : SvgPicture.string(HomeSvg().toggleInActive,height: 22),
+                        // //     onTap: () {
+                        // //       setState(() {
+                        // //         isNotify = !isNotify;
+                        // //       });
+                        // //     },
+                        // //   ),
+                        // //
+                        // // ),
+                        // // SizedBox(height: 30,),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     context.read<EmployeeBloc>().add(
+                        //         GetActivityLogListingEvent(Variable.jobReadId));
+                        //     PersistentNavBarNavigator.pushNewScreen(
+                        //       context,
+                        //       screen: ActivityLog(),
+                        //       withNavBar: false, // OPTIONAL VALUE. True by default.
+                        //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //       width: w,
+                        //       height: 60,
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         border: Border.all(
+                        //           color: Color(0xffe6ecf0),
+                        //           width: 1,
+                        //         ),
+                        //         boxShadow: [
+                        //           BoxShadow(
+                        //             color: Color(0x05000000),
+                        //             blurRadius: 8,
+                        //             offset: Offset(1, 1),
+                        //           ),
+                        //         ],
+                        //         color: Colors.white,
+                        //       ),
+                        //       child: Center(
+                        //         child: Text("View Activity Logs",
+                        //             style: GoogleFonts.roboto(
+                        //               color: Colors.black,
+                        //               fontSize: w / 24,
+                        //               fontWeight: FontWeight.w400,
+                        //             )),
+                        //       )),
+                        // ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.heavyImpact();
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    surfaceTintColor: Colors.white,
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text(
+                                          "Are you Sure ?",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Color(0xff151522),
+                                            fontSize: w/22,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Text(
+                                          "Did you wants to delete this job",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Color(0xff6d6d6d),
+                                            fontSize: w/26,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Container(
+                                                  width: w / 3.3,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(5),
+                                                    border: Border.all(
+                                                      color: ColorPalette.primary,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: const Center(
+                                                      child: Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                      color: ColorPalette.primary,
+                                                      fontSize: 18,
+                                                    ),
+                                                  )),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  BlocProvider.of<JobBloc>(context)
+                                                      .add(DeleteJobEvent(
+                                                      JobRead?.id??0));
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                    width: w / 3.1,
+                                                    padding: EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(5),
+                                                      color: ColorPalette.primary,
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Delete",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    )),
+                                              ),
+                                            ])
+                                      ],
+                                    ),
+                                  );
+                                });
+                          },
+                          child: Container(
+                              width: w1,
+                              // height: 60,
+                              padding: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x05000000),
+                                    blurRadius: 8,
+                                    offset: Offset(1, 1),
+                                  ),
+                                ],
+                                color: Colors.white,
+                              ),
+                              child: Center(
+                                child: Text("Delete this Job",
+                                    style: GoogleFonts.roboto(
+                                      color: Color(0xffe70c0c),
+                                      fontSize: w / 24,
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        )
+                      ],
                     ),
-                    SizedBox(
-                      height: 30,
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

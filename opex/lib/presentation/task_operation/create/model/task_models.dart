@@ -40,6 +40,8 @@ class GetTaskList extends Equatable {
   final String? taskName;
   @JsonKey(name: 'topic')
   final String? topic;
+  @JsonKey(name: 'duration')
+  final String? duration;
   @JsonKey(name: 'task_type_name')
   final String? taskTypeName;
   @JsonKey(name: 'job_title')
@@ -54,6 +56,8 @@ class GetTaskList extends Equatable {
   final int? groupId;
   @JsonKey(name: 'currency_code')
   final String? currency;
+  @JsonKey(name: 'profile_pic')
+  final String? profile;
   @JsonKey(name: 'is_notify',defaultValue: false)
   final bool? isNotify;
   @JsonKey(name: 'assigned_to')
@@ -155,6 +159,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.profile,
     this.parentGroupId,
     this.assignByDict,
     this.assignToDict,
@@ -163,6 +168,7 @@ class GetTaskList extends Equatable {
     this.groupId,
     this.assignNameCard,
     this.topic,
+    this.duration,
     this.imgCount,
     this.taskTypeName,
     this.paymentMeta,
@@ -248,6 +254,32 @@ class GetCountTask extends Equatable {
 
   Map<String, dynamic> toJson() => _$GetCountTaskToJson(this);
 }
+
+//readCreat
+@JsonSerializable()
+class GetReadCreateTask extends Equatable {
+
+  @JsonKey(name: 'priority')
+  final List<String>? priority;
+  @JsonKey(name: 'assigning_type')
+  final List<String>? assignType;
+  @JsonKey(name: 'duration_option')
+  final List<String>? duration;
+  const GetReadCreateTask({
+    this.assignType,
+    this.priority,
+    this.duration,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory GetReadCreateTask.fromJson(Map<String, dynamic> json) =>
+      _$GetReadCreateTaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetReadCreateTaskToJson(this);
+}
+
 
 
 //payment
@@ -826,6 +858,8 @@ class PerfomerModel extends Equatable {
   final String? email;
   @JsonKey(name: 'user_code')
   final String? userCode;
+  @JsonKey(name: 'profile_pic')
+  final String? profile;
   @JsonKey(name: 'highest_average_points')
   final double? points;
 
@@ -833,6 +867,7 @@ class PerfomerModel extends Equatable {
     this.fName,
     this.userCode,
     this.lName,
+    this.profile,
   this.email,
   this.points,
    

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -13,38 +14,46 @@ class MediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w = MediaQuery.of(context).size.width;
     return Container(
       width: w,
       height: 105,
       child: ListView.separated(
+        addAutomaticKeepAlives: true,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        cacheExtent: 9,
         scrollDirection: Axis.horizontal,
         // padding: EdgeInsets.only(right: 10, left: 16),
         physics: ScrollPhysics(),
         shrinkWrap: true,
-        itemCount: messages?.length ?? 0,
+        itemCount: messages!.length,
         itemBuilder: (BuildContext context, int i) {
           return 
           messages?[i].type == "image"
               ? InkWell(
                 onTap: (){
                    Navigator.push(context,
-                                                MaterialPageRoute(builder: (_) {
-                                              return DetailScreen(
-                                                image: messages?[i]
-                                                        .message ??
-                                                    "",
-                                              );
-                                            }));
+                      MaterialPageRoute(builder: (_) {
+                    return DetailScreen(
+                      image: messages?[i]
+                              .message ??
+                          "",
+                    );
+                  }));
                 },
                 child: Container(
-                    width: w / 3,
-                    // padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(messages?[i].message ?? ""),
-                          fit: BoxFit.contain),
-                    )),
+                  key: new PageStorageKey(
+                                "image $i ${messages![i].message}",),
+                        
+                    width: w / 3, 
+                    // decoration: BoxDecoration(
+                    //   image: DecorationImage(image: ResizeImage(CachedNetworkImageProvider("${messages?[i].message}",)),fit: BoxFit.cover)
+                    // ),  
+                    child: Image(image: ResizeImage(
+                      NetworkImage("${messages?[i].message}"),width: 500,
+                    ),
+                    fit: BoxFit.cover,),
+                    ),
               )
               : 
               messages?[i].type == "video"?

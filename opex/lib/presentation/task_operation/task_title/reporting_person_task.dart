@@ -27,9 +27,10 @@ class ReportingPerson extends StatefulWidget {
   final GetTaskList? readTask;
   final bool task;
   final bool job;
+  final Function()? refresh;
 
   const ReportingPerson(
-      {Key? key, required this.editTask, this.readTask, required this.task, required this.job})
+      {Key? key, required this.editTask, this.readTask,this.refresh, required this.task, required this.job})
       : super(key: key);
 
   @override
@@ -77,13 +78,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
         listeners: [
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
-              if (state is UpdateReportingTaskLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
+
 
               if (state is UpdateReportingFailed) {
                 showSnackBar(
@@ -111,13 +106,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is UpdateTaskGroupLoading) {
-                // showSnackBar(context,
-                //     message: "Loading...",
-                //     color: Colors.white,
-                //     // icon: HomeSvg().SnackbarIcon,
-                //     autoDismiss: true);
-              }
+
 
               if (state is UpdateTaskGroupFailed) {
                 showSnackBar(
@@ -166,9 +155,6 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetRoleListLoading) {
-
-              }
               if (state is GetRoleListSuccess) {
                 roleList = state.roleList;
 
@@ -409,111 +395,134 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                     BuildContext context, int i) {
                                                   return InkWell(
                                                     onTap: () {
-                                                      Variable.reportingEmail =
-                                                          employee[i]
-                                                              .email ?? "";
-                                                      widget.editTask
-                                                          ? BlocProvider.of<
-                                                          TaskBloc>(context).add(
-                                                          UpdateReportingTaskEvent(
-                                                            img5: widget.readTask?.metaData?.image5,
-                                                            img1: widget.readTask?.metaData?.image1,
-                                                            img4: widget.readTask?.metaData?.image4,
-                                                            img2: widget.readTask?.metaData?.image2,
-                                                            img3: widget.readTask?.metaData?.image3,
-                                                            attachmentDescription: widget.readTask?.metaData?.description,
-                                                            attachmentNote: widget.readTask?.metaData?.note,
-                                                            latitude: widget.readTask?.latitude??"",
-                                                            longitude: widget.readTask?.longitude??"",
-                                                            id: widget.readTask
-                                                                ?.id ?? 0,
-                                                            AssigningCode: widget
-                                                                .readTask
-                                                                ?.assigningCode ??
-                                                                "",
-                                                            AssigningType: widget
-                                                                .readTask
-                                                                ?.assigningType ??
-                                                                "",
-                                                            createdOn: "${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                "+")[0]}",
-                                                            jobid: widget.readTask
-                                                                ?.jobId,
-                                                            notas: widget.readTask
-                                                                ?.notes ?? "",
-                                                            priorityLeval: widget
-                                                                .readTask
-                                                                ?.priorityLevel
-                                                                ?? 0,
-                                                            remarks: widget
-                                                                .readTask
-                                                                ?.remarks ?? "",
-                                                            taskName: widget
-                                                                .readTask
-                                                                ?.taskName ?? "",
-                                                            taskType: widget
-                                                                .readTask
-                                                                ?.taskType ?? 0,
-                                                            lastmodified: widget
-                                                                .readTask
-                                                                ?.lastModified ??
-                                                                "",
-                                                            parant: widget
-                                                                .readTask?.parent,
-                                                            statusStagesId: widget
-                                                                .readTask
-                                                                ?.statusStagesId,
-                                                            discription: widget
-                                                                .readTask
-                                                                ?.description ??
-                                                                "",
-                                                            createdBy: widget
-                                                                .readTask
-                                                                ?.createdBy
-                                                                .toString() ?? "",
-                                                            isActive: true,
-                                                            priority: widget
-                                                                .readTask
-                                                                ?.priority ?? "",
-                                                            reportingPerson: employee[i]
-                                                                .userCode ?? "",
-                                                            endDate: "${widget
-                                                                .readTask?.endDate
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask?.endDate
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                "+")[0]}" ?? "",
-                                                            startDate: "${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split(
-                                                                "T")[0]}"" ""${widget
-                                                                .readTask
-                                                                ?.startDate
-                                                                ?.split("T")[1]
-                                                                .split(
-                                                                "+")[0]}" ?? "",
-                                                          ))
-                                                          : Variable
-                                                          .reportingCode =
-                                                          employee[i].userCode ?? "";
+                                                      if(widget.editTask==true){
+                                                        Variable.reportingEmail =
+                                                            employee[i]
+                                                                .email ?? "";
+                                                        Variable.reportingName =
+                                                            employee[i]
+                                                                .fname ?? "";
+                                                        Variable
+                                                            .reportingCode =
+                                                            employee[i].userCode ?? "";
+                                                        BlocProvider.of<
+                                                            TaskBloc>(context).add(
+                                                            UpdateReportingTaskEvent(
+                                                              img5: widget.readTask?.metaData?.image5,
+                                                              img1: widget.readTask?.metaData?.image1,
+                                                              img4: widget.readTask?.metaData?.image4,
+                                                              img2: widget.readTask?.metaData?.image2,
+                                                              img3: widget.readTask?.metaData?.image3,
+                                                              attachmentDescription: widget.readTask?.metaData?.description,
+                                                              attachmentNote: widget.readTask?.metaData?.note,
+                                                              latitude: widget.readTask?.latitude??"",
+                                                              longitude: widget.readTask?.longitude??"",
+                                                              id: widget.readTask
+                                                                  ?.id ?? 0,
+                                                              AssigningCode: widget
+                                                                  .readTask
+                                                                  ?.assigningCode ??
+                                                                  "",
+                                                              AssigningType: widget
+                                                                  .readTask
+                                                                  ?.assigningType ??
+                                                                  "",
+                                                              createdOn: "${widget
+                                                                  .readTask
+                                                                  ?.startDate
+                                                                  ?.split(
+                                                                  "T")[0]}"" ""${widget
+                                                                  .readTask
+                                                                  ?.startDate
+                                                                  ?.split("T")[1]
+                                                                  .split(
+                                                                  "+")[0]}",
+                                                              jobid: widget.readTask
+                                                                  ?.jobId,
+                                                              durationOption: widget.readTask?.duration??"",
+                                                              notas: widget.readTask
+                                                                  ?.notes ?? "",
+                                                              priorityLeval: widget
+                                                                  .readTask
+                                                                  ?.priorityLevel
+                                                                  ?? 0,
+                                                              remarks: widget
+                                                                  .readTask
+                                                                  ?.remarks ?? "",
+                                                              taskName: widget
+                                                                  .readTask
+                                                                  ?.taskName ?? "",
+                                                              taskType: widget
+                                                                  .readTask
+                                                                  ?.taskType ?? 0,
+                                                              lastmodified: widget
+                                                                  .readTask
+                                                                  ?.lastModified ??
+                                                                  "",
+                                                              parant: widget
+                                                                  .readTask?.parent,
+                                                              statusStagesId: widget
+                                                                  .readTask
+                                                                  ?.statusStagesId,
+                                                              discription: widget
+                                                                  .readTask
+                                                                  ?.description ??
+                                                                  "",
+                                                              createdBy: widget
+                                                                  .readTask
+                                                                  ?.createdBy
+                                                                  .toString() ?? "",
+                                                              isActive: true,
+                                                              priority: widget
+                                                                  .readTask
+                                                                  ?.priority ?? "",
+                                                              reportingPerson: employee[i]
+                                                                  .userCode ?? "",
+                                                              endDate: "${widget
+                                                                  .readTask?.endDate
+                                                                  ?.split(
+                                                                  "T")[0]}"" ""${widget
+                                                                  .readTask?.endDate
+                                                                  ?.split("T")[1]
+                                                                  .split(
+                                                                  "+")[0]}" ?? "",
+                                                              startDate: "${widget
+                                                                  .readTask
+                                                                  ?.startDate
+                                                                  ?.split(
+                                                                  "T")[0]}"" ""${widget
+                                                                  .readTask
+                                                                  ?.startDate
+                                                                  ?.split("T")[1]
+                                                                  .split(
+                                                                  "+")[0]}" ?? "",
+                                                            ));
+                                                        context.read<TaskBloc>()
+                                                            .add(
+                                                            GetTaskReadListEvent(
+                                                                widget.readTask
+                                                                    ?.id ?? 0));
+                                                        read();
+                                                      }
+                                                      else{
+                                                        Variable.reportingEmail =
+                                                            employee[i]
+                                                                .email ?? "";
+                                                        Variable.reportingName =
+                                                            employee[i]
+                                                                .fname ?? "";
+                                                        Variable
+                                                            .reportingCode =
+                                                            employee[i].userCode ?? "";
+                                                        Navigator.pop(context);
 
-                                                      context.read<TaskBloc>()
-                                                          .add(
-                                                          GetTaskReadListEvent(
-                                                              widget.readTask
-                                                                  ?.id ?? 0));
-                                                      read();
+                                                      }
+                                                      widget.refresh!();
+                                                      setState(() {
+
+                                                      });
+
+
 
                                                     },
                                                     child: Container(
@@ -546,7 +555,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                           children: [
                                                             Row(
                                                               children: [
-                                                                TextAvatar(
+                                                                employee[i]?.userMete?.profile==null?TextAvatar(
                                                                   shape: Shape.Circular,
                                                                   size: 40,
                                                                   numberLetters: 2,
@@ -554,7 +563,10 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                                   textColor: Colors.white,
                                                                   fontWeight: FontWeight.w500,
                                                                   text:employee[i].email.toString().toUpperCase() ,
-                                                                ),
+                                                                ):  CircleAvatar(
+                                                      radius: 20,
+                                                      backgroundImage: NetworkImage(employee[i]?.userMete?.profile??"",),
+                                                    ),
                                                                 SizedBox(
                                                                   width: 10,),
                                                                 Container(
@@ -573,22 +585,6 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                                 )
                                                               ],
                                                             ),
-                                                            // PopupMenuButton(
-                                                            //   icon: SvgPicture.string(TaskSvg().moreIcon),
-                                                            //   //don't specify icon if you want 3 dot menu
-                                                            //   color: Colors.white,
-                                                            //   elevation: 2,
-                                                            //   padding: EdgeInsets.zero,
-                                                            //   shape:
-                                                            //   RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                                            //   itemBuilder: (context) {
-                                                            //     return List.generate(roleList.length, (index) {
-                                                            //       return PopupMenuItem(
-                                                            //         child: Text(roleList[index].roleName??""),
-                                                            //       );
-                                                            //     });
-                                                            //   },
-                                                            //  )
                                                           ]),
                                                     ),
                                                   );

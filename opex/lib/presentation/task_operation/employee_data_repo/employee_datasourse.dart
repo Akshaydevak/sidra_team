@@ -31,6 +31,7 @@ class EmployeeDataSource {
     required List<int> additionalRole,
     required List<String> roleNameList,
     required String roleName,
+    required String whatsapp,
     required dynamic profilePic,
   }) async {
     print("ffff${ClusterUrls.userCreateUrl}");
@@ -54,6 +55,7 @@ class EmployeeDataSource {
         "official_role_name":roleName,
         "additional_roles_list":roleNameList,
         "profile_pic":profilePic,
+        "whatsapp_number":whatsapp,
       },
       options: Options(
         headers: {
@@ -259,6 +261,7 @@ print(groupRead.userId);
     required List<int> additionalRole,
     required List<String> roleNameList,
     required String roleName,
+    required String whatsapp,
     required bool isActive,
     required int id,
     required dynamic profilePic,
@@ -294,6 +297,7 @@ print(groupRead.userId);
         "additional_roles_list":roleNameList,
         "is_active":isActive,
         "profile_pic":profilePic,
+        "whatsapp_number":whatsapp,
 
       },
       options: Options(
@@ -404,8 +408,9 @@ print(groupRead.userId);
         },
       ),
     );
-    print(response.data);
-    if (response.data != null || response.data != "") {
+    print("ddaaa${response.data}");
+    if (response.data['status']=='success') {
+      print("succ444444");
       return DoubleResponse(response.data['data'], response.data['image_url']);
     }
     return DoubleResponse(response.data, "failed");
@@ -496,7 +501,8 @@ print(groupRead.userId);
     createTaskGroupChat chatlist = createTaskGroupChat();
     final response = await client.post(
       "https://api-communication-application.hilalcart.com/api/group/create-group",
-      // "http://192.168.1.20:5500/api/group/create-group",
+      // "http://192.168.1.187:5500/api/group/create-group",
+      // "https://5z7l1nh4-5500.inc1.devtunnels.ms/api/group/create-group",
       data: taskGroup,
       options: Options(
         headers: {

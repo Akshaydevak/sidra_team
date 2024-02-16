@@ -105,6 +105,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
               systemNavigationBarColor: Colors.white, // Navigation bar
               statusBarColor: Colors.white, // Status bar
             ),
+            surfaceTintColor: Colors.white,
           elevation: 0,
           backgroundColor: Colors.white,
           centerTitle: false,
@@ -176,7 +177,8 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
             token: widget.token ?? "",
             grpchatId: "",
             chatId:state.list.chatid??"",
-            pageNo: 1));
+            pageNo: 1,
+            userId: widget.loginUserId??""));
       PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: ChatScreen(
@@ -265,8 +267,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                         fontWeight: FontWeight.w600
                     ) ,
                     controller: discription,
-                    // maxLines: 4,
-                    // minLines: 1,
+                    maxLength: 150,
+                    maxLines: 2,
+                    minLines: 1,
                     onChanged: (n){
                       validationCheck();
                       setState(() {
@@ -275,7 +278,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                     },
                     focusNode: descriptionfocusNode,
                     decoration:  InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16,bottom: 16),
+                      contentPadding: EdgeInsets.only(left: 16,top: 10,right: 16),
                       hintText: "Group Description",
                       hintStyle: TextStyle(
                         color: Color(0x66151522),
@@ -294,7 +297,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
             ),
             SizedBox(height: 10,),
           SizedBox(
-            height: h / 1.6,
+            height: h / 1.65,
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -364,9 +367,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                                       NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) =>
                                           GroupChatList(
-                                            userUpdateList: userList??[],
+                                            userUpdateList: userList,
                                             userList: userCodeList,
-                                            readUser:userCodeList!=null && userCodeList.isNotEmpty? userCodeList.contains(state.registeresUsers[index].userCode):false,
+                                            readUser:userCodeList.isNotEmpty? userCodeList.contains(state.registeresUsers[index].userCode):false,
 
                                               listuser: chaneTable,
                                               employeeList: state
@@ -374,7 +377,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                                       separatorBuilder:
                                           (context, index) => Container(),
                                       itemCount:
-                                      state.registeresUsers!.length),
+                                      state.registeresUsers.length),
                                 ),
                               ],
                             ),
@@ -384,7 +387,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                       },
                     ),
 
-                    SizedBox(height: h/10,)
+                    // SizedBox(height: h/10,)
                   ],
                 ),
               ),
@@ -392,14 +395,14 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
           ),
             Padding(
               padding: const EdgeInsets.only(left: 16,right: 16),
-              child: isValid==true?
+              child: isValid==true&&userList.isNotEmpty?
               GradientButton(
                   onPressed: () {
    
                     BlocProvider.of<GroupBloc>(context).add(
                         CreateGroupEvent(
                             groupName: groupName.text,
-                            // discription: discription.text,
+                            description: discription.text,
                             userIdList: userList,
                             token: widget.token ??"",
                             groupPhotoUrl: ""
@@ -448,6 +451,7 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                     ),
                   )),
             ),
+            SizedBox(height: 5,)
         ])
 
 ),

@@ -202,6 +202,27 @@ class TaskRepo {
     );
   }
 
+  Future<DataResponse> getTaskCreationRead() async {
+    try {
+      final apiResponse = await _dataSource.getTaskCreationRead();
+
+      if (apiResponse.duration!.isNotEmpty) {
+        return DataResponse(
+          data: apiResponse,
+        );
+      } else {
+        return DataResponse(
+          error: "implement Error conersion Text",
+        );
+      }
+    } catch (e) {
+      debugPrint("implement Error conersion Text$e");
+    }
+    return DataResponse(
+      error: "implement Error conersion Text",
+    );
+  }
+
   //readRewards
   Future<DataResponse> getReadRewards(int? id,bool isTask) async {
     try {
@@ -313,10 +334,12 @@ class TaskRepo {
     required String? lastmodified,
     required String? longitude,
     required String? latitude,
+    required String durationOption,
   }) async {
     final restAPIresponse = await _dataSource.taskCreatePost(
     longitude: longitude,
         latitude: latitude,
+        durationOption: durationOption,
         reportingPerson: reportingPerson,
         createdBy:createdBy,
         discription: discription,
@@ -396,10 +419,12 @@ class TaskRepo {
     required int? id,
     required String? longitude,
     required String? latitude,
+    required String durationOption,
   }) async {
     final restAPIresponse = await _dataSource.taskUpdatePost(
      latitude: latitude,
         longitude: longitude,
+        durationOption: durationOption,
         img4: img4,
         img3: img3,
         img2: img2,

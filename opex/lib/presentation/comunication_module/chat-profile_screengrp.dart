@@ -1,6 +1,7 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/add_group_member.dart';
 import 'package:cluster/presentation/comunication_module/bloc/attachment_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
@@ -20,8 +21,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 
@@ -32,6 +34,10 @@ class ChatProfileScreen2 extends StatefulWidget {
   final String? token;
   final Socket? socket;
   final String? roomId;
+  final String? loginuserid;
+  final String redirectchatid;
+  final String redirectchatname;
+  final bool? isadmin;
   final bool chat;
   List<GroupUserList>? grpmember=[];
   ChatProfileScreen2(
@@ -41,7 +47,11 @@ class ChatProfileScreen2 extends StatefulWidget {
       this.chat=false,
       this.communicationUserModel,
       this.socket,
+      this.isadmin,
       this.roomId,
+      this.redirectchatid="",
+      this.redirectchatname="",
+      this.loginuserid,
       required this.grpmember,
       required this.token})
       : super(key: key);
@@ -52,38 +62,46 @@ class ChatProfileScreen2 extends StatefulWidget {
 
 class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isMute = false;
-  // List<GroupUserList> grpmember=[];
-  // bool isM=true;
+  List<GroupUserList> grpmember=[];
+  bool isM=true;
+  bool issMount= true;
   String uid='';
-    @override
+  SharedPreferences? preff;
+  List<ChatModel> attachments=[];
+  @override
   void initState() {
-
-//  widget.socket!.emit("group.members", 
-//      widget.chat==false? widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
+    
+print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid} ${widget.redirectchatname}");
+ widget.socket!.emit("group.members", 
+     widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
      
-//     widget.socket!.on("groupmembers.result", (data){ 
-//       print("group members: $data");
-//       grpmember.clear();
-//     (data as List).forEach((element) {
-//     grpmember.add(GroupUserList.fromJson(element));
-   
-//       });
-//       isM=false;
-//  print(grpmember.length);
-//  if(this.mounted){
-//     setState(() {
+    widget.socket!.on("groupmembers.result", (data){ 
+      print("groupk members: $data");
       
-//     });
-//  }
-//     });
+      grpmember.clear();
+    (data as List).forEach((element) {
+    grpmember.add(GroupUserList.fromJson(element));
+   
+      });
+      if(issMount){
+        setState(() {
+          isM=false;
+          print(grpmember.length);
+        });
+      }
+      print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid}");
+
+    });
      
 widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$data"));
     // TODO: implement initState
     super.initState();
   }
-
-  @override
-
+    @override
+   void dispose(){
+    issMount=false;
+  super.dispose();
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +118,9 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           BlocProvider(
             create: (context) => AttachmentBloc()
               ..add(GroupProfileAttachmentsGet(
-                  chatId: widget.chat==false? widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.chatid??"",
+                  chatId: widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid ?? "":widget.communicationuser?.chatid??"",
                   token: widget.token ?? "")),
+
           )
         ],
     
@@ -112,45 +131,64 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
         if (state is GroupLeaveLoading) {
           print("group leave loading");
         } else if (state is GroupLeaveSuccess) {
+          
           showSnackBar(context,
               message: state.successMessage, color: Colors.green);
+              widget.socket!.emit("group.message",{
+        "type": "notify", "chatid": widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid : widget.communicationuser?.chatid, "content": "${authentication.authenticatedUser.fname.toString().toTitleCase()} ${authentication.authenticatedUser.lname.toString().toTitleCase()} left"
+      });
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
           PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: CommunicationModule(
               // token: widget.token ?? ""
-              socket: widget.socket,
+              // socket: widget.socket,
             ),
             withNavBar: true, // OPTIONAL VALUE. True by default.
             pageTransitionAnimation: PageTransitionAnimation.fade,
           );
+          Navigator.pop(context);
         } else if (state is GroupLeaveFailed) {
           showSnackBar(context, message: state.error, color: Colors.green);
         }
       },
     ),
     BlocListener<GroupBloc, GroupState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         print("state found ${state}");
         if (state is GroupMemberDeleteLoading) {
           print("group delete loading");
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
-           
-        widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                     widget.socket!.on("groupmembers.result", (data) => print("update"));
+           preff = await SharedPreferences.getInstance();
+        widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                      
+        widget.socket!.emit("user.deleted",{
+          'chatId':widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid??"":widget.communicationuser?.chatid,
+          'userId':state.successmsg
+        });
+        //  widget.socket!.emit("leave.chat",{
+        //                 "room": widget.roomId??"",
+        //                 "userid":state.successmsg
+        //               }
+        //                );
        
+                      String? chatidd=widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid;
+       preff!.setString(chatidd??"",state.successmsg);
                     showSnackBar(context,
-              message: state.successmsg, color: Colors.green);
-              BlocProvider.of<CommunicationBloc>(context).add(
-                GetChatListEvent(token: widget.token??"")
-              );
+              message: "User removed from the group successfully", color: Colors.green);
+              // BlocProvider.of<CommunicationBloc>(context).add(
+              //   GetChatListEvent(token: widget.token??"")
+              // );
               //   BlocProvider.of<AttachmentBloc>(context)
               // .add(GroupProfileAttachmentsGet(
               //     chatId: widget.communicationUserModel?.id ?? "",
               //     token: widget.token ?? "")
           // );
               setState(() {
-                
+                isM=true;
               });
         } else if (state is GroupMemberDeleteFailed) {
           showSnackBar(context, message: state.error, color: Colors.green);
@@ -159,15 +197,17 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
     ),
     ],
       
-        child: Scaffold(
+        child:Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.white, // Navigation bar
               statusBarColor: Colors.white, // Status bar
             ),
+            surfaceTintColor: Colors.white,
             leading: IconButton(
               onPressed: () {
+                 widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                 Navigator.pop(context);
               },
               icon: const Icon(
@@ -178,25 +218,25 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
             elevation: 0,
             backgroundColor: Colors.white,
           ),
-          body: SafeArea(
+          body:SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
                     // width: w,
-                    child: widget.communicationUserModel?.photo==null||
-                      widget.communicationUserModel!.photo!.isEmpty 
-                      ?TextAvatar(
-               shape: Shape.Circular,
-               size: 120,
-               numberLetters: 2,
-               fontSize: w/11,
-               textColor: Colors.white,
-               fontWeight: FontWeight.w500,
-               text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
-             ):
+            //         child: widget.communicationUserModel?.photo==null||
+            //           widget.communicationUserModel!.photo!.isEmpty 
+            //           ?TextAvatar(
+            //    shape: Shape.Circular,
+            //    size: 120,
+            //    numberLetters: 2,
+            //    fontSize: w/11,
+            //    textColor: Colors.white,
+            //    fontWeight: FontWeight.w500,
+            //    text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
+            //  ):
                     
-                    CircleAvatar(
+               child:     CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.grey,
                         backgroundImage: AssetImage("asset/chatgrpimg.png")
@@ -207,7 +247,6 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                         //   // "${widget.communicationUserModel?.photo}"
                         //   widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? ""
                         //   ,
-                          
                         // )
                         ),
                   ),
@@ -216,7 +255,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   widget.communicationUserModel?.isgrp == false
                       ? Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
+                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -224,7 +263,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                           ),
                         )
                       : Text(
-                          widget.chat==false?widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
+                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
                           style: GoogleFonts.roboto(
                             color: const Color(0xff151522),
                             fontSize: 18,
@@ -236,12 +275,26 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   Text(
                    
-                    widget.isGroup
-                        ? "Created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
+                    widget.isGroup 
+                        ? "created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
                         : "",
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 188, 212, 233),
-                      fontSize: 14,
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(  
+                      widget.chat ==false 
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",
+                          textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                   Container(
@@ -264,6 +317,12 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                       customCupertinoLoading();
                                     } else if (state
                                         is GetGroupAttachmentsInProfileSuccess) {
+                                          attachments.clear();
+                                          for(int i=0;i<state.groupProfileGet.media!.messages!.length;){
+                                            attachments.add(state.groupProfileGet.media!.messages![i]);
+                                            i++;
+                                          }
+                                          attachments=attachments.reversed.toList();
                                       return Column(
                                         children: [
                                           Align(
@@ -286,8 +345,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                             height: 10,
                                           ),
                                           MediaList(
-                                              messages: state.groupProfileGet
-                                                  .media?.messages),
+                                              messages: attachments),
                                           Container(
                                             padding: const EdgeInsets.only(
                                                 left: 16,
@@ -300,7 +358,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  "${widget.grpmember!.length} Members",
+                                                  "${grpmember.length} Members",
                                                   style: GoogleFonts.roboto(
                                                     color:
                                                         const Color(0xff151522),
@@ -318,13 +376,17 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
-                                                    chatid:widget.communicationUserModel?.chatid,
+                                                    chatid:widget.redirectchatid==""?widget.communicationUserModel?.chatid:widget.redirectchatid,
                                                     socket: widget.socket,
                                                     isGroup: widget.isGroup,
                                                     communicationUserModel: widget.communicationUserModel,
+                                                    chat: widget.chat,
+                                                    communicationuser: widget.communicationuser,
+                                                    redirectchatid: widget.redirectchatid,
+                                                    redirectchatname: widget.redirectchatname,
                                                   )));
                                                   },
-                                                  child: Text(
+                                                  child:widget.isadmin==true? Text(
                                                     "Add Member",
                                                     style: GoogleFonts.roboto(
                                                       color:
@@ -332,7 +394,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       fontSize: w / 20,
                                                       fontWeight: FontWeight.w600,
                                                     ),
-                                                  ),
+                                                  ):SizedBox()
                                                 )
                                               ],
                                             ),
@@ -345,30 +407,52 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                               thickness: 1.1,
                                             ),
                                           ),
-                                          ListView.separated(
+                                          isM==true?Padding(
+                                            padding: const EdgeInsets.all(30),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      10),
+                                                              boxShadow: [
+                                                                const BoxShadow(
+                                                                  color:
+                                                                      Color(0x05000000),
+                                                                  blurRadius: 8,
+                                                                  offset: Offset(3, 3),
+                                                                ),
+                                                              ],
+                                                              color: Colors.white,
+                                                            ),
+                                              child: customCupertinoLoading()),
+                                          ): ListView.separated(
                                               shrinkWrap: true,
                                               primary: false,
                                               padding: const EdgeInsets.all(16),
                                               physics:
                                                   const NeverScrollableScrollPhysics(),
-                                                  itemCount:widget.grpmember!.length,
+                                                  itemCount:grpmember.length,
                                               itemBuilder: (context, index) {
-                                                return Row(
+                                                return  Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Row(
+                                                   Row(
                                                       children: [
-                                                      TextAvatar(
+                                                  grpmember[index].photo == null || grpmember[index].photo!.isEmpty  ?    TextAvatar(
                                                         shape: Shape.Circular,
                                                         size: 48,
                                                         numberLetters: 2,
                                                         fontSize: w/22,
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
-                                                        text:"${widget.grpmember?[index].name.toString().toUpperCase()}" ,
-                                                      ),
+                                                        text:"${grpmember[index].name.toString().toUpperCase()}" ,
+                                                      ):CircleAvatar(
+                                                        radius: w / 23,
+                                                        backgroundColor: Colors.grey,
+                                                        backgroundImage: NetworkImage("${grpmember[index].photo}"
+                                                            )),
                                                         const SizedBox(
                                                           width: 5,
                                                         ),
@@ -382,16 +466,16 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                           children: [
                                                             Text(
                                                               
-                                                                  "${widget.grpmember?[index].name.toString().toTitleCase()}",
+                                                                  "${grpmember[index].name.toString().toTitleCase()}",
                                                               style: TextStyle(
                                                                 color: Color(
                                                                     0xff151522),
                                                                 fontSize: 18,
                                                               ),
                                                             ),
-                                                            index == 0
+                                                          grpmember[index].isAdmin==true
                                                                 ? const Text(
-                                                                    "Moderator",
+                                                                    "Admin",
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -428,7 +512,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                     //               }); 
                                                     //                 });
                                                     // }, icon: Icon(Icons.delete)),
-                                                    PopupMenuButton(
+                                                   widget.isadmin==true?grpmember[index].isAdmin==false? PopupMenuButton(
                                                       icon: SvgPicture.string(
                                                           TaskSvg().moreIcon),
                                                       //don't specify icon if you want 3 dot menu
@@ -444,101 +528,75 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       itemBuilder: (context) =>
                                                           [
                                                         PopupMenuItem(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(0),
-                                                            value: 'a',
-                                                            enabled: true,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                // Container(
-                                                                //   padding: const EdgeInsets
-                                                                //           .only(
-                                                                //       left: 10),
-                                                                //   child: Text(
-                                                                //     'Edit this Job',
-                                                                //     style: GoogleFonts.poppins(
-                                                                //         color: Colors
-                                                                //             .black54,
-                                                                //         fontSize:
-                                                                //             13,
-                                                                //         fontWeight:
-                                                                //             FontWeight.w500),
-                                                                //   ),
-                                                                // ),
-                                                                // const Divider(
-                                                                //   indent: 30,
-                                                                // ),
-                                                                GestureDetector(
-                                                                onTap: (){
-                                                                  print("hello");
-                                                                  uid=widget.grpmember![index].name!;
-                                                                 
-                                                                   showDialog(
-                                                                            context: context, builder: (BuildContext context) {
-                                                                              return AlertDialog(
-                                                                                insetPadding: EdgeInsets.symmetric(vertical:20),
-                                                                                content: Text("Delete ${widget.grpmember![index].name?.toLowerCase().toTitleCase()} from this group"),
-                                                                                actions: [
-                                                                                  Row( mainAxisAlignment: MainAxisAlignment.end,
-                                                                                    children: [
-                                                                                      TextButton(onPressed: (){
-                                                                                        Navigator.pop(context);
-                                                                                      }, child: Text("Cancel")),
-                                                                                      TextButton(onPressed: (){
-                                                                                         setState(() {
-                                                                                        widget.socket!.emit("removeUserFromGroup",
-                                                                                    {"userId":widget.grpmember![index].id??"",
-                                                                                    "chatId":widget.communicationUserModel!.chatid??""
-                                                                                    }
-                                                                                    );
-                                                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                                    widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                                      widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                                      showSnackBar(context, message: data, color: Colors.black);
-                                                                                    } );
-                                                                                    widget.socket!.emit("group.message",{
-                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content": "${widget.grpmember![index].name.toString().toTitleCase()} is deleted from group"
-                                                                                    }); 
+                                                          onTap: (){
+                                                              print("hello");
+                                                              uid=grpmember[index].name!;
+                                                             
+                                                               showDialog(
+                                                                        context: context, builder: (BuildContext context) {
+                                                                          return AlertDialog(
+                                                                            insetPadding: EdgeInsets.symmetric(vertical:20),
+                                                                            content: Text("Remove ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group"),
+                                                                            actions: [
+                                                                              Row( mainAxisAlignment: MainAxisAlignment.end,
+                                                                                children: [
+                                                                                  TextButton(onPressed: (){
                                                                                     Navigator.pop(context);
-                                                                                      });
-                                                                              
-                                                                                      }, child: Text("Delete"))
-                                                                                    ],
-                                                                                  )
+                                                                                  }, child: Text("Cancel",style: TextStyle(color: Colors.blue),)),
+                                                                                  TextButton(onPressed: (){
+                                                                                     setState(() {
+                                                                                        String? chattid = widget.chat==false? widget.redirectchatid!=""?widget.redirectchatid.toString():  widget.communicationUserModel?.chatid.toString():widget.communicationuser?.chatid.toString();
+                                                                                          BlocProvider.of<GroupBloc>(context).add( GroupMemberDeleteEvent(
+                                                                                    token:widget.token??"", 
+                                                                                    chatId: chattid??"" , 
+                                                                                    userId:grpmember[index].id??"")
+                                                                                );
+                                                                                //     widget.socket!.emit("removeUserFromGroup",
+                                                                                // {"userId":grpmember[index].id??"",
+                                                                                // "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
+                                                                                // }
+                                                                                // );
+                                                                                // widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                // widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                //   showSnackBar(context, message: data, color: Colors.black);
+                                                                                // } );
+                                                                                widget.socket!.emit("group.message",{
+                                                                                  "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
+                                                                                }); 
+                                                                                isM=true;
+                                                                                Navigator.pop(context);
+                                                                                 
+                                                                                
+                                                                                  });
+                                                                          
+                                                                                  }, child: Container(child: Text("Remove",style: TextStyle(color: Colors.blue))))
                                                                                 ],
-                                                                              );
-                                                                            },
-                                                                            );
-                                                                
-                                                                },
-                                                                child: Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .only(
-                                                                          left:
-                                                                              10),
-                                                                  child: Text(
-                                                                    'Delete',
-                                                                    style: GoogleFonts.poppins(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontSize:
-                                                                            w/26,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              ],
+                                                                              )
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                        );
+                                                          },
+                                                            // padding:
+                                                            //     const EdgeInsets
+                                                            //         .all(0),
+                                                            // value: 'a',
+                                                            // enabled: true,
+                                                            child: Text(
+                                                              'Remove',
+                                                              style: GoogleFonts.poppins(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
                                                             ))
                                                       ],
+                                                      
                                                       onSelected: (value) {},
-                                                    ),
+                                                    ):SizedBox():SizedBox()
                                                   ],
                                                 );
                                               },
@@ -584,7 +642,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                "${widget.grpmember!.length} Members",
+                                                "${grpmember.length} Members",
                                                 style: GoogleFonts.roboto(
                                                   color:
                                                       const Color(0xff151522),
@@ -602,10 +660,14 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                     chatid:widget.communicationUserModel?.chatid,
                                                     socket: widget.socket,
                                                     isGroup: widget.isGroup,
-                                                    // communicationUserModel: widget.communicationUserModel,
+                                                    communicationUserModel: widget.communicationUserModel,
+                                                    chat: widget.chat,
+                                                    communicationuser: widget.communicationuser,
+                                                    redirectchatid: widget.redirectchatid,
+                                                    redirectchatname: widget.redirectchatname,
                                                   )));
                                                 },
-                                                child: Text(
+                                                child:widget.isadmin==true? Text(
                                                   "Add Member",
                                                   style: GoogleFonts.roboto(
                                                     color:
@@ -613,7 +675,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                     fontSize: w / 20,
                                                     fontWeight: FontWeight.w600,
                                                   ),
-                                                ),
+                                                ):SizedBox()
                                               )
                                             ],
                                           ),
@@ -632,7 +694,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                             padding: const EdgeInsets.all(16),
                                             physics:
                                                 const NeverScrollableScrollPhysics(),
-                                                itemCount:widget.grpmember!.length,
+                                                itemCount:grpmember.length,
                                             itemBuilder: (context, index) {
                                               return Row(
                                                 mainAxisAlignment:
@@ -641,15 +703,19 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      TextAvatar(
+                                                    grpmember[index].photo ==null || grpmember[index].photo!.isEmpty ?    TextAvatar(
                                                         shape: Shape.Circular,
                                                         size: 48,
                                                         numberLetters: 2,
                                                         fontSize: w/22,
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
-                                                        text:"${widget.grpmember![index].name.toString().toUpperCase()}" ,
-                                                      ),
+                                                        text:"${grpmember[index].name.toString().toUpperCase()}" ,
+                                                      ):CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage("${grpmember[index].photo}"
+                                )),
                                                       const SizedBox(
                                                         width: 5,
                                                       ),
@@ -662,16 +728,16 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                        "${widget.grpmember![index].name.toString().toTitleCase()}",
+                                                        "${grpmember[index].name.toString().toTitleCase()}",
                                                             style: TextStyle(
                                                               color: Color(
                                                                   0xff151522),
                                                               fontSize: 18,
                                                             ),
                                                           ),
-                                                          index == 0
+                                                        grpmember[index].isAdmin==true
                                                               ? const Text(
-                                                                  "Moderator",
+                                                                  "Admin",
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -687,7 +753,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       )
                                                     ],
                                                   ),
-                                                  
+                                                  widget.isadmin==true? grpmember[index].isAdmin==false?
                                                   PopupMenuButton(
                                                     icon: SvgPicture.string(
                                                         TaskSvg().moreIcon),
@@ -703,120 +769,77 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                         5)),
                                                     itemBuilder: (context) => [
                                                       PopupMenuItem(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(0),
-                                                          value: 'a',
-                                                          enabled: true,
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              // Container(
-                                                              //   padding:
-                                                              //       const EdgeInsets
-                                                              //               .only(
-                                                              //           left:
-                                                              //               10),
-                                                              //   child: Text(
-                                                              //     'Edit this Job',
-                                                              //     style: GoogleFonts.poppins(
-                                                              //         color: Colors
-                                                              //             .black54,
-                                                              //         fontSize:
-                                                              //             13,
-                                                              //         fontWeight:
-                                                              //             FontWeight
-                                                              //                 .w500),
-                                                              //   ),
-                                                              // ),
-                                                              // const Divider(
-                                                              //   indent: 30,
-                                                              // ),
-                                                              GestureDetector(
-                                                                onTap: (){
-                                                                  print("hello");
-                                                                  widget.socket!.emit("update.list",{
-                                                                    
-                                                                                      print("update")
-                                                                                    });
-                                                                                    widget.socket!.on("friends.update", (data) {
-                                                                      print(data);
-                                                                      setState(() {
-                                                                        
-                                                                      });
-                                                                    } );
-                                                                  uid=widget.grpmember![index].id!;
-                                                                  // BlocProvider.of<GroupBloc>(context).add(
-
-                                                                    //   GroupMemberDeleteEvent(
-                                                                    //     token:widget.token??"", 
-                                                                    //     chatId: widget.communicationUserModel!.chatid??"", 
-                                                                    //     userId:grpmember[index].id??"")
-                                                                    // );
-                                                                    showDialog(
-                                                                            context: context, builder: (BuildContext context) {
-                                                                              return AlertDialog(
-                                                                                content: Text("Delete ${widget.grpmember![index].name?.toLowerCase().toTitleCase()} from this group?"),
-                                                                                actions: [
-                                                                                  Row( mainAxisAlignment: MainAxisAlignment.end,
-                                                                                    children: [
-                                                                                      TextButton(onPressed: (){
-                                                                                        Navigator.pop(context);
-                                                                                      }, child: Text("Cancel",style: TextStyle(color: ColorPalette.primary),)),
-                                                                                      TextButton(onPressed: (){
-                                                                                         setState(() {
-                                                                                        widget.socket!.emit("removeUserFromGroup",
-                                                                                    {"userId":widget.grpmember![index].id??"",
-                                                                                    "chatId":widget.communicationUserModel!.chatid??""
-                                                                                    }
-                                                                                    );
-                                                                                    widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
-                                                                                    widget.socket!.on("userRemovedFromGroup", (data) {
-                                                                                      widget.socket!.emit("group.members",{widget.chat==false? widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
-                                                                                      showSnackBar(context, message: data, color: Colors.black);
-                                                                                    } );
-                                                                                    widget.socket!.emit("group.message",{
-                                                                                      "type": "notify", "chatid": widget.communicationUserModel?.chatid, "content":"${widget.grpmember![index].name.toString().toTitleCase()} is removed from this group "
-                                                                                    }); 
-                                                                                    Navigator.pop(context);
-                                                                                      });
-
-                                                                                      }, child: Text("Delete",style: TextStyle(color: ColorPalette.primary),))
-                                                                                    ],
-                                                                                  )
-                                                                                ],
-                                                                              );
-                                                                            },
-                                                                            );
+                                                        onTap: (){
+                                                          print("hello");
+                                                              widget.socket!.emit("update.list",{
                                                                 
-                                                                  
-                                                                },
-                                                                child: Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .only(
-                                                                          left:
-                                                                              10),
-                                                                  child: Text(
-                                                                    'Delete',
-                                                                    style: GoogleFonts.poppins(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontSize:
-                                                                            w/26,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
+                                                                                  print("update")
+                                                                                });
+                                                                                widget.socket!.on("friends.update", (data) {
+                                                                  print(data);
+                                                                  setState(() {
+                                                                    
+                                                                  });
+                                                                } );
+                                                              uid=grpmember[index].id!;
+                                                              
+                                                                showDialog(
+                                                                        context: context, builder: (BuildContext context) {
+                                                                          return AlertDialog(
+                                                                            content: Text("Remove ${grpmember[index].name?.toLowerCase().toTitleCase()} from this group?"),
+                                                                            actions: [
+                                                                              Row( mainAxisAlignment: MainAxisAlignment.end,
+                                                                                children: [
+                                                                                  TextButton(onPressed: (){
+                                                                                    Navigator.pop(context);
+                                                                                  }, child: Text("Cancel",style: TextStyle(color: ColorPalette.primary),)),
+                                                                                  TextButton(onPressed: (){
+                                                                                     setState(() {
+                                                                                      String? chattid = widget.chat==false? widget.redirectchatid!=""?widget.redirectchatid.toString():  widget.communicationUserModel?.chatid.toString():widget.communicationuser?.chatid.toString();
+                                                                                //     widget.socket!.emit("removeUserFromGroup",
+                                                                                // {"userId":grpmember[index].id??"",
+                                                                                // "chatId":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel!.chatid??""
+                                                                                // }
+                                                                                // );
+                                                                                // widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                                                                                // widget.socket!.on("userRemovedFromGroup", (data) {
+                                                                                //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                                                                                //   showSnackBar(context, message: data, color: Colors.black);
+                                                                                // } );
+                                                                                BlocProvider.of<GroupBloc>(context).add( GroupMemberDeleteEvent(
+                                                                                    token:widget.token??"", 
+                                                                                    chatId: chattid??"" , 
+                                                                                    userId:grpmember[index].id??"")
+                                                                                );
+                                                                                widget.socket!.emit("group.message",{
+                                                                                  "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content":"${grpmember[index].name.toString().toTitleCase()} is removed from this group "
+                                                                                }); 
+                                                                                Navigator.pop(context);
+                                                                                isM=true;
+                                                                                  });
+                                                          
+                                                                                  }, child: Text("Remove",style: TextStyle(color: ColorPalette.primary),))
+                                                                                ],
+                                                                              )
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                        );
+                                                        },
+                                                          child: Text(
+                                                            'Remove',
+                                                            style: GoogleFonts.poppins(
+                                                                color: Colors
+                                                                    .black54,
+                                                                fontSize:
+                                                                    w/26,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
                                                           ))
                                                     ],
                                                     onSelected: (value) {},
-                                                  ),
+                                                  ):SizedBox():SizedBox()
                                                 ],
                                               );
                                             },
@@ -863,7 +886,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                           ),
                                           MediaList(
                                               messages: state.profileGetModel
-                                                  .media?.messages),
+                                                  .media!.messages!),
                                           Container(
                                             margin: const EdgeInsets.only(
                                                 left: 16, top: 20),
@@ -1050,7 +1073,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                   ),
                                 ),
                               ])),
-                          widget.isGroup
+                          widget.isGroup && widget.isadmin==false
                               ? InkWell(
                                   onTap: () {
                                     alertbox();
@@ -1079,7 +1102,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                     child: Text(
                                       "Leave Chat",
                                       style: GoogleFonts.roboto(
-                                        color: const Color(0xfffe5762),
+                                        color:  ColorPalette.primary,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -1153,11 +1176,15 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
       },
       );
   }
+// Future<void> loading(){
+// return EasyLoading.show();
+// }
+
     alertbox2(){
     showDialog(
       context: context, builder: (BuildContext context) {
         return AlertDialog(
-          content: Text("Remove to leave this group"),
+          content: Text("Remove user from this group"),
           actions: [
             Row( mainAxisAlignment: MainAxisAlignment.end,
               children: [

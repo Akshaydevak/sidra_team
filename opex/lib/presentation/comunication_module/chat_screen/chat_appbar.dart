@@ -1,5 +1,6 @@
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat-profile_screengrp.dart';
 import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
@@ -26,6 +27,8 @@ class ChatAppBar extends StatefulWidget {
   final bool isgrp;
   final String? loginUserId;
   final FromUser? groupTypingUser;
+  final String redirectchatid;
+  final String redirectchatname;
   final String? token;
   final Socket? socket;
   final String? roomId;
@@ -33,18 +36,24 @@ class ChatAppBar extends StatefulWidget {
   final String cmntgrpid;
   final String cmntgrpname;
   final GroupList? grpuser;
+  final String? redirectionsenduserId;
   List<GroupUserList>? grpmember = [];
+  final bool? isadmin;
   // final VoidCallback ontap;
   ChatAppBar(
       {Key? key,
       this.communicationUserModel,
       this.communicationuser,
       this.grpuser,
+      this.isadmin,
       this.cmntgrpid = "",
       this.cmntgrpname = "",
+      this.redirectchatid="",
+      this.redirectchatname="",
       this.loginUserId,
       this.typing,
       this.socket,
+      this.redirectionsenduserId="",
       this.isGroup,
       this.token,
       this.roomId,
@@ -74,6 +83,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   void initState() {
+    print("isadminn ${widget.isadmin} name ${widget.redirectchatname} ame ${widget.redirectchatid} ${widget.isGroup}");
     // TODO: implement initState
     super.initState();
   }
@@ -105,11 +115,68 @@ class _ChatAppBarState extends State<ChatAppBar> {
               GestureDetector(
                   onTap: () {
                     if (widget.isGroup == false) {
-                      if (widget.chat == false) {
+                      if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationUserModel?.id ?? ""
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
+                        });
+                        print("user left too");
+
+                        print("user left too");
+                        widget.socket!.on("left.room", (data) {
+                          print("room left $data");
+
+                          if (mounted) {
+                            widget.socket!.off("get.clients");
+                            widget.socket!.emit("get.clients", widget.roomId);
+                            widget.socket!.off("active.length");
+                            widget.socket!.on("active.length", (data) {
+                              saveactiveusers(data);
+                              print("ACTIVE ...length1 $data");
+                            });
+                          }
+                          widget.socket!.on("msg1.seen", (data) {
+                            print("room leave message $data");
+                          });
+                        });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data) {
+                          print("user left");
+
+                          if (data["userid"] == widget.loginUserId) {
+                            print("ACTIVE length sharedprefww");
+                            saveUnreadMessageCount(0, widget.roomId ?? "");
+                            print("user left the room1 ${data["chatid"]}");
+                            setState(() {});
+                          } else {
+                            print("same user id");
+                          }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                      else if (widget.chat == false) {
+                        widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
+                        widget.socket!.emit("leave.chat", {
+                          "room": widget.roomId ?? "",
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
@@ -152,9 +219,12 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 chatFilter: "chats"));
                         Navigator.pop(context);
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
+    ? widget.communicationUserModel?.chatid:
+    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationuser?.users?[0].id ?? ""
+                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationuser?.users?[0].id ?? ""
                         });
                         print("user left too");
 
@@ -191,11 +261,73 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Navigator.pop(context);
                       }
                     } else {
-                      if (widget.isgrp == false) {
+                       if(widget.redirectchatid != ""){
+                        print("push notificstion redirection");
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.communicationUserModel?.id ?? ""
+                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
+                        });
+                        print("user left too");
+
+                        print("user left too");
+                        widget.socket!.on("left.room", (data) {
+                          print("room left $data");
+
+                          if (mounted) {
+                            widget.socket!.off("get.clients");
+                            widget.socket!.emit("get.clients", widget.roomId);
+                            widget.socket!.off("active.length");
+                            widget.socket!.on("active.length", (data) {
+                              saveactiveusers(data);
+                              print("ACTIVE ...length1 $data");
+                            });
+                          }
+                          if (ismount) {
+                            widget.socket
+                                ?.emit("group.message.seen", widget.roomId);
+                            widget.socket?.on("msg.seen.by",
+                                (data) => print("active userss $data"));
+                          }
+
+                          widget.socket!.on("msg1.seen", (data) {
+                            print("room leave message $data");
+                          });
+                        });
+                        widget.socket!.off("user.left");
+                        widget.socket!.on("user.left", (data) {
+                          print("user left");
+
+                          if (data["userid"] == widget.loginUserId) {
+                            print("ACTIVE length sharedprefww");
+                            saveUnreadMessageCount(0, widget.roomId ?? "");
+                            print("user left the room1 ${data["chatid"]}");
+                            setState(() {});
+                          } else {
+                            print("same user id");
+                          }
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: DashBoard(
+              // token: widget.token ?? ""
+              // socket: widget.socket,
+            ),
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+                      }
+                   else   if (widget.isgrp == false) {
+                        widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
+                        widget.socket!.emit("leave.chat", {
+                          "room": widget.roomId ?? "",
+                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
@@ -240,6 +372,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Navigator.pop(context);
                       } else {
                         widget.socket!.emit("update.list", {print("update")});
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
+    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid": widget.loginUserId ?? ""
@@ -297,21 +431,21 @@ class _ChatAppBarState extends State<ChatAppBar> {
               GestureDetector(
                 onTap: () {
                   if (widget.isGroup == false) {
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: ChatProfileScreen(
-                        chat: widget.chat,
-                        token: widget.token,
-                        roomId: widget.roomId,
-                        socket: widget.socket,
-                        isGroup: widget.communicationUserModel?.isgrp ?? false,
-                        communicationUserModel: widget.communicationUserModel,
-                        communicationuser: widget.communicationuser,
-                      ),
-                      withNavBar: true, // OPTIONAL VALUE. True by default.
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
-                  } else {
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: ChatProfileScreen(
+                    //     chat: widget.chat,
+                    //     token: widget.token,
+                    //     roomId: widget.roomId,
+                    //     socket: widget.socket,
+                    //     isGroup: widget.communicationUserModel?.isgrp ?? false,
+                    //     communicationUserModel: widget.communicationUserModel,
+                    //     communicationuser: widget.communicationuser,
+                    //   ),
+                    //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
+                  } else if(widget.cmntgrpid=="") {
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
                       screen: ChatProfileScreen2(
@@ -319,18 +453,52 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         token: widget.token,
                         roomId: widget.roomId,
                         socket: widget.socket,
+                        loginuserid: widget.loginUserId,
                         isGroup: true,
+                        isadmin: widget.isadmin,
+                        redirectchatid: widget.redirectchatid,
+                        redirectchatname: widget.redirectchatname,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
+
                       ),
                       withNavBar: true, // OPTIONAL VALUE. True by default.
                       pageTransitionAnimation: PageTransitionAnimation.fade,
                     );
                   }
                 },
-                child: widget.communicationUserModel?.photo == null ||
-                        widget.communicationUserModel!.photo!.isEmpty
+                child:widget.isGroup==false? 
+             widget.chat==true?widget.communicationuser?.photoUrl ==null||widget.communicationuser!.photoUrl!.isEmpty?
+             TextAvatar(
+                        shape: Shape.Circular,
+                        size: h / 95,
+                        numberLetters: 2,
+                        fontSize: w / 22,
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        text: widget.isGroup == false
+                            ? widget.chat == false
+                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                            : widget.isgrp == false
+                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                : widget.cmntgrpid == ""
+                                    ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                    : "${widget.cmntgrpname.toString().toUpperCase()}",
+                      )
+                    :  CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage(
+                                    widget.communicationuser?.photoUrl ?? ""
+                                //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                // "${widget.communicationUserModel?.photo}"
+                                // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                ))
+             
+                :widget.communicationUserModel?.photoindividual == null ||
+                        widget.communicationUserModel!.photoindividual!.isEmpty 
                     ? TextAvatar(
                         shape: Shape.Circular,
                         size: h / 95,
@@ -340,7 +508,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         fontWeight: FontWeight.w500,
                         text: widget.isGroup == false
                             ? widget.chat == false
-                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
                                 : "${widget.communicationuser?.name.toString().toUpperCase()}"
                             : widget.isgrp == false
                                 ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
@@ -348,18 +516,20 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                     ? "${widget.grpuser?.gname.toString().toUpperCase()}"
                                     : "${widget.cmntgrpname.toString().toUpperCase()}",
                       )
-                    : widget.isGroup == false
-                        ? CircleAvatar(
+                    :  CircleAvatar(
                             radius: w / 23,
                             backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(widget.chat == false
-                                    ? widget.communicationUserModel?.photo ?? ""
-                                    : widget.communicationuser?.photoUrl ?? ""
+                            backgroundImage: NetworkImage(widget.communicationUserModel?.photoindividual ?? ""
                                 //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
                                 // "${widget.communicationUserModel?.photo}"
                                 // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
                                 ))
-                        : CircleAvatar(
+                        // : CircleAvatar(
+                        //     radius: w / 23,
+                        //     backgroundColor: Colors.grey,
+                        //     backgroundImage:
+                        //         AssetImage("asset/chatgrpimg.png"))
+                                :CircleAvatar(
                             radius: w / 23,
                             backgroundColor: Colors.grey,
                             backgroundImage:
@@ -394,6 +564,9 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         roomId: widget.roomId,
                         socket: widget.socket,
                         isGroup: true,
+                        redirectchatid: widget.redirectchatid,
+                        redirectchatname: widget.redirectchatname,
+                        isadmin: widget.isadmin,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
@@ -413,8 +586,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             width: w / 1.9,
                             child: Text(
                               widget.chat == false
-                                  ? "${widget.communicationUserModel?.name?.toTitleCase()}"
-                                  : "${widget.communicationuser?.users![0].name?.toTitleCase()}",
+                                  ?  widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                  : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationuser?.users![0].name?.toTitleCase()}",
                               // maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.roboto(
@@ -427,8 +600,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         : widget.cmntgrpid == ""
                             ? Text(
                                 widget.isgrp == false
-                                    ? "${widget.communicationUserModel?.name?.toTitleCase()}"
-                                    : "${widget.grpuser?.gname?.toTitleCase()}",
+                                    ? widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                    : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.grpuser?.gname?.toTitleCase()}",
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.roboto(
                                   color: Colors.white,
@@ -439,7 +612,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             : Container(
                                 width: w / 1.8,
                                 child: Text(
-                                  "${widget.cmntgrpname.toTitleCase()}",
+                                 widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}": "${widget.cmntgrpname.toTitleCase()}",
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.roboto(
                                     color: Colors.white,

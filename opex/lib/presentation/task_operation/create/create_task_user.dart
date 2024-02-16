@@ -10,11 +10,13 @@ import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -36,7 +38,8 @@ import '../home/bloc/job_bloc.dart';
 
 class CreateUser extends StatefulWidget {
   final bool? edit;
-  const CreateUser({super.key, this.edit});
+  final GetEmployeeList? readEmployee;
+  const CreateUser({super.key, this.edit, this.readEmployee});
 
   @override
   State<CreateUser> createState() => _CreateUserState();
@@ -67,6 +70,7 @@ class _CreateUserState extends State<CreateUser> {
   TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
+  TextEditingController whatsappmobileController = TextEditingController();
   TextEditingController nationalityController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String designationCode = '';
@@ -77,7 +81,12 @@ class _CreateUserState extends State<CreateUser> {
   String designationName = '';
   String departmentCodeUser = '';
   String contactNumber = '';
+  String completeNumber="";
+  String countryCode="IN";
   String userRoleName = 'Normal User';
+  String contactNumberWhatsapp = '';
+  String completeNumberWhatsapp="";
+  String countryCodeWhatsapp="IN";
   int officialId = 0;
   int select = 0;
   void onselct(index) {
@@ -89,6 +98,7 @@ class _CreateUserState extends State<CreateUser> {
 
   @override
   void initState() {
+    // readUser();
     context.read<EmployeeBloc>().add(const GetReadTypeEvent());
     context
         .read<SellerAdminBloc>()
@@ -96,6 +106,59 @@ class _CreateUserState extends State<CreateUser> {
     context.read<SellerAdminBloc>().add(const CountryListEvent());
 
     super.initState();
+  }
+  readUser(){
+
+      readEmployee = widget.readEmployee;
+      drop ?? (drop = readEmployee?.country?.toUpperCase());
+      if (readEmployee?.gender == 'M') {
+        selectedGender = 'Male';
+        selGender = 'M';
+      } else if (readEmployee?.gender == 'F') {
+        selectedGender = 'Female';
+        selGender = 'F';
+      } else {
+        selectedGender = 'Other';
+        selGender = 'O';
+      }
+      // selGender ?? (drop=readEmployee?.gender);
+      // dropState ?? (dropState=sellerRead?.state.toString().toTitleCase());
+
+      fNameController.text = readEmployee?.fname ?? "";
+      lNameController.text = readEmployee?.lname ?? "";
+      // selectedGender=state.getEmployee.gender??"";
+      mobileController.text = readEmployee?.contactNum?.number ?? "";
+      whatsappmobileController.text = readEmployee?.WhatsappNum?.number ?? "";
+
+      contactNumber = readEmployee?.primaryMobile ?? "";
+      completeNumberWhatsapp="${readEmployee?.WhatsappNum?.countryCode}${readEmployee?.WhatsappNum?.number}";
+      completeNumber="${readEmployee?.contactNum?.countryCode}${readEmployee?.contactNum?.number}";
+      countryCode=readEmployee?.contactNum?.countryCode??"";
+      countryCodeWhatsapp=readEmployee?.WhatsappNum?.countryCode??"";
+      emailController.text = readEmployee?.email ?? "";
+      designationName = readEmployee?.designation ?? "";
+      userRoleName = readEmployee?.role ?? "";
+      officialRoleName = readEmployee?.userMete?.roleName ?? "";
+      departmentName = readEmployee?.departmentCode ?? "";
+      designationName = readEmployee?.designation ?? "";
+      imageId=readEmployee?.userMete?.profile??"";
+      imageUrl=readEmployee?.userMete?.profile??"";
+      for (var i = 0;
+      i < readEmployee!.userMete!.roleList!.length;
+      i++) {
+        passNameList
+            .add(readEmployee?.userMete!.roleList?[i] ?? "");
+
+      }
+      context
+          .read<SellerAdminBloc>()
+          .add(const AdditionalRoleListEvent('', "", ""));
+      print("pass ${passNameList.length}");
+      print("mobhhh${completeNumber}");
+      print("mobhhh$completeNumberWhatsapp");
+
+      setState(() {});
+
   }
 
   String? drop;
@@ -111,7 +174,7 @@ class _CreateUserState extends State<CreateUser> {
       listeners: [
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if (state is PicSuccess) {
+            if (state is Pic2Success) {
               print("Inside Success${state.data}\t${state.url}");
               setState(() {
                 // picModel.replaceRange(indexImage, indexImage+1,
@@ -138,7 +201,6 @@ class _CreateUserState extends State<CreateUser> {
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
             print("state group$state");
-            if (state is GetEmployeeReadLoading) {}
             if (state is GetEmployeeReadSuccess) {
               readEmployee = state.getEmployee;
               drop ?? (drop = readEmployee?.country?.toUpperCase());
@@ -157,9 +219,16 @@ class _CreateUserState extends State<CreateUser> {
 
               fNameController.text = state.getEmployee.fname ?? "";
               lNameController.text = state.getEmployee.lname ?? "";
+              countryCode=state.getEmployee.WhatsappNum?.countryCode??"";
               // selectedGender=state.getEmployee.gender??"";
-              mobileController.text = state.getEmployee.primaryMobile ?? "";
+              mobileController.text = state.getEmployee.contactNum?.number ?? "";
+              whatsappmobileController.text = state.getEmployee.WhatsappNum?.number ?? "";
+
               contactNumber = state.getEmployee.primaryMobile ?? "";
+              completeNumberWhatsapp="${state.getEmployee?.WhatsappNum?.countryCode}${state.getEmployee?.WhatsappNum?.number}";
+              completeNumber="${state.getEmployee?.contactNum?.countryCode}${state.getEmployee?.contactNum?.number}";
+              countryCode=state.getEmployee?.contactNum?.countryCode??"";
+              countryCodeWhatsapp=state.getEmployee?.WhatsappNum?.countryCode??"";
               emailController.text = state.getEmployee.email ?? "";
               designationName = state.getEmployee?.designation ?? "";
               userRoleName = state.getEmployee?.role ?? "";
@@ -173,12 +242,14 @@ class _CreateUserState extends State<CreateUser> {
                   i++) {
                 passNameList
                     .add(state.getEmployee?.userMete!.roleList?[i] ?? "");
-                
+
               }
               context
                   .read<SellerAdminBloc>()
                   .add(const AdditionalRoleListEvent('', "", ""));
               print("pass ${passNameList.length}");
+              print("mobhhh${completeNumber}");
+              print("mobhhh$completeNumberWhatsapp");
 
               setState(() {});
             }
@@ -194,7 +265,6 @@ class _CreateUserState extends State<CreateUser> {
         ),
         BlocListener<SellerAdminBloc, SellerAdminState>(
           listener: (context, state) {
-            if (state is GetCountryListLoading) {}
             if (state is GetCountryListSuccess) {
               countryList = state.country;
               setState(() {});
@@ -203,7 +273,6 @@ class _CreateUserState extends State<CreateUser> {
         ),
         BlocListener<SellerAdminBloc, SellerAdminState>(
           listener: (context, state) {
-            if (state is CreateDesignationLoading) {}
             if (state is CreateDesignationSuccess) {
               Navigator.pop(context);
             }
@@ -211,10 +280,7 @@ class _CreateUserState extends State<CreateUser> {
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if (state is EmployeeLoading) {
-              showSnackBar(context,
-                  message: "User Creation Loading", color: ColorPalette.green);
-            }
+
             if (state is EmployeeSuccess) {
               showSnackBar(context,
                   message: state.user ?? "", color: ColorPalette.green);
@@ -229,10 +295,7 @@ class _CreateUserState extends State<CreateUser> {
         ),
         BlocListener<EmployeeBloc, EmployeeState>(
           listener: (context, state) {
-            if (state is UpdateEmployeeLoading) {
-              showSnackBar(context,
-                  message: "User Updation Loading", color: ColorPalette.green);
-            }
+
             if (state is UpdateEmployeeSuccess) {
               showSnackBar(context,
                   message: state.user, color: ColorPalette.green);
@@ -363,6 +426,7 @@ class _CreateUserState extends State<CreateUser> {
                     ),
                   ),
                 ),
+                SizedBox(height: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -505,51 +569,266 @@ class _CreateUserState extends State<CreateUser> {
                   height: 5,
                 ),
                 IntlPhoneField(
-                  initialCountryCode: "IN",
+                  pickerDialogStyle:
+                  PickerDialogStyle(backgroundColor: Colors.white,
+                      searchFieldCursorColor:
+                      const Color(0xffff9900),
+                      listTileDivider: const Divider(
+                        height: 0,
+                      ),
+                      searchFieldInputDecoration:
+                      const InputDecoration(
+                          focusedBorder:
+                          UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(
+                                      0xffff9900),
+                                  width: 2.0,
+                                  style: BorderStyle
+                                      .solid)),
+                          suffixIcon: Icon(
+                            Icons.search,
+                            color: ColorPalette.primary,
+                          ),
+                          labelText: "Search Country...",
+                          labelStyle: TextStyle(
+                              color: Colors.grey),
+                          enabledBorder:
+                          UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: ColorPalette.primary,
+                                  width: 1.0,
+                                  style: BorderStyle
+                                      .solid)))),
                   controller: mobileController,
+                  disableLengthCheck: true,
+                  initialCountryCode: countryCode,
+
                   validator: (text) {
-                    if (text == null) {
-                      return 'Text is empty';
+                    if (text == null || text.toString() == "") {
+                      return '* required';
                     }
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: "eg.8606200441",
-                    hintStyle: GoogleFonts.roboto(
-                        color: Colors.grey, fontSize: w / 24),
+                    fillColor: Colors.white,
+                    focusColor: Colors.white,
+                    hintText: "eg.553536677",
+                    hintStyle: GoogleFonts.inter(
+                        color: ColorPalette.fillGrey, fontSize: 13),
                     contentPadding: const EdgeInsets.only(
-                        left: 10, top: 10, bottom: 10, right: 10),
+                        left: 0, top: 10, bottom: 10),
                     border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffe6ecf0)),
+                      borderSide:
+                      BorderSide(color: ColorPalette.borderGrey),
                     ),
                     enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffe6ecf0)),
+                      borderSide:
+                      BorderSide(color: ColorPalette.borderGrey),
                     ),
                     focusedBorder: const OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0xffe6ecf0), width: 1.0),
+                      borderSide: BorderSide(
+                          color: ColorPalette.black, width: 1.0),
                     ),
                     errorBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderSide: BorderSide(
+                          color: Colors.red, width: 1.0),
                     ),
                   ),
                   onChanged: (phone) {
-                    contactNumber = phone.completeNumber.toString();
+                    contactNumber = phone.number;
+                    countryCode =phone.countryCode;
+                    completeNumber=countryCode+contactNumber;
+                    // print("compleeeeeeeeeeeeete$completeNumber");
                     mobileController =
                         TextEditingController(text: phone.number);
+                    // email = TextEditingController(text: completeNumber);
                   },
-                  onCountryChanged: (country) {},
+                  onCountryChanged: (country) {
+                    countryCode=country.dialCode;
+                    completeNumber= "+${countryCode + contactNumber}";
+                    mobileController =
+                        TextEditingController(text: contactNumber);
+
+                  },
                   cursorColor: Colors.black,
                   dropdownIcon: const Icon(
                     Icons.arrow_right,
                     color: Colors.white,
                   ),
                   dropdownIconPosition: IconPosition.trailing,
-                  flagsButtonMargin: const EdgeInsets.only(left: 10, right: 30),
-                  disableLengthCheck: false,
+                  flagsButtonMargin:
+                  const EdgeInsets.only(left: 10, right: 0),
+
+                  // disableLengthCheck: false,
                   showDropdownIcon: false,
                 ),
+                SizedBox(height: 16,),
+                Row(
+                  children: [
+                    Text(
+                      "Whatsapp Number",
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: w / 24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        " *",
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.w900),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                // IntlPhoneField(
+                //   initialCountryCode: "IN",
+                //   controller: mobileController,
+                //   validator: (text) {
+                //     if (text == null) {
+                //       return 'Text is empty';
+                //     }
+                //     return null;
+                //   },
+                //   decoration: InputDecoration(
+                //     hintText: "eg.8606200441",
+                //     hintStyle: GoogleFonts.roboto(
+                //         color: Colors.grey, fontSize: w / 24),
+                //     contentPadding: const EdgeInsets.only(
+                //         left: 10, top: 10, bottom: 10, right: 10),
+                //     border: const OutlineInputBorder(
+                //       borderSide: BorderSide(color: Color(0xffe6ecf0)),
+                //     ),
+                //     enabledBorder: const OutlineInputBorder(
+                //       borderSide: BorderSide(color: Color(0xffe6ecf0)),
+                //     ),
+                //     focusedBorder: const OutlineInputBorder(
+                //       borderSide:
+                //       BorderSide(color: Color(0xffe6ecf0), width: 1.0),
+                //     ),
+                //     errorBorder: const OutlineInputBorder(
+                //       borderSide: BorderSide(color: Colors.black, width: 1.0),
+                //     ),
+                //   ),
+                //   onChanged: (phone) {
+                //
+                //     contactNumber = phone.completeNumber.toString();
+                //     mobileController =
+                //         TextEditingController(text: phone.number);
+                //   },
+                //   onCountryChanged: (country) {},
+                //   cursorColor: Colors.black,
+                //   dropdownIcon: const Icon(
+                //     Icons.arrow_right,
+                //     color: Colors.white,
+                //   ),
+                //   dropdownIconPosition: IconPosition.trailing,
+                //   flagsButtonMargin: const EdgeInsets.only(left: 10, right: 30),
+                //   disableLengthCheck: false,
+                //   showDropdownIcon: false,
+                // ),
+                IntlPhoneField(
+                  pickerDialogStyle:
+                  PickerDialogStyle(backgroundColor: Colors.white,
+                      searchFieldCursorColor:
+                      const Color(0xffff9900),
+                      listTileDivider: const Divider(
+                        height: 0,
+                      ),
+                      searchFieldInputDecoration:
+                      const InputDecoration(
+                          focusedBorder:
+                          UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(
+                                      0xffff9900),
+                                  width: 2.0,
+                                  style: BorderStyle
+                                      .solid)),
+                          suffixIcon: Icon(
+                            Icons.search,
+                            color: ColorPalette.primary,
+                          ),
+                          labelText: "Search Country...",
+                          labelStyle: TextStyle(
+                              color: Colors.grey),
+                          enabledBorder:
+                          UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: ColorPalette.primary,
+                                  width: 1.0,
+                                  style: BorderStyle
+                                      .solid)))),
+                  controller: whatsappmobileController,
+                  disableLengthCheck: true,
+                  initialCountryCode: countryCodeWhatsapp,
 
+                  validator: (text) {
+                    if (text == null || text.toString() == "") {
+                      return '* required';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    focusColor: Colors.white,
+                    hintText: "eg.553536677",
+                    hintStyle: GoogleFonts.inter(
+                        color: ColorPalette.fillGrey, fontSize: 13),
+                    contentPadding: const EdgeInsets.only(
+                        left: 0, top: 10, bottom: 10),
+                    border: const OutlineInputBorder(
+                      borderSide:
+                      BorderSide(color: ColorPalette.borderGrey),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide:
+                      BorderSide(color: ColorPalette.borderGrey),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: ColorPalette.black, width: 1.0),
+                    ),
+                    errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.red, width: 1.0),
+                    ),
+                  ),
+                  onChanged: (phone) {
+                    contactNumberWhatsapp = phone.number;
+                    countryCodeWhatsapp =phone.countryCode;
+                    completeNumberWhatsapp=countryCodeWhatsapp+contactNumberWhatsapp;
+                    // print("compleeeeeeeeeeeeete$completeNumber");
+                    whatsappmobileController =
+                        TextEditingController(text: phone.number);
+                    // email = TextEditingController(text: completeNumber);
+                  },
+                  onCountryChanged: (country) {
+                    countryCodeWhatsapp=country.dialCode;
+                    completeNumberWhatsapp= "+${countryCodeWhatsapp + contactNumberWhatsapp}";
+                    whatsappmobileController =
+                        TextEditingController(text: contactNumberWhatsapp);
+
+                  },
+                  cursorColor: Colors.black,
+                  dropdownIcon: const Icon(
+                    Icons.arrow_right,
+                    color: Colors.white,
+                  ),
+                  dropdownIconPosition: IconPosition.trailing,
+                  flagsButtonMargin:
+                  const EdgeInsets.only(left: 10, right: 0),
+
+                  // disableLengthCheck: false,
+                  showDropdownIcon: false,
+                ),
+                SizedBox(height: 16,),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -570,9 +849,6 @@ class _CreateUserState extends State<CreateUser> {
                           ),
                         )
                       ],
-                    ),
-                    SizedBox(
-                      height: 5,
                     ),
                     Container(
                       width: w1,
@@ -651,7 +927,7 @@ class _CreateUserState extends State<CreateUser> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: Color(0xffe6ecf0),
                             width: 1,
@@ -848,10 +1124,12 @@ class _CreateUserState extends State<CreateUser> {
                     ? GradientButton(
                         color: ColorPalette.primary,
                         onPressed: () {
+                          HapticFeedback.heavyImpact();
                           print("mob${mobileController.text}");
                           print("mob${readEmployee?.id}");
                           context.read<EmployeeBloc>().add(UpdateEmployeeEvent(
-                              contact: contactNumber,
+                              contact: completeNumber,
+                              whatsapp: completeNumberWhatsapp,
                               profileImg: imageId,
                               officialRole: readEmployee?.userMete?.roleId ?? 0,
                               roleName: officialRoleName,
@@ -893,12 +1171,14 @@ class _CreateUserState extends State<CreateUser> {
                     : GradientButton(
                         color: ColorPalette.primary,
                         onPressed: () {
-                          print("mob${mobileController.text}");
-                          print("mob$contactNumber");
+                          HapticFeedback.heavyImpact();
+                          print("mob${completeNumber}");
+                          print("mob$completeNumberWhatsapp");
                           context.read<EmployeeBloc>().add(
                               RegisterEmployeeEvent(
+                                whatsapp: completeNumberWhatsapp,
                                 profilePic: imageId,
-                                  contact: contactNumber,
+                                  contact: completeNumber,
                                   password: passwordController.text,
                                   officialRole: officialId,
                                   roleName: officialRoleName,
@@ -2568,7 +2848,7 @@ class _CreateUserState extends State<CreateUser> {
           // Variable.imageTyp=pickedFile?.name??"";
 
           BlocProvider.of<EmployeeBloc>(context)
-              .add(PostImageAllEvent(file!));
+              .add(PostImageAll2Event(file!));
         }
       }
     } catch (e) {

@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
@@ -9,6 +10,9 @@ import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/model/joblist_model.dart';
 import 'package:cluster/presentation/task_operation/job_title.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
+import 'package:day_night_time_picker/lib/constants.dart';
+import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
+import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,6 +25,7 @@ import '../../../../core/common_snackBar.dart';
 import '../../../../core/utils/variables.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import '../../../common_widgets/reusable_textfield.dart';
 import '../lottieLoader.dart';
 import 'create_svg.dart';
 
@@ -50,29 +55,18 @@ class _CreateJobState extends State<CreateJob> {
   }
   GetJobList? JobRead;
 
-  String _selectedDate1 = '';
-  String _dateCount = '';
+
   String _range = '';
   String _range2 = '';
-  String _rangeCount = '';
 
-  /// The method for [DateRangePickerSelectionChanged] callback, which will be
-  /// called whenever a selection changed on the date picker widget.
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+   _onSelectionChanged(DateTime? startDatePass,DateTime? endDatePass) {
 
     setState(() {
-      if (args.value is PickerDateRange) {
-        _range = '${DateFormat('yyyy-MM-dd').format(args.value.startDate)} -'
-            ' ${DateFormat('yyyy-MM-dd').format(args.value.endDate ?? args.value.startDate)}';
-        _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
-            ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
-      } else if (args.value is DateTime) {
-        _selectedDate1 = args.value.toString();
-      } else if (args.value is List<DateTime>) {
-        _dateCount = args.value.length.toString();
-      } else {
-        _rangeCount = args.value.length.toString();
-      }
+      _range = '${DateFormat('yyyy-MM-dd').format(startDatePass!)} -'
+          ' ${DateFormat('yyyy-MM-dd').format(endDatePass!)}';
+
+        _range2 = '${DateFormat('dd-MM-yyyy').format(startDatePass)} -'
+            ' ${DateFormat('dd-MM-yyyy').format(endDatePass)}';
       startDate=_range.split(" - ")[0];
       startDate2=_range2.split(" - ")[0];
       ebdDate=_range.split(" - ")[1];
@@ -81,58 +75,75 @@ class _CreateJobState extends State<CreateJob> {
       validationCheck();
     });
   }
-  TimeOfDay _time = const TimeOfDay(hour: 7, minute: 15);
-  TimeOfDay _time2 = const TimeOfDay(hour: 8, minute: 15);
+  Time _time = Time(hour: 11, minute: 30, second: 20);
+  Time _timeRead = Time(hour: 12, minute: 30, second: 20);
+  bool time1Selected = false;
+  bool time2Selected = false;
+  String time2='';
+  String time3='';
+  void onTimeChanged(Time newTime) {
+    setState(() {
+      _time = newTime;
+
+    });
+  }
+  void onTimeChangedEnd(Time newTime) {
+    setState(() {
+      _timeRead = newTime;
+    });
+  }
+  // TimeOfDay _time = const TimeOfDay(hour: 7, minute: 15);
+  // TimeOfDay _time2 = const TimeOfDay(hour: 8, minute: 15);
 
   TextEditingController jobtitle=TextEditingController();
   TextEditingController jobdiscription=TextEditingController();
   int? relatedJobId;
-  void _selectTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _time,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time = newTime;
-        startTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
-      });
-    }
-    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30);
-
-    final twentyFourHourFormat = DateFormat('HH:mm:00');
-    final twelveHourFormat = DateFormat('h:mm a');
-
-    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
-     startTime = twelveHourFormat.format(dateTime);
-     startTime2 = twentyFourHourFormat.format(dateTime);
-    validationCheck();
-    print(startTime);
-  }
-  void _endTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _time2,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time2 = newTime;
-        endTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
-      });
-    }
-    print("TYM${_time2.hour}"":""${_time2.minute}");
-    final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30); // Example time of day (3:30 PM)
-
-    final twentyFourHourFormat = DateFormat('HH:mm:00');
-    final twelveHourFormat = DateFormat('h:mm a');
-
-    final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
-    endTime = twelveHourFormat.format(dateTime);
-    endTime2 = twentyFourHourFormat.format(dateTime);
-
-    print(endTime);
-    validationCheck();
-  }
+  // void _selectTime() async {
+  //   final TimeOfDay? newTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: _time,
+  //   );
+  //   if (newTime != null) {
+  //     setState(() {
+  //       _time = newTime;
+  //       startTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
+  //     });
+  //   }
+  //   final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30);
+  //
+  //   final twentyFourHourFormat = DateFormat('HH:mm:00');
+  //   final twelveHourFormat = DateFormat('h:mm a');
+  //
+  //   final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+  //    startTime = twelveHourFormat.format(dateTime);
+  //    startTime2 = twentyFourHourFormat.format(dateTime);
+  //   validationCheck();
+  //   print(startTime);
+  // }
+  // void _endTime() async {
+  //   final TimeOfDay? newTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: _time2,
+  //   );
+  //   if (newTime != null) {
+  //     setState(() {
+  //       _time2 = newTime;
+  //       endTime="${newTime.hour}"":""${newTime.minute}"":""00 ";
+  //     });
+  //   }
+  //   print("TYM${_time2.hour}"":""${_time2.minute}");
+  //   final timeOfDay = TimeOfDay(hour: newTime?.hour??3, minute: newTime?.minute??30); // Example time of day (3:30 PM)
+  //
+  //   final twentyFourHourFormat = DateFormat('HH:mm:00');
+  //   final twelveHourFormat = DateFormat('h:mm a');
+  //
+  //   final dateTime = DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute);
+  //   endTime = twelveHourFormat.format(dateTime);
+  //   endTime2 = twentyFourHourFormat.format(dateTime);
+  //
+  //   print(endTime);
+  //   validationCheck();
+  // }
 
   void onselct(index){
     setState(() {
@@ -142,9 +153,9 @@ class _CreateJobState extends State<CreateJob> {
   }
 
   int? jobtype;
-  String startDate="";
+  String startDate=DateTime.now().toString();
   String startDate2="";
-  String ebdDate="";
+  String ebdDate=DateTime.now().toString();
   String ebdDate2="";
   String startTime="Start Time";
   String startTime2="00:00";
@@ -218,12 +229,7 @@ class _CreateJobState extends State<CreateJob> {
                 if (state is CreateJobSuccess) {
                   buttonLoad=false;
                   print("JOBID${state.jobId}");
-                  // Fluttertoast.showToast(
-                  //     msg: 'Successfully Created',
-                  //     toastLength: Toast.LENGTH_SHORT,
-                  //     gravity: ToastGravity.BOTTOM,
-                  //     backgroundColor: Colors.black,
-                  //     textColor: Colors.white);
+
                   Navigator.pop(context);
 
                   context.read<JobBloc>().add(
@@ -265,6 +271,8 @@ class _CreateJobState extends State<CreateJob> {
                       gravity: ToastGravity.BOTTOM,
                       backgroundColor: Colors.black,
                       textColor: Colors.white);
+                  context.read<JobBloc>().add(
+                      GetJobReadListEvent(JobRead?.id??0));
                   Navigator.pop(context);
 
                   setState(() {
@@ -275,9 +283,7 @@ class _CreateJobState extends State<CreateJob> {
             ),
             BlocListener<JobBloc, JobState>(
               listener: (context, state) {
-                if(state is GetJobReadLoading){
 
-                }
                 if(state is GetJobReadSuccess){
                   JobRead=state.getjobRead;
 
@@ -575,92 +581,216 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
-                                                    surfaceTintColor: Colors.white,
-                                                    backgroundColor: Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10.0),),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                      MainAxisSize
-                                                          .min,
-                                                      children: [
-                                                        Container(
-                                                          height: 300,
-                                                          child:
-                                                          Scaffold(
+                                                    insetPadding:w1>700?  EdgeInsets.all(50): const EdgeInsets.all(15),
+                                                    contentPadding: EdgeInsets.zero,
 
-                                                            body:
-                                                            SfDateRangePicker(
-                                                              backgroundColor:
-                                                              Colors.white,
-                                                              endRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              startRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              rangeSelectionColor:
-                                                              ColorPalette.primary
-                                                                  .withOpacity(0.1),
-                                                              selectionColor:
-                                                              Colors.grey,
-                                                              todayHighlightColor:
-                                                              ColorPalette.primary,
-                                                              onSelectionChanged:
-                                                              _onSelectionChanged,
-                                                              selectionMode:
-                                                              DateRangePickerSelectionMode
-                                                                  .range,
-                                                              initialSelectedRange: widget.edit?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              startDate!=""?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              PickerDateRange(
-                                                                  DateTime.now(),
-                                                                  DateTime.now()),
+                                                    content: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
+                                                      decoration: const BoxDecoration(
+                                                          color: Colors.white,
+
+                                                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          Text("Please select start date & end date",
+                                                          style: GoogleFonts.roboto(
+                                                            color: ColorPalette.subtextGrey,
+                                                            fontSize: w/28
+                                                          ),),
+                                                          Container(
+                                                            width: w1,
+                                                            child: CalendarDatePicker2WithActionButtons(
+                                                              onOkTapped: (){
+                                                                Navigator.pop(context);
+                                                              },
+                                                              onCancelTapped: (){
+                                                                Navigator.pop(context);
+                                                              },
+                                                              onValueChanged: (ff){
+                                                                print("value changed$ff");
+                                                                DateTime? dateTime =  DateTime.parse(ff[0].toString());
+                                                                DateTime? dateTime2 =  DateTime.parse(ff[1].toString());
+                                                                _onSelectionChanged(dateTime,dateTime2);
+                                                                // _range = '${DateFormat('yyyy-MM-dd').format(dateTime)} -'
+                                                                //     ' ${DateFormat('yyyy-MM-dd').format(dateTime2)}';
+                                                                // _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
+                                                                //     ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
+                                                                print("value changed${dateTime}");
+                                                                print("value changed${dateTime2}");
+                                                                print("value changed${_range}");
+                                                                setState(() {
+
+                                                                });
+                                                              },
+
+                                                              config: CalendarDatePicker2WithActionButtonsConfig(
+                                                                firstDayOfWeek: 1,firstDate: DateTime.tryParse(startDate),
+                                                                calendarType: CalendarDatePicker2Type.range,
+                                                                selectedDayTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                                                                selectedDayHighlightColor: ColorPalette.primary,
+                                                                centerAlignModePicker: true,
+                                                                customModePickerIcon: SizedBox(),
+                                                              ),
+                                                              value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
                                                             ),
                                                           ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if(_range.isEmpty)
-                                                            setState(() {
-                                                              // if (DateTime.now() is PickerDateRange) {
-                                                                _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-                                                                _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
-                                                                print("range is here$_range");
 
-                                                              startDate=_range;
-                                                              startDate2=_range2;
-                                                              ebdDate=_range;
-                                                              ebdDate2=_range2;
-                                                                print("range is here$startDate");
-                                                                print("range is here$startDate2");
-                                                                print("range is here$ebdDate");
-                                                                print("range is here$startDate2");
-                                                              // validationCheck();
-                                                            });
-
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 25,
-                                                            width: 75,
-                                                            color: ColorPalette
-                                                                .primary,
-                                                            child: Center(
-                                                                child: Text(
-                                                                    "Ok",
-                                                                style: GoogleFonts.roboto(
-                                                                  color: Colors.white
-                                                                ),)),
-                                                          ),
-                                                        )
-                                                      ],
+                                                          // Row(
+                                                          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                          //     children: <Widget>[
+                                                          //       GestureDetector(
+                                                          //         onTap: () {
+                                                          //           Navigator.of(context).pop();
+                                                          //         },
+                                                          //         child: Container(
+                                                          //           width: w1 > 700 ? w1 / 3.3 : w / 3.3,
+                                                          //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                          //           decoration: BoxDecoration(
+                                                          //             borderRadius: BorderRadius.circular(5),
+                                                          //             border: Border.all(
+                                                          //                 width: 1,
+                                                          //                 color: const Color(0x26000000)
+                                                          //                     .withOpacity(0.05)),
+                                                          //             // boxShadow: [
+                                                          //             //   BoxShadow(
+                                                          //             //     color: Color(0x26000000),
+                                                          //             //     blurRadius: 3,
+                                                          //             //     offset: Offset(0, 0),
+                                                          //             //   ),
+                                                          //             // ],
+                                                          //             color: Colors.white,
+                                                          //           ),
+                                                          //           child: Center(
+                                                          //             child: Text(
+                                                          //               "Close",
+                                                          //               textAlign: TextAlign.center,
+                                                          //               style: GoogleFonts.inter(
+                                                          //                 color: const Color(0xffa9a8a8),
+                                                          //                 fontSize: w / 26,
+                                                          //                 fontWeight: FontWeight.w500,
+                                                          //               ),
+                                                          //             ),
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //       GestureDetector(
+                                                          //         onTap: () {
+                                                          //           // BlocProvider.of<SignupBloc>(context).add(
+                                                          //           //     DeactivateAccount(password: password.text));
+                                                          //         },
+                                                          //         child: Container(
+                                                          //           width: w1 > 700 ? w1 / 3.3 : w / 2.5,
+                                                          //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                          //           decoration: BoxDecoration(
+                                                          //             borderRadius: BorderRadius.circular(5),
+                                                          //             color: ColorPalette.primary,
+                                                          //           ),
+                                                          //           child: Text(
+                                                          //             "Deactivate",
+                                                          //             textAlign: TextAlign.center,
+                                                          //             style: GoogleFonts.inter(
+                                                          //               color: Colors.white,
+                                                          //               fontSize: w / 26,
+                                                          //               fontWeight: FontWeight.w500,
+                                                          //             ),
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //     ]),
+                                                          // const SizedBox(height: 16,)
+                                                        ],
+                                                      ),
                                                     ),
                                                   );
+
+                                                  //   AlertDialog(
+                                                  //   surfaceTintColor: Colors.white,
+                                                  //   backgroundColor: Colors.white,
+                                                  //     shape: RoundedRectangleBorder(
+                                                  //     borderRadius: BorderRadius.circular(10.0),),
+                                                  //   content: Column(
+                                                  //     mainAxisSize:
+                                                  //     MainAxisSize
+                                                  //         .min,
+                                                  //     children: [
+                                                  //       Container(
+                                                  //         height: 300,
+                                                  //         child:
+                                                  //         Scaffold(
+                                                  //
+                                                  //           body:
+                                                  //           SfDateRangePicker(
+                                                  //             backgroundColor:
+                                                  //             Colors.white,
+                                                  //             endRangeSelectionColor:
+                                                  //             ColorPalette.primary,
+                                                  //             startRangeSelectionColor:
+                                                  //             ColorPalette.primary,
+                                                  //             rangeSelectionColor:
+                                                  //             ColorPalette.primary
+                                                  //                 .withOpacity(0.1),
+                                                  //             selectionColor:
+                                                  //             Colors.grey,
+                                                  //             todayHighlightColor:
+                                                  //             ColorPalette.primary,
+                                                  //             onSelectionChanged:
+                                                  //             _onSelectionChanged,
+                                                  //             selectionMode:
+                                                  //             DateRangePickerSelectionMode
+                                                  //                 .range,
+                                                  //             initialSelectedRange: widget.edit?PickerDateRange(
+                                                  //                 DateTime.parse(startDate),
+                                                  //                 DateTime.parse(ebdDate)):
+                                                  //             startDate!=""?PickerDateRange(
+                                                  //                 DateTime.parse(startDate),
+                                                  //                 DateTime.parse(ebdDate)):
+                                                  //             PickerDateRange(
+                                                  //                 DateTime.now(),
+                                                  //                 DateTime.now()),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ),
+                                                  //       GestureDetector(
+                                                  //         onTap: () {
+                                                  //           if(_range.isEmpty)
+                                                  //           setState(() {
+                                                  //             // if (DateTime.now() is PickerDateRange) {
+                                                  //               _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                  //               _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                  //               print("range is here$_range");
+                                                  //
+                                                  //             startDate=_range;
+                                                  //             startDate2=_range2;
+                                                  //             ebdDate=_range;
+                                                  //             ebdDate2=_range2;
+                                                  //               print("range is here$startDate");
+                                                  //               print("range is here$startDate2");
+                                                  //               print("range is here$ebdDate");
+                                                  //               print("range is here$startDate2");
+                                                  //             // validationCheck();
+                                                  //           });
+                                                  //
+                                                  //           Navigator.pop(
+                                                  //               context);
+                                                  //         },
+                                                  //         child:
+                                                  //         Container(
+                                                  //           height: 25,
+                                                  //           width: 75,
+                                                  //           color: ColorPalette
+                                                  //               .primary,
+                                                  //           child: Center(
+                                                  //               child: Text(
+                                                  //                   "Ok",
+                                                  //               style: GoogleFonts.roboto(
+                                                  //                 color: Colors.white
+                                                  //               ),)),
+                                                  //         ),
+                                                  //       )
+                                                  //     ],
+                                                  //   ),
+                                                  // );
                                                 });
                                           },
 
@@ -785,7 +915,33 @@ class _CreateJobState extends State<CreateJob> {
                                               .spaceBetween,
                                           children: [
                                             GestureDetector(
-                                              onTap: _selectTime,
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _time,
+                                                    onChange: onTimeChanged,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time2 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                        final twelveHourFormat = DateFormat('h:mm a');
+                                                         startTime = twelveHourFormat.format(dateTime);
+                                                         startTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(startTime);
+                                                      print(startTime2);
+                                                      debugPrint("[debug datetime]:  $dateTime");
+                                                      debugPrint("[debug datetime]:  $time2");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
                                               child: Text(
                                                 startTime,
                                                 style: GoogleFonts.roboto(
@@ -797,7 +953,32 @@ class _CreateJobState extends State<CreateJob> {
                                               ),
                                             ),
                                             GestureDetector(
-                                              onTap: _endTime,
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _timeRead,
+                                                    onChange: onTimeChangedEnd,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time3 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                      final twelveHourFormat = DateFormat('h:mm a');
+                                                      endTime = twelveHourFormat.format(dateTime);
+                                                      endTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(endTime);
+                                                      print(endTime2);
+                                                      debugPrint("[debug datetime]:  $time3");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
                                               child: Text(
                                                 endTime,
                                                 style: GoogleFonts.roboto(
@@ -922,88 +1103,210 @@ class _CreateJobState extends State<CreateJob> {
                                                 builder: (BuildContext
                                                 context) {
                                                   return AlertDialog(
-                                                    surfaceTintColor: Colors.white,
-                                                    backgroundColor: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10.0),),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                      MainAxisSize
-                                                          .min,
-                                                      children: [
-                                                        Container(
-                                                          height: 300,
-                                                          child:
-                                                          Scaffold(
-                                                            body:
-                                                            SfDateRangePicker(
-                                                              backgroundColor:
-                                                              Colors.white,
-                                                              endRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              startRangeSelectionColor:
-                                                              ColorPalette.primary,
-                                                              rangeSelectionColor:
-                                                              ColorPalette.primary
-                                                                  .withOpacity(0.1),
-                                                              selectionColor:
-                                                              Colors.grey,
-                                                              todayHighlightColor:
-                                                              ColorPalette.primary,
-                                                              onSelectionChanged:
-                                                              _onSelectionChanged,
-                                                              selectionMode:
-                                                              DateRangePickerSelectionMode
-                                                                  .range,
-                                                              initialSelectedRange: widget.edit?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              startDate!=""?PickerDateRange(
-                                                                  DateTime.parse(startDate),
-                                                                  DateTime.parse(ebdDate)):
-                                                              PickerDateRange(
-                                                                  DateTime.now(),
-                                                                  DateTime.now()),
+                                                    insetPadding:w1>700?  EdgeInsets.all(50): const EdgeInsets.all(15),
+                                                    contentPadding: EdgeInsets.zero,
+
+                                                    content: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
+                                                      decoration: const BoxDecoration(
+                                                          color: Colors.white,
+
+                                                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          Text("Please select start date & end date",
+                                                            style: GoogleFonts.roboto(
+                                                                color: ColorPalette.subtextGrey,
+                                                                fontSize: w/28
+                                                            ),),
+                                                          Container(
+                                                            width: w1,
+                                                            child: CalendarDatePicker2WithActionButtons(
+                                                              onOkTapped: (){
+                                                                Navigator.pop(context);
+                                                              },
+                                                              onCancelTapped: (){
+                                                                Navigator.pop(context);
+                                                              },
+                                                              onValueChanged: (ff){
+                                                                print("value changed$ff");
+                                                                DateTime? dateTime =  DateTime.parse(ff[0].toString());
+                                                                DateTime? dateTime2 =  DateTime.parse(ff[1].toString());
+                                                                _onSelectionChanged(dateTime,dateTime2);
+                                                                // _range = '${DateFormat('yyyy-MM-dd').format(dateTime)} -'
+                                                                //     ' ${DateFormat('yyyy-MM-dd').format(dateTime2)}';
+                                                                // _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
+                                                                //     ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
+                                                                print("value changed${dateTime}");
+                                                                print("value changed${dateTime2}");
+                                                                print("value changed${_range}");
+                                                                setState(() {
+
+                                                                });
+                                                              },
+
+                                                              config: CalendarDatePicker2WithActionButtonsConfig(
+                                                                firstDayOfWeek: 1,firstDate: DateTime.tryParse(startDate),
+                                                                calendarType: CalendarDatePicker2Type.range,
+                                                                selectedDayTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                                                                selectedDayHighlightColor: ColorPalette.primary,
+                                                                centerAlignModePicker: true,
+                                                                customModePickerIcon: SizedBox(),
+                                                              ),
+                                                              value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
                                                             ),
                                                           ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if(_range.isEmpty)
-                                                              setState(() {
-                                                                // if (DateTime.now() is PickerDateRange) {
-                                                                _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-                                                                _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
-                                                                print("range is here$_range");
-
-                                                                startDate=_range;
-                                                                startDate2=_range2;
-                                                                ebdDate=_range;
-                                                                ebdDate2=_range2;
-
-                                                                // validationCheck();
-                                                              });
-
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                          Container(
-                                                            height: 25,
-                                                            width: 75,
-                                                            color: ColorPalette
-                                                                .primary,
-                                                            child: Center(
-                                                                child: Text(
-                                                                  "Ok",
-                                                                  style: GoogleFonts.roboto(
-                                                                      color: Colors.white
-                                                                  ),)),
-                                                          ),
-                                                        )
-                                                      ],
+                                                          // Row(
+                                                          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                          //     children: <Widget>[
+                                                          //       GestureDetector(
+                                                          //         onTap: () {
+                                                          //           Navigator.of(context).pop();
+                                                          //         },
+                                                          //         child: Container(
+                                                          //           width: w1 > 700 ? w1 / 3.3 : w / 3.3,
+                                                          //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                          //           decoration: BoxDecoration(
+                                                          //             borderRadius: BorderRadius.circular(5),
+                                                          //             border: Border.all(
+                                                          //                 width: 1,
+                                                          //                 color: const Color(0x26000000)
+                                                          //                     .withOpacity(0.05)),
+                                                          //             // boxShadow: [
+                                                          //             //   BoxShadow(
+                                                          //             //     color: Color(0x26000000),
+                                                          //             //     blurRadius: 3,
+                                                          //             //     offset: Offset(0, 0),
+                                                          //             //   ),
+                                                          //             // ],
+                                                          //             color: Colors.white,
+                                                          //           ),
+                                                          //           child: Center(
+                                                          //             child: Text(
+                                                          //               "Close",
+                                                          //               textAlign: TextAlign.center,
+                                                          //               style: GoogleFonts.inter(
+                                                          //                 color: const Color(0xffa9a8a8),
+                                                          //                 fontSize: w / 26,
+                                                          //                 fontWeight: FontWeight.w500,
+                                                          //               ),
+                                                          //             ),
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //       GestureDetector(
+                                                          //         onTap: () {
+                                                          //           // BlocProvider.of<SignupBloc>(context).add(
+                                                          //           //     DeactivateAccount(password: password.text));
+                                                          //         },
+                                                          //         child: Container(
+                                                          //           width: w1 > 700 ? w1 / 3.3 : w / 2.5,
+                                                          //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                          //           decoration: BoxDecoration(
+                                                          //             borderRadius: BorderRadius.circular(5),
+                                                          //             color: ColorPalette.primary,
+                                                          //           ),
+                                                          //           child: Text(
+                                                          //             "Deactivate",
+                                                          //             textAlign: TextAlign.center,
+                                                          //             style: GoogleFonts.inter(
+                                                          //               color: Colors.white,
+                                                          //               fontSize: w / 26,
+                                                          //               fontWeight: FontWeight.w500,
+                                                          //             ),
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //     ]),
+                                                          // const SizedBox(height: 16,)
+                                                        ],
+                                                      ),
                                                     ),
                                                   );
+                                                  // return AlertDialog(
+                                                  //   surfaceTintColor: Colors.white,
+                                                  //   backgroundColor: Colors.white,
+                                                  //   shape: RoundedRectangleBorder(
+                                                  //     borderRadius: BorderRadius.circular(10.0),),
+                                                  //   content: Column(
+                                                  //     mainAxisSize:
+                                                  //     MainAxisSize
+                                                  //         .min,
+                                                  //     children: [
+                                                  //       Container(
+                                                  //         height: 300,
+                                                  //         child:
+                                                  //         Scaffold(
+                                                  //           body:
+                                                  //           SfDateRangePicker(
+                                                  //             backgroundColor:
+                                                  //             Colors.white,
+                                                  //             endRangeSelectionColor:
+                                                  //             ColorPalette.primary,
+                                                  //             startRangeSelectionColor:
+                                                  //             ColorPalette.primary,
+                                                  //             rangeSelectionColor:
+                                                  //             ColorPalette.primary
+                                                  //                 .withOpacity(0.1),
+                                                  //             selectionColor:
+                                                  //             Colors.grey,
+                                                  //             todayHighlightColor:
+                                                  //             ColorPalette.primary,
+                                                  //             // onSelectionChanged:
+                                                  //             // _onSelectionChanged,
+                                                  //             selectionMode:
+                                                  //             DateRangePickerSelectionMode
+                                                  //                 .range,
+                                                  //             initialSelectedRange: widget.edit?PickerDateRange(
+                                                  //                 DateTime.parse(startDate),
+                                                  //                 DateTime.parse(ebdDate)):
+                                                  //             startDate!=""?PickerDateRange(
+                                                  //                 DateTime.parse(startDate),
+                                                  //                 DateTime.parse(ebdDate)):
+                                                  //             PickerDateRange(
+                                                  //                 DateTime.now(),
+                                                  //                 DateTime.now()),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ),
+                                                  //       GestureDetector(
+                                                  //         onTap: () {
+                                                  //           if(_range.isEmpty)
+                                                  //             setState(() {
+                                                  //               // if (DateTime.now() is PickerDateRange) {
+                                                  //               _range = '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                  //               _range2 = '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                  //               print("range is here$_range");
+                                                  //
+                                                  //               startDate=_range;
+                                                  //               startDate2=_range2;
+                                                  //               ebdDate=_range;
+                                                  //               ebdDate2=_range2;
+                                                  //
+                                                  //               // validationCheck();
+                                                  //             });
+                                                  //
+                                                  //           Navigator.pop(
+                                                  //               context);
+                                                  //         },
+                                                  //         child:
+                                                  //         Container(
+                                                  //           height: 25,
+                                                  //           width: 75,
+                                                  //           color: ColorPalette
+                                                  //               .primary,
+                                                  //           child: Center(
+                                                  //               child: Text(
+                                                  //                 "Ok",
+                                                  //                 style: GoogleFonts.roboto(
+                                                  //                     color: Colors.white
+                                                  //                 ),)),
+                                                  //         ),
+                                                  //       )
+                                                  //     ],
+                                                  //   ),
+                                                  // );
                                                 });
                                           },
 
@@ -1128,7 +1431,33 @@ class _CreateJobState extends State<CreateJob> {
                                               .spaceBetween,
                                           children: [
                                             GestureDetector(
-                                              onTap: _selectTime,
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _time,
+                                                    onChange: onTimeChanged,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time2 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                      final twelveHourFormat = DateFormat('h:mm a');
+                                                      startTime = twelveHourFormat.format(dateTime);
+                                                      startTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(startTime);
+                                                      print(startTime2);
+                                                      debugPrint("[debug datetime]:  $dateTime");
+                                                      debugPrint("[debug datetime]:  $time2");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
                                               child: Text(
                                                 startTime,
                                                 style: GoogleFonts.roboto(
@@ -1140,7 +1469,32 @@ class _CreateJobState extends State<CreateJob> {
                                               ),
                                             ),
                                             GestureDetector(
-                                              onTap: _endTime,
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _timeRead,
+                                                    onChange: onTimeChangedEnd,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time3 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                      final twelveHourFormat = DateFormat('h:mm a');
+                                                      endTime = twelveHourFormat.format(dateTime);
+                                                      endTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(endTime);
+                                                      print(endTime2);
+                                                      debugPrint("[debug datetime]:  $time3");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
                                               child: Text(
                                                 endTime,
                                                 style: GoogleFonts.roboto(

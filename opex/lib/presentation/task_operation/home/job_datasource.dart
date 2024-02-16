@@ -671,7 +671,7 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
   Future<List<GetUserList>> getUserUderGroupList() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int groupId=sharedPreferences.getInt('groupId')??0;
-    String? token = sharedPreferences.getString('token');
+
     List<GetUserList> userlist = [];
     print("URL:${ClusterUrls.userUnderGroupListUrl+groupId.toString()}");
 

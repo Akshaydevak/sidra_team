@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     builder: (context, state) {
                                   print("..................$state");
                                   if (state is ProfileSuccess) {
-                                    print(state.user.prflImage);
+                                    // print(state.user.prflImage);
                                     return Container(
                                       width: 68,
                                       height: 80,
@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           image: DecorationImage(
                                               image: NetworkImage(
-                                                  state.user.prflImage ?? ""),
+                                                  state.user.userMete?.profile ?? ""),
                                               fit: BoxFit.fill)),
                                     );
                                   }

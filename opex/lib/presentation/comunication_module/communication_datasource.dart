@@ -70,9 +70,11 @@ class CommunicationDatasource {
       {required String token,
       required String groupPicUrl,
       required List<GetEmployeeList>? userIdList,
-      required String groupName}) async {
+      required String groupName,
+      required String description
+      }) async {
         print("asdd${userIdList![0].userCode}");
-
+        print("asdd$description");
         GroupList? grpuserlist=GroupList();
     List<Map<String, dynamic>> map = [];
   for (var i = 0; i < userIdList.length; i++) {
@@ -87,7 +89,7 @@ class CommunicationDatasource {
     }
     final response = await client.post(
       CommunicationUrls.createGroupUrl,
-      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl},
+      data: {"name": groupName, "friends": map, "groupPhotoUrl": groupPicUrl, "description":description},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +130,7 @@ class CommunicationDatasource {
     print("....$chatId...$userId");
     final response = await client.post(
       CommunicationUrls.addGroupMember+chatId,
-      data: {"userId": userId},
+      data: {"userCode": userId},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +139,7 @@ class CommunicationDatasource {
         },
       ),
     );
-    print(response.data);
+    print("add memmej ${response.data}");
     return DoubleResponse(
         response.data['status'] == 'success', response.data['message']);
   }
@@ -157,7 +159,7 @@ class CommunicationDatasource {
     );
     print("response at datasource ${response.data}");
     return DoubleResponse(
-        response.data['status'] == 'success', response.data['message']);
+        response.data['status'] == 'success', response.data['userid']);
   }
 
   Future<CommunicationUserModel> addAFriendUser(String token, String fname,
@@ -230,16 +232,19 @@ class CommunicationDatasource {
   }
 
   Future<List<ChatMessagaeData>> getChatScreenData(
-      String token,String chatId,String grpchatId, int pageNo) async {
+      String token,String chatId,String grpchatId,int pageNo,String userId) async {
    List<ChatMessagaeData>? chatScreenData =[];
   String api="";
+  print("shifas++@@ $grpchatId, userid $userId ..");
   if(grpchatId != "")
   {
-    api="${CommunicationUrls.commentGroupUrl}$grpchatId";
+    print("if grpchatId $grpchatId");
+    api="${CommunicationUrls.commentGroupUrl}$grpchatId?page=$pageNo";
   }else{
+    print("else chatId $chatId ..");
     api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
   }
-    // print(
+   print("display $api "); // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
     final response = await client.get(
         // "${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo",
@@ -316,7 +321,35 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
+  Future<String> uploadImageData1({File? img}) async {
+    String statusCode;
 
+    print("total result ${img}");
+    String filePath = "";
+
+    if (img != null) filePath = img.path;
+    final mime = lookupMimeType(filePath)!.split("/");
+
+    final fileData = await MultipartFile.fromFile(
+      filePath,
+      contentType: MediaType(mime.first, mime.last),
+    );
+    final FormData formData = FormData.fromMap({"upload": fileData});
+
+    final response = await client.post(
+      CommunicationUrls.uploadImageUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    print("response is here ${response.data}");
+    statusCode = (response.data['data']['upload']);
+    return statusCode;
+  }
   Future<String> uploadImageData({FilePickerResult? img}) async {
     String statusCode;
 
@@ -347,7 +380,7 @@ class CommunicationDatasource {
     return statusCode;
   }
 
-  Future<String> uploadLiveAudioData({File? img}) async {
+  Future<String> uploadLiveAudioData({File? img,bool comment=false}) async {
     String statusCode;
 
     print("total result ${img}");

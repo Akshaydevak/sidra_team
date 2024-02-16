@@ -3,6 +3,7 @@ import 'package:cluster/presentation/dashboard_screen/cart_screen/cart_svg.dart'
 import 'package:cluster/presentation/task_operation/create/single_row.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,7 +54,6 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
       listeners: [
         BlocListener<JobBloc, JobState>(
           listener: (context, state) {
-            if (state is GetJobReadLoading) {}
             if (state is GetJobReadSuccess) {
               JobRead = state.getjobRead;
 
@@ -63,13 +63,7 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
         ),
         BlocListener<JobBloc, JobState>(
           listener: (context, state) {
-            if (state is UpdateJobLoading) {
-              // showSnackBar(context,
-              //     message: "Loading...",
-              //     color: Colors.white,
-              //     // icon: HomeSvg().SnackbarIcon,
-              //     autoDismiss: true);
-            }
+
 
             if (state is UpdateJobFailed) {
               showSnackBar(
@@ -241,6 +235,7 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                   itemBuilder: (BuildContext context, int i) {
                                     return InkWell(
                                       onTap: () {
+                                        HapticFeedback.heavyImpact();
                                         BlocProvider.of<JobBloc>(context)
                                             .add(UpdateJobEvent(
                                           id: JobRead?.id,
@@ -293,7 +288,7 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  TextAvatar(
+                                                  employee[i]?.userMete?.profile==null?TextAvatar(
                                                     shape: Shape.Circular,
                                                     size: 40,
                                                     numberLetters: 2,
@@ -301,7 +296,10 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                                     textColor: Colors.white,
                                                     fontWeight: FontWeight.w500,
                                                     text:employee[i].email.toString().toUpperCase() ,
-                                                  ),
+                                                  ):  CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: NetworkImage(employee[i]?.userMete?.profile??"",),
+                                      ),
                                                   SizedBox(
                                                     width: 10,
                                                   ),

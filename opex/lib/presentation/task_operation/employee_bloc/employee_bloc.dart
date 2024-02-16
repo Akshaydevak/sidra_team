@@ -20,6 +20,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     if (event is RegisterEmployeeEvent) {
       yield* _mapEmployeeStateToState(
         email: event.emailID.trim(),
+        whatsapp: event.whatsapp,
         profilePic: event.profilePic,
         orgCode: event.orgCode.trim(),
         departCode: event.depatCode.trim(),
@@ -51,6 +52,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
      if (event is UpdateEmployeeEvent) {
       yield* updateEmployeeState(
         roleName: event.roleName,
+        whatsapp: event.whatsapp,
         profilePic: event.profileImg,
         roleNameList: event.roleNameList,
         id: event.id,
@@ -90,8 +92,12 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     }
     else if (event is PostImageEvent) {
       yield* postImageInTaskState(img: event.image);}
+    else if (event is PostImageOnlyProfileEvent) {
+      yield* postImageOnlyProfilr(img: event.image);}
     else if (event is PostImageAllEvent) {
       yield* postImageInAll(img: event.image);}
+    else if (event is PostImageAll2Event) {
+      yield* postImageInAll2(img: event.image);}
     else if (event is DeleteEmployeeEvent) {
       yield* deleteEmployee(reviewId: event.employeId);
     }
@@ -143,12 +149,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         required List<String> roleNameList,
         required String roleName,
         required dynamic profilePic,
+        required String whatsapp,
       }) async* {
     yield EmployeeLoading();
 
     final dataResponse = await _employeeRepo.employeeCreate(
       email: email,
       departCode: departCode,
+      whatsapp: whatsapp,
       profilePic: profilePic,
       gender: gender,
       orgCode: orgCode,
@@ -308,12 +316,14 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         required String roleName,
         required bool isActive,
         required int id, required dynamic profilePic,
+        required String whatsapp,
       }) async* {
     yield UpdateEmployeeLoading();
 
     final dataResponse = await _employeeRepo.updateEmployee(
       email: email,profilePic: profilePic,
       isActive: isActive,
+      whatsapp: whatsapp,
       departCode: departCode,
       gender: gender,
       orgCode: orgCode,
@@ -391,6 +401,30 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield PicSuccess(dataResponse.data1,dataResponse.data2);
     } else {
       yield PicFailed();
+    }
+  }
+  Stream<EmployeeState> postImageOnlyProfilr(
+      {required File img}) async* {
+    yield PicOnlyProfileLoading();
+    final dataResponse = await _employeeDataSource.postImageInAll(img: img);
+    print("data${dataResponse.data1}");
+    print("data${dataResponse.data2}");
+    if (dataResponse.data1 != null) {
+      print("hhhhh");
+      yield PicOnlyProfileSuccess(dataResponse.data1,dataResponse.data2);
+    } else {
+      yield PicOnlyProfileFailed();
+    }
+  }
+  //
+  Stream<EmployeeState> postImageInAll2(
+      {required File img}) async* {
+    yield Pic2Loading();
+    final dataResponse = await _employeeDataSource.postImageInAll(img: img);
+    if (dataResponse.data1 != null) {
+      yield Pic2Success(dataResponse.data1,dataResponse.data2);
+    } else {
+      yield Pic2Failed();
     }
   }
 
