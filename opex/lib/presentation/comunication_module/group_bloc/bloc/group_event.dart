@@ -42,7 +42,11 @@ class GroupMemberAddEvent extends GroupEvent {
   final String token;
   final String chatId;
   final String userId;
-  const GroupMemberAddEvent({required this.token, required this.chatId, required this.userId});
+  final String emailid;
+  final String fname;
+  final String lname;
+  final String photo;
+  const GroupMemberAddEvent({required this.token, required this.chatId, required this.userId,required this.emailid,required this.fname,required this.lname,required this.photo});
 }
 
 class GroupMemberDeleteEvent extends GroupEvent {

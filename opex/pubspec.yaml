@@ -45,6 +45,7 @@ dependencies:
   internet_connection_checker:
   provider:
   lottie:
+  keyboard_actions: ^4.2.0
   flutter_bloc: ^7.1.0
   flutter_sizer: ^1.0.5
   shared_preferences:

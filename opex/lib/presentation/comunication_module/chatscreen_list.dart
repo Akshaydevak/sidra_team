@@ -25,7 +25,19 @@ class MyChatList extends StatefulWidget {
   final int? index;
   final String grpchatid;
   final String? roomid;
-  const MyChatList({super.key, this.messageList,this.msgdate,this.loginUserId,this.isGroup=false,this.formattedTime,this.activeUsersLength,this.index,this.grpchatid="",this.roomid});
+  final bool? seentick;
+  const MyChatList({super.key, 
+  this.messageList,
+  this.msgdate,
+  this.loginUserId,
+  this.isGroup=false,
+  this.formattedTime,
+  this.activeUsersLength,
+  this.index,
+  this.grpchatid="",
+  this.roomid,
+  this.seentick
+  });
 
   @override
   State<MyChatList> createState() => _MyChatListState();
@@ -190,15 +202,19 @@ class _MyChatListState extends State<MyChatList> {
                                               "audio") ...{
                                                 Stack(
                                                   children:[
-                                                    VoiceMessage(
-                                              audioSrc:
-                                                  widget.messageList!.message ?? "",
-                                              played:
-                                                  false, // To show played badge or not.
-                                              me: false, // Set message side.
-                                              onPlay:
-                                                  () {}, // Do something when voice played.
-                                            ),
+                                                    Container(
+                                                      key: new PageStorageKey(
+                                "image ${widget.roomid}${widget.messageList!.message}",),
+                                                      child: VoiceMessage(
+                                                          audioSrc:
+                                                              widget.messageList!.message ?? "",
+                                                          played:
+                                                              false, // To show played badge or not.
+                                                          me: false, // Set message side.
+                                                          onPlay:
+                                                              () {}, // Do something when voice played.
+                                                        ),
+                                                    ),
                                             Positioned(
                                                         right: 6,
                                                         bottom: 5,
@@ -1150,10 +1166,10 @@ class _MyChatListState extends State<MyChatList> {
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(widget.activeUsersLength! >= 2)...{
+                                                                        if(widget.activeUsersLength! >=2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
-                                                                      else if(widget.activeUsersLength! ==1 && widget.messageList!.seenBy == null )...{
+                                                                      else if(widget.activeUsersLength! == 1 && widget.messageList!.seenBy == null )...{
                                                                         SizedBox()
                                                                       }
                                                                       else...{
@@ -1200,10 +1216,10 @@ class _MyChatListState extends State<MyChatList> {
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(widget.activeUsersLength! >= 2)...{
+                                                                        if(widget.activeUsersLength! >=2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
-                                                                      else if(widget.activeUsersLength! ==1 && widget.messageList!.seenBy == null )...{
+                                                                      else if(widget.activeUsersLength! == 1&& widget.messageList!.seenBy == null )...{
                                                                         SizedBox()
                                                                       }
                                                                       else...{
@@ -1599,6 +1615,6 @@ class _MyChatListState extends State<MyChatList> {
                                       //      ),
                                       //    ):Container(),
                                     ],
-                                  );;
+                                  );
   }
 }

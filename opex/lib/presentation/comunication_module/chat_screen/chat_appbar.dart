@@ -469,7 +469,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   }
                 },
                 child:widget.isGroup==false? 
-             widget.chat==true?widget.communicationuser?.photoUrl ==null||widget.communicationuser!.photoUrl!.isEmpty?
+             widget.chat==true?widget.communicationuser?.users![0].photo == null||widget.communicationuser!.users![0].photo!.isEmpty?
              TextAvatar(
                         shape: Shape.Circular,
                         size: h / 95,
@@ -491,7 +491,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             radius: w / 23,
                             backgroundColor: Colors.grey,
                             backgroundImage: NetworkImage(
-                                    widget.communicationuser?.photoUrl ?? ""
+                                    widget.communicationuser?.users![0].photo ?? ""
                                 //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
                                 // "${widget.communicationUserModel?.photo}"
                                 // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",

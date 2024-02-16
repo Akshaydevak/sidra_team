@@ -23,6 +23,7 @@ import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,6 +92,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen>
     with SingleTickerProviderStateMixin {
+   
+        late FocusNode myFocusNode;
       bool canFocus=false;
   final _audioRecorder = Record();
 AudioPlayer? player = AudioPlayer();
@@ -150,6 +153,7 @@ bool ismount1=true;
   String fromuserids="";
   final ImagePicker picker = ImagePicker();
   XFile? image;
+  bool seentick =false;
   late File _imageFile;
   bool _keyboardVisible =true;
   //Mic Animation
@@ -171,7 +175,7 @@ bool ismount1=true;
   String seenTimestamp="";
   @override
   void initState() {
-
+myFocusNode = FocusNode(canRequestFocus: true,descendantsAreFocusable: false);
      print("room id listens atleast ${widget.redirectchatid} chatid${widget.grpchatid} ${widget.isGroup}");
     widget.socket?.emit("join.chat", {
       widget.redirectchatid!=""?widget.redirectchatid:
@@ -699,6 +703,7 @@ Future<void> saveUnreadMessageCount(int count,String chatt) async {
     ?widget.grpchatid!=""?"${widget.grpchatid}": widget.redirectchatid!=""?"${widget.redirectchatid}": "${widget.communicationUserModel?.chatid}":
     widget.chat==true&& widget.isg==false?"${widget.communicationuser?.id}": "${widget.grpuser?.chatid}";
   if(activeUsersLength == 2){
+    seentick=true;
               sendMessageCount=0;
               saveUnreadMessageCount(0,chatid);
             }
@@ -750,7 +755,7 @@ print("jhdgfkjhgkrng");
      
      pref = await SharedPreferences.getInstance();
     setState(() {
-      activeUsersLength = pref!.getInt('activeuser')??0;
+      activeUsersLength = pref!.getInt('activeuser')??1;
       print("ACTIVE length sharepref$activeUsersLength");
     });
   }
@@ -850,6 +855,8 @@ Future<void> saveactiveusers(int count) async {
   @override
   void dispose() {
     _controller.dispose();
+    myFocusNode.dispose();
+    
     isMount = false;
     ismount1=false;
     isgrp=false;
@@ -1623,7 +1630,10 @@ double currentScrollPosition= 0.0;
         ],
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            myFocusNode.unfocus();
+            // FocusManager.instance.primaryFocus?.canRequestFocus;
+            //  FocusScope.of(context).requestFocus(new FocusNode());
+            
           },
           child: Scaffold(
             backgroundColor: Color(0xffEFF1F3),
@@ -1776,6 +1786,7 @@ double currentScrollPosition= 0.0;
                                     grpchatid: widget.grpchatid,
                                     index: index,
                                     roomid: roomId,
+                                    seentick: seentick,
                                   );
                                 },
                                 separatorBuilder: (context, index) {
@@ -1907,16 +1918,17 @@ double currentScrollPosition= 0.0;
                                       SizedBox(
                                         width: w / 1.25,
                                         child: TextFormField(
+                                       
                                          canRequestFocus: true,
-                                          focusNode: FocusNode(canRequestFocus: true),
+                                          focusNode: FocusNode( canRequestFocus: true),
                                         // focusNode: FocusNode(skipTraversal: true),
                                           // focusNode:FocusNode(onKey: (node, event) => ,),
                                           autofocus: false,
                                           style: const TextStyle(
                                             // height: 1.6,
                                           ),
-                                          maxLines:4,
-                                          minLines: 1,
+                                          // maxLines:4,
+                                          // minLines: 1,
                                           onChanged: (val) {
                                             if (widget.isGroup == false) {
                                               if (val.length > 0) {
@@ -2010,8 +2022,9 @@ double currentScrollPosition= 0.0;
                                   SizedBox(width: 8,),
                                   Row(
                                     children: [
+                                      
                                       if (typedMessageController
-                                          .text.isNotEmpty) ...{
+                                          .text.trim().isNotEmpty) ...{
                                         Container(
                                             // margin: const EdgeInsets.only(left: 16, right: 16),
              

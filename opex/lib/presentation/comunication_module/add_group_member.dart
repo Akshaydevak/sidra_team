@@ -246,7 +246,26 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.redirectcha
                                               onTap: () {
                                                 addusername= "${state.registeresUsers[index].fname.toString().toTitleCase()} ${state.registeresUsers[index].lname.toString().toTitleCase()}";
                                                        BlocProvider.of<GroupBloc>(context).add( 
-                                                        GroupMemberAddEvent(token: widget.token??"", chatId: widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString(), userId: "${state.registeresUsers[index].userCode}")
+                                                        GroupMemberAddEvent(token: widget.token??"", 
+                                                        chatId: widget.redirectchatid==""?widget.chatid.toString():widget.redirectchatid.toString(), 
+                                                        userId: "${state.registeresUsers[index].userCode}",
+                                                        emailid: state
+                                                      .registeresUsers[index]
+                                                      .email ??
+                                                  "",
+                                              fname: state
+                                                      .registeresUsers[index]
+                                                      .fname ??
+                                                  "",
+                                              photo: state
+                                                      .registeresUsers[index].userMete
+                                                      ?.profile ??
+                                                  "",
+                                              lname: state
+                                                      .registeresUsers[index]
+                                                      .lname ??
+                                                  "",
+                                                        )
                                                                                 );
                                                  
                                               //       widget.socket!.emit("userAddToGroup",{
