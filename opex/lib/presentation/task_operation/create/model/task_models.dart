@@ -56,6 +56,8 @@ class GetTaskList extends Equatable {
   final int? groupId;
   @JsonKey(name: 'currency_code')
   final String? currency;
+  @JsonKey(name: 'profile_pic')
+  final String? profile;
   @JsonKey(name: 'is_notify',defaultValue: false)
   final bool? isNotify;
   @JsonKey(name: 'assigned_to')
@@ -157,6 +159,7 @@ class GetTaskList extends Equatable {
 
   const GetTaskList({
     this.name,
+    this.profile,
     this.parentGroupId,
     this.assignByDict,
     this.assignToDict,
@@ -855,6 +858,8 @@ class PerfomerModel extends Equatable {
   final String? email;
   @JsonKey(name: 'user_code')
   final String? userCode;
+  @JsonKey(name: 'profile_pic')
+  final String? profile;
   @JsonKey(name: 'highest_average_points')
   final double? points;
 
@@ -862,6 +867,7 @@ class PerfomerModel extends Equatable {
     this.fName,
     this.userCode,
     this.lName,
+    this.profile,
   this.email,
   this.points,
    

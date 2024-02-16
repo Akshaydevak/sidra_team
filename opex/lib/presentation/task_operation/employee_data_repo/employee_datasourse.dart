@@ -408,8 +408,9 @@ print(groupRead.userId);
         },
       ),
     );
-    print(response.data);
-    if (response.data != null || response.data != "") {
+    print("ddaaa${response.data}");
+    if (response.data['status']=='success') {
+      print("succ444444");
       return DoubleResponse(response.data['data'], response.data['image_url']);
     }
     return DoubleResponse(response.data, "failed");

@@ -16,6 +16,7 @@ import 'package:cluster/presentation/task_operation/task_title/task_title_card.d
 import 'package:cluster/presentation/task_operation/task_title/text_card.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -904,7 +905,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          height: 28,
+                                          height: 29,
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius:
@@ -917,16 +918,25 @@ class _TaskTitleState extends State<TaskTitle> {
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Text(
-                                          "Priority ",
-                                          style: GoogleFonts.roboto(
-                                            color: const Color(0xff151522),
-                                            fontSize: w / 24,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Text(getTaskRead?.priority ?? ""),
+                                       Container( 
+                                         width: w1/1.45,
+                                         padding: EdgeInsets.only(top: 3 ),
+                                         
+                                         child: Row(
+                                             children: [
+                                               Text(
+                                                 "Priority ",
+                                                 style: GoogleFonts.roboto(
+                                                   color: const Color(0xff151522),
+                                                   fontSize: w / 24,
+                                                   fontWeight: FontWeight.w500,
+                                                 ),
+                                               ),
+                                               Spacer(),
+                                               Text(getTaskRead?.priority ?? ""),
+                                             ],
+                                         ),
+                                       )
                                       ],
                                     ),
                                   ),
@@ -1036,6 +1046,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             getTaskRead?.assigningType=="Task_Group"?
                                             GestureDetector(
                                               onTap: (){
+                                                HapticFeedback.vibrate();
                                                 print("task Group");
                                                 getTaskRead?.assigningType=="Task_Group"&&taskListNew.isEmpty?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1157,6 +1168,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ):
                                             GestureDetector(
                                               onTap: (){
+                                                HapticFeedback.vibrate();
                                                 print("group id${getTaskRead?.groupId}");
                                                 widget.groupId!=null?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1290,7 +1302,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                           0xffFFC800),
                                                       svg: CreateSvg().taskIcon,
                                                       endIcon: Container(
-                                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+                                                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 4),
                                                           decoration: BoxDecoration(
                                                             color: ColorPalette.primary,
                                                               borderRadius: BorderRadius.circular(4)
@@ -1303,6 +1315,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                   color: Colors.white
                                                               ),)),
                                                       onTap: () async{
+                                                        HapticFeedback.vibrate();
                                                         final SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
@@ -1419,51 +1432,132 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                SizedBox(height: 2),
+                                                                                // SizedBox(height: 2),
+                                                                                // Row(
+                                                                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                //   children: [
+                                                                                //     // Text(
+                                                                                //     //   'Description : ',
+                                                                                //     //   style: GoogleFonts.roboto(
+                                                                                //     //     color: Colors.black87,
+                                                                                //     //     fontSize: w / 28,
+                                                                                //     //     fontWeight: FontWeight.w500,
+                                                                                //     //   ),
+                                                                                //     // ),
+                                                                                //     Container(
+                                                                                //       width: w1 / 1.7,
+                                                                                //       // color: Colors.red,
+                                                                                //       child: Text(
+                                                                                //         '${taskListNew[index].description.toString().toTitleCase()}',
+                                                                                //         maxLines: 2,
+                                                                                //         overflow: TextOverflow.ellipsis,
+                                                                                //         style: GoogleFonts.roboto(
+                                                                                //           color: ColorPalette.primary,
+                                                                                //           fontSize: w / 30,
+                                                                                //           // fontWeight: FontWeight.w500,
+                                                                                //         ),
+                                                                                //       ),
+                                                                                //     ),
+                                                                                //   ],
+                                                                                // ),
+                                                                                SizedBox(height: 2,),
                                                                                 Row(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
-                                                                                    // Text(
-                                                                                    //   'Description : ',
-                                                                                    //   style: GoogleFonts.roboto(
-                                                                                    //     color: Colors.black87,
-                                                                                    //     fontSize: w / 28,
-                                                                                    //     fontWeight: FontWeight.w500,
-                                                                                    //   ),
-                                                                                    // ),
+                                                                                    taskListNew[index]?.profile==null?
                                                                                     Container(
-                                                                                      width: w1 / 1.7,
-                                                                                      // color: Colors.red,
-                                                                                      child: Text(
-                                                                                        '${taskListNew[index].description.toString().toTitleCase()}',
-                                                                                        maxLines: 2,
-                                                                                        overflow: TextOverflow.ellipsis,
-                                                                                        style: GoogleFonts.roboto(
-                                                                                          color: ColorPalette.primary,
-                                                                                          fontSize: w / 30,
-                                                                                          // fontWeight: FontWeight.w500,
-                                                                                        ),
+                                                                                      width: 20,height: 20,                                                                                       child: TextAvatar(
+                                                                                        shape: Shape.Circular,
+                                                                                        size: 10,
+                                                                                        numberLetters: 1,
+                                                                                        fontSize: w/26,
+                                                                                        textColor: Colors.white,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                        text:"${taskListNew[index]?.assignToName.toString().toUpperCase()}" ,
                                                                                       ),
+                                                                                    )
+                                                                                        :
+                                                                                    CircleAvatar(
+                                                                                      radius: 11,
+                                                                                      backgroundImage: NetworkImage(taskListNew[index]?.profile??"",),
                                                                                     ),
+                                                                                    SizedBox(width: 5,),
+                                                                                    Text(
+                                                                                       taskListNew[index]?.assignToName ?? "",
+                                                                                      style: GoogleFonts.roboto(
+                                                                                        color: Colors.black,
+                                                                                        fontSize: w / 36,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                      ),
+                                                                                    )
                                                                                   ],
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            Container(
-                                                                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                                                              decoration: BoxDecoration(
-                                                                                color: ColorPalette.primary,
-                                                                                borderRadius: BorderRadius.circular(4),
-                                                                              ),
-                                                                              child: Text(
-                                                                                taskListNew[index].statusName.toString() == "null" ? "Not Started" : "${taskListNew[index].statusName.toString().toTitleCase()}",
-                                                                                style: GoogleFonts.roboto(
-                                                                                  color: Colors.white,
-                                                                                  fontSize: w / 32,
-                                                                                  fontWeight: FontWeight.w500,
+                                                                            taskListNew[index]?.statusName=="VERIFIED"?
+                                                                            Row(
+                                                                              children: [
+                                                                                Container(
+                                                                                  // width: 121,
+                                                                                  // height: 30,
+                                                                                    padding:
+                                                                                    const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                                                                    decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(4),
+                                                                                        boxShadow: const [
+                                                                                          BoxShadow(
+                                                                                            color: Color(0x05000000),
+                                                                                            blurRadius: 8,
+                                                                                            offset: Offset(1, 1),
+                                                                                          ),
+                                                                                        ],
+                                                                                        color: Color(0xff079B16)
+                                                                                    ),
+                                                                                    child: Text(
+                                                                                      "COMPLETED",
+                                                                                      style: GoogleFonts.roboto(
+                                                                                        color: Colors.white,
+                                                                                        fontSize: w / 36,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                      ),
+                                                                                    )),
+                                                                                SizedBox(width: 3,),
+                                                                                SvgPicture.string(
+                                                                                  TaskSvg().tickIcon,
+                                                                                  color: Colors.green,
+                                                                                  width: 15,
+                                                                                  height: 15,
                                                                                 ),
-                                                                              ),
-                                                                            ),
+                                                                              ],
+                                                                            ):Container(
+                                                                              // width: 121,
+                                                                              // height: 30,
+                                                                                padding:
+                                                                                const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(4),
+                                                                                  boxShadow: const [
+                                                                                    BoxShadow(
+                                                                                      color: Color(0x05000000),
+                                                                                      blurRadius: 8,
+                                                                                      offset: Offset(1, 1),
+                                                                                    ),
+                                                                                  ],
+                                                                                  color: taskListNew[index]?.statusName=="STARTED"?
+                                                                                  Color(0xffFF9900):taskListNew[index]?.statusName=="ON PROGRESS"?
+                                                                                  Color(0xff2871AF):taskListNew[index]?.statusName=="COMPLETED"?
+                                                                                  Color(0xff079B16):taskListNew[index]?.statusName=="PENDING"?
+                                                                                  Color(0xffFF0000):Color(0xffFFE5BE),
+                                                                                ),
+                                                                                child: Text(
+                                                                                  taskListNew[index]?.statusName == null
+                                                                                      ? "NOT INITIATED"
+                                                                                      : taskListNew[index]?.statusName ?? "",
+                                                                                  style: GoogleFonts.roboto(
+                                                                                    color: Colors.white,
+                                                                                    fontSize: w / 36,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                )),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -1476,7 +1570,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                             separatorBuilder:
                                                                 (context,
                                                                         index) =>
-                                                                    SizedBox(),
+                                                                
+                                                                    SizedBox(height: 1,),
                                                           ),
                                                         ],
                                                       ),
@@ -1736,7 +1831,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                                             MainAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          TextAvatar(
+
+
+                                                          getTaskRead?.reportingPersonDict?.profile==null?TextAvatar(
                                                             shape:
                                                                 Shape.Circular,
                                                             size: 40,
@@ -1748,7 +1845,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                 FontWeight.w500,
                                                             text:
                                                                 "${getTaskRead?.reportingPerson.toString().toUpperCase()}",
-                                                          ),
+                                                          ) :
+                                                    CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundImage: NetworkImage(getTaskRead?.reportingPersonDict?.profile??"",),
+                                                  ),
                                                           const SizedBox(
                                                             width: 10,
                                                           ),
@@ -1948,6 +2049,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             // ),
                                             GestureDetector(
                                               onTap: () {
+                                                HapticFeedback.vibrate();
                                                 setState(() {
                                                   isLocation = !isLocation;
                                                   location();
@@ -1988,6 +2090,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                         svg: CreateSvg()
                                                             .locationIcon,
                                                         onTap: () {
+                                                          HapticFeedback.vibrate();
                                                           setState(() {
                                                             // if(isLocation==false){
                                                             isLocation =
@@ -2075,6 +2178,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
+                                                HapticFeedback.vibrate();
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
@@ -2135,6 +2239,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
+                                                HapticFeedback.vibrate();
                                                 getTaskRead?.paymentId != null
                                                     ? context.read<TaskBloc>().add(
                                                         GetPaymentReadListEvent(
@@ -2223,6 +2328,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
+                                                HapticFeedback.vibrate();
                                                 getTaskRead?.rewardid != null
                                                     ? context
                                                         .read<TaskBloc>()
@@ -2303,6 +2409,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                         )
                                       : GestureDetector(
                                           onTap: () {
+                                            HapticFeedback.vibrate();
                                             if (getTaskRead?.statusStagesId ==
                                                     5 &&
                                                 authentication.isAdmin ==
@@ -2419,6 +2526,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   getTaskRead?.assigningType=="Task_Group"&&taskListNew.isNotEmpty?Container():communicationGroupId==""?Container():
                                   GestureDetector(
                                     onTap: () {
+                                      HapticFeedback.heavyImpact();
                                       print("grp id $communicationGroupId");
                                       context.read<ChatBloc>().add(
                                           ChatScreenGetEvent(
@@ -2502,12 +2610,13 @@ class _TaskTitleState extends State<TaskTitle> {
                                       ),
                                     ),
                                   ),
+                                  authentication.authenticatedUser.code==getTaskRead?.assignToDict?.userCode?Container():
                                   getTaskRead?.assigningType == "Individual" &&
                                           authentication.isAdmin
                                       ? Column(
                                           children: [
                                             SizedBox(
-                                              height: 10,
+                                              height: 5,
                                             ),
                                             GestureDetector(
                                               onTap: () {
@@ -2630,6 +2739,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                       authentication.authenticatedUser.code==getTaskRead?.reportingPersonDict?.userCode?Container():
                                   GestureDetector(
                                     onTap: () {
+                                      HapticFeedback.heavyImpact();
                                       context
                                           .read<TaskBloc>()
                                           .add(GetTopicListEvent());

@@ -31,6 +31,7 @@ class _ProfileGroupListState extends State<ProfileGroupList> {
 
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: BackAppBar(

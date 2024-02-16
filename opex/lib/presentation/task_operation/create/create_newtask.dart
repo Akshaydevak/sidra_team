@@ -1,3 +1,5 @@
+import 'package:animated_emoji/emoji.dart';
+import 'package:animated_emoji/emojis.g.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
@@ -13,6 +15,7 @@ import 'package:day_night_time_picker/lib/constants.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -261,7 +264,12 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     var h = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
-        if(taskListNew.isEmpty&&Variable.assignType=="Task_Group"){
+
+
+          context
+              .read<TaskBloc>()
+              .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
+
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -291,7 +299,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                       height: 5,
                     ),
                     Text(
-                      "You are not added a subtask for this task. Do you want to continue?",
+                      "Going back erases your filled data. Do you want to continue?",
                       style: GoogleFonts.roboto(
                         color: ColorPalette.black,
                         fontSize: w / 28,
@@ -382,14 +390,6 @@ class _CreateNewTaskState extends State<CreateNewTask> {
             },
           );
           return false;
-        }
-        else{
-          context
-              .read<TaskBloc>()
-              .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
-
-          return true;
-        }
 
       },
       child: MultiBlocListener(
@@ -589,133 +589,129 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                   isAction: false,
                   isBack: false,
                   onTap: () {
-                    if(taskListNew.isEmpty&&Variable.assignType=="Task_Group"){
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            surfaceTintColor: Colors.white,
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  width: w,
-                                  // height: h/7,
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Confirm",
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.black,
-                                      fontSize: w / 24,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Divider(),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "You are not added a subtask for this task. Do you want to continue?",
+                    context
+                        .read<TaskBloc>()
+                        .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          surfaceTintColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                width: w,
+                                // height: h/7,
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "Confirm",
                                   style: GoogleFonts.roboto(
                                     color: ColorPalette.black,
-                                    fontSize: w / 28,
+                                    fontSize: w / 24,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 30,
+                              ),
+                              Divider(),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                "Going back erases your filled data. Do you want to continue?",
+                                style: GoogleFonts.roboto(
+                                  color: ColorPalette.black,
+                                  fontSize: w / 28,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Container(
-                                          width: w / 3.3,
-                                          padding: EdgeInsets.symmetric(vertical: 10),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: Color(0x26000000).withOpacity(0.05)),
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color: Color(0x26000000),
-                                            //     blurRadius: 0,
-                                            //     offset: Offset(0, 0),
-                                            //   ),
-                                            // ],
-                                            color: ColorPalette.primary,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Cancel",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.white,
-                                                fontSize: w / 26,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        width: w / 3.3,
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                              width: 1,
+                                              color: Color(0x26000000).withOpacity(0.05)),
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Color(0x26000000),
+                                          //     blurRadius: 0,
+                                          //     offset: Offset(0, 0),
+                                          //   ),
+                                          // ],
+                                          color: ColorPalette.primary,
                                         ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          popFunction();
-                                          //
-                                        },
-                                        child: Container(
-                                          width: w / 3.1,
-                                          padding: EdgeInsets.symmetric(vertical: 13),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: Color(0x26000000).withOpacity(0.05)),
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: [
-                                                ColorPalette.white,
-                                                ColorPalette.white,
-                                              ],
-                                            ),
-                                          ),
+                                        child: Center(
                                           child: Text(
-                                            "Confirm",
+                                            "Cancel",
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.grey,
+                                            style: GoogleFonts.poppins(
+                                              color: Colors.white,
                                               fontSize: w / 26,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ]),
-                                SizedBox(
-                                  height: h / 80,
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
-                    else{
-                      context
-                          .read<TaskBloc>()
-                          .add(GetTaskListEvent(widget.jobId, '', '', '', false, '', ''));
-
-                    }
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        popFunction();
+                                        //
+                                      },
+                                      child: Container(
+                                        width: w / 3.1,
+                                        padding: EdgeInsets.symmetric(vertical: 13),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                              width: 1,
+                                              color: Color(0x26000000).withOpacity(0.05)),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              ColorPalette.white,
+                                              ColorPalette.white,
+                                            ],
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "Confirm",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.grey,
+                                            fontSize: w / 26,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                              SizedBox(
+                                height: h / 80,
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    );
 
                   },
                 )),
@@ -727,1551 +723,1587 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            validationCheck();
-                            _showModalBottomSheet(
-                                context, typelist ?? [], taskYype);
-                          },
-                          child: Container(
-                            width: w1,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Color(0xffF4F4F4),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  taskYype == null
-                                      ? "Select Task Type"
-                                      : taskYype ?? "",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: ColorPalette.primary,
-                                      fontSize: w / 24,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios_sharp,
-                                  size: 18,
-                                  color: ColorPalette.primary,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          width: w1,
-                          // height: 185,
-                          // padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              TextFormField(
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w600),
-                                onChanged: (n) {
-                                  validationCheck();
-                                  setState(() {});
-                                },
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.only(left: 16, right: 16),
-                                  hintText: "Task Title",
-                                  hintStyle: TextStyle(
-                                    color: Color(0x66151522),
-                                    fontSize: w / 26,
-                                  ),
-                                  border: InputBorder.none,
-                                ),
-                                controller: taskTitle,
-                                maxLines: 1,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 16),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.vibrate();
+                                validationCheck();
+                                _showModalBottomSheet(
+                                    context, typelist ?? [], taskYype);
+                              },
+                              child: Container(
                                 width: w1,
-                                height: 1.50,
-                                color: ColorPalette.divider,
-                              ),
-                              TextFormField(
-                                controller: discription,
-                                maxLines: 4,
-                                minLines: 1,
-                                onChanged: (n) {
-                                  validationCheck();
-                                  setState(() {});
-                                },
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w600),
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 16, top: 10, right: 16, bottom: 16),
-                                  hintText: "Enter Description",
-                                  hintStyle: TextStyle(
-                                    color: Color(0x66151522),
-                                    fontSize: w / 26,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Color(0xffe6ecf0),
+                                    width: 1,
                                   ),
-                                  border: InputBorder.none,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0x05000000),
+                                      blurRadius: 8,
+                                      offset: Offset(1, 1),
+                                    ),
+                                  ],
+                                  color: Color(0xffF4F4F4),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      taskYype == null
+                                          ? "Select Task Type"
+                                          : taskYype ?? "",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: ColorPalette.primary,
+                                          fontSize: w / 24,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      size: 18,
+                                      color: ColorPalette.primary,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        // Container(
-                        //   width: w1,
-                        //   decoration: BoxDecoration(
-                        //     color: Color(0xffFFDC5A).withOpacity(0.2),
-                        //     borderRadius: BorderRadius.circular(10)
-                        //   ),
-                        //   child: Row(
-                        //     children: [
-                        //       SvgPicture.string(
-                        //         TaskSvg().infoIcon,
-                        //         color: ColorPalette.black,
-                        //       ),
-                        //       Container(
-                        //         width: w1/1.3,
-                        //           child: Text("Please attention that, Job duration is from 12 Jan 2024 to 15 Jan 2024",
-                        //           style: GoogleFonts.roboto(
-                        //             fontSize: w/28,
-                        //             color: Colorp
-                        //           ),))
-                        //     ],
-                        //   ),
-                        // ),
-                        Container(
-                          width: w1,
-                          // height: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              width: w1,
+                              // height: 185,
+                              // padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x05000000),
+                                    blurRadius: 8,
+                                    offset: Offset(1, 1),
+                                  ),
+                                ],
+                                color: Colors.white,
                               ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 10, top: 10),
-                                child: SingleRow(
-                                    color: Color(0xfffc3a97),
-                                    label: "Date & Time",
-                                    svg: CreateSvg().clockIcon,
-                                    onTap: () {
-                                      setState(() {
-                                        // isTime = !isTime;
-                                      });
-                                    },
-                                    endIcon: GestureDetector(
-                                      onTap: () {
-                                        // focusNode.unfocus();
-                                        // descriptionfocusNode.unfocus();
-
-                                      },
-                                      child: DropdownButton<String>(
-                                        value: selectedValue,
-                                        isDense: true,
-                                        dropdownColor: Colors.white,
-                                        padding: EdgeInsets.zero,
-                                        underline: Container(),
-                                        // elevation: 16,
-                                        style: GoogleFonts.roboto(color: ColorPalette.primary,
-                                        fontWeight: FontWeight.w500),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedValue = newValue??"";
-                                            // startDate="";
-                                            // startDate2="";
-                                            // startTime="";
-                                            // startTime2="";
-                                            // endTime2='';
-                                            // endTime='';
-                                            // ebdDate='';
-                                            // ebdDate2='';
-                                            if(selectedValue=="Custom date"){
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return AlertDialog(
-                                                      insetPadding:w1>700?  EdgeInsets.all(50): const EdgeInsets.all(15),
-                                                      contentPadding: EdgeInsets.zero,
-
-                                                      content: Container(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
-                                                        decoration: const BoxDecoration(
-                                                            color: Colors.white,
-
-                                                            borderRadius: BorderRadius.all(Radius.circular(12))),
-                                                        child: Column(
-                                                          mainAxisSize: MainAxisSize.min,
-                                                          children: <Widget>[
-                                                            Text("Please select start date & end date",
-                                                              style: GoogleFonts.roboto(
-                                                                  color: ColorPalette.subtextGrey,
-                                                                  fontSize: w/28
-                                                              ),),
-                                                            Container(
-                                                              width: w1,
-                                                              child: CalendarDatePicker2WithActionButtons(
-                                                                onOkTapped: (){
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                onCancelTapped: (){
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                onValueChanged: (ff){
-                                                                  print("value changed$ff");
-                                                                  DateTime? dateTime =  DateTime.parse(ff[0].toString());
-                                                                  DateTime? dateTime2 =  DateTime.parse(ff[1].toString());
-                                                                  _onSelectionChanged(dateTime,dateTime2);
-                                                                  // _range = '${DateFormat('yyyy-MM-dd').format(dateTime)} -'
-                                                                  //     ' ${DateFormat('yyyy-MM-dd').format(dateTime2)}';
-                                                                  // _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
-                                                                  //     ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
-                                                                  print("value changed${dateTime}");
-                                                                  print("value changed${dateTime2}");
-                                                                  print("value changed${_range}");
-                                                                  setState(() {
-
-                                                                  });
-                                                                },
-
-                                                                config: CalendarDatePicker2WithActionButtonsConfig(
-                                                                  firstDayOfWeek: 1,firstDate: DateTime.tryParse(startDate),
-                                                                  calendarType: CalendarDatePicker2Type.range,
-                                                                  selectedDayTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-                                                                  selectedDayHighlightColor: ColorPalette.primary,
-                                                                  centerAlignModePicker: true,
-                                                                  customModePickerIcon: SizedBox(),
-                                                                ),
-                                                                value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
-                                                              ),
-                                                            ),
-                                                            // Row(
-                                                            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                            //     children: <Widget>[
-                                                            //       GestureDetector(
-                                                            //         onTap: () {
-                                                            //           Navigator.of(context).pop();
-                                                            //         },
-                                                            //         child: Container(
-                                                            //           width: w1 > 700 ? w1 / 3.3 : w / 3.3,
-                                                            //           padding: const EdgeInsets.symmetric(vertical: 10),
-                                                            //           decoration: BoxDecoration(
-                                                            //             borderRadius: BorderRadius.circular(5),
-                                                            //             border: Border.all(
-                                                            //                 width: 1,
-                                                            //                 color: const Color(0x26000000)
-                                                            //                     .withOpacity(0.05)),
-                                                            //             // boxShadow: [
-                                                            //             //   BoxShadow(
-                                                            //             //     color: Color(0x26000000),
-                                                            //             //     blurRadius: 3,
-                                                            //             //     offset: Offset(0, 0),
-                                                            //             //   ),
-                                                            //             // ],
-                                                            //             color: Colors.white,
-                                                            //           ),
-                                                            //           child: Center(
-                                                            //             child: Text(
-                                                            //               "Close",
-                                                            //               textAlign: TextAlign.center,
-                                                            //               style: GoogleFonts.inter(
-                                                            //                 color: const Color(0xffa9a8a8),
-                                                            //                 fontSize: w / 26,
-                                                            //                 fontWeight: FontWeight.w500,
-                                                            //               ),
-                                                            //             ),
-                                                            //           ),
-                                                            //         ),
-                                                            //       ),
-                                                            //       GestureDetector(
-                                                            //         onTap: () {
-                                                            //           // BlocProvider.of<SignupBloc>(context).add(
-                                                            //           //     DeactivateAccount(password: password.text));
-                                                            //         },
-                                                            //         child: Container(
-                                                            //           width: w1 > 700 ? w1 / 3.3 : w / 2.5,
-                                                            //           padding: const EdgeInsets.symmetric(vertical: 10),
-                                                            //           decoration: BoxDecoration(
-                                                            //             borderRadius: BorderRadius.circular(5),
-                                                            //             color: ColorPalette.primary,
-                                                            //           ),
-                                                            //           child: Text(
-                                                            //             "Deactivate",
-                                                            //             textAlign: TextAlign.center,
-                                                            //             style: GoogleFonts.inter(
-                                                            //               color: Colors.white,
-                                                            //               fontSize: w / 26,
-                                                            //               fontWeight: FontWeight.w500,
-                                                            //             ),
-                                                            //           ),
-                                                            //         ),
-                                                            //       ),
-                                                            //     ]),
-                                                            // const SizedBox(height: 16,)
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                    // return AlertDialog(
-                                                    //   surfaceTintColor: Colors.white,
-                                                    //   backgroundColor: Colors.white,
-                                                    //   shape: RoundedRectangleBorder(
-                                                    //     borderRadius:
-                                                    //         BorderRadius.circular(
-                                                    //             10.0),
-                                                    //   ),
-                                                    //   content: Column(
-                                                    //     mainAxisSize:
-                                                    //         MainAxisSize.min,
-                                                    //     children: [
-                                                    //       Container(
-                                                    //         height: 300,
-                                                    //         child: Scaffold(
-                                                    //           body: SfDateRangePicker(
-                                                    //             backgroundColor:
-                                                    //                 Colors.white,
-                                                    //             endRangeSelectionColor:
-                                                    //                 ColorPalette
-                                                    //                     .primary,
-                                                    //             startRangeSelectionColor:
-                                                    //                 ColorPalette
-                                                    //                     .primary,
-                                                    //             rangeSelectionColor:
-                                                    //                 ColorPalette
-                                                    //                     .primary
-                                                    //                     .withOpacity(
-                                                    //                         0.1),
-                                                    //             selectionColor:
-                                                    //                 Colors.grey,
-                                                    //             todayHighlightColor:
-                                                    //                 ColorPalette
-                                                    //                     .primary,
-                                                    //             onSelectionChanged:
-                                                    //                 _onSelectionChanged,
-                                                    //             selectionMode:
-                                                    //                 DateRangePickerSelectionMode
-                                                    //                     .range,
-                                                    //             initialSelectedRange: widget
-                                                    //                     .editTask
-                                                    //                 ? PickerDateRange(
-                                                    //                     DateTime.parse(
-                                                    //                         startDate),
-                                                    //                     DateTime.parse(
-                                                    //                         ebdDate))
-                                                    //                 : startDate != ""
-                                                    //                     ? PickerDateRange(
-                                                    //                         DateTime.parse(
-                                                    //                             startDate),
-                                                    //                         DateTime.parse(
-                                                    //                             ebdDate))
-                                                    //                     : PickerDateRange(
-                                                    //                         DateTime
-                                                    //                             .now(),
-                                                    //                         DateTime
-                                                    //                             .now()),
-                                                    //           ),
-                                                    //         ),
-                                                    //       ),
-                                                    //       GestureDetector(
-                                                    //         onTap: () {
-                                                    //           if (_range.isEmpty)
-                                                    //             setState(() {
-                                                    //               // if (DateTime.now() is PickerDateRange) {
-                                                    //               _range =
-                                                    //                   '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
-                                                    //               _range2 =
-                                                    //                   '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
-                                                    //               print(
-                                                    //                   "range is here$_range");
-                                                    //
-                                                    //               startDate = _range;
-                                                    //               startDate2 =
-                                                    //                   _range2;
-                                                    //               ebdDate = _range;
-                                                    //               ebdDate2 = _range2;
-                                                    //
-                                                    //               // validationCheck();
-                                                    //             });
-                                                    //
-                                                    //           Navigator.pop(context);
-                                                    //         },
-                                                    //         child: Container(
-                                                    //           height: 25,
-                                                    //           width: 75,
-                                                    //           color: ColorPalette
-                                                    //               .primary,
-                                                    //           child: Center(
-                                                    //               child: Text(
-                                                    //             "Ok",
-                                                    //             style: GoogleFonts
-                                                    //                 .roboto(
-                                                    //                     color: Colors
-                                                    //                         .white),
-                                                    //           )),
-                                                    //         ),
-                                                    //       )
-                                                    //     ],
-                                                    //   ),
-                                                    // );
-                                                  });
-                                            }
-                                          });
-                                        },
-                                        items: durationList
-                                            .map<DropdownMenuItem<String>>((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )),
-                              ),
-                              selectedValue=="Custom date"?
-                              Column(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Divider(
-                                    indent: 10,
-                                    height: 2,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 10,
-                                        top: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "From :",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: w / 24,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: w / 40,
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(5),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                // border:
-                                                // Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Color(0x05000000),
-                                                    blurRadius: 8,
-                                                    offset: Offset(1, 1),
-                                                  ),
-                                                ],
-                                                color: Color(0xffF4F4F4),
-                                              ),
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                _range2.isNotEmpty
-                                                    ? startDate2
-                                                    : "           ",
-                                                style: GoogleFonts.roboto(
-                                                  color: ColorPalette.black,
-                                                  fontSize: w / 24,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "To :",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: w / 24,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: w / 40,
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(5),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                // border:
-                                                // Border.all(color: Color(0xffe6ecf0), width: 1, ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Color(0x05000000),
-                                                    blurRadius: 8,
-                                                    offset: Offset(1, 1),
-                                                  ),
-                                                ],
-                                                color: Color(0xffF4F4F4),
-                                              ),
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                _range2.isNotEmpty
-                                                    ? ebdDate2
-                                                    : "           ",
-                                                style: GoogleFonts.roboto(
-                                                  color: ColorPalette.black,
-                                                  fontSize: w / 24,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+
+                                  TextFormField(
+                                    style: GoogleFonts.roboto(
+                                        fontWeight: FontWeight.w600),
+                                    onChanged: (n) {
+                                      validationCheck();
+                                      setState(() {});
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 16, right: 16),
+                                      hintText: "Task Title",
+                                      hintStyle: TextStyle(
+                                        color: Color(0x66151522),
+                                        fontSize: w / 26,
+                                      ),
+                                      border: InputBorder.none,
                                     ),
-                                  ),
-                                  Divider(
-                                    indent: 10,
-                                    height: 2,
+                                    controller: taskTitle,
+                                    maxLines: 1,
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 12,
-                                        top: 12),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.of(context).push(
-                                              showPicker(
-                                                showSecondSelector: false,
-                                                context: context,
-                                                value: _time,
-                                                onChange: onTimeChanged,
-                                                minuteInterval: TimePickerInterval.FIVE,
-                                                // Optional onChange to receive value as DateTime
-                                                onChangeDateTime: (DateTime dateTime) {
-                                                  time1Selected=true;
-
-                                                  time2 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
-                                                  final twentyFourHourFormat = DateFormat('HH:mm:ss');
-                                                  final twelveHourFormat = DateFormat('h:mm a');
-                                                  startTime = twelveHourFormat.format(dateTime);
-                                                  startTime2 = twentyFourHourFormat.format(dateTime);
-                                                  print(startTime);
-                                                  print(startTime2);
-                                                  debugPrint("[debug datetime]:  $dateTime");
-                                                  debugPrint("[debug datetime]:  $time2");
-                                                  validationCheck();
-                                                  setState((){});
-                                                },
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            startTime,
-                                            style: GoogleFonts.roboto(
-                                              color: const Color(0xff2871AF),
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.of(context).push(
-                                              showPicker(
-                                                showSecondSelector: false,
-                                                context: context,
-                                                value: _timeRead,
-                                                onChange: onTimeChangedEnd,
-                                                minuteInterval: TimePickerInterval.FIVE,
-                                                // Optional onChange to receive value as DateTime
-                                                onChangeDateTime: (DateTime dateTime) {
-                                                  time1Selected=true;
-
-                                                  time3 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
-                                                  final twentyFourHourFormat = DateFormat('HH:mm:ss');
-                                                  final twelveHourFormat = DateFormat('h:mm a');
-                                                  endTime = twelveHourFormat.format(dateTime);
-                                                  endTime2 = twentyFourHourFormat.format(dateTime);
-                                                  print(endTime);
-                                                  print(endTime2);
-                                                  debugPrint("[debug datetime]:  $time3");
-                                                  validationCheck();
-                                                  setState((){});
-                                                },
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            endTime,
-                                            style: GoogleFonts.roboto(
-                                              color: Color(0xff2871AF),
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                    margin: EdgeInsets.only(left: 16),
+                                    width: w1,
+                                    height: 1.50,
+                                    color: ColorPalette.divider,
+                                  ),
+                                  TextFormField(
+                                    controller: discription,
+                                    maxLines: 4,
+                                    minLines: 1,
+                                    onChanged: (n) {
+                                      validationCheck();
+                                      setState(() {});
+                                    },
+                                    style: GoogleFonts.roboto(
+                                        fontWeight: FontWeight.w600),
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.only(
+                                          left: 16, top: 10, right: 16, bottom: 16),
+                                      hintText: "Enter Description",
+                                      hintStyle: TextStyle(
+                                        color: Color(0x66151522),
+                                        fontSize: w / 26,
+                                      ),
+                                      border: InputBorder.none,
                                     ),
                                   ),
                                 ],
-                              ):Container(),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          "Job Duration ${widget.startDateTime} - ${widget.endDateTime}",
-                          style: GoogleFonts.roboto(
-                              color: Color(0x66151522),
-                              fontSize: w / 32,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            validationCheck();
-                            _showModalBottomSheetPriority(PriorityLeval);
-                          },
-                          child: Container(
-                            width: w1,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
                             ),
-                            child: SingleRow(
-                                color: Color(0xff33c658),
-                                label: "Set Priority",
-                                svg: CreateSvg().priorityIcon,
-                                onTap: () {},
-                                endIcon: Row(
-                                  children: [
-                                    Container(
-                                        // color:Colors.red,
-                                        width: w / 4.5,
-                                        child: PriorityLeval == ""
-                                            ? Container()
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                            SizedBox(
+                              height: 15,
+                            ),
+                            // Container(
+                            //   width: w1,
+                            //   decoration: BoxDecoration(
+                            //     color: Color(0xffFFDC5A).withOpacity(0.2),
+                            //     borderRadius: BorderRadius.circular(10)
+                            //   ),
+                            //   child: Row(
+                            //     children: [
+                            //       SvgPicture.string(
+                            //         TaskSvg().infoIcon,
+                            //         color: ColorPalette.black,
+                            //       ),
+                            //       Container(
+                            //         width: w1/1.3,
+                            //           child: Text("Please attention that, Job duration is from 12 Jan 2024 to 15 Jan 2024",
+                            //           style: GoogleFonts.roboto(
+                            //             fontSize: w/28,
+                            //             color: Colorp
+                            //           ),))
+                            //     ],
+                            //   ),
+                            // ),
+                            Container(
+                              width: w1,
+                              // height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Color(0xffe6ecf0),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x05000000),
+                                    blurRadius: 8,
+                                    offset: Offset(1, 1),
+                                  ),
+                                ],
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 10, top: 10),
+                                    child: SingleRow(
+                                        color: Color(0xfffc3a97),
+                                        label: "Date & Time",
+                                        svg: CreateSvg().clockIcon,
+                                        onTap: () {
+                                          setState(() {
+                                            // isTime = !isTime;
+                                          });
+                                        },
+                                        endIcon: GestureDetector(
+                                          onTap: () {
+                                            // focusNode.unfocus();
+                                            // descriptionfocusNode.unfocus();
+
+                                          },
+                                          child: DropdownButton<String>(
+                                            value: selectedValue,
+                                            isDense: true,
+                                            dropdownColor: Colors.white,
+                                            padding: EdgeInsets.zero,
+                                            underline: Container(),
+                                            // elevation: 16,
+                                            style: GoogleFonts.roboto(color: ColorPalette.primary,
+                                            fontWeight: FontWeight.w500),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                HapticFeedback.vibrate();
+                                                selectedValue = newValue??"";
+                                                // startDate="";
+                                                // startDate2="";
+                                                // startTime="";
+                                                // startTime2="";
+                                                // endTime2='';
+                                                // endTime='';
+                                                // ebdDate='';
+                                                // ebdDate2='';
+                                                if(selectedValue=="Custom date"){
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          insetPadding:w1>700?  EdgeInsets.all(50): const EdgeInsets.all(15),
+                                                          contentPadding: EdgeInsets.zero,
+
+                                                          content: Container(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
+                                                            decoration: const BoxDecoration(
+                                                                color: Colors.white,
+
+                                                                borderRadius: BorderRadius.all(Radius.circular(12))),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: <Widget>[
+                                                                Text("Please select start date & end date",
+                                                                  style: GoogleFonts.roboto(
+                                                                      color: ColorPalette.subtextGrey,
+                                                                      fontSize: w/28
+                                                                  ),),
+                                                                Container(
+                                                                  width: w1,
+                                                                  child: CalendarDatePicker2WithActionButtons(
+                                                                    onOkTapped: (){
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    onCancelTapped: (){
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    onValueChanged: (ff){
+                                                                      print("value changed$ff");
+                                                                      DateTime? dateTime =  DateTime.parse(ff[0].toString());
+                                                                      DateTime? dateTime2 =  DateTime.parse(ff[1].toString());
+                                                                      _onSelectionChanged(dateTime,dateTime2);
+                                                                      // _range = '${DateFormat('yyyy-MM-dd').format(dateTime)} -'
+                                                                      //     ' ${DateFormat('yyyy-MM-dd').format(dateTime2)}';
+                                                                      // _range2 = '${DateFormat('dd-MM-yyyy').format(args.value.startDate)} -'
+                                                                      //     ' ${DateFormat('dd-MM-yyyy').format(args.value.endDate ?? args.value.startDate)}';
+                                                                      print("value changed${dateTime}");
+                                                                      print("value changed${dateTime2}");
+                                                                      print("value changed${_range}");
+                                                                      setState(() {
+
+                                                                      });
+                                                                    },
+
+                                                                    config: CalendarDatePicker2WithActionButtonsConfig(
+                                                                      firstDayOfWeek: 1,firstDate: DateTime.tryParse(startDate),
+                                                                      calendarType: CalendarDatePicker2Type.range,
+                                                                      selectedDayTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                                                                      selectedDayHighlightColor: ColorPalette.primary,
+                                                                      centerAlignModePicker: true,
+                                                                      customModePickerIcon: SizedBox(),
+                                                                    ),
+                                                                    value: [DateTime.tryParse(startDate),DateTime.tryParse(ebdDate)],
+                                                                  ),
+                                                                ),
+                                                                // Row(
+                                                                //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                //     children: <Widget>[
+                                                                //       GestureDetector(
+                                                                //         onTap: () {
+                                                                //           Navigator.of(context).pop();
+                                                                //         },
+                                                                //         child: Container(
+                                                                //           width: w1 > 700 ? w1 / 3.3 : w / 3.3,
+                                                                //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                                //           decoration: BoxDecoration(
+                                                                //             borderRadius: BorderRadius.circular(5),
+                                                                //             border: Border.all(
+                                                                //                 width: 1,
+                                                                //                 color: const Color(0x26000000)
+                                                                //                     .withOpacity(0.05)),
+                                                                //             // boxShadow: [
+                                                                //             //   BoxShadow(
+                                                                //             //     color: Color(0x26000000),
+                                                                //             //     blurRadius: 3,
+                                                                //             //     offset: Offset(0, 0),
+                                                                //             //   ),
+                                                                //             // ],
+                                                                //             color: Colors.white,
+                                                                //           ),
+                                                                //           child: Center(
+                                                                //             child: Text(
+                                                                //               "Close",
+                                                                //               textAlign: TextAlign.center,
+                                                                //               style: GoogleFonts.inter(
+                                                                //                 color: const Color(0xffa9a8a8),
+                                                                //                 fontSize: w / 26,
+                                                                //                 fontWeight: FontWeight.w500,
+                                                                //               ),
+                                                                //             ),
+                                                                //           ),
+                                                                //         ),
+                                                                //       ),
+                                                                //       GestureDetector(
+                                                                //         onTap: () {
+                                                                //           // BlocProvider.of<SignupBloc>(context).add(
+                                                                //           //     DeactivateAccount(password: password.text));
+                                                                //         },
+                                                                //         child: Container(
+                                                                //           width: w1 > 700 ? w1 / 3.3 : w / 2.5,
+                                                                //           padding: const EdgeInsets.symmetric(vertical: 10),
+                                                                //           decoration: BoxDecoration(
+                                                                //             borderRadius: BorderRadius.circular(5),
+                                                                //             color: ColorPalette.primary,
+                                                                //           ),
+                                                                //           child: Text(
+                                                                //             "Deactivate",
+                                                                //             textAlign: TextAlign.center,
+                                                                //             style: GoogleFonts.inter(
+                                                                //               color: Colors.white,
+                                                                //               fontSize: w / 26,
+                                                                //               fontWeight: FontWeight.w500,
+                                                                //             ),
+                                                                //           ),
+                                                                //         ),
+                                                                //       ),
+                                                                //     ]),
+                                                                // const SizedBox(height: 16,)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                        // return AlertDialog(
+                                                        //   surfaceTintColor: Colors.white,
+                                                        //   backgroundColor: Colors.white,
+                                                        //   shape: RoundedRectangleBorder(
+                                                        //     borderRadius:
+                                                        //         BorderRadius.circular(
+                                                        //             10.0),
+                                                        //   ),
+                                                        //   content: Column(
+                                                        //     mainAxisSize:
+                                                        //         MainAxisSize.min,
+                                                        //     children: [
+                                                        //       Container(
+                                                        //         height: 300,
+                                                        //         child: Scaffold(
+                                                        //           body: SfDateRangePicker(
+                                                        //             backgroundColor:
+                                                        //                 Colors.white,
+                                                        //             endRangeSelectionColor:
+                                                        //                 ColorPalette
+                                                        //                     .primary,
+                                                        //             startRangeSelectionColor:
+                                                        //                 ColorPalette
+                                                        //                     .primary,
+                                                        //             rangeSelectionColor:
+                                                        //                 ColorPalette
+                                                        //                     .primary
+                                                        //                     .withOpacity(
+                                                        //                         0.1),
+                                                        //             selectionColor:
+                                                        //                 Colors.grey,
+                                                        //             todayHighlightColor:
+                                                        //                 ColorPalette
+                                                        //                     .primary,
+                                                        //             onSelectionChanged:
+                                                        //                 _onSelectionChanged,
+                                                        //             selectionMode:
+                                                        //                 DateRangePickerSelectionMode
+                                                        //                     .range,
+                                                        //             initialSelectedRange: widget
+                                                        //                     .editTask
+                                                        //                 ? PickerDateRange(
+                                                        //                     DateTime.parse(
+                                                        //                         startDate),
+                                                        //                     DateTime.parse(
+                                                        //                         ebdDate))
+                                                        //                 : startDate != ""
+                                                        //                     ? PickerDateRange(
+                                                        //                         DateTime.parse(
+                                                        //                             startDate),
+                                                        //                         DateTime.parse(
+                                                        //                             ebdDate))
+                                                        //                     : PickerDateRange(
+                                                        //                         DateTime
+                                                        //                             .now(),
+                                                        //                         DateTime
+                                                        //                             .now()),
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //       GestureDetector(
+                                                        //         onTap: () {
+                                                        //           if (_range.isEmpty)
+                                                        //             setState(() {
+                                                        //               // if (DateTime.now() is PickerDateRange) {
+                                                        //               _range =
+                                                        //                   '${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
+                                                        //               _range2 =
+                                                        //                   '${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
+                                                        //               print(
+                                                        //                   "range is here$_range");
+                                                        //
+                                                        //               startDate = _range;
+                                                        //               startDate2 =
+                                                        //                   _range2;
+                                                        //               ebdDate = _range;
+                                                        //               ebdDate2 = _range2;
+                                                        //
+                                                        //               // validationCheck();
+                                                        //             });
+                                                        //
+                                                        //           Navigator.pop(context);
+                                                        //         },
+                                                        //         child: Container(
+                                                        //           height: 25,
+                                                        //           width: 75,
+                                                        //           color: ColorPalette
+                                                        //               .primary,
+                                                        //           child: Center(
+                                                        //               child: Text(
+                                                        //             "Ok",
+                                                        //             style: GoogleFonts
+                                                        //                 .roboto(
+                                                        //                     color: Colors
+                                                        //                         .white),
+                                                        //           )),
+                                                        //         ),
+                                                        //       )
+                                                        //     ],
+                                                        //   ),
+                                                        // );
+                                                      });
+                                                }
+                                              });
+                                            },
+                                            items: durationList
+                                                .map<DropdownMenuItem<String>>((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        )),
+                                  ),
+                                  selectedValue=="Custom date"?
+                                  Column(
+                                    children: [
+                                      Divider(
+                                        indent: 10,
+                                        height: 2,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            bottom: 10,
+                                            top: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "From :",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: w / 40,
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(4),
+                                                    // border:
+                                                    // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Color(0xffF4F4F4),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    _range2.isNotEmpty
+                                                        ? startDate2
+                                                        : "           ",
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.black,
+                                                      fontSize: w / 24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "To :",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: w / 24,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: w / 40,
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(4),
+                                                    // border:
+                                                    // Border.all(color: Color(0xffe6ecf0), width: 1, ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Color(0x05000000),
+                                                        blurRadius: 8,
+                                                        offset: Offset(1, 1),
+                                                      ),
+                                                    ],
+                                                    color: Color(0xffF4F4F4),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    _range2.isNotEmpty
+                                                        ? ebdDate2
+                                                        : "           ",
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.black,
+                                                      fontSize: w / 24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        indent: 10,
+                                        height: 2,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            bottom: 12,
+                                            top: 12),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _time,
+                                                    onChange: onTimeChanged,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time2 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                      final twelveHourFormat = DateFormat('h:mm a');
+                                                      startTime = twelveHourFormat.format(dateTime);
+                                                      startTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(startTime);
+                                                      print(startTime2);
+                                                      debugPrint("[debug datetime]:  $dateTime");
+                                                      debugPrint("[debug datetime]:  $time2");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                startTime,
+                                                style: GoogleFonts.roboto(
+                                                  color: const Color(0xff2871AF),
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: (){
+                                                Navigator.of(context).push(
+                                                  showPicker(
+                                                    showSecondSelector: false,
+                                                    context: context,
+                                                    value: _timeRead,
+                                                    onChange: onTimeChangedEnd,
+                                                    minuteInterval: TimePickerInterval.FIVE,
+                                                    // Optional onChange to receive value as DateTime
+                                                    onChangeDateTime: (DateTime dateTime) {
+                                                      time1Selected=true;
+
+                                                      time3 = "${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
+                                                      final twentyFourHourFormat = DateFormat('HH:mm:ss');
+                                                      final twelveHourFormat = DateFormat('h:mm a');
+                                                      endTime = twelveHourFormat.format(dateTime);
+                                                      endTime2 = twentyFourHourFormat.format(dateTime);
+                                                      print(endTime);
+                                                      print(endTime2);
+                                                      debugPrint("[debug datetime]:  $time3");
+                                                      validationCheck();
+                                                      setState((){});
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                endTime,
+                                                style: GoogleFonts.roboto(
+                                                  color: Color(0xff2871AF),
+                                                  fontSize: w / 24,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ):Container(),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              "Job Duration ${widget.startDateTime} - ${widget.endDateTime}",
+                              style: GoogleFonts.roboto(
+                                  color: Color(0x66151522),
+                                  fontSize: w / 32,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.vibrate();
+                                validationCheck();
+                                _showModalBottomSheetPriority(PriorityLeval);
+                              },
+                              child: Container(
+                                width: w1,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Color(0xffe6ecf0),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0x05000000),
+                                      blurRadius: 8,
+                                      offset: Offset(1, 1),
+                                    ),
+                                  ],
+                                  color: Colors.white,
+                                ),
+                                child: SingleRow(
+                                    color: Color(0xff33c658),
+                                    label: "Set Priority",
+                                    svg: CreateSvg().priorityIcon,
+                                    onTap: () {
+                                      HapticFeedback.vibrate();
+                                      validationCheck();
+                                      _showModalBottomSheetPriority(PriorityLeval);
+                                    },
+                                    endIcon: Row(
+                                      children: [
+                                        Container(
+                                            // color:Colors.red,
+                                            width: w / 4.5,
+                                            child: PriorityLeval == ""
+                                                ? Container()
+                                                : Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      SvgPicture.string(
+                                                        TaskSvg().priorityIcon,
+                                                        color: PriorityLeval ==
+                                                                "Low"
+                                                            ? Color(0xff50D166)
+                                                            : PriorityLeval ==
+                                                                    "Medium"
+                                                                ? Color(0xffF18F1C)
+                                                                : null,
+                                                      ),
+                                                      Text(
+                                                        PriorityLeval,
+                                                        style: TextStyle(
+                                                            fontSize: w / 24,
+                                                            fontWeight:
+                                                                FontWeight.w500),
+                                                      ),
+                                                    ],
+                                                  )),
+                                        PriorityLeval == ""
+                                            ? Icon(
+                                                Icons.arrow_forward_ios_sharp,
+                                                color: ColorPalette.primary,
+                                                size: 18,
+                                              )
+                                            : Container()
+                                      ],
+                                    )),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.vibrate();
+                                validationCheck();
+                                context
+                                    .read<TaskBloc>()
+                                    .add(GetTaskReadListEvent(readTask?.id ?? 0));
+                                print(readTask?.id);
+                                readTask?.id == null
+                                    ? PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ReportingPerson(
+                                          editTask: false,
+                                          readTask: readTask,
+                                          task: true,
+                                          job: false,
+                                          refresh: refreshPage,
+                                        ),
+                                        withNavBar:
+                                            true, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                      )
+                                    : PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ReportingPerson(
+                                          refresh: refreshPage,
+                                          editTask: true,
+                                          readTask: readTask,
+                                          task: true,
+                                          job: false,
+                                        ),
+                                        withNavBar:
+                                            true, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.fade,
+                                      );
+                              },
+                              child: Container(
+                                width: w1,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Color(0xffe6ecf0),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0x05000000),
+                                      blurRadius: 8,
+                                      offset: Offset(1, 1),
+                                    ),
+                                  ],
+                                  color: Colors.white,
+                                ),
+                                child: SingleRow(
+                                    color: Color(0xffAD51E0),
+                                    label: "Reporting Person",
+                                    svg: TaskSvg().personIcon,
+                                    onTap: () {
+                                      validationCheck();
+                                      context
+                                          .read<TaskBloc>()
+                                          .add(GetTaskReadListEvent(readTask?.id ?? 0));
+                                      print(readTask?.id);
+                                      readTask?.id == null
+                                          ? PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ReportingPerson(
+                                          editTask: false,
+                                          readTask: readTask,
+                                          task: true,
+                                          job: false,
+                                          refresh: refreshPage,
+                                        ),
+                                        withNavBar:
+                                        true, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                        PageTransitionAnimation.fade,
+                                      )
+                                          : PersistentNavBarNavigator.pushNewScreen(
+                                        context,
+                                        screen: ReportingPerson(
+                                          refresh: refreshPage,
+                                          editTask: true,
+                                          readTask: readTask,
+                                          task: true,
+                                          job: false,
+                                        ),
+                                        withNavBar:
+                                        true, // OPTIONAL VALUE. True by default.
+                                        pageTransitionAnimation:
+                                        PageTransitionAnimation.fade,
+                                      );
+                                    },
+                                    endIcon: Variable.reportingEmail == ""?Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      color: ColorPalette.primary,
+                                      size: 18,
+                                    ):Container(
+                                      width: w1/4,
+                                        alignment: Alignment.centerRight,
+                                        // color: Colors.orange,
+                                        child: Text(Variable.reportingName??"",
+                                        overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,))),
+                              ),
+                            ),
+                            // SizedBox(
+                            //   height: 15,
+                            // ),
+                            // Container(
+                            //   width: w1,
+                            //   // height: 185,
+                            //   // padding: EdgeInsets.all(16),
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(4),
+                            //     border: Border.all(
+                            //       color: Color(0xffe6ecf0),
+                            //       width: 1,
+                            //     ),
+                            //     boxShadow: [
+                            //       BoxShadow(
+                            //         color: Color(0x05000000),
+                            //         blurRadius: 8,
+                            //         offset: Offset(1, 1),
+                            //       ),
+                            //     ],
+                            //     color: Colors.white,
+                            //   ),
+                            //   child: Column(
+                            //     mainAxisAlignment: MainAxisAlignment.start,
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       TextFormField(
+                            //         style: GoogleFonts.roboto(
+                            //             fontWeight: FontWeight.w400),
+                            //         onChanged: (n) {
+                            //           validationCheck();
+                            //           setState(() {});
+                            //         },
+                            //         decoration: InputDecoration(
+                            //           contentPadding:
+                            //               EdgeInsets.only(left: 16, right: 16),
+                            //           hintText: "Add Notes",
+                            //           hintStyle: TextStyle(
+                            //             color: Color(0x66151522),
+                            //             fontSize: w / 26,
+                            //           ),
+                            //           border: InputBorder.none,
+                            //         ),
+                            //         controller: notesController,
+                            //         maxLines: 1,
+                            //       ),
+                            //       Container(
+                            //         margin: EdgeInsets.only(left: 16),
+                            //         width: w1,
+                            //         height: 1.50,
+                            //         color: ColorPalette.divider,
+                            //       ),
+                            //       TextFormField(
+                            //         controller: remarksController,
+                            //         maxLines: 4,
+                            //         minLines: 1,
+                            //         onChanged: (n) {
+                            //           validationCheck();
+                            //           setState(() {});
+                            //         },
+                            //         style: GoogleFonts.roboto(
+                            //             fontWeight: FontWeight.w400),
+                            //         decoration: InputDecoration(
+                            //           contentPadding: EdgeInsets.only(
+                            //               left: 16, top: 10, right: 16, bottom: 16),
+                            //           hintText: "Add Remarks",
+                            //           hintStyle: TextStyle(
+                            //             color: Color(0x66151522),
+                            //             fontSize: w / 26,
+                            //           ),
+                            //           border: InputBorder.none,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            widget.editTask == false
+                                ? widget.isSubTask
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.vibrate();
+                                          context.read<JobBloc>().add(
+                                              const GetEmployeeListEvent(
+                                                  '', '', ''));
+                                          context
+                                              .read<JobBloc>()
+                                              .add(GetGroupListEvent());
+                                          PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen: AssignesUnderGroup(
+                                              groupVal: updatevalue,
+                                              groupId: readTask?.groupId??0,
+                                            ),
+                                            withNavBar: true,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation:
+                                                PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        child: Container(
+                                          width: w1,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 14, vertical: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Color(0xffe6ecf0),
+                                              width: 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color(0x05000000),
+                                                blurRadius: 8,
+                                                offset: Offset(1, 1),
+                                              ),
+                                            ],
+                                            color: Colors.white,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
                                                 children: [
-                                                  SvgPicture.string(
-                                                    TaskSvg().priorityIcon,
-                                                    color: PriorityLeval ==
-                                                            "Low"
-                                                        ? Color(0xff50D166)
-                                                        : PriorityLeval ==
-                                                                "Medium"
-                                                            ? Color(0xffF18F1C)
-                                                            : null,
+                                                  Container(
+                                                    width: 32,
+                                                    height: 32,
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(5),
+                                                      color: Color(0xff33c658),
+                                                    ),
+                                                    child: SvgPicture.string(
+                                                        CreateSvg().assignIcon),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
                                                   ),
                                                   Text(
-                                                    PriorityLeval,
-                                                    style: TextStyle(
-                                                        fontSize: w / 24,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  ),
+                                                    "Assign To",
+                                                    style: GoogleFonts.roboto(
+                                                      color: Color(0xff151522),
+                                                      fontSize: w / 24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  )
                                                 ],
-                                              )),
-                                    PriorityLeval == ""
-                                        ? Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            color: ColorPalette.primary,
-                                            size: 18,
-                                          )
-                                        : Container()
-                                  ],
-                                )),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            validationCheck();
-                            context
-                                .read<TaskBloc>()
-                                .add(GetTaskReadListEvent(readTask?.id ?? 0));
-                            print(readTask?.id);
-                            readTask?.id == null
-                                ? PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ReportingPerson(
-                                      editTask: false,
-                                      readTask: readTask,
-                                      task: true,
-                                      job: false,
-                                      refresh: refreshPage,
-                                    ),
-                                    withNavBar:
-                                        true, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  )
-                                : PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ReportingPerson(
-                                      refresh: refreshPage,
-                                      editTask: true,
-                                      readTask: readTask,
-                                      task: true,
-                                      job: false,
-                                    ),
-                                    withNavBar:
-                                        true, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  );
-                          },
-                          child: Container(
-                            width: w1,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Color(0xffe6ecf0),
-                                width: 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x05000000),
-                                  blurRadius: 8,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: SingleRow(
-                                color: Color(0xffAD51E0),
-                                label: "Reporting Person",
-                                svg: TaskSvg().personIcon,
-                                onTap: () {
-                                  validationCheck();
-                                  context
-                                      .read<TaskBloc>()
-                                      .add(GetTaskReadListEvent(readTask?.id ?? 0));
-                                  print(readTask?.id);
-                                  readTask?.id == null
-                                      ? PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ReportingPerson(
-                                      editTask: false,
-                                      readTask: readTask,
-                                      task: true,
-                                      job: false,
-                                      refresh: refreshPage,
-                                    ),
-                                    withNavBar:
-                                    true, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                    PageTransitionAnimation.fade,
-                                  )
-                                      : PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ReportingPerson(
-                                      refresh: refreshPage,
-                                      editTask: true,
-                                      readTask: readTask,
-                                      task: true,
-                                      job: false,
-                                    ),
-                                    withNavBar:
-                                    true, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                    PageTransitionAnimation.fade,
-                                  );
-                                },
-                                endIcon: Variable.reportingEmail == ""?Icon(
-                                  Icons.arrow_forward_ios_sharp,
-                                  color: ColorPalette.primary,
-                                  size: 18,
-                                ):Container(
-                                  width: w1/4,
-                                    alignment: Alignment.centerRight,
-                                    // color: Colors.orange,
-                                    child: Text(Variable.reportingName??"",
-                                    overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,))),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          width: w1,
-                          // height: 185,
-                          // padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextFormField(
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w400),
-                                onChanged: (n) {
-                                  validationCheck();
-                                  setState(() {});
-                                },
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.only(left: 16, right: 16),
-                                  hintText: "Add Notes",
-                                  hintStyle: TextStyle(
-                                    color: Color(0x66151522),
-                                    fontSize: w / 26,
-                                  ),
-                                  border: InputBorder.none,
-                                ),
-                                controller: notesController,
-                                maxLines: 1,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 16),
-                                width: w1,
-                                height: 1.50,
-                                color: ColorPalette.divider,
-                              ),
-                              TextFormField(
-                                controller: remarksController,
-                                maxLines: 4,
-                                minLines: 1,
-                                onChanged: (n) {
-                                  validationCheck();
-                                  setState(() {});
-                                },
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.w400),
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 16, top: 10, right: 16, bottom: 16),
-                                  hintText: "Add Remarks",
-                                  hintStyle: TextStyle(
-                                    color: Color(0x66151522),
-                                    fontSize: w / 26,
-                                  ),
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        widget.editTask == false
-                            ? widget.isSubTask
-                                ? GestureDetector(
-                                    onTap: () {
-                                      context.read<JobBloc>().add(
-                                          const GetEmployeeListEvent(
-                                              '', '', ''));
-                                      context
-                                          .read<JobBloc>()
-                                          .add(GetGroupListEvent());
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen: AssignesUnderGroup(
-                                          groupVal: updatevalue,
-                                          groupId: readTask?.groupId??0,
-                                        ),
-                                        withNavBar: true,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: Container(
-                                      width: w1,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: Color(0xffe6ecf0),
-                                          width: 1,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color(0x05000000),
-                                            blurRadius: 8,
-                                            offset: Offset(1, 1),
-                                          ),
-                                        ],
-                                        color: Colors.white,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: 32,
-                                                height: 32,
-                                                padding: EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: Color(0xff33c658),
-                                                ),
-                                                child: SvgPicture.string(
-                                                    CreateSvg().assignIcon),
                                               ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                "Assign To",
-                                                style: GoogleFonts.roboto(
-                                                  color: Color(0xff151522),
-                                                  fontSize: w / 24,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  // Image.asset(
+                                                  //   "asset/img_6.png",
+                                                  //   height: 30,
+                                                  //   width: 30,
+                                                  // ),
+                                                  // const SizedBox(
+                                                  //   width: 10,
+                                                  // ),
+                                                  Variable.assignName == ""
+                                                      ? Icon(
+                                                    Icons
+                                                        .arrow_forward_ios_sharp,
+                                                    color:
+                                                    ColorPalette.primary,
+                                                    size: 18,
+                                                  )
+                                                      : Text(Variable.assignName)
+                                                ],
                                               )
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              // Image.asset(
-                                              //   "asset/img_6.png",
-                                              //   height: 30,
-                                              //   width: 30,
-                                              // ),
-                                              // const SizedBox(
-                                              //   width: 10,
-                                              // ),
-                                              // Variable.assignName==""?Icon(Icons.arrow_forward_ios_sharp):Text(Variable.assignName)
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : GestureDetector(
-                                    onTap: () {
-                                      // context.read<JobBloc>().add( const GetEmployeeListEvent());
-                                      context
-                                          .read<JobBloc>()
-                                          .add(GetGroupListEvent());
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen:
-                                            SelectAssignees(groupVal: grpVal),
-                                        withNavBar: true,
-                                        // OPTIONAL VALUE. True by default.
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: Container(
-                                      width: w1,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: Color(0xffe6ecf0),
-                                          width: 1,
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color(0x05000000),
-                                            blurRadius: 8,
-                                            offset: Offset(1, 1),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.vibrate();
+
+                                          context
+                                              .read<JobBloc>()
+                                              .add(GetGroupListEvent());
+                                          PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen:
+                                                SelectAssignees(groupVal: grpVal),
+                                            withNavBar: true,
+                                            // OPTIONAL VALUE. True by default.
+                                            pageTransitionAnimation:
+                                                PageTransitionAnimation.fade,
+                                          );
+                                        },
+                                        child: Container(
+                                          width: w1,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(
+                                              color: Color(0xffe6ecf0),
+                                              width: 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color(0x05000000),
+                                                blurRadius: 8,
+                                                offset: Offset(1, 1),
+                                              ),
+                                            ],
+                                            color: Colors.white,
                                           ),
-                                        ],
-                                        color: Colors.white,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Container(
-                                                width: 32,
-                                                height: 32,
-                                                padding: EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: Color(0xff33c658),
-                                                ),
-                                                child: SvgPicture.string(
-                                                    CreateSvg().assignIcon),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 32,
+                                                    height: 32,
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(5),
+                                                      color: Color(0xff33c658),
+                                                    ),
+                                                    child: SvgPicture.string(
+                                                        CreateSvg().assignIcon),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    "Assign To",
+                                                    style: GoogleFonts.roboto(
+                                                      color: Color(0xff151522),
+                                                      fontSize: w / 24,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  )
+                                                ],
                                               ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                "Assign To",
-                                                style: GoogleFonts.roboto(
-                                                  color: Color(0xff151522),
-                                                  fontSize: w / 24,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  // Image.asset(
+                                                  //   "asset/img_6.png",
+                                                  //   height: 30,
+                                                  //   width: 30,
+                                                  // ),
+                                                  // const SizedBox(
+                                                  //   width: 10,
+                                                  // ),
+                                                  Variable.assignName == ""
+                                                      ? Icon(
+                                                    Icons
+                                                        .arrow_forward_ios_sharp,
+                                                    color:
+                                                    ColorPalette.primary,
+                                                    size: 18,
+                                                  )
+                                                      : Text(Variable.assignName)
+                                                ],
                                               )
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              // Image.asset(
-                                              //   "asset/img_6.png",
-                                              //   height: 30,
-                                              //   width: 30,
-                                              // ),
-                                              // const SizedBox(
-                                              //   width: 10,
-                                              // ),
-                                              Variable.assignName == ""
-                                                  ? Icon(
-                                                      Icons
-                                                          .arrow_forward_ios_sharp,
-                                                      color:
-                                                          ColorPalette.primary,
-                                                      size: 18,
-                                                    )
-                                                  : Text(Variable.assignName)
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                            : Container(),
-                        widget.editTask == true
-                            ? Container()
-                            : SizedBox(
-                                height: 5,
-                              ),
-                        // widget.isSubTask
-                        //     ? Container()
-                        //     : grpval == true
-                        //         ? Column(
-                        //             children: [
-                        //               Container(
-                        //                 width: w,
-                        //                 padding: EdgeInsets.symmetric(
-                        //                     horizontal: 16, vertical: 10),
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(5),
-                        //                   border: Border.all(
-                        //                     color: Color(0xffe6ecf0),
-                        //                     width: 1,
-                        //                   ),
-                        //                   boxShadow: [
-                        //                     BoxShadow(
-                        //                       color: Color(0x05000000),
-                        //                       blurRadius: 8,
-                        //                       offset: Offset(1, 1),
-                        //                     ),
-                        //                   ],
-                        //                   color: Colors.white,
-                        //                 ),
-                        //                 child: SingleRow(
-                        //                   label: "Subtasks",
-                        //                   color: Color(0xffFFC800),
-                        //                   svg: CreateSvg().taskIcon,
-                        //                   endIcon: isSubTask
-                        //                       ? SvgPicture.string(
-                        //                           HomeSvg().toggleActive)
-                        //                       : SvgPicture.string(
-                        //                           HomeSvg().toggleInActive),
-                        //                   onTap: () {
-                        //                     setState(() {
-                        //                       Variable.taskType == 0 ||
-                        //                               taskTitle.text == "" ||
-                        //                               discription.text == "" ||
-                        //                               Variable.assignType ==
-                        //                                   "" ||
-                        //                               Variable.assignCode == ""
-                        //                           ? Fluttertoast.showToast(
-                        //                               msg:
-                        //                                   'Please fill the fields',
-                        //                               toastLength:
-                        //                                   Toast.LENGTH_SHORT,
-                        //                               gravity:
-                        //                                   ToastGravity.BOTTOM,
-                        //                               backgroundColor:
-                        //                                   Colors.black,
-                        //                               textColor: Colors.white)
-                        //                           : BlocProvider.of<TaskBloc>(
-                        //                                   context)
-                        //                               .add(CreateTaskEvent(
-                        //                               latitude: null,
-                        //                               longitude: null,
-                        //                               AssigningCode:
-                        //                                   Variable.assignCode,
-                        //                               AssigningType:
-                        //                                   Variable.assignType,
-                        //                               createdOn:
-                        //                                   "${_range.split(" - ")[0]} $startTime2",
-                        //                               jobId: widget.jobId ?? 0,
-                        //                               notas: notesController
-                        //                                       .text ??
-                        //                                   "",
-                        //                               durationOption: selectedValue,
-                        //                               priorityLeval: 0,
-                        //                               remarks: remarksController
-                        //                                   .text,
-                        //                               taskName:
-                        //                                   taskTitle.text ?? "",
-                        //                               taskType:
-                        //                                   Variable.taskType,
-                        //                               lastmodified: null,
-                        //                               parant: null,
-                        //                               statusStagesId: null,
-                        //                               discription:
-                        //                                   discription.text ??
-                        //                                       "",
-                        //                               createdBy: authentication
-                        //                                       .authenticatedUser
-                        //                                       .code ??
-                        //                                   "",
-                        //                               isActive: true,
-                        //                               priority: PriorityLeval,
-                        //                               reportingPerson: Variable
-                        //                                           .reportingCode ==
-                        //                                       ""
-                        //                                   ? authentication
-                        //                                       .authenticatedUser
-                        //                                       .code
-                        //                                       .toString()
-                        //                                   : Variable
-                        //                                       .reportingCode
-                        //                                       .toString(),
-                        //                               endDate:
-                        //                                   "$ebdDate ${endTime2}",
-                        //                               startDate:
-                        //                                   "$startDate ${startTime2}",
-                        //                             ));
-                        //                       Variable.taskType == 0 ||
-                        //                               taskTitle.text == "" ||
-                        //                               discription.text == "" ||
-                        //                               Variable.assignType ==
-                        //                                   "" ||
-                        //                               Variable.assignCode == ""
-                        //                           ? Fluttertoast.showToast(
-                        //                               msg:
-                        //                                   'Please fill the fields',
-                        //                               toastLength:
-                        //                                   Toast.LENGTH_SHORT,
-                        //                               gravity:
-                        //                                   ToastGravity.BOTTOM,
-                        //                               backgroundColor:
-                        //                                   Colors.black,
-                        //                               textColor: Colors.white)
-                        //                           : isSubTask = !isSubTask;
-                        //                     });
-                        //                   },
-                        //                 ),
-                        //               ),
-                        //               SizedBox(
-                        //                 height: 10,
-                        //               ),
-                        //               isSubTask == true
-                        //                   ? Container(
-                        //                       width: w,
-                        //                       decoration: BoxDecoration(
-                        //                         borderRadius:
-                        //                             BorderRadius.circular(4),
-                        //                         border: Border.all(
-                        //                           color: Color(0xffe6ecf0),
-                        //                           width: 1,
-                        //                         ),
-                        //                         boxShadow: [
-                        //                           BoxShadow(
-                        //                             color: Color(0x05000000),
-                        //                             blurRadius: 8,
-                        //                             offset: Offset(1, 1),
-                        //                           ),
-                        //                         ],
-                        //                         color: Colors.white,
-                        //                       ),
-                        //                       child: Column(
-                        //                         children: [
-                        //                           Container(
-                        //                             width: w,
-                        //                             child: taskListNew.isEmpty
-                        //                                 ? Container()
-                        //                                 : Container(
-                        //                                     child: ListView
-                        //                                         .separated(
-                        //                                             shrinkWrap:
-                        //                                                 true,
-                        //                                             physics:
-                        //                                                 NeverScrollableScrollPhysics(),
-                        //                                             itemBuilder:
-                        //                                                 (context,
-                        //                                                         index) =>
-                        //                                                     Container(
-                        //                                                       decoration: BoxDecoration(
-                        //                                                         color: Colors.white,
-                        //                                                         border: Border.all(color: ColorPalette.borderGrey),
-                        //                                                         borderRadius: BorderRadius.circular(10)
-                        //                                                       ),
-                        //                                                       margin: EdgeInsets.all(5),
-                        //                                                       child: Padding(
-                        //                                                         padding: const EdgeInsets.all(10),
-                        //                                                         child: Row(
-                        //                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //                                                           children: [
-                        //                                                             Text(
-                        //                                                               "${index + 1}- ${taskListNew[index].taskName ?? ""}",
-                        //                                                               style: GoogleFonts.roboto(
-                        //                                                                 color: Color(0xff151522),
-                        //                                                                 fontSize: 18,
-                        //                                                                 fontWeight: FontWeight.w500,
-                        //                                                               ),
-                        //                                                             ),
-                        //                                                             // Row(
-                        //                                                             //   children: [
-                        //                                                             //     Text(taskListNew[index].assigningCode??""),
-                        //                                                             //     SizedBox(
-                        //                                                             //       width: 10,
-                        //                                                             //     ),
-                        //                                                             //     // Icon(
-                        //                                                             //     //     Icons
-                        //                                                             //     //         .arrow_forward_ios_sharp)
-                        //                                                             //   ],
-                        //                                                             // )
-                        //                                                           ],
-                        //                                                         ),
-                        //                                                       ),
-                        //                                                     ),
-                        //                                             separatorBuilder:
-                        //                                                 (context,
-                        //                                                     index) {
-                        //                                               return SizedBox(
-                        //                                                 height:
-                        //                                                     5,
-                        //                                               );
-                        //                                             },
-                        //                                             itemCount:
-                        //                                                 taskListNew
-                        //                                                     .length),
-                        //                                   ),
-                        //                           ),
-                        //                           // Divider(
-                        //                           //   color: Color(0xffE6ECF0)
-                        //                           //       .withOpacity(0.5),
-                        //                           //   thickness: 1,
-                        //                           // ),
-                        //                           isSubTask == true
-                        //                               ? GestureDetector(
-                        //                                   onTap: () {
-                        //                                     print(
-                        //                                         "SUbtask$taskId");
-                        //                                     // Variable.taskIdForSubtask =
-                        //                                     //     int.tryParse(taskId!) ?? 0;
-                        //                                     PersistentNavBarNavigator
-                        //                                         .pushNewScreen(
-                        //                                       context,
-                        //                                       screen:
-                        //                                           CreateNewTask(
-                        //                                         jobId: widget
-                        //                                             .jobId,
-                        //                                             startDateTime: "${startDate2}  ${startTime}",
-                        //                                             endDateTime: "$ebdDate2  $endTime",
-                        //                                         isSubTask: true,
-                        //                                         subTaskId:
-                        //                                             int.tryParse(
-                        //                                                     taskId!) ??
-                        //                                                 0,
-                        //                                       ),
-                        //                                       withNavBar: true,
-                        //                                       // OPTIONAL VALUE. True by default.
-                        //                                       pageTransitionAnimation:
-                        //                                           PageTransitionAnimation
-                        //                                               .fade,
-                        //                                     );
-                        //                                   },
-                        //                                   child: Container(
-                        //                                       width: w,
-                        //                                       alignment:
-                        //                                           Alignment
-                        //                                               .center,
-                        //                                       decoration:
-                        //                                           BoxDecoration(
-                        //                                         borderRadius:
-                        //                                             BorderRadius
-                        //                                                 .circular(
-                        //                                                     4),
-                        //                                         color: Color(
-                        //                                             0xffF4F4F4),
-                        //                                       ),
-                        //                                       padding: EdgeInsets
-                        //                                           .symmetric(
-                        //                                               horizontal:
-                        //                                                   16,
-                        //                                               vertical:
-                        //                                                   10),
-                        //                                       child: Text(
-                        //                                         "Add Subtask",
-                        //                                         style: TextStyle(
-                        //                                             color: ColorPalette
-                        //                                                 .primary,
-                        //                                             fontSize:
-                        //                                                 w / 24,
-                        //                                             fontWeight:
-                        //                                                 FontWeight
-                        //                                                     .w500),
-                        //                                       )),
-                        //                                 )
-                        //                               : Container(),
-                        //                         ],
-                        //                       ),
-                        //                     )
-                        //                   : Container()
-                        //             ],
-                        //           )
-                        //         : Container(),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      isValid == false
-                                ? GradientButton(
-                                    color: ColorPalette.inactiveGrey,
-                                    onPressed: () {},
-                                    gradient: const LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          ColorPalette.inactiveGrey,
-                                          ColorPalette.inactiveGrey
-                                        ]),
-                                    child: Text(
-                                      widget.editTask ? "Update" : "Create",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.roboto(
-                                        color: Colors.white,
-                                        fontSize: w / 22,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ))
-                                : GradientButton(
-                                    color: ColorPalette.primary,
-                                    onPressed: () {
-                                      createButtonLoad = true;
-                                      setState(() {});
-                                      widget.editTask || isSubTask
-                                          ? BlocProvider.of<TaskBloc>(context)
-                                              .add(UpdateTaskEvent(
-                                        durationOption: selectedValue,
-                                                  latitude: readTask?.latitude,
-                                                  longitude:
-                                                      readTask?.longitude,
-                                                  id: readTask?.id ?? 0,
+                                        ),
+                                      )
+                                : Container(),
+                            widget.editTask == true
+                                ? Container()
+                                : SizedBox(
+                                    height: 5,
+                                  ),
+                            // widget.isSubTask
+                            //     ? Container()
+                            //     : grpval == true
+                            //         ? Column(
+                            //             children: [
+                            //               Container(
+                            //                 width: w,
+                            //                 padding: EdgeInsets.symmetric(
+                            //                     horizontal: 16, vertical: 10),
+                            //                 decoration: BoxDecoration(
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(5),
+                            //                   border: Border.all(
+                            //                     color: Color(0xffe6ecf0),
+                            //                     width: 1,
+                            //                   ),
+                            //                   boxShadow: [
+                            //                     BoxShadow(
+                            //                       color: Color(0x05000000),
+                            //                       blurRadius: 8,
+                            //                       offset: Offset(1, 1),
+                            //                     ),
+                            //                   ],
+                            //                   color: Colors.white,
+                            //                 ),
+                            //                 child: SingleRow(
+                            //                   label: "Subtasks",
+                            //                   color: Color(0xffFFC800),
+                            //                   svg: CreateSvg().taskIcon,
+                            //                   endIcon: isSubTask
+                            //                       ? SvgPicture.string(
+                            //                           HomeSvg().toggleActive)
+                            //                       : SvgPicture.string(
+                            //                           HomeSvg().toggleInActive),
+                            //                   onTap: () {
+                            //                     setState(() {
+                            //                       Variable.taskType == 0 ||
+                            //                               taskTitle.text == "" ||
+                            //                               discription.text == "" ||
+                            //                               Variable.assignType ==
+                            //                                   "" ||
+                            //                               Variable.assignCode == ""
+                            //                           ? Fluttertoast.showToast(
+                            //                               msg:
+                            //                                   'Please fill the fields',
+                            //                               toastLength:
+                            //                                   Toast.LENGTH_SHORT,
+                            //                               gravity:
+                            //                                   ToastGravity.BOTTOM,
+                            //                               backgroundColor:
+                            //                                   Colors.black,
+                            //                               textColor: Colors.white)
+                            //                           : BlocProvider.of<TaskBloc>(
+                            //                                   context)
+                            //                               .add(CreateTaskEvent(
+                            //                               latitude: null,
+                            //                               longitude: null,
+                            //                               AssigningCode:
+                            //                                   Variable.assignCode,
+                            //                               AssigningType:
+                            //                                   Variable.assignType,
+                            //                               createdOn:
+                            //                                   "${_range.split(" - ")[0]} $startTime2",
+                            //                               jobId: widget.jobId ?? 0,
+                            //                               notas: notesController
+                            //                                       .text ??
+                            //                                   "",
+                            //                               durationOption: selectedValue,
+                            //                               priorityLeval: 0,
+                            //                               remarks: remarksController
+                            //                                   .text,
+                            //                               taskName:
+                            //                                   taskTitle.text ?? "",
+                            //                               taskType:
+                            //                                   Variable.taskType,
+                            //                               lastmodified: null,
+                            //                               parant: null,
+                            //                               statusStagesId: null,
+                            //                               discription:
+                            //                                   discription.text ??
+                            //                                       "",
+                            //                               createdBy: authentication
+                            //                                       .authenticatedUser
+                            //                                       .code ??
+                            //                                   "",
+                            //                               isActive: true,
+                            //                               priority: PriorityLeval,
+                            //                               reportingPerson: Variable
+                            //                                           .reportingCode ==
+                            //                                       ""
+                            //                                   ? authentication
+                            //                                       .authenticatedUser
+                            //                                       .code
+                            //                                       .toString()
+                            //                                   : Variable
+                            //                                       .reportingCode
+                            //                                       .toString(),
+                            //                               endDate:
+                            //                                   "$ebdDate ${endTime2}",
+                            //                               startDate:
+                            //                                   "$startDate ${startTime2}",
+                            //                             ));
+                            //                       Variable.taskType == 0 ||
+                            //                               taskTitle.text == "" ||
+                            //                               discription.text == "" ||
+                            //                               Variable.assignType ==
+                            //                                   "" ||
+                            //                               Variable.assignCode == ""
+                            //                           ? Fluttertoast.showToast(
+                            //                               msg:
+                            //                                   'Please fill the fields',
+                            //                               toastLength:
+                            //                                   Toast.LENGTH_SHORT,
+                            //                               gravity:
+                            //                                   ToastGravity.BOTTOM,
+                            //                               backgroundColor:
+                            //                                   Colors.black,
+                            //                               textColor: Colors.white)
+                            //                           : isSubTask = !isSubTask;
+                            //                     });
+                            //                   },
+                            //                 ),
+                            //               ),
+                            //               SizedBox(
+                            //                 height: 10,
+                            //               ),
+                            //               isSubTask == true
+                            //                   ? Container(
+                            //                       width: w,
+                            //                       decoration: BoxDecoration(
+                            //                         borderRadius:
+                            //                             BorderRadius.circular(4),
+                            //                         border: Border.all(
+                            //                           color: Color(0xffe6ecf0),
+                            //                           width: 1,
+                            //                         ),
+                            //                         boxShadow: [
+                            //                           BoxShadow(
+                            //                             color: Color(0x05000000),
+                            //                             blurRadius: 8,
+                            //                             offset: Offset(1, 1),
+                            //                           ),
+                            //                         ],
+                            //                         color: Colors.white,
+                            //                       ),
+                            //                       child: Column(
+                            //                         children: [
+                            //                           Container(
+                            //                             width: w,
+                            //                             child: taskListNew.isEmpty
+                            //                                 ? Container()
+                            //                                 : Container(
+                            //                                     child: ListView
+                            //                                         .separated(
+                            //                                             shrinkWrap:
+                            //                                                 true,
+                            //                                             physics:
+                            //                                                 NeverScrollableScrollPhysics(),
+                            //                                             itemBuilder:
+                            //                                                 (context,
+                            //                                                         index) =>
+                            //                                                     Container(
+                            //                                                       decoration: BoxDecoration(
+                            //                                                         color: Colors.white,
+                            //                                                         border: Border.all(color: ColorPalette.borderGrey),
+                            //                                                         borderRadius: BorderRadius.circular(10)
+                            //                                                       ),
+                            //                                                       margin: EdgeInsets.all(5),
+                            //                                                       child: Padding(
+                            //                                                         padding: const EdgeInsets.all(10),
+                            //                                                         child: Row(
+                            //                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //                                                           children: [
+                            //                                                             Text(
+                            //                                                               "${index + 1}- ${taskListNew[index].taskName ?? ""}",
+                            //                                                               style: GoogleFonts.roboto(
+                            //                                                                 color: Color(0xff151522),
+                            //                                                                 fontSize: 18,
+                            //                                                                 fontWeight: FontWeight.w500,
+                            //                                                               ),
+                            //                                                             ),
+                            //                                                             // Row(
+                            //                                                             //   children: [
+                            //                                                             //     Text(taskListNew[index].assigningCode??""),
+                            //                                                             //     SizedBox(
+                            //                                                             //       width: 10,
+                            //                                                             //     ),
+                            //                                                             //     // Icon(
+                            //                                                             //     //     Icons
+                            //                                                             //     //         .arrow_forward_ios_sharp)
+                            //                                                             //   ],
+                            //                                                             // )
+                            //                                                           ],
+                            //                                                         ),
+                            //                                                       ),
+                            //                                                     ),
+                            //                                             separatorBuilder:
+                            //                                                 (context,
+                            //                                                     index) {
+                            //                                               return SizedBox(
+                            //                                                 height:
+                            //                                                     5,
+                            //                                               );
+                            //                                             },
+                            //                                             itemCount:
+                            //                                                 taskListNew
+                            //                                                     .length),
+                            //                                   ),
+                            //                           ),
+                            //                           // Divider(
+                            //                           //   color: Color(0xffE6ECF0)
+                            //                           //       .withOpacity(0.5),
+                            //                           //   thickness: 1,
+                            //                           // ),
+                            //                           isSubTask == true
+                            //                               ? GestureDetector(
+                            //                                   onTap: () {
+                            //                                     print(
+                            //                                         "SUbtask$taskId");
+                            //                                     // Variable.taskIdForSubtask =
+                            //                                     //     int.tryParse(taskId!) ?? 0;
+                            //                                     PersistentNavBarNavigator
+                            //                                         .pushNewScreen(
+                            //                                       context,
+                            //                                       screen:
+                            //                                           CreateNewTask(
+                            //                                         jobId: widget
+                            //                                             .jobId,
+                            //                                             startDateTime: "${startDate2}  ${startTime}",
+                            //                                             endDateTime: "$ebdDate2  $endTime",
+                            //                                         isSubTask: true,
+                            //                                         subTaskId:
+                            //                                             int.tryParse(
+                            //                                                     taskId!) ??
+                            //                                                 0,
+                            //                                       ),
+                            //                                       withNavBar: true,
+                            //                                       // OPTIONAL VALUE. True by default.
+                            //                                       pageTransitionAnimation:
+                            //                                           PageTransitionAnimation
+                            //                                               .fade,
+                            //                                     );
+                            //                                   },
+                            //                                   child: Container(
+                            //                                       width: w,
+                            //                                       alignment:
+                            //                                           Alignment
+                            //                                               .center,
+                            //                                       decoration:
+                            //                                           BoxDecoration(
+                            //                                         borderRadius:
+                            //                                             BorderRadius
+                            //                                                 .circular(
+                            //                                                     4),
+                            //                                         color: Color(
+                            //                                             0xffF4F4F4),
+                            //                                       ),
+                            //                                       padding: EdgeInsets
+                            //                                           .symmetric(
+                            //                                               horizontal:
+                            //                                                   16,
+                            //                                               vertical:
+                            //                                                   10),
+                            //                                       child: Text(
+                            //                                         "Add Subtask",
+                            //                                         style: TextStyle(
+                            //                                             color: ColorPalette
+                            //                                                 .primary,
+                            //                                             fontSize:
+                            //                                                 w / 24,
+                            //                                             fontWeight:
+                            //                                                 FontWeight
+                            //                                                     .w500),
+                            //                                       )),
+                            //                                 )
+                            //                               : Container(),
+                            //                         ],
+                            //                       ),
+                            //                     )
+                            //                   : Container()
+                            //             ],
+                            //           )
+                            //         : Container(),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          isValid == false
+                                    ? GradientButton(
+                                        color: ColorPalette.inactiveGrey,
+                                        onPressed: () {
+                                          HapticFeedback.vibrate();
+                                        },
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              ColorPalette.inactiveGrey,
+                                              ColorPalette.inactiveGrey
+                                            ]),
+                                        child: Text(
+                                          widget.editTask ? "Update" : "Create",
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.white,
+                                            fontSize: w / 22,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ))
+                                    : GradientButton(
+                                        color: ColorPalette.primary,
+                                        onPressed: () {
+                                          HapticFeedback.heavyImpact();
+                                          createButtonLoad = true;
+                                          setState(() {});
+                                          widget.editTask || isSubTask
+                                              ? BlocProvider.of<TaskBloc>(context)
+                                                  .add(UpdateTaskEvent(
+                                            durationOption: selectedValue,
+                                                      latitude: readTask?.latitude,
+                                                      longitude:
+                                                          readTask?.longitude,
+                                                      id: readTask?.id ?? 0,
+                                                      AssigningCode:
+                                                          Variable.assignCode,
+                                                      AssigningType:
+                                                          Variable.assignType,
+                                                      createdOn:
+                                                          "${_range.split(" - ")[0]} ${startTime2}",
+                                                      jobid: readTask?.jobId,
+                                                      notas: notesController.text ??
+                                                          "",
+                                                      priorityLeval: 0,
+                                                      remarks:
+                                                          remarksController.text ??
+                                                              "",
+                                                      taskName:
+                                                          taskTitle.text ?? "",
+                                                      taskType: Variable.taskType,
+                                                      lastmodified: null,
+                                                      parant: readTask?.parent,
+                                                      statusStagesId:
+                                                          readTask?.statusStagesId,
+                                                      discription:
+                                                          discription.text ?? "",
+                                                      createdBy: authentication
+                                                              .authenticatedUser
+                                                              .code ??
+                                                          "",
+                                                      isActive: true,
+                                                      priority: PriorityLeval,
+                                                      reportingPerson: readTask
+                                                              ?.reportingPersonCode ??
+                                                          "",
+                                                      endDate: "$ebdDate"
+                                                          " "
+                                                          "$endTime2",
+                                                      startDate: "$startDate"
+                                                          " "
+                                                          "$startTime2",
+                                                      img5: readTask
+                                                          ?.metaData?.image5,
+                                                      img1: readTask
+                                                          ?.metaData?.image1,
+                                                      img4: readTask
+                                                          ?.metaData?.image4,
+                                                      img2: readTask
+                                                          ?.metaData?.image2,
+                                                      img3: readTask
+                                                          ?.metaData?.image3,
+                                                      attachmentDescription:
+                                                          readTask?.metaData
+                                                              ?.description,
+                                                      attachmentNote:
+                                                          readTask?.metaData?.note))
+                                              : BlocProvider.of<TaskBloc>(context)
+                                                  .add(CreateTaskEvent(
+                                                  latitude: null,
+                                                  longitude: null,
+                                                  durationOption: selectedValue,
                                                   AssigningCode:
                                                       Variable.assignCode,
                                                   AssigningType:
                                                       Variable.assignType,
                                                   createdOn:
                                                       "${_range.split(" - ")[0]} ${startTime2}",
-                                                  jobid: readTask?.jobId,
-                                                  notas: notesController.text ??
-                                                      "",
+                                                  jobId: widget.jobId ?? 0,
+                                                  notas: notesController.text,
                                                   priorityLeval: 0,
-                                                  remarks:
-                                                      remarksController.text ??
-                                                          "",
-                                                  taskName:
-                                                      taskTitle.text ?? "",
+                                                  remarks: remarksController.text,
+                                                  taskName: taskTitle.text,
                                                   taskType: Variable.taskType,
                                                   lastmodified: null,
-                                                  parant: readTask?.parent,
-                                                  statusStagesId:
-                                                      readTask?.statusStagesId,
-                                                  discription:
-                                                      discription.text ?? "",
+                                                  parant: widget.subTaskId,
+                                                  statusStagesId: null,
+                                                  discription: discription.text,
                                                   createdBy: authentication
-                                                          .authenticatedUser
-                                                          .code ??
+                                                          .authenticatedUser.code ??
                                                       "",
                                                   isActive: true,
                                                   priority: PriorityLeval,
-                                                  reportingPerson: readTask
-                                                          ?.reportingPersonCode ??
-                                                      "",
-                                                  endDate: "$ebdDate"
-                                                      " "
-                                                      "$endTime2",
-                                                  startDate: "$startDate"
-                                                      " "
-                                                      "$startTime2",
-                                                  img5: readTask
-                                                      ?.metaData?.image5,
-                                                  img1: readTask
-                                                      ?.metaData?.image1,
-                                                  img4: readTask
-                                                      ?.metaData?.image4,
-                                                  img2: readTask
-                                                      ?.metaData?.image2,
-                                                  img3: readTask
-                                                      ?.metaData?.image3,
-                                                  attachmentDescription:
-                                                      readTask?.metaData
-                                                          ?.description,
-                                                  attachmentNote:
-                                                      readTask?.metaData?.note))
-                                          : BlocProvider.of<TaskBloc>(context)
-                                              .add(CreateTaskEvent(
-                                              latitude: null,
-                                              longitude: null,
-                                              durationOption: selectedValue,
-                                              AssigningCode:
-                                                  Variable.assignCode,
-                                              AssigningType:
-                                                  Variable.assignType,
-                                              createdOn:
-                                                  "${_range.split(" - ")[0]} ${startTime2}",
-                                              jobId: widget.jobId ?? 0,
-                                              notas: notesController.text,
-                                              priorityLeval: 0,
-                                              remarks: remarksController.text,
-                                              taskName: taskTitle.text,
-                                              taskType: Variable.taskType,
-                                              lastmodified: null,
-                                              parant: widget.subTaskId,
-                                              statusStagesId: null,
-                                              discription: discription.text,
-                                              createdBy: authentication
-                                                      .authenticatedUser.code ??
-                                                  "",
-                                              isActive: true,
-                                              priority: PriorityLeval,
-                                              reportingPerson:
-                                                  Variable.reportingCode == ""
-                                                      ? authentication
-                                                          .authenticatedUser
-                                                          .code
-                                                          .toString()
-                                                      : Variable.reportingCode
-                                                          .toString(),
-                                              endDate: "$ebdDate ${endTime2}",
-                                              startDate:
-                                                  "$startDate ${startTime2}",
-                                            ));
-                                    },
-                                    gradient: const LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          ColorPalette.primary,
-                                          ColorPalette.primary
-                                        ]),
-                                    child: createButtonLoad == true
-                                        ? SpinKitThreeBounce(
-                                            color: Colors.white,
-                                            size: 15.0,
-                                          )
-                                        : Text(
-                                            widget.editTask
-                                                ? "Update"
-                                                : "Create",
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.white,
-                                              fontSize: w / 22,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          )),
+                                                  reportingPerson:
+                                                      Variable.reportingCode == ""
+                                                          ? authentication
+                                                              .authenticatedUser
+                                                              .code
+                                                              .toString()
+                                                          : Variable.reportingCode
+                                                              .toString(),
+                                                  endDate: "$ebdDate ${endTime2}",
+                                                  startDate:
+                                                      "$startDate ${startTime2}",
+                                                ));
+                                        },
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              ColorPalette.primary,
+                                              ColorPalette.primary
+                                            ]),
+                                        child: createButtonLoad == true
+                                            ? SpinKitThreeBounce(
+                                                color: Colors.white,
+                                                size: 15.0,
+                                              )
+                                            : Text(
+                                                widget.editTask
+                                                    ? "Update"
+                                                    : "Create",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.white,
+                                                  fontSize: w / 22,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              )),
+                          ],
+                        ),
+                        // Positioned(
+                        //   top: h/3,
+                        //   left: w1/3.5,
+                        //   child: Center(
+                        //     child: AnimatedEmoji(
+                        //       AnimatedEmojis.sad,
+                        //       size: 128,
+                        //       repeat: true,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -2361,6 +2393,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                           (BuildContext context, int i) {
                                         return GestureDetector(
                                           onTap: () {
+                                            HapticFeedback.vibrate();
                                             changeTappedTile(i);
                                             Variable.taskType =
                                                 taskTypeList[i].id ?? 0;
@@ -2486,6 +2519,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         ),
                         InkWell(
                           onTap: () {
+                            HapticFeedback.vibrate();
                             Variable.prioritys = "High";
                             PriorityLeval = "High";
                             setState(() {});
@@ -2548,6 +2582,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         ),
                         InkWell(
                           onTap: () {
+                            HapticFeedback.vibrate();
                             Variable.prioritys = "Medium";
                             PriorityLeval = "Medium";
                             setState(() {});
@@ -2613,6 +2648,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                         ),
                         InkWell(
                           onTap: () {
+                            HapticFeedback.vibrate();
                             Variable.prioritys = "Low";
                             PriorityLeval = "Low";
                             setState(() {});
