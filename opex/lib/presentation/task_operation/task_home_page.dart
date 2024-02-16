@@ -59,6 +59,7 @@ class _TaskAndOperationHomePageState extends State<TaskAndOperationHomePage> {
                   color: Colors.white,
                   child:
                      const TabBarView(
+                         physics: NeverScrollableScrollPhysics(),
                         children: [
                           // MyTasks(),
                           MyJobs(),

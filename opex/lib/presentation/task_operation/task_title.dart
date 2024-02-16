@@ -33,6 +33,7 @@ import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
 import '../comunication_module/chat_screen.dart';
+import '3_in_1_Tab.dart';
 import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
@@ -1883,37 +1884,41 @@ class _TaskTitleState extends State<TaskTitle> {
                                       ],
                                     ),
                                   ),
-                                  getTaskRead?.notes == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 15,
-                                        ),
-                                  getTaskRead?.notes == ""
-                                      ? Container()
-                                      : TaskTitleCard(
+                                  authentication.authenticatedUser?.code==getTaskRead?.assignByDict?.userCode?Container():
+                                  Column(
+                                    children: [
+                                      getTaskRead?.metaData?.note == null
+
+                                          ? Container()
+                                          : SizedBox(
+                                        height: 15,
+                                      ),
+                                      getTaskRead?.metaData?.note == null
+                                          ? Container()
+                                          : TaskTitleCard(
                                           paddingg: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           widget: TextCard(
                                               title: "Note",
-                                              subText: getTaskRead?.notes)),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 5,
-                                        ),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : TaskTitleCard(
+                                              subText: getTaskRead?.metaData?.note)),
+
+                                      getTaskRead?.metaData?.description == null
+                                          ? Container()
+                                          : TaskTitleCard(
                                           paddingg: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           widget: TextCard(
                                               title: "Remarks",
-                                              subText: getTaskRead?.remarks)),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 5,
-                                        ),
+                                              subText: getTaskRead?.metaData?.description)),
+                                      getTaskRead?.metaData?.description == null
+                                          ? Container()
+                                          : SizedBox(
+                                        height: 5,
+                                      ),
+                                      
+                                    ],
+                                  ),
+                                  
                                   authentication.isAdmin == false &&
                                           getTaskRead?.rewardsData?.name != null
                                       ? SizedBox(
@@ -1980,13 +1985,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                               vertical: 16),
                                           widget: Column(
                                             children: [
-                                              TextCard(
-                                                  title: "Attachment",
-                                                  subText: getTaskRead
-                                                      ?.metaData?.note),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
+                                              TextCard(title: "Attachment",),
+
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 10, right: 10),
@@ -2176,6 +2176,20 @@ class _TaskTitleState extends State<TaskTitle> {
                                             SizedBox(
                                               height: 5,
                                             ),
+                                            // GestureDetector(
+                                            //     onTap: (){
+                                            //       PersistentNavBarNavigator
+                                            //           .pushNewScreen(
+                                            //         context,
+                                            //         screen: MyTabScreen(),
+                                            //         withNavBar:
+                                            //         true, // OPTIONAL VALUE. True by default.
+                                            //         pageTransitionAnimation:
+                                            //         PageTransitionAnimation
+                                            //             .fade,
+                                            //       );
+                                            //     },
+                                            //     child: Text("3 IN TAB")),
                                             GestureDetector(
                                               onTap: () {
                                                 HapticFeedback.vibrate();
@@ -2214,7 +2228,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                                 child: SingleRow(
                                                   color: Color(0xffFFC800),
-                                                  label: "Add Attachments",
+                                                  label: "Notes & Attachments",
                                                   svg: TaskSvg().attachmentIcon,
                                                   onTap: () {},
                                                   endIcon: getTaskRead?.metaData
@@ -2234,6 +2248,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                               ),
                                             ),
+                                            
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -2253,6 +2268,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                     .pushNewScreen(
                                                   context,
                                                   screen: PaymentOption(
+                                                    assignCode: getTaskRead?.assignToDict?.userCode,
+                                                    assignType: getTaskRead?.assigningType,
                                                     currencyCode:
                                                         getTaskRead?.currency,
                                                     isJob: false,
