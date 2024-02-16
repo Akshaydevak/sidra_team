@@ -67,7 +67,8 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool issMount= true;
   String uid='';
   SharedPreferences? preff;
-    @override
+  List<ChatModel> attachments=[];
+  @override
   void initState() {
     
 print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid} ${widget.redirectchatname}");
@@ -316,6 +317,12 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                       customCupertinoLoading();
                                     } else if (state
                                         is GetGroupAttachmentsInProfileSuccess) {
+                                          attachments.clear();
+                                          for(int i=0;i<state.groupProfileGet.media!.messages!.length;){
+                                            attachments.add(state.groupProfileGet.media!.messages![i]);
+                                            i++;
+                                          }
+                                          attachments=attachments.reversed.toList();
                                       return Column(
                                         children: [
                                           Align(
@@ -338,8 +345,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                             height: 10,
                                           ),
                                           MediaList(
-                                              messages: state.groupProfileGet
-                                                  .media?.messages),
+                                              messages: attachments),
                                           Container(
                                             padding: const EdgeInsets.only(
                                                 left: 16,
@@ -434,7 +440,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                   children: [
                                                    Row(
                                                       children: [
-                                                      TextAvatar(
+                                                  grpmember[index].photo == null || grpmember[index].photo!.isEmpty  ?    TextAvatar(
                                                         shape: Shape.Circular,
                                                         size: 48,
                                                         numberLetters: 2,
@@ -442,7 +448,11 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
                                                         text:"${grpmember[index].name.toString().toUpperCase()}" ,
-                                                      ),
+                                                      ):CircleAvatar(
+                                                        radius: w / 23,
+                                                        backgroundColor: Colors.grey,
+                                                        backgroundImage: NetworkImage("${grpmember[index].photo}"
+                                                            )),
                                                         const SizedBox(
                                                           width: 5,
                                                         ),
@@ -693,7 +703,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      TextAvatar(
+                                                    grpmember[index].photo ==null || grpmember[index].photo!.isEmpty ?    TextAvatar(
                                                         shape: Shape.Circular,
                                                         size: 48,
                                                         numberLetters: 2,
@@ -701,7 +711,11 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         textColor: Colors.white,
                                                         fontWeight: FontWeight.w500,
                                                         text:"${grpmember[index].name.toString().toUpperCase()}" ,
-                                                      ),
+                                                      ):CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage("${grpmember[index].photo}"
+                                )),
                                                       const SizedBox(
                                                         width: 5,
                                                       ),
@@ -872,7 +886,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                           ),
                                           MediaList(
                                               messages: state.profileGetModel
-                                                  .media?.messages),
+                                                  .media!.messages!),
                                           Container(
                                             margin: const EdgeInsets.only(
                                                 left: 16, top: 20),
