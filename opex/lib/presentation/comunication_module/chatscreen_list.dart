@@ -87,7 +87,7 @@ class _MyChatListState extends State<MyChatList> {
                                                 },
                                                 child: Container(
                                                   key: new PageStorageKey(
-                                  "image ${widget.roomid}${widget.index}",
+                                  "image ${widget.roomid}${widget.messageList!.message}",
                                 ),
                                                     width: w / 1.5,
                                                     padding: const EdgeInsets.all(4),
@@ -129,12 +129,18 @@ class _MyChatListState extends State<MyChatList> {
                                                                             .circular(
                                                                                 6)),
                                                             child: CachedNetworkImage(
+                                                             height: MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .height /
+                                                                        3 ,
                                                                   imageUrl: "${widget.messageList!.message}",
                                                                   placeholder: (context, url) => Padding(
                                                                     padding: const EdgeInsets.all(200),
                                                                     child: CircularProgressIndicator(color: ColorPalette.primary,),
                                                                   ),
                                                                   errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                  fit: BoxFit.cover,
                                                               ),
                                                             // Image(
                                                             //     loadingBuilder: (context,
@@ -206,7 +212,7 @@ class _MyChatListState extends State<MyChatList> {
                                               "video") ...{
                                                 Container(
                                                    key: new PageStorageKey(
-                                  "vedio ${widget.roomid}${widget.index}",
+                                  "vedio ${widget.roomid}${widget.messageList!.message}",
                                 ),
                                                    constraints:  BoxConstraints(
                                                   maxWidth: 277,
@@ -585,6 +591,9 @@ class _MyChatListState extends State<MyChatList> {
                                                             child: Column(
                                                               children: [
                                                                 Container(
+                                                                  key: new PageStorageKey(
+                                  "image ${widget.roomid}${widget.messageList!.message}",
+                                ),
                                                                   constraints:
                                                                       BoxConstraints(
                                                                     maxHeight: MediaQuery.of(
@@ -609,16 +618,21 @@ class _MyChatListState extends State<MyChatList> {
                                                                         bottomRight: Radius
                                                                             .circular(
                                                                                 6)),
-                                                                                key: new PageStorageKey(
-                                  "image ${widget.roomid}${widget.index}",
-                                ),
+                                                                                
                                                                     child: CachedNetworkImage(
+                                                                      height:MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .height /
+                                                                        3 ,
                                                                   imageUrl: "${widget.messageList!.message}",
                                                                   placeholder: (context, url) => Padding(
                                                                     padding: const EdgeInsets.all(200),
                                                                     child: CircularProgressIndicator(color: ColorPalette.primary,),
                                                                   ),
                                                                   errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                  fit:BoxFit.cover ,
+                                                                  
                                                               ),
                                                                     // Image(
                                                                     //     loadingBuilder:
@@ -667,18 +681,22 @@ class _MyChatListState extends State<MyChatList> {
                                                   } else if (widget.messageList!
                                                           .type ==
                                                       "audio") ...{
+                                                      
                                                         Stack(
                                                           children:[
-                                                            VoiceMessage(
-                                                      audioSrc: widget.messageList!
-                                                              .message ??
-                                                          "",
-                                                      played:
-                                                          false, // To show played badge or not.
-                                                      me: false, // Set message side.
-                                                      onPlay:
-                                                          () {}, // Do something when voice played.
-                                                    ),
+                                                            Container(
+                                                              key: new PageStorageKey(
+                                  "image ${widget.roomid}${widget.messageList!.message}",),
+                                                              child: VoiceMessage(
+                                                                audioSrc: widget.messageList!.message ??
+                                                                    "",
+                                                                played:
+                                                                    false, // To show played badge or not.
+                                                                me: false, // Set message side.
+                                                                onPlay:
+                                                                    () {}, // Do something when voice played.
+                                                              ),
+        ),
                                                     Positioned(
                                                                  right: 6,
                                                                  bottom: 5,
@@ -876,7 +894,7 @@ class _MyChatListState extends State<MyChatList> {
                                                  color: Colors.white,
                                                   ),
                                                   key: new PageStorageKey(
-                                  "vedio ${widget.roomid}${widget.index}",
+                                  "vedio ${widget.roomid}${widget.messageList!.message}",
                                 ),
                                                   child:Stack(
                                                   children:[
@@ -1083,7 +1101,7 @@ class _MyChatListState extends State<MyChatList> {
                                                     children: [
                                                       Container(
                                                         key: new PageStorageKey(
-                                  "image ${widget.roomid}${widget.index}",
+                                  "image ${widget.roomid}${widget.messageList!.message}",
                                 ),
                                                         constraints: BoxConstraints(
                                                           maxHeight:
@@ -1108,27 +1126,42 @@ class _MyChatListState extends State<MyChatList> {
                                                                   bottomRight:
                                                                       Radius.circular(
                                                                           0)),
-                                                          child: Image(
-                                                              loadingBuilder: (context,
-                                                                  child,
-                                                                  loadingProgress) {
-                                                                if (loadingProgress ==
-                                                                    null)
-                                                                  return child;
-                                                                return const SizedBox(
-                                                                  child: Center(
-                                                                      child:
-                                                                          CircularProgressIndicator(
-                                                                    color:
-                                                                        Colors.white,
-                                                                  )),
-                                                                );
-                                                              },
-                                                              fit: BoxFit.cover,
-                                                              image: NetworkImage(
-                                                                 widget.messageList!
-                                                                          .message ??
-                                                                      "")),
+                                                          child: CachedNetworkImage(
+                                                            height: MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .height /
+                                                                        3 ,
+                                                                  imageUrl: "${widget.messageList!.message}",
+                                                                  placeholder: (context, url) => Padding(
+                                                                    padding: const EdgeInsets.all(200),
+                                                                    child: CircularProgressIndicator(color: ColorPalette.primary,),
+                                                                  ),
+                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                  fit:BoxFit.cover ,
+                                                                  
+                                                              ),
+                                                          // Image(
+                                                          //     loadingBuilder: (context,
+                                                          //         child,
+                                                          //         loadingProgress) {
+                                                          //       if (loadingProgress ==
+                                                          //           null)
+                                                          //         return child;
+                                                          //       return const SizedBox(
+                                                          //         child: Center(
+                                                          //             child:
+                                                          //                 CircularProgressIndicator(
+                                                          //           color:
+                                                          //               Colors.white,
+                                                          //         )),
+                                                          //       );
+                                                          //     },
+                                                          //     fit: BoxFit.cover,
+                                                          //     image: NetworkImage(
+                                                          //        widget.messageList!
+                                                          //                 .message ??
+                                                          //             "")),
                                                         ),
                                                       ),
                                                       const SizedBox(
@@ -1170,15 +1203,19 @@ class _MyChatListState extends State<MyChatList> {
                                             "audio") ...{
                                               Stack(
                                                 children:[
-                                                   VoiceMessage(
-                                            audioSrc:
-                                                widget.messageList!.message ?? "",
-                                            played:
-                                                true, // To show played badge or not.
-                                            me: true, // Set message side.
-                                            onPlay:
-                                                () {}, // Do something when voice played.
-                                          ),
+                                                   Container(
+                                                    key: new PageStorageKey(
+                                  "image ${widget.roomid}${widget.messageList!.message}",),
+                                                     child: VoiceMessage(
+                                                        audioSrc:
+                                                            widget.messageList!.message ?? "",
+                                                        played:
+                                                            true, // To show played badge or not.
+                                                        me: true, // Set message side.
+                                                        onPlay:
+                                                            () {}, // Do something when voice played.
+                                                      ),
+                                                   ),
                                            Positioned(
                                                                    right: 5,
                                                                    bottom: 5,
@@ -1385,7 +1422,7 @@ class _MyChatListState extends State<MyChatList> {
                                                  color: ColorPalette.primary,
                                                   ),
                                                 key: new PageStorageKey(
-                                  "vedio ${widget.roomid}${widget.index}",
+                                  "vedio ${widget.roomid}${widget.messageList!.message}",
                                 ),
                                               child: Stack(
                                                 children:[
