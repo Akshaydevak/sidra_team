@@ -94,7 +94,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
         ),
         BlocListener<TaskBloc, TaskState>(
           listener: (context, state) {
-            if (state is GetPointListLoading) {}
+
             if (state is GetPointListSuccess) {
               pointList = state.pointList;
               print("FAS$pointList");
@@ -142,6 +142,7 @@ class _PerformanceAppraisalState extends State<PerformanceAppraisal> {
         ),
       ],
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: BackAppBar(

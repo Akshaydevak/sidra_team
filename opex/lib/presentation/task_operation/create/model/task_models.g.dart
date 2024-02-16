@@ -26,6 +26,7 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
+      profile: json['profile_pic'] as String?,
       parentGroupId: json['parent_group_id'] as int?,
       assignByDict: json['assigned_by_dict'] == null
           ? null
@@ -115,6 +116,7 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'report_id': instance.reportId,
       'group_id': instance.groupId,
       'currency_code': instance.currency,
+      'profile_pic': instance.profile,
       'is_notify': instance.isNotify,
       'assigned_to': instance.assignToEmail,
       'assigned_to_name': instance.assignToName,
@@ -550,6 +552,7 @@ PerfomerModel _$PerfomerModelFromJson(Map<String, dynamic> json) =>
       fName: json['first_name'] as String?,
       userCode: json['user_code'] as String?,
       lName: json['last_name'] as String?,
+      profile: json['profile_pic'] as String?,
       email: json['email'] as String?,
       points: (json['highest_average_points'] as num?)?.toDouble(),
     );
@@ -560,5 +563,6 @@ Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>
       'last_name': instance.lName,
       'email': instance.email,
       'user_code': instance.userCode,
+      'profile_pic': instance.profile,
       'highest_average_points': instance.points,
     };

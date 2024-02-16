@@ -12,7 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:voice_message_package/voice_message_package.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
+// import 'package:flutter_linkify/flutter_linkify.dart';
 
 
 class MyChatList extends StatefulWidget {

@@ -156,7 +156,7 @@ class EmployeeCardUnderGroup extends StatelessWidget {
     return Container(
       // width: w,
       // height: h/7,
-      padding: EdgeInsets.only(top: 15,bottom: 18,left: 10,right: 10),
+      padding: EdgeInsets.only(bottom: 18,left: 10,right: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Color(0xffe6ecf0), width: 1, ),
@@ -174,14 +174,17 @@ class EmployeeCardUnderGroup extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // employeeList?.profile==""?
-          TextAvatar(
-            shape: Shape.Circular,
-            size: 40,
-            numberLetters: 2,
-            fontSize: w/22,
-            textColor: Colors.white,
-            fontWeight: FontWeight.w500,
-            text:"${userList?.email.toString().toUpperCase()} " ,
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextAvatar(
+              shape: Shape.Circular,
+              size: 40,
+              numberLetters: 2,
+              fontSize: w/22,
+              textColor: Colors.white,
+              fontWeight: FontWeight.w500,
+              text:"${userList?.email.toString().toUpperCase()} " ,
+            ),
           ),
           //     :
           // CircleAvatar(
@@ -203,7 +206,7 @@ class EmployeeCardUnderGroup extends StatelessWidget {
                       width: w/1.4,
                       // color: Colors.yellow,
                       child: Text(
-                        "${userList?.email}",
+                        "${userList?.fName}",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.roboto(
@@ -215,6 +218,20 @@ class EmployeeCardUnderGroup extends StatelessWidget {
                     ),
 
                   ],
+                ),
+                Container(
+                  width: w/1.4,
+                  // color: Colors.yellow,
+                  child: Text(
+                    "${userList?.email}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontSize: w/24,
+                      // fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
                 // const SizedBox(height: 2,),
                 // Container(

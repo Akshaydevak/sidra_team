@@ -286,6 +286,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                         )
                       : GestureDetector(
                           onTap: () {
+                            HapticFeedback.heavyImpact();
                             buttonLoad = true;
                             setState(() {});
                             widget.update

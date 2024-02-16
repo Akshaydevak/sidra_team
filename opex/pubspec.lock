@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.0"
+  animated_emoji:
+    dependency: "direct main"
+    description:
+      name: animated_emoji
+      sha256: "659581b70fa48df978deba2c3110363e1d06eba177cdafe05d9c891a39b1e28a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   animated_splash_screen:
     dependency: "direct main"
     description:
@@ -734,14 +742,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.1"
-  flutter_linkify:
-    dependency: "direct main"
-    description:
-      name: flutter_linkify
-      sha256: "74669e06a8f358fee4512b4320c0b80e51cffc496607931de68d28f099254073"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.0"
   flutter_local_notifications:
     dependency: "direct main"
     description:
@@ -1264,14 +1264,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.9"
-  linkify:
-    dependency: transitive
-    description:
-      name: linkify
-      sha256: "4139ea77f4651ab9c315b577da2dd108d9aa0bd84b5d03d33323f1970c645832"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
   loading_animation_widget:
     dependency: "direct main"
     description:
@@ -1300,10 +1292,10 @@ packages:
     dependency: "direct main"
     description:
       name: lottie
-      sha256: "1f0ce68112072d66ea271a9841994fa8d16442e23d8cf8996c9fa74174e58b4e"
+      sha256: a93542cc2d60a7057255405f62252533f8e8956e7e06754955669fd32fb4b216
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "2.7.0"
   map_address_picker:
     dependency: "direct main"
     description:

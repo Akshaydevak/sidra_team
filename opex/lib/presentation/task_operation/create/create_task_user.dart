@@ -10,6 +10,7 @@ import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1123,6 +1124,7 @@ class _CreateUserState extends State<CreateUser> {
                     ? GradientButton(
                         color: ColorPalette.primary,
                         onPressed: () {
+                          HapticFeedback.heavyImpact();
                           print("mob${mobileController.text}");
                           print("mob${readEmployee?.id}");
                           context.read<EmployeeBloc>().add(UpdateEmployeeEvent(
@@ -1169,6 +1171,7 @@ class _CreateUserState extends State<CreateUser> {
                     : GradientButton(
                         color: ColorPalette.primary,
                         onPressed: () {
+                          HapticFeedback.heavyImpact();
                           print("mob${completeNumber}");
                           print("mob$completeNumberWhatsapp");
                           context.read<EmployeeBloc>().add(
