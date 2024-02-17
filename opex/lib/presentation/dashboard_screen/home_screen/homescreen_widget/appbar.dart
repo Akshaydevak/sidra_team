@@ -53,8 +53,8 @@ class _AppBarState extends State<AppBarScreen> {
 
       if(state is GetNotificationListSuccess){
         notification=state.notificationList;
-        countNoti=notification?[0].count??0;
-        print("SDFG${notification?[0].count}");
+        // countNoti=notification?[0].count??0;
+        print("SDFG${notification?.length}");
         setState(() {
     
         });

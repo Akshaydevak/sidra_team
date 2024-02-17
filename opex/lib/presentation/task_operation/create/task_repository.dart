@@ -115,7 +115,7 @@ class TaskRepo {
   Future<PaginatedResponse> getNotificationList(String? search,String? next,String? prev) async {
     final apiResponse = await _dataSource.getNotificationList(search,next,prev);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data !=null) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 
@@ -315,6 +315,8 @@ class TaskRepo {
   Future<DataResponse> taskCreatePost({
     required int? parant,
     required int jobId,
+    required String startTime,
+    required String endTime,
     required int taskType,
     final int? statusStagesId,
     required String reportingPerson,
@@ -339,6 +341,8 @@ class TaskRepo {
     final restAPIresponse = await _dataSource.taskCreatePost(
     longitude: longitude,
         latitude: latitude,
+        endTime: endTime,
+        startTime: startTime,
         durationOption: durationOption,
         reportingPerson: reportingPerson,
         createdBy:createdBy,

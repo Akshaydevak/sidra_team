@@ -1,6 +1,7 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -8,6 +9,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../common_widgets/no_glow.dart';
 import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'create/create_svg.dart';
 import 'create_group.dart';
 import 'groups_card.dart';
 import 'home/bloc/job_bloc.dart';
@@ -83,8 +85,15 @@ class _ProfileGroupListState extends State<ProfileGroupList> {
                       return LottieLoader();
                     }
                     if (state is GetGroupListSuccess) {
-                      print("Sucsess shifu");
-                      return Column(
+                      return state.groupList.isEmpty?
+                      Center(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 25,),
+                            SvgPicture.string(CreateSvg().groupEmpty,height: 250,width: 250,),
+                          ],
+                        ),
+                      ):Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

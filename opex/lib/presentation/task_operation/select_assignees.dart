@@ -854,297 +854,318 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                     return LottieLoader();
                   }
                   if (state is GetUserUderGroupSuccess) {
-                    return Container(
-                      width: w,
-                      // height: 577,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        // border: Border.all(
-                        //   color: const Color(0xffe6ecf0),
-                        //   width: 1,
-                        // ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x05000000),
-                            blurRadius: 8,
-                            offset: Offset(1, 1),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        widget.updateAssign==true?Text(
+                          "Re Assign To",
+                          style: GoogleFonts.roboto(
+                            color: ColorPalette.black,
+                            fontSize: w / 22,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => GestureDetector(
-                                onTap: () {
-                                  if(Variable.assignName==""){
-                                    setState(() {
-                                      indValue = index;
-                                      Variable.assignType = "Individual";
-                                      Variable.assignName = state.userlist[index].fName??"";
-                                      Variable.assignCode =
-                                          state.userlist[index].code ?? "";
-                                      print("ASSUNDER${state.userlist[index].fName}");
-                                      widget.groupVal!(true);
+                        ):  Text(
+                  "Assign To",
+                  style: GoogleFonts.roboto(
+                  color: ColorPalette.black,
+                  fontSize: w / 22,
+                  fontWeight: FontWeight.w500,
+                  ),
+                  ),
 
-                                      if(widget.updateAssign==true){
-                                        BlocProvider.of<TaskBloc>(context)
-                                            .add(UpdateTaskEvent(
-                                            durationOption: widget.taskRead?.duration??"",
-                                            latitude: widget.taskRead?.latitude,
-                                            longitude:
-                                            widget.taskRead?.longitude,
-                                            id: widget.taskRead?.id ?? 0,
-                                            AssigningCode:
-                                            Variable.assignCode,
-                                            AssigningType:
-                                            Variable.assignType,
-                                            createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
-                                            jobid: widget.taskRead?.jobId,
-                                            notas: widget.taskRead?.notes ??
-                                                "",
-                                            priorityLeval: 0,
-                                            remarks:
-                                            widget.taskRead?.remarks ??
-                                                "",
-                                            taskName:
-                                            widget.taskRead?.taskName ?? "",
-                                            taskType: widget.taskRead?.taskType??0,
-                                            lastmodified: null,
-                                            parant: widget.taskRead?.parent,
-                                            statusStagesId:
-                                            widget.taskRead?.statusStagesId,
-                                            discription:
-                                            widget.taskRead?.description ?? "",
-                                            createdBy: widget.taskRead?.createdPersonCode ??
-                                                "",
-                                            isActive: true,
-                                            priority: widget.taskRead?.priority??"",
-                                            reportingPerson: widget.taskRead
-                                                ?.reportingPersonCode ??
-                                                "",
-                                            endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                            startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
-                                            img5: widget.taskRead
-                                                ?.metaData?.image5,
-                                            img1: widget.taskRead
-                                                ?.metaData?.image1,
-                                            img4: widget.taskRead
-                                                ?.metaData?.image4,
-                                            img2: widget.taskRead
-                                                ?.metaData?.image2,
-                                            img3: widget.taskRead
-                                                ?.metaData?.image3,
-                                            attachmentDescription:
-                                            widget.taskRead?.metaData
-                                                ?.description,
-                                            attachmentNote:
-                                            widget.taskRead?.metaData?.note));
+                        Container(
+                          width: w,
+                          // height: 577,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            // border: Border.all(
+                            //   color: const Color(0xffe6ecf0),
+                            //   width: 1,
+                            // ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x05000000),
+                                blurRadius: 8,
+                                offset: Offset(1, 1),
+                              ),
+                            ],
+                            color: Colors.white,
+                          ),
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) => GestureDetector(
+                                    onTap: () {
+                                      if(Variable.assignName==""){
+                                        setState(() {
+                                          indValue = index;
+                                          Variable.assignType = "Individual";
+                                          Variable.assignName = state.userlist[index].fName??"";
+                                          Variable.assignCode =
+                                              state.userlist[index].code ?? "";
+                                          print("ASSUNDER${state.userlist[index].fName}");
+                                          widget.groupVal!(true);
+
+                                          if(widget.updateAssign==true){
+                                            BlocProvider.of<TaskBloc>(context)
+                                                .add(UpdateTaskEvent(
+                                                durationOption: widget.taskRead?.duration??"",
+                                                latitude: widget.taskRead?.latitude,
+                                                longitude:
+                                                widget.taskRead?.longitude,
+                                                id: widget.taskRead?.id ?? 0,
+                                                AssigningCode:
+                                                Variable.assignCode,
+                                                AssigningType:
+                                                Variable.assignType,
+                                                createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                                jobid: widget.taskRead?.jobId,
+                                                notas: widget.taskRead?.notes ??
+                                                    "",
+                                                priorityLeval: 0,
+                                                remarks:
+                                                widget.taskRead?.remarks ??
+                                                    "",
+                                                taskName:
+                                                widget.taskRead?.taskName ?? "",
+                                                taskType: widget.taskRead?.taskType??0,
+                                                lastmodified: null,
+                                                parant: widget.taskRead?.parent,
+                                                statusStagesId:
+                                                widget.taskRead?.statusStagesId,
+                                                discription:
+                                                widget.taskRead?.description ?? "",
+                                                createdBy: widget.taskRead?.createdPersonCode ??
+                                                    "",
+                                                isActive: true,
+                                                priority: widget.taskRead?.priority??"",
+                                                reportingPerson: widget.taskRead
+                                                    ?.reportingPersonCode ??
+                                                    "",
+                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                img5: widget.taskRead
+                                                    ?.metaData?.image5,
+                                                img1: widget.taskRead
+                                                    ?.metaData?.image1,
+                                                img4: widget.taskRead
+                                                    ?.metaData?.image4,
+                                                img2: widget.taskRead
+                                                    ?.metaData?.image2,
+                                                img3: widget.taskRead
+                                                    ?.metaData?.image3,
+                                                attachmentDescription:
+                                                widget.taskRead?.metaData
+                                                    ?.description,
+                                                attachmentNote:
+                                                widget.taskRead?.metaData?.note));
+                                          }
+                                          else{
+                                            Navigator.pop(context);
+                                          }
+                                        });
                                       }
                                       else{
-                                        Navigator.pop(context);
-                                      }
-                                    });
-                                  }
-                                  else{
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          surfaceTintColor: Colors.white,
-                                          backgroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0),),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Container(
-                                                width: w,
-                                                // height: h/7,
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  "Confirm",
-                                                  style: GoogleFonts.roboto(
-                                                    color: ColorPalette.black,
-                                                    fontSize: w / 24,
-                                                    fontWeight: FontWeight.w500,
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              surfaceTintColor: Colors.white,
+                                              backgroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10.0),),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Container(
+                                                    width: w,
+                                                    // height: h/7,
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      "Confirm",
+                                                      style: GoogleFonts.roboto(
+                                                        color: ColorPalette.black,
+                                                        fontSize: w / 24,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              Divider(),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
-                                                "Do you want to re-assign this task?",
-                                                style: GoogleFonts.roboto(
-                                                  color: ColorPalette.black,
-                                                  fontSize: w / 28,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: Container(
-                                                        width: w / 3.3,
-                                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: Color(0x26000000).withOpacity(0.05)),
-                                                          // boxShadow: [
-                                                          //   BoxShadow(
-                                                          //     color: Color(0x26000000),
-                                                          //     blurRadius: 0,
-                                                          //     offset: Offset(0, 0),
-                                                          //   ),
-                                                          // ],
-                                                          color: ColorPalette.primary,
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            "Cancel",
-                                                            textAlign: TextAlign.center,
-                                                            style: GoogleFonts.poppins(
-                                                              color: Colors.white,
-                                                              fontSize: w / 26,
-                                                              fontWeight: FontWeight.w500,
+                                                  Divider(),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    "Do you want to re-assign this task?",
+                                                    style: GoogleFonts.roboto(
+                                                      color: ColorPalette.black,
+                                                      fontSize: w / 28,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 30,
+                                                  ),
+                                                  Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                      children: <Widget>[
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          child: Container(
+                                                            width: w / 3.3,
+                                                            padding: EdgeInsets.symmetric(vertical: 10),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5),
+                                                              border: Border.all(
+                                                                  width: 1,
+                                                                  color: Color(0x26000000).withOpacity(0.05)),
+                                                              // boxShadow: [
+                                                              //   BoxShadow(
+                                                              //     color: Color(0x26000000),
+                                                              //     blurRadius: 0,
+                                                              //     offset: Offset(0, 0),
+                                                              //   ),
+                                                              // ],
+                                                              color: ColorPalette.primary,
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                "Cancel",
+                                                                textAlign: TextAlign.center,
+                                                                style: GoogleFonts.poppins(
+                                                                  color: Colors.white,
+                                                                  fontSize: w / 26,
+                                                                  fontWeight: FontWeight.w500,
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                        setState(() {
-                                                          indValue = index;
-                                                          Variable.assignType = "Individual";
-                                                          Variable.assignName = state.userlist[index].fName??"";
-                                                          Variable.assignCode =
-                                                              state.userlist[index].code ?? "";
-                                                          print("ASSUNDER${state.userlist[index].fName}");
-                                                          widget.groupVal!(true);
-
-                                                          if(widget.updateAssign==true){
-                                                            BlocProvider.of<TaskBloc>(context)
-                                                                .add(UpdateTaskEvent(
-                                                                durationOption: widget.taskRead?.duration??"",
-                                                                latitude: widget.taskRead?.latitude,
-                                                                longitude:
-                                                                widget.taskRead?.longitude,
-                                                                id: widget.taskRead?.id ?? 0,
-                                                                AssigningCode:
-                                                                Variable.assignCode,
-                                                                AssigningType:
-                                                                Variable.assignType,
-                                                                createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
-                                                                jobid: widget.taskRead?.jobId,
-                                                                notas: widget.taskRead?.notes ??
-                                                                    "",
-                                                                priorityLeval: 0,
-                                                                remarks:
-                                                                widget.taskRead?.remarks ??
-                                                                    "",
-                                                                taskName:
-                                                                widget.taskRead?.taskName ?? "",
-                                                                taskType: widget.taskRead?.taskType??0,
-                                                                lastmodified: null,
-                                                                parant: widget.taskRead?.parent,
-                                                                statusStagesId:
-                                                                widget.taskRead?.statusStagesId,
-                                                                discription:
-                                                                widget.taskRead?.description ?? "",
-                                                                createdBy: widget.taskRead?.createdPersonCode ??
-                                                                    "",
-                                                                isActive: true,
-                                                                priority: widget.taskRead?.priority??"",
-                                                                reportingPerson: widget.taskRead
-                                                                    ?.reportingPersonCode ??
-                                                                    "",
-                                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
-                                                                img5: widget.taskRead
-                                                                    ?.metaData?.image5,
-                                                                img1: widget.taskRead
-                                                                    ?.metaData?.image1,
-                                                                img4: widget.taskRead
-                                                                    ?.metaData?.image4,
-                                                                img2: widget.taskRead
-                                                                    ?.metaData?.image2,
-                                                                img3: widget.taskRead
-                                                                    ?.metaData?.image3,
-                                                                attachmentDescription:
-                                                                widget.taskRead?.metaData
-                                                                    ?.description,
-                                                                attachmentNote:
-                                                                widget.taskRead?.metaData?.note));
-                                                          }
-                                                          else{
+                                                        GestureDetector(
+                                                          onTap: () {
                                                             Navigator.pop(context);
-                                                          }
-                                                        });
-                                                        //
-                                                      },
-                                                      child: Container(
-                                                        width: w / 3.1,
-                                                        padding: EdgeInsets.symmetric(vertical: 13),
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: Color(0x26000000).withOpacity(0.05)),
-                                                          gradient: LinearGradient(
-                                                            begin: Alignment.topCenter,
-                                                            end: Alignment.bottomCenter,
-                                                            colors: [
-                                                              ColorPalette.white,
-                                                              ColorPalette.white,
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        child: Text(
-                                                          "Confirm",
-                                                          textAlign: TextAlign.center,
-                                                          style: GoogleFonts.roboto(
-                                                            color: Colors.grey,
-                                                            fontSize: w / 26,
-                                                            fontWeight: FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ]),
-                                              SizedBox(
-                                                height: h / 80,
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }
+                                                            setState(() {
+                                                              indValue = index;
+                                                              Variable.assignType = "Individual";
+                                                              Variable.assignName = state.userlist[index].fName??"";
+                                                              Variable.assignCode =
+                                                                  state.userlist[index].code ?? "";
+                                                              print("ASSUNDER${state.userlist[index].fName}");
+                                                              widget.groupVal!(true);
 
-                                },
-                                child: EmployeeCardUnderGroup(
-                                  userList: state.userlist[index],
-                                )
-                              ),
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 2,
-                            );
-                          },
-                          itemCount: state.userlist.length),
+                                                              if(widget.updateAssign==true){
+                                                                BlocProvider.of<TaskBloc>(context)
+                                                                    .add(UpdateTaskEvent(
+                                                                    durationOption: widget.taskRead?.duration??"",
+                                                                    latitude: widget.taskRead?.latitude,
+                                                                    longitude:
+                                                                    widget.taskRead?.longitude,
+                                                                    id: widget.taskRead?.id ?? 0,
+                                                                    AssigningCode:
+                                                                    Variable.assignCode,
+                                                                    AssigningType:
+                                                                    Variable.assignType,
+                                                                    createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                                                    jobid: widget.taskRead?.jobId,
+                                                                    notas: widget.taskRead?.notes ??
+                                                                        "",
+                                                                    priorityLeval: 0,
+                                                                    remarks:
+                                                                    widget.taskRead?.remarks ??
+                                                                        "",
+                                                                    taskName:
+                                                                    widget.taskRead?.taskName ?? "",
+                                                                    taskType: widget.taskRead?.taskType??0,
+                                                                    lastmodified: null,
+                                                                    parant: widget.taskRead?.parent,
+                                                                    statusStagesId:
+                                                                    widget.taskRead?.statusStagesId,
+                                                                    discription:
+                                                                    widget.taskRead?.description ?? "",
+                                                                    createdBy: widget.taskRead?.createdPersonCode ??
+                                                                        "",
+                                                                    isActive: true,
+                                                                    priority: widget.taskRead?.priority??"",
+                                                                    reportingPerson: widget.taskRead
+                                                                        ?.reportingPersonCode ??
+                                                                        "",
+                                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
+                                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                                    img5: widget.taskRead
+                                                                        ?.metaData?.image5,
+                                                                    img1: widget.taskRead
+                                                                        ?.metaData?.image1,
+                                                                    img4: widget.taskRead
+                                                                        ?.metaData?.image4,
+                                                                    img2: widget.taskRead
+                                                                        ?.metaData?.image2,
+                                                                    img3: widget.taskRead
+                                                                        ?.metaData?.image3,
+                                                                    attachmentDescription:
+                                                                    widget.taskRead?.metaData
+                                                                        ?.description,
+                                                                    attachmentNote:
+                                                                    widget.taskRead?.metaData?.note));
+                                                              }
+                                                              else{
+                                                                Navigator.pop(context);
+                                                              }
+                                                            });
+                                                            //
+                                                          },
+                                                          child: Container(
+                                                            width: w / 3.1,
+                                                            padding: EdgeInsets.symmetric(vertical: 13),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5),
+                                                              border: Border.all(
+                                                                  width: 1,
+                                                                  color: Color(0x26000000).withOpacity(0.05)),
+                                                              gradient: LinearGradient(
+                                                                begin: Alignment.topCenter,
+                                                                end: Alignment.bottomCenter,
+                                                                colors: [
+                                                                  ColorPalette.white,
+                                                                  ColorPalette.white,
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            child: Text(
+                                                              "Confirm",
+                                                              textAlign: TextAlign.center,
+                                                              style: GoogleFonts.roboto(
+                                                                color: Colors.grey,
+                                                                fontSize: w / 26,
+                                                                fontWeight: FontWeight.w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ]),
+                                                  SizedBox(
+                                                    height: h / 80,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+
+                                    },
+                                    child: EmployeeCardUnderGroup(
+                                      userList: state.userlist[index],
+                                    )
+                                  ),
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  height: 2,
+                                );
+                              },
+                              itemCount: state.userlist.length),
+                        ),
+                      ],
                     );
                   }
                   return Container();

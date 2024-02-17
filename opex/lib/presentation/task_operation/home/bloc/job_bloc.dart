@@ -289,7 +289,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     final dataResponse = await _jobRepo.getGroupList();
 
-    if (dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null) {
       yield GetGroupListSuccess(dataResponse.data);
     } else {
       yield GetGroupListFailed();

@@ -851,44 +851,45 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                 label: "Reporter",
                                                 svg: TaskSvg().reporterSvg,
                                               )),
-                                          authentication.isAssociateAdmin==false?GestureDetector(
-                                              onTap: () {
-                                                PersistentNavBarNavigator.pushNewScreen(
-                                                  context,
-                                                  screen: CreatePerformance(),
-                                                  withNavBar: false, // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade,
-                                                );
-                                              },
-                                              child: FourCard(
-                                                label: "Criteria",
-                                                svg: TaskSvg().criteriaIcon,
-                                              )):  Container(
-                                            width: w1/6,
-                                            height: 60,
-                                            padding: EdgeInsets.all(10),
-
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: Colors.white,
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                // SvgPicture.string(svg??TaskSvg().quickaccessIcon),
-                                                //
-                                                // SizedBox(height: 5,),
-                                                // Text(
-                                                //   label??"Employees",
-                                                //   textAlign: TextAlign.center,
-                                                //   style: TextStyle(
-                                                //     color: ColorPalette.black,
-                                                //     fontSize: 11,
-                                                //
-                                                //   ),
-                                                // )
-                                              ],
-                                            ),
-                                          ),
+                                          // authentication.isAssociateAdmin==false?
+                                          // GestureDetector(
+                                          //     onTap: () {
+                                          //       PersistentNavBarNavigator.pushNewScreen(
+                                          //         context,
+                                          //         screen: CreatePerformance(),
+                                          //         withNavBar: false, // OPTIONAL VALUE. True by default.
+                                          //         pageTransitionAnimation: PageTransitionAnimation.fade,
+                                          //       );
+                                          //     },
+                                          //     child: FourCard(
+                                          //       label: "Criteria",
+                                          //       svg: TaskSvg().criteriaIcon,
+                                          //     )):  Container(
+                                          //   width: w1/6,
+                                          //   height: 60,
+                                          //   padding: EdgeInsets.all(10),
+                                          //
+                                          //   decoration: BoxDecoration(
+                                          //     borderRadius: BorderRadius.circular(10),
+                                          //     color: Colors.white,
+                                          //   ),
+                                          //   child: Column(
+                                          //     children: [
+                                          //       // SvgPicture.string(svg??TaskSvg().quickaccessIcon),
+                                          //       //
+                                          //       // SizedBox(height: 5,),
+                                          //       // Text(
+                                          //       //   label??"Employees",
+                                          //       //   textAlign: TextAlign.center,
+                                          //       //   style: TextStyle(
+                                          //       //     color: ColorPalette.black,
+                                          //       //     fontSize: 11,
+                                          //       //
+                                          //       //   ),
+                                          //       // )
+                                          //     ],
+                                          //   ),
+                                          // ),
                                           authentication.isAdmin? GestureDetector(
                                               onTap: () {
                                                 PersistentNavBarNavigator
@@ -944,7 +945,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                               },
                                               child: FourCard(
                                                   label: "All Job List",
-                                                  svg: TaskSvg().createGroupSvg
+                                                  svg: TaskSvg().alljobList
                                               )):Container(
                                             width: w1/6,
                                             height: 60,
@@ -970,6 +971,18 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                                 // )
                                               ],
                                             ),
+                                          ),
+                                          Container(
+                                            width: w1/6,
+                                            height: 60,
+                                            padding: EdgeInsets.all(20),
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              // border: Border.all(color: Colors.grey,width: 0.1),
+                                              color: Color(0x0ffFFFFFF),
+                                            ),
+                                            // child: SvgPicture.string(svg??TaskSvg().deleteBox),
                                           ),
 
                                         ],

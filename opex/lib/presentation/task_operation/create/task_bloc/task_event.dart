@@ -145,9 +145,13 @@ class CreateTaskEvent extends TaskEvent {
   final String? lastmodified;
   final String? longitude;
   final String? latitude;
+  final String? startTime;
+  final String? endTime;
   const CreateTaskEvent(  {
     required this.longitude,
     required this.latitude,
+    required this.endTime,
+    required this.startTime,
     required this.durationOption,
     this.parant,
     required this.jobId,

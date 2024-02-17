@@ -183,7 +183,7 @@ class JobRepo {
   Future<DataResponse> getGroupList() async {
     final apiResponse = await _dataSource.getGroupList();
     try {
-      if (apiResponse.isNotEmpty) {
+      if (apiResponse !=null) {
         return DataResponse(data: apiResponse);
       } else {
         return DataResponse(error: "error Text");

@@ -110,7 +110,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child:  BackAppBar(
-            label: "Attachment",
+            label: "Notes & Attachments",
             isAction: false,
             isBack: false,
             onTap: (){
