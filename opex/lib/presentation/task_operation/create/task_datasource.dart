@@ -206,7 +206,7 @@ class TaskDataSource {
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
         ));
-    print("api " + api);
+    print("api noti " + api);
     print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
       nationalityModel.add(NotificationList.fromJson(element));
@@ -457,8 +457,12 @@ class TaskDataSource {
     required String createdOn,
     required String? lastmodified,
     required String? longitude,
+    required String startTime,
+    required String endTime,
     required String? latitude,
   }) async {
+    print("taskdetails parant$startTime");
+    print("taskdetails parant$endTime");
     print("taskdetails parant$durationOption");
     print("taskdetails parant$parant");
     print("taskdetails jobId$jobId");
@@ -505,6 +509,8 @@ class TaskDataSource {
           "last_modified": lastmodified,
           "longitude": longitude,
           "latitude": latitude,
+          "start_time":startTime,
+          "end_time":endTime
         },
         options: Options(
           headers: {

@@ -89,6 +89,12 @@ class _AttachmentCardState extends State<AttachmentCard> {
                     barrierDismissible: true,
                     builder: (BuildContext context) {
                       return AlertDialog(
+
+                        surfaceTintColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),),
+
                         content: ImagePreview(
                           assetName: picModel[i].url??"",
                         ),
@@ -186,6 +192,10 @@ class _RewardsCardState extends State<RewardsCard> {
                     barrierDismissible: true,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        surfaceTintColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),),
                         content: ImagePreview(
                           assetName: picModel[i].url??"",
                         ),
@@ -290,6 +300,10 @@ class _PaymentCardState extends State<PaymentCard> {
                   barrierDismissible: true,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      surfaceTintColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),),
                       content: ImagePreview(
                         assetName: picModel[i].url??"",
                       ),

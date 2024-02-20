@@ -34,7 +34,9 @@ class TextCard extends StatelessWidget {
           ),
         ),
         const Divider(
+
           indent: 16,
+          height: 1,
         ),
         Container(
           padding: EdgeInsets.only(left: 16, right: 5),

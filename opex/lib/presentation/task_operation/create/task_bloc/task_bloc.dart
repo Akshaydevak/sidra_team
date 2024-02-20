@@ -103,6 +103,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is CreateTaskEvent) {
       yield* createTaskstate(
+        endTime: event.endTime??"",
+        startTime: event.startTime??"",
         longitude: event.longitude,
           durationOption: event.durationOption,
           latitude: event.latitude,
@@ -420,7 +422,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) async* {
     yield GetNotificationListLoading();
     final dataResponse = await _taskRepo.getNotificationList(search,next,prev);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null ) {
       yield GetNotificationListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",
@@ -585,6 +587,8 @@ Stream<TaskState> getTaskCreationRead() async* {
         required int priorityLeval,
         required String startDate,
         required String endDate,
+        required String startTime,
+        required String endTime,
         required bool isActive,
         required String AssigningType,
         required String AssigningCode,
@@ -601,6 +605,8 @@ Stream<TaskState> getTaskCreationRead() async* {
 
     final dataResponse = await _taskRepo.taskCreatePost(
       latitude: latitude,
+      startTime: startTime,
+      endTime: endTime,
       durationOption: durationOption,
       longitude: longitude,
       statusStagesId:statusStagesId,

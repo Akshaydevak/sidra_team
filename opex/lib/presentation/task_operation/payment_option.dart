@@ -42,6 +42,8 @@ class PaymentOption extends StatefulWidget {
   final int paymentId;
   final GetJobList? joblist;
   final String? currencyCode;
+  final String? assignType;
+  final String? assignCode;
   final GetTaskList? taskList;
   const PaymentOption(
       {Key? key,
@@ -50,6 +52,8 @@ class PaymentOption extends StatefulWidget {
       this.isTask = false,
       this.taskId = 0,
       this.jobId = 0,
+      this.assignCode = '',
+      this.assignType = '',
       required this.paymentId,
       this.joblist,
       this.taskList,
@@ -301,8 +305,8 @@ class _PaymentOptionState extends State<PaymentOption> {
                                             0.0,
                                     notas: notesController.text,
                                     jobId: paymentRead?.jobId,
-                                    AssigningCode: selCode ?? "",
-                                    assigningType: selectedType ?? "",
+                                    AssigningCode: widget.assignCode ?? "",
+                                    assigningType: widget.assignType ?? "",
                                     payId: paymentRead?.id,
                                     img1: picModelPayment[0].data ??
                                         picModelPayment[0].url,
@@ -324,8 +328,8 @@ class _PaymentOptionState extends State<PaymentOption> {
                                         expense: double.tryParse(expenceController.text) ?? 0.0,
                                         notas: notesController.text,
                                         jobId: widget.jobId,
-                                        AssigningCode: selCode ?? "",
-                                        assigningType: selectedType ?? "",
+                                        AssigningCode: widget.assignCode ?? "",
+                                        assigningType: widget.assignType ?? "",
                                         img1: picModelPayment[0].data ?? 0,
                                         img5: picModelPayment[4].data ?? 0,
                                         img4: picModelPayment[3].data ?? 0,
@@ -371,127 +375,127 @@ class _PaymentOptionState extends State<PaymentOption> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      widget.isJob
-                          ? Container()
-                          : widget.isTask
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    widget.update
-                                        ? Container()
-                                        : Text(
-                                            "Assigning Type",
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.black,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                    widget.update
-                                        ? Container()
-                                        : SizedBox(
-                                            height: 10,
-                                          ),
-                                    widget.update
-                                        ? ReadDropDownCard(
-                                            label: "Assigning Type",
-                                            selValue:
-                                                paymentRead?.assigningType ??
-                                                    "",
-                                          )
-                                        : Container(
-                                            width: w / 1,
-                                            // padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            //height: 20.0,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                              border: Border.all(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2),
-                                                  width: 1),
-                                            ),
-                                            child: DropdownButton(
-                                                isExpanded: true,
-                                                dropdownColor: Colors.white,
-                                                icon: Icon(Icons
-                                                    .keyboard_arrow_down_outlined),
-                                                underline: Container(),
-                                                items: assignTypeList
-                                                    .map((String items) {
-                                                  return DropdownMenuItem(
-                                                    enabled: true,
-                                                    value: items,
-                                                    child: Text(items,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black)),
-                                                  );
-                                                }).toList(),
-                                                value: selectedType,
-                                                onChanged: (dynamic value) {
-                                                  setState(() {
-                                                    selectedType = value;
-                                                    selectedType == "Individual"
-                                                        ? context
-                                                            .read<JobBloc>()
-                                                            .add(
-                                                                GetEmployeeListEvent(
-                                                                    '', '', ''))
-                                                        : selectedType ==
-                                                                "Task_Group"
-                                                            ? context
-                                                                .read<JobBloc>()
-                                                                .add(
-                                                                    GetGroupListEvent())
-                                                            : null;
-                                                  });
-                                                },
-                                                hint: Text(
-                                                  "Assign Type",
-                                                  style: GoogleFonts.poppins(
-                                                      color: Colors.grey,
-                                                      fontSize: 14),
-                                                )),
-                                          ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    widget.update
-                                        ? ReadDropDownCard(
-                                            label: "Assigning Code",
-                                            selValue:
-                                                paymentRead?.assigningName ??
-                                                    "",
-                                          )
-                                        : selectedType == "Task_Group"
-                                            ? DropDownCard(
-                                                label: "Assigning Name",
-                                                selValue: selName,
-                                                onTap: () {
-                                                  context
-                                                      .read<JobBloc>()
-                                                      .add(GetGroupListEvent());
-                                                  _showModalBottomGroupList();
-                                                },
-                                              )
-                                            : selectedType == "Individual"
-                                                ? DropDownCard(
-                                                    label: "Assigning Name",
-                                                    selValue: selName,
-                                                    onTap: () {
-                                                      context.read<JobBloc>().add(
-                                                          GetEmployeeListEvent(
-                                                              '', '', ''));
-                                                      _showModalBottomAdditionalRole();
-                                                    },
-                                                  )
-                                                : Container(),
-                                  ],
-                                )
-                              : Container(),
+                      // widget.isJob
+                      //     ? Container()
+                      //     : widget.isTask
+                      //         ? Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: [
+                      //               widget.update
+                      //                   ? Container()
+                      //                   : Text(
+                      //                       "Assigning Type",
+                      //                       style: GoogleFonts.roboto(
+                      //                         color: Colors.black,
+                      //                         fontSize: w / 24,
+                      //                         fontWeight: FontWeight.w500,
+                      //                       ),
+                      //                     ),
+                      //               widget.update
+                      //                   ? Container()
+                      //                   : SizedBox(
+                      //                       height: 10,
+                      //                     ),
+                      //               widget.update
+                      //                   ? ReadDropDownCard(
+                      //                       label: "Assigning Type",
+                      //                       selValue:
+                      //                           paymentRead?.assigningType ??
+                      //                               "",
+                      //                     )
+                      //                   : Container(
+                      //                       width: w / 1,
+                      //                       // padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      //                       //height: 20.0,
+                      //                       padding: EdgeInsets.symmetric(
+                      //                           horizontal: 12.0),
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius:
+                      //                             BorderRadius.circular(4),
+                      //                         border: Border.all(
+                      //                             color: Colors.grey
+                      //                                 .withOpacity(0.2),
+                      //                             width: 1),
+                      //                       ),
+                      //                       child: DropdownButton(
+                      //                           isExpanded: true,
+                      //                           dropdownColor: Colors.white,
+                      //                           icon: Icon(Icons
+                      //                               .keyboard_arrow_down_outlined),
+                      //                           underline: Container(),
+                      //                           items: assignTypeList
+                      //                               .map((String items) {
+                      //                             return DropdownMenuItem(
+                      //                               enabled: true,
+                      //                               value: items,
+                      //                               child: Text(items,
+                      //                                   style: TextStyle(
+                      //                                       color:
+                      //                                           Colors.black)),
+                      //                             );
+                      //                           }).toList(),
+                      //                           value: selectedType,
+                      //                           onChanged: (dynamic value) {
+                      //                             setState(() {
+                      //                               selectedType = value;
+                      //                               selectedType == "Individual"
+                      //                                   ? context
+                      //                                       .read<JobBloc>()
+                      //                                       .add(
+                      //                                           GetEmployeeListEvent(
+                      //                                               '', '', ''))
+                      //                                   : selectedType ==
+                      //                                           "Task_Group"
+                      //                                       ? context
+                      //                                           .read<JobBloc>()
+                      //                                           .add(
+                      //                                               GetGroupListEvent())
+                      //                                       : null;
+                      //                             });
+                      //                           },
+                      //                           hint: Text(
+                      //                             "Assign Type",
+                      //                             style: GoogleFonts.poppins(
+                      //                                 color: Colors.grey,
+                      //                                 fontSize: 14),
+                      //                           )),
+                      //                     ),
+                      //               SizedBox(
+                      //                 height: 10,
+                      //               ),
+                      //               widget.update
+                      //                   ? ReadDropDownCard(
+                      //                       label: "Assigning Code",
+                      //                       selValue:
+                      //                           paymentRead?.assigningName ??
+                      //                               "",
+                      //                     )
+                      //                   : selectedType == "Task_Group"
+                      //                       ? DropDownCard(
+                      //                           label: "Assigning Name",
+                      //                           selValue: selName,
+                      //                           onTap: () {
+                      //                             context
+                      //                                 .read<JobBloc>()
+                      //                                 .add(GetGroupListEvent());
+                      //                             _showModalBottomGroupList();
+                      //                           },
+                      //                         )
+                      //                       : selectedType == "Individual"
+                      //                           ? DropDownCard(
+                      //                               label: "Assigning Name",
+                      //                               selValue: selName,
+                      //                               onTap: () {
+                      //                                 context.read<JobBloc>().add(
+                      //                                     GetEmployeeListEvent(
+                      //                                         '', '', ''));
+                      //                                 _showModalBottomAdditionalRole();
+                      //                               },
+                      //                             )
+                      //                           : Container(),
+                      //             ],
+                      //           )
+                      //         : Container(),
 
                       SizedBox(
                         height: 10,

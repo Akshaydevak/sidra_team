@@ -54,6 +54,7 @@ class _DashBoardState extends State<DashBoard> {
   String? loginuserId;
   String? logingrpuserId;
   SharedPreferences? pref;
+  String oldmessageId="";
 String _previousConnectionState = 'Unknown';
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
@@ -123,21 +124,9 @@ print("inside the notifaction comment flush");
               chatId: "",
               grpchatId: id,
               userId:logingrpuserId??"" ));
-        // PersistentNavBarNavigator.pushNewScreen(
-        //   context,
-        //   screen:  ChatScreen(
-        //     token: token,
-        //     loginUserId: logingrpuserId,
-        //     socket: socketCon1,
-        //     grpchatid: id,
-        //     cmntgrpchatname:
-        //        messages.notification?.title??"",
-        //     isGroup: true,
-        //   ),
-        //   withNavBar: true, // OPTIONAL VALUE. True by default.
-        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-        // );
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(
             token: token,
             loginUserId: logingrpuserId,
             socket: socketCon1,
@@ -145,7 +134,19 @@ print("inside the notifaction comment flush");
             cmntgrpchatname:
                messages.notification?.title??"",
             isGroup: true,
-          ),));
+          ),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        //     token: token,
+        //     loginUserId: logingrpuserId,
+        //     socket: socketCon1,
+        //     grpchatid: id,
+        //     cmntgrpchatname:
+        //        messages.notification?.title??"",
+        //     isGroup: true,
+        //   ),));
         
           }
           else{
@@ -163,30 +164,30 @@ print("inside the notifaction comment flush");
               chatId: id,
               grpchatId: "",
               userId: loginuserId??""));
-        // PersistentNavBarNavigator.pushNewScreen(
-        //   context,
-        //   screen:  ChatScreen(
-        //     token: token,
-        //     loginUserId: loginuserId,
-        //     socket: socketCon,
-        //     redirectchatid: id,
-        //     redirectchatname:
-        //        messages.notification?.title??"",
-        //     isGroup: data['is_group_chat']=="true"?true:false,
-        //   ),
-        //   withNavBar: true, // OPTIONAL VALUE. True by default.
-        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-        // );
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen:  ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
             redirectchatname:
                messages.notification?.title??"",
-               redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
-          ),));
+          ),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,
+        //     redirectchatid: id,
+        //     redirectchatname:
+        //        messages.notification?.title??"",
+        //        redirectionsenduserId: data['to_user_id'],
+        //     isGroup: data['is_group_chat']=="true"?true:false,
+        //   ),));
         }
         },
         backgroundColor: Colors.black,
@@ -223,7 +224,7 @@ print("inside the notifaction comment flush");
     });
 
     // Handle message when the app is opened from the background
-    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+  FirebaseMessaging.onMessageOpenedApp.listen((message) async {
       print('Message opened while the app was in the background: $message');
       var data = message.data;
       // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
@@ -231,8 +232,10 @@ print("inside the notifaction comment flush");
       //   'serviceUid': data["serviceUid"] ,
       // });
       String id = data['chat_id'];
-      print("hahaha$id ..... ${message.notification?.title}");
-      if (data['Sidra_teams_key'] == "task_and_operation") {
+      print("hahaha${message.messageId} $id ..... ${message.notification?.title}");
+      if(message.messageId != oldmessageId){
+        if (data['Sidra_teams_key'] == "task_and_operation") {
+          oldmessageId = message.messageId!;
         context
             .read<TaskBloc>()
             .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
@@ -243,6 +246,7 @@ print("inside the notifaction comment flush");
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
       } else if (data['Sidra_teams_key'] == "comment") {
+        oldmessageId = message.messageId!;
         print("background the notifaction comment");
         print("else condition");
         pref = await SharedPreferences.getInstance();
@@ -284,6 +288,7 @@ print("inside the notifaction comment flush");
           }
       else{
         print("else condition");
+        oldmessageId = message.messageId!;
         pref = await SharedPreferences.getInstance();
         token = pref!.getString("token");
         loginuserId = pref!.getString("loginuserid");
@@ -325,6 +330,8 @@ print("inside the notifaction comment flush");
         // }
         
       }
+      }
+      
     });
   }
 
