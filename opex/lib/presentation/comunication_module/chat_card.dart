@@ -262,7 +262,7 @@ int unreadCount=0;
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: w1/4,
+                                                        width: w1/5,
                                                         child: Text(
                                                           widget.communicationUserModel
                                                                   ?.latestMessage ??

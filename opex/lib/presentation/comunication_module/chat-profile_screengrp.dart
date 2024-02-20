@@ -162,6 +162,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
           print("group delete loading");
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
+           
            preff = await SharedPreferences.getInstance();
         widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                       
@@ -561,9 +562,9 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                 //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                                                                                 //   showSnackBar(context, message: data, color: Colors.black);
                                                                                 // } );
-                                                                                widget.socket!.emit("group.message",{
-                                                                                  "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
-                                                                                }); 
+                                                                               widget.socket!.emit("group.message",{
+              "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
+            }); 
                                                                                 isM=true;
                                                                                 Navigator.pop(context);
                                                                                  

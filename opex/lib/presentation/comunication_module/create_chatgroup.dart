@@ -267,9 +267,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
                         fontWeight: FontWeight.w600
                     ) ,
                     controller: discription,
-                    maxLength: 150,
-                    maxLines: 2,
-                    minLines: 1,
+                    // maxLength: 150,
+                    // maxLines: 2,
+                    // minLines: 1,
                     onChanged: (n){
                       validationCheck();
                       setState(() {

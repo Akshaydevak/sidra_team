@@ -125,12 +125,18 @@ class CommunicationDatasource {
         response.data['status'] == 'success', response.data['message']);
   }
   Future<DoubleResponse> addanGroupMember(
-      {required String chatId, required String userId, required String token}) async {
+      {required String chatId, required String userId, required String token,required String emailid,
+  required String fname,
+  required String lname,
+  required String photo}) async {
     print("at datasource");
-    print("....$chatId...$userId");
+    print("....$chatId...$userId....$fname....$lname......$emailid....$photo");
     final response = await client.post(
       CommunicationUrls.addGroupMember+chatId,
-      data: {"userCode": userId},
+      data: {
+        "userCode": userId,
+        "fname": fname, "lname": lname, "email": emailid, "photo": photo
+        },
       options: Options(
         headers: {
           'Content-Type': 'application/json',
