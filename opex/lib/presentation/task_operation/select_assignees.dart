@@ -383,8 +383,11 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                                   reportingPerson: widget.taskRead
                                                       ?.reportingPersonCode ??
                                                       "",
-                                                  endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                  startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                  endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+
+                                                  startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                  endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                                  startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                   img5: widget.taskRead
                                                       ?.metaData?.image5,
                                                   img1: widget.taskRead
@@ -513,8 +516,10 @@ class _SelectAssigneesState extends State<SelectAssignees> {
                                                     reportingPerson: widget.taskRead
                                                         ?.reportingPersonCode ??
                                                         "",
-                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                    endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                                    startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                     img5: widget.taskRead
                                                         ?.metaData?.image5,
                                                     img1: widget.taskRead
@@ -942,8 +947,10 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                                 reportingPerson: widget.taskRead
                                                     ?.reportingPersonCode ??
                                                     "",
-                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                                startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                 img5: widget.taskRead
                                                     ?.metaData?.image5,
                                                 img1: widget.taskRead
@@ -1090,8 +1097,10 @@ class _AssignesUnderGroupState extends State<AssignesUnderGroup> {
                                                                     reportingPerson: widget.taskRead
                                                                         ?.reportingPersonCode ??
                                                                         "",
-                                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                                    endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                                    startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                                    endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                                                    startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                                     img5: widget.taskRead
                                                                         ?.metaData?.image5,
                                                                     img1: widget.taskRead

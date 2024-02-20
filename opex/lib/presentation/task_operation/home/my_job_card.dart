@@ -626,15 +626,11 @@ class _MyJobCardState extends State<MyJobCard> {
                                 priority: widget.tasksList?.priority ?? "",
                                 reportingPerson:
                                     widget.tasksList?.reportingPersonCode ?? "",
-                                endDate: "${widget.tasksList?.endDate?.split("T")[0]}"
-                                        " "
-                                        "${widget.tasksList?.endDate?.split("T")[1].split("+")[0]}" ??
-                                    "",
+                                endDate: "${widget.tasksList?.endDate?.split("T")[0]}",
+                                endTime:  "${widget.tasksList?.endDate?.split("T")[1].split("+")[0]}",
                                 startDate:
-                                    "${widget.tasksList?.startDate?.split("T")[0]}"
-                                            " "
-                                            "${widget.tasksList?.startDate?.split("T")[1].split("+")[0]}" ??
-                                        "",
+                                    "${widget.tasksList?.startDate?.split("T")[0]}",
+                                startTime: "${widget.tasksList?.startDate?.split("T")[1].split("+")[0]}",
                                 AssigningCode:
                                     widget.tasksList?.assigningCode ?? "",
                                 notas: widget.tasksList?.notes ?? "",

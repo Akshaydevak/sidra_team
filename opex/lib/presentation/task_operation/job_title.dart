@@ -259,96 +259,186 @@ class _JobTitleState extends State<JobTitle> {
                   Navigator.pop(context);
                 },
                 action: PopupMenuButton(
-                  icon: SvgPicture.string(TaskSvg().moreIcon),
-                  color: ColorPalette.white,
-                  elevation: 2,
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
+                  surfaceTintColor: Colors.white,
+                  icon: Icon(Icons.more_horiz),
+                  color: Colors.white,
+                  onSelected: (value) {
+                    // popUpItemSelected(
+                    //   value.toString(),
+                    //   context,
+                    //   address: address,
+                    //   isDefualt: isDefualt,
+                    //   addressID: addressID,
+                    // );
+                  },
                   itemBuilder: (context) => [
                     PopupMenuItem(
-                        padding: EdgeInsets.all(0),
                         value: 'a',
-                        enabled: true,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                print("EdIT");
-                                context.read<JobBloc>().add(
-                                    GetJobReadListEvent(JobRead?.id??0));
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: const CreateJob(
-                                    edit: true,
-                                  ),
-                                  withNavBar:
-                                      true, // OPTIONAL VALUE. True by default.
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.fade,
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Row(
-                                  children: [
-                                    // SvgPicture.string(TaskSvg().editorIcon),
-                                    // SizedBox(
-                                    //   width: 10,
-                                    // ),
-                                    Text(
-                                      'Edit this Job',
-                                      style: GoogleFonts.poppins(
-                                          color: ColorPalette.black,
-                                          fontSize: w/26,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Divider(
-                              indent: 30,
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  context.read<EmployeeBloc>().add(
-                                      GetActivityLogListingEvent(
-                                          JobRead?.id));
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ActivityLog(),
-                                    withNavBar:
-                                        false, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  );
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Row(
-                                    children: [
-                                      // SvgPicture.string(TaskSvg().activityIcon),
-                                      // SizedBox(
-                                      //   width: 10,
-                                      // ),
-                                      Text(
-                                        'View Activity Logs',
-                                        style: GoogleFonts.poppins(
-                                            color: Colors.black54,
-                                            fontSize: w/26,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ],
-                        ))
+                        child:InkWell(
+                          onTap: (){
+                            Navigator.pop(context);
+                                            print("EdIT");
+                                            context.read<JobBloc>().add(
+                                                GetJobReadListEvent(JobRead?.id??0));
+                                            PersistentNavBarNavigator.pushNewScreen(
+                                              context,
+                                              screen: const CreateJob(
+                                                edit: true,
+                                              ),
+                                              withNavBar:
+                                                  true, // OPTIONAL VALUE. True by default.
+                                              pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                            );
+                          },
+                          child: Text(
+                            "Edit this Job",
+                            style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w / 28,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        )
+                      // :
+                      // InkWell(
+                      //   onTap: (){
+                      //     context.read<JobBloc>().add(
+                      //         PinAJobPostEvent(
+                      //             userCode: authentication
+                      //                 .authenticatedUser.code ??
+                      //                 "",
+                      //             taskId: getTaskRead?.id ?? 0,
+                      //             isPinned:
+                      //             getTaskRead?.isPinned == true
+                      //                 ? false
+                      //                 : true));
+                      //     context.read<TaskBloc>().add(
+                      //         GetTaskReadListEvent(
+                      //             getTaskRead?.id ?? 0));
+                      //     Navigator.pop(context);
+                      //   },
+                      //   child: Text(
+                      //     getTaskRead?.isPinned == true
+                      //         ? 'Unpin this Task'
+                      //         : 'Pin this Task',
+                      //     style: TextStyle(fontSize: 12),
+                      // ),
+                      // )
+                    ),
+                    PopupMenuItem(
+                        value: 'b',
+                        child: InkWell(
+                          onTap: () {
+                            context.read<EmployeeBloc>().add(
+                                                      GetActivityLogListingEvent(
+                                                          JobRead?.id));
+                                                  PersistentNavBarNavigator.pushNewScreen(
+                                                    context,
+                                                    screen: ActivityLog(),
+                                                    withNavBar:
+                                                        false, // OPTIONAL VALUE. True by default.
+                                                    pageTransitionAnimation:
+                                                        PageTransitionAnimation.fade,
+                                                  );
+                          },
+                          child: const Text(
+                            "View Activity Logs",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        )),
                   ],
-                  onSelected: (value) {},
-                ),
+                )
+                // PopupMenuButton(
+                //   icon: SvgPicture.string(TaskSvg().moreIcon),
+                //   color: ColorPalette.white,
+                //   elevation: 2,
+                //   padding: EdgeInsets.zero,
+                //   shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(5)),
+                //   itemBuilder: (context) => [
+                //     PopupMenuItem(
+                //         padding: EdgeInsets.all(0),
+                //         value: 'a',
+                //         enabled: true,
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             InkWell(
+                //               onTap: () {
+                //                 Navigator.pop(context);
+                //                 print("EdIT");
+                //                 context.read<JobBloc>().add(
+                //                     GetJobReadListEvent(JobRead?.id??0));
+                //                 PersistentNavBarNavigator.pushNewScreen(
+                //                   context,
+                //                   screen: const CreateJob(
+                //                     edit: true,
+                //                   ),
+                //                   withNavBar:
+                //                       true, // OPTIONAL VALUE. True by default.
+                //                   pageTransitionAnimation:
+                //                       PageTransitionAnimation.fade,
+                //                 );
+                //               },
+                //               child: Container(
+                //                 padding: EdgeInsets.only(left: 10),
+                //                 child: Row(
+                //                   children: [
+                //                     // SvgPicture.string(TaskSvg().editorIcon),
+                //                     // SizedBox(
+                //                     //   width: 10,
+                //                     // ),
+                //                     Text(
+                //                       'Edit this Job',
+                //                       style: GoogleFonts.poppins(
+                //                           color: ColorPalette.black,
+                //                           fontSize: w/26,
+                //                           fontWeight: FontWeight.w500),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ),
+                //             Divider(
+                //               indent: 30,
+                //             ),
+                //             GestureDetector(
+                //                 onTap: () {
+                //                   context.read<EmployeeBloc>().add(
+                //                       GetActivityLogListingEvent(
+                //                           JobRead?.id));
+                //                   PersistentNavBarNavigator.pushNewScreen(
+                //                     context,
+                //                     screen: ActivityLog(),
+                //                     withNavBar:
+                //                         false, // OPTIONAL VALUE. True by default.
+                //                     pageTransitionAnimation:
+                //                         PageTransitionAnimation.fade,
+                //                   );
+                //                 },
+                //                 child: Container(
+                //                   padding: EdgeInsets.only(left: 10),
+                //                   child: Row(
+                //                     children: [
+                //                       // SvgPicture.string(TaskSvg().activityIcon),
+                //                       // SizedBox(
+                //                       //   width: 10,
+                //                       // ),
+                //                       Text(
+                //                         'View Activity Logs',
+                //                         style: GoogleFonts.poppins(
+                //                             color: Colors.black54,
+                //                             fontSize: w/26,
+                //                             fontWeight: FontWeight.w500),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 )),
+                //           ],
+                //         ))
+                //   ],
+                //   onSelected: (value) {},
+                // ),
               )),
           body: ScrollConfiguration(
             behavior: NoGlow(),

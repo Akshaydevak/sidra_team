@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import '../task_operation/employee_bloc/employee_bloc.dart';
 import 'dashboard.dart';
@@ -37,6 +38,8 @@ class SplashScreenState extends State<SplashScreen> {
         sound: true);
     final fcmToken=await _firebaseMessaging.getToken();
     print("FCM TOKEN.....$fcmToken");
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    pre.setString("fcm", fcmToken.toString());
 
     context.read<EmployeeBloc>().add( FcmTokenRegisterEvent(fcmToken.toString()??""));
     print("after fcm");

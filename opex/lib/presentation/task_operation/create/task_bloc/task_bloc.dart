@@ -151,6 +151,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is UpdateTaskEvent) {
       yield* updateTaskstate(
+        startTime: event.startTime,
+         endTime: event.endTime,
          durationOption: event.durationOption,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
@@ -187,6 +189,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is UpdateReportingTaskEvent) {
       yield* updateReportingTaskstate(
         durationOption: event.durationOption,
+        startTime: event.startTime,
+        endTime: event.endTime,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
         img5: event.img5,
@@ -701,12 +705,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,
@@ -778,12 +786,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateReportingTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,

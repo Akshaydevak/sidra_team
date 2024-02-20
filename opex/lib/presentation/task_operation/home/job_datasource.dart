@@ -357,7 +357,7 @@ class JobDataSource {
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
         ));
-    print("api $api");
+    print("api my ad $api");
     print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
       nationalityModel.add(GetJobList.fromJson(element));

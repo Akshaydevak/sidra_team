@@ -187,15 +187,11 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                       priority: widget.readData?.priority ?? "",
                       reportingPerson:
                       widget.readData?.reportingPersonCode ?? "",
-                      endDate: "${widget.readData?.endDate?.split("T")[0]}"
-                          " "
-                          "${widget.readData?.endDate?.split("T")[1].split("+")[0]}" ??
-                          "",
+                      endDate: "${widget.readData?.endDate?.split("T")[0]}",
+                      endTime: "${widget.readData?.endDate?.split("T")[1].split("+")[0]}",
                       startDate:
-                      "${widget.readData?.startDate?.split("T")[0]}"
-                          " "
-                          "${widget.readData?.startDate?.split("T")[1].split("+")[0]}" ??
-                          "",
+                      "${widget.readData?.startDate?.split("T")[0]}",
+                      startTime:  "${widget.readData?.startDate?.split("T")[1].split("+")[0]}"
                     ));
                   },
                   child: Container(

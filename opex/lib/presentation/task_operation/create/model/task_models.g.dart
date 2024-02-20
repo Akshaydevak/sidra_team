@@ -27,6 +27,10 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
       profile: json['profile_pic'] as String?,
+      parentDict: json['parent_task_dict'] == null
+          ? null
+          : ParentDict.fromJson(
+              json['parent_task_dict'] as Map<String, dynamic>),
       parentGroupId: json['parent_group_id'] as int?,
       assignByDict: json['assigned_by_dict'] == null
           ? null
@@ -166,6 +170,18 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'assigned_by_dict': instance.assignByDict,
       'assigned_to_dict': instance.assignToDict,
       'reporting_person_dict': instance.reportingPersonDict,
+      'parent_task_dict': instance.parentDict,
+    };
+
+ParentDict _$ParentDictFromJson(Map<String, dynamic> json) => ParentDict(
+      description: json['description'] as String?,
+      taskName: json['task_name'] as String?,
+    );
+
+Map<String, dynamic> _$ParentDictToJson(ParentDict instance) =>
+    <String, dynamic>{
+      'task_name': instance.taskName,
+      'description': instance.description,
     };
 
 GetCountTask _$GetCountTaskFromJson(Map<String, dynamic> json) => GetCountTask(

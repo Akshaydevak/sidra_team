@@ -208,6 +208,8 @@ class UpdateTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String startTime;
+  final String endTime;
   final String durationOption;
   final String createdBy;
   final String taskName;
@@ -238,6 +240,8 @@ class UpdateTaskEvent extends TaskEvent {
     required this.longitude,
     required this.latitude,
     required this.img4,
+    required this.startTime,
+    required this.endTime,
     required this.img3,
     required this.durationOption,
     required this.img2,
@@ -279,6 +283,8 @@ class UpdateReportingTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String startTime;
+  final String endTime;
   final String durationOption;
   final String createdBy;
   final String taskName;
@@ -310,6 +316,8 @@ class UpdateReportingTaskEvent extends TaskEvent {
     required this.durationOption,
     required this.latitude,
     required this.img4,
+    required this.startTime,
+    required this.endTime,
     required this.img3,
     required this.img2,
     required this.img5,
