@@ -31,7 +31,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield* groupLeaveMap(roomId: event.roomId, token: event.token);
     } 
     else if(event is GroupMemberAddEvent){
-      yield* groupmemberadd(token:event.token,chatid:event.chatId,userid:event.userId);
+      yield* groupmemberadd(token:event.token,chatid:event.chatId,userid:event.userId,emailid: event.emailid,fname: event.fname,lname: event.lname,photo: event.photo);
     }
     else if(event is GroupMemberDeleteEvent){
       yield* groupmemberdelete(token:event.token,chatid:event.chatId,userid:event.userId);
@@ -95,10 +95,13 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   }
   
   Stream<GroupState> groupmemberadd(
-      {required String token, required String chatid,required String userid}) async* {
+      {required String token, required String chatid,required String userid,required String emailid,
+  required String fname,
+  required String lname,
+  required String photo}) async* {
     yield GroupMemberAddLoading();
     final dataResponse =
-        await _productData.addanGroupMember(chatId: chatid, userId: userid, token: token);
+        await _productData.addanGroupMember(chatId: chatid, userId: userid, token: token,emailid: emailid,fname: fname,lname: lname,photo: photo);
     if (dataResponse.data1) {
       print("ghhsucess");
       yield GroupMemberAddSuccess(successmsg: dataResponse.data2);

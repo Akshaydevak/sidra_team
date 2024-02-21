@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
 import 'package:cluster/presentation/comunication_module/com_svg.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -12,7 +13,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:voice_message_package/voice_message_package.dart';
-// import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 
 class MyChatList extends StatefulWidget {
@@ -25,7 +27,21 @@ class MyChatList extends StatefulWidget {
   final int? index;
   final String grpchatid;
   final String? roomid;
-  const MyChatList({super.key, this.messageList,this.msgdate,this.loginUserId,this.isGroup=false,this.formattedTime,this.activeUsersLength,this.index,this.grpchatid="",this.roomid});
+  final bool? seentick;
+  final VoidCallback? ontap; 
+  const MyChatList({super.key, 
+  this.messageList,
+  this.msgdate,
+  this.loginUserId,
+  this.isGroup=false,
+  this.formattedTime,
+  this.activeUsersLength,
+  this.index,
+  this.grpchatid="",
+  this.roomid,
+  this.seentick,
+  this.ontap
+  });
 
   @override
   State<MyChatList> createState() => _MyChatListState();
@@ -190,15 +206,19 @@ class _MyChatListState extends State<MyChatList> {
                                               "audio") ...{
                                                 Stack(
                                                   children:[
-                                                    VoiceMessage(
-                                              audioSrc:
-                                                  widget.messageList!.message ?? "",
-                                              played:
-                                                  false, // To show played badge or not.
-                                              me: false, // Set message side.
-                                              onPlay:
-                                                  () {}, // Do something when voice played.
-                                            ),
+                                                    Container(
+                                                      key: new PageStorageKey(
+                                "image ${widget.roomid}${widget.messageList!.message}",),
+                                                      child: VoiceMessage(
+                                                          audioSrc:
+                                                              widget.messageList!.message ?? "",
+                                                          played:
+                                                              false, // To show played badge or not.
+                                                          me: false, // Set message side.
+                                                          onPlay:
+                                                              () {}, // Do something when voice played.
+                                                        ),
+                                                    ),
                                             Positioned(
                                                         right: 6,
                                                         bottom: 5,
@@ -407,70 +427,89 @@ class _MyChatListState extends State<MyChatList> {
                                                           .width -
                                                       95,
                                                 ),
-                                                child: Container(
-                                                  // elevation: 1,
-                                                  decoration: BoxDecoration(
-                                                      // RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(0),
-                                                      topRight: Radius.circular(10),
-                                                      bottomLeft:
-                                                          Radius.circular(10),
-                                                      bottomRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                    boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            offset: Offset(0, 1), // changes position of shadow
-          ),
-        ],
-                                                  // ),
-                                                  color: Colors.white,
-                                                  ),
-                                                  // shape:
-                                                     
-                                                  // margin: const EdgeInsets.symmetric(
-                                                  //     horizontal: 15, vertical: 5),
-                                                  child: Stack(
-                                                    // mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                          left: 10,
-                                                          right:20,
-                                                          top:7,
-                                                          bottom: 17,
-                                                        ),
-                                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                            widget.messageList!
-                                                                    .message ??
-                                                                "",
-                                                                textAlign: TextAlign.left,
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors.black),
-                                                            ),
-                                                            SizedBox(height: 5,),
-                                                           
-                                                          ],
-                                                        ),
+                                                child: GestureDetector(
+                                                  onLongPress: ()=>widget.ontap!(),
+                                                
+                                                  child: Container(
+                                                    // elevation: 1,
+                                                    decoration: BoxDecoration(
+                                                        // RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(0),
+                                                        topRight: Radius.circular(10),
+                                                        bottomLeft:
+                                                            Radius.circular(10),
+                                                        bottomRight:
+                                                            Radius.circular(10),
                                                       ),
-                                                       Positioned(
-                                                               right: 5,
-                                                               bottom: 5,
-                                                               child: Text(
-                                                              widget.formattedTime??"",
-                                                                style: const TextStyle(
-                                                                  fontSize: 8,
-                                                                  color: Color(0xFF6D6D6D),
-                                                                ),                                                           ),
-                                                             ),
-                                                    ],
+                                                      boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey.withOpacity(0.5),
+                                                              offset: Offset(0, 1), // changes position of shadow
+                                                            ),
+                                                          ],
+                                                    // ),
+                                                    color: Colors.white,
+                                                    ),
+                                                    // shape:
+                                                       
+                                                    // margin: const EdgeInsets.symmetric(
+                                                    //     horizontal: 15, vertical: 5),
+                                                    child: Stack(
+                                                      // mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                            left: 10,
+                                                            right:20,
+                                                            top:7,
+                                                            bottom: 17,
+                                                          ),
+                                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Linkify(
+                                                                linkStyle: TextStyle(decorationColor: Colors.blue),
+                                                              onOpen: (link) async {
+                                                                  if (!await launchUrl(Uri.parse(link.url))) {
+                                                                    throw Exception('Could not launch ${link.url}');
+                                                                  }
+                                                                },
+                                                              text: widget.messageList!
+                                                                      .message ??
+                                                                  "",
+                                                                  
+                                                                  textAlign: TextAlign.left,
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors.black),),
+                                                              // Text(
+                                                              // widget.messageList!
+                                                              //         .message ??
+                                                              //     "",
+                                                              //     textAlign: TextAlign.left,
+                                                              // style: const TextStyle(
+                                                              //     fontSize: 16,
+                                                              //     color: Colors.black),
+                                                              // ),
+                                                              SizedBox(height: 5,),
+                                                             
+                                                            ],
+                                                          ),
+                                                        ),
+                                                         Positioned(
+                                                                 right: 5,
+                                                                 bottom: 5,
+                                                                 child: Text(
+                                                                widget.formattedTime??"",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 8,
+                                                                    color: Color(0xFF6D6D6D),
+                                                                  ),                                                           ),
+                                                               ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -925,75 +964,93 @@ class _MyChatListState extends State<MyChatList> {
                                                                       .width -
                                                                   90,
                                                         ),
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                      // RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(0),
-                                                      topRight: Radius.circular(10),
-                                                      bottomLeft:
-                                                          Radius.circular(10),
-                                                      bottomRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey.withOpacity(0.5),
-                                                        offset: Offset(0, 1), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                  // ),
-                                                  color: Colors.white,
-                                                  ),
-                                                          // margin: const EdgeInsets
-                                                          //         .symmetric(
-                                                          //     horizontal: 15,
-                                                          //     vertical: 5),
-                                                          child:  Stack(
-                                                      // mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                            left: 10,
-                                                            right:20,
-                                                            top:7,
-                                                            bottom: 17,
-                                                          ),
-                                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Text(
-                                                              widget.messageList!
+                                                        child: GestureDetector(
+                                                          onLongPress: ()=>widget.ontap!(),
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                                                                                // RoundedRectangleBorder(
+                                                                                                              borderRadius: BorderRadius.only(
+                                                                                                                topLeft: Radius.circular(0),
+                                                                                                                topRight: Radius.circular(10),
+                                                                                                                bottomLeft:
+                                                            Radius.circular(10),
+                                                                                                                bottomRight:
+                                                            Radius.circular(10),
+                                                                                                              ),
+                                                                                                              boxShadow: [
+                                                                                                                BoxShadow(
+                                                          color: Colors.grey.withOpacity(0.5),
+                                                          offset: Offset(0, 1), // changes position of shadow
+                                                                                                                ),
+                                                                                                              ],
+                                                                                                            // ),
+                                                                                                            color: Colors.white,
+                                                                                                            ),
+                                                            // margin: const EdgeInsets
+                                                            //         .symmetric(
+                                                            //     horizontal: 15,
+                                                            //     vertical: 5),
+                                                            child:  Stack(
+                                                                                                                // mainAxisSize: MainAxisSize.min,
+                                                                                                                children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                              left: 10,
+                                                              right:20,
+                                                              top:7,
+                                                              bottom: 17,
+                                                            ),
+                                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                              Linkify(
+                                                                  linkStyle: TextStyle(decorationColor: Colors.blue),
+                                                              onOpen: (link) async {
+                                                                  if (!await launchUrl(Uri.parse(link.url))) {
+                                                                    throw Exception('Could not launch ${link.url}');
+                                                                  }
+                                                                },
+                                                              text: widget.messageList!
                                                                       .message ??
                                                                   "",
-                                                                  softWrap: true,
+                                                                  
                                                                   textAlign: TextAlign.left,
                                                               style: const TextStyle(
                                                                   fontSize: 16,
-                                                                  color: Colors.black),
-                                                              ),
-                                                              SizedBox(height: 5,),
-                                                             
-                                                            ],
+                                                                  color: Colors.black),),
+                                                                // Text(
+                                                                // widget.messageList!
+                                                                //         .message ??
+                                                                //     "",
+                                                                //     softWrap: true,
+                                                                //     textAlign: TextAlign.left,
+                                                                // style: const TextStyle(
+                                                                //     fontSize: 16,
+                                                                //     color: Colors.black),
+                                                                // ),
+                                                                SizedBox(height: 5,),
+                                                               
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                         Positioned(
-                                                                 right: 6,
-                                                                 bottom: 5,
-                                                                 child: Text(
-                                                                 widget.formattedTime??"",
-                                                                //   messageList[index]
-                                                                //     .createdAt ??
-                                                                // "",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 8,
-                                                                    color: Color(0xFF6D6D6D),
-                                                                  ),
-                                                                                                                            ),
-                                                               ),
-                                                      ],
-                                                    ),
+                                                           Positioned(
+                                                                   right: 6,
+                                                                   bottom: 5,
+                                                                   child: Text(
+                                                                   widget.formattedTime??"",
+                                                                  //   messageList[index]
+                                                                  //     .createdAt ??
+                                                                  // "",
+                                                                    style: const TextStyle(
+                                                                      fontSize: 8,
+                                                                      color: Color(0xFF6D6D6D),
+                                                                    ),
+                                                                                                                              ),
+                                                                 ),
+                                                                                                                ],
+                                                                                                              ),
+                                                          ),
                                                         ),
                                                       ),
                                                       // Row(
@@ -1150,10 +1207,10 @@ class _MyChatListState extends State<MyChatList> {
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(widget.activeUsersLength! >= 2)...{
+                                                                        if(widget.activeUsersLength! >=2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
-                                                                      else if(widget.activeUsersLength! ==1 && widget.messageList!.seenBy == null )...{
+                                                                      else if(widget.activeUsersLength! == 1 && widget.messageList!.seenBy == null )...{
                                                                         SizedBox()
                                                                       }
                                                                       else...{
@@ -1200,10 +1257,10 @@ class _MyChatListState extends State<MyChatList> {
                                                                       ),
                                                                       SizedBox(width: 5,),
                                                                       if(widget.grpchatid=="")...{
-                                                                        if(widget.activeUsersLength! >= 2)...{
+                                                                        if(widget.activeUsersLength! >=2)...{
                                                                         Icon(Icons.done,color: Color.fromARGB(255, 211, 209, 209),size: 13,)
                                                                       }
-                                                                      else if(widget.activeUsersLength! ==1 && widget.messageList!.seenBy == null )...{
+                                                                      else if(widget.activeUsersLength! == 1&& widget.messageList!.seenBy == null )...{
                                                                         SizedBox()
                                                                       }
                                                                       else...{
@@ -1460,20 +1517,8 @@ class _MyChatListState extends State<MyChatList> {
                                                         .width - 100,
                                               ),
                                               child: GestureDetector(
-                                                onLongPress: (){
-                                                  if(widget.isGroup==true){
-                                                    // showMenu(context: context, position: RelativeRect.fill, 
-                                                    // items: [
-                                                    //   PopupMenuItem(child: Row(
-                                                    //     children: [
-                                                    //       Text("Read by"),
-                                                    //       IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios))
-                                                    //     ],
-                                                    //   ))
-                                                                        
-                                                    // ]);
-                                                  }
-                                                },
+                                                onLongPress: ()=>widget.ontap!(),
+                                                
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                       // RoundedRectangleBorder(
@@ -1485,12 +1530,13 @@ class _MyChatListState extends State<MyChatList> {
                                                       bottomRight:
                                                           Radius.circular(0),
                                                     ),
+                                                    
                                                     boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            offset: Offset(0, 1), // changes position of shadow
-          ),
-        ],
+                                                    BoxShadow(
+                                                      color: Colors.grey.withOpacity(0.5),
+                                                      offset: Offset(0, 1), // changes position of shadow
+                                                    ),
+                                                  ],
                                                   // ),
                                                  color: ColorPalette.primary,
                                                   ),
@@ -1513,15 +1559,30 @@ class _MyChatListState extends State<MyChatList> {
                                                         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                                                         mainAxisSize: MainAxisSize.min,
                                                           children: [
-                                                            Text(
-                                                            widget.messageList!
-                                                                    .message ??
-                                                                "",
-                                                                textAlign: TextAlign.left,
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color: Color.fromARGB(255, 255, 255, 255)),
-                                                            ),
+                                                          Linkify(
+                                                              linkStyle: TextStyle(color: Color.fromARGB(255, 219, 246, 244),decorationColor: Color.fromARGB(255, 219, 246, 244)),
+                                                              onOpen: (link) async {
+                                                                  if (!await launchUrl(Uri.parse(link.url))) {
+                                                                    throw Exception('Could not launch ${link.url}');
+                                                                  }
+                                                                },
+                                                              text: widget.messageList!
+                                                                      .message ??
+                                                                  "",
+                                                                  
+                                                                  textAlign: TextAlign.left,
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors.white),),
+                                                            // Text(
+                                                            // widget.messageList!
+                                                            //         .message ??
+                                                            //     "",
+                                                            //     textAlign: TextAlign.left,
+                                                            // style: const TextStyle(
+                                                            //     fontSize: 16,
+                                                            //     color: Color.fromARGB(255, 255, 255, 255)),
+                                                            // ),
                                                             
                                                            SizedBox(height: 5,)
                                                           ],
@@ -1599,6 +1660,6 @@ class _MyChatListState extends State<MyChatList> {
                                       //      ),
                                       //    ):Container(),
                                     ],
-                                  );;
+                                  );
   }
 }
