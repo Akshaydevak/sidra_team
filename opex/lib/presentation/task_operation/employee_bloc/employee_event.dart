@@ -235,3 +235,7 @@ class FcmTokenRegisterEvent extends EmployeeEvent {
   final String fcmToken;
   const FcmTokenRegisterEvent(this.fcmToken);
 }
+class FcmTokenLogOutEvent extends EmployeeEvent {
+  final String fcmToken;
+  const FcmTokenLogOutEvent(this.fcmToken);
+}

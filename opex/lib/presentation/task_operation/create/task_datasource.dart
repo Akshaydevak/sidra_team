@@ -557,6 +557,8 @@ class TaskDataSource {
         "last_modified": lastmodified,
         "longitude": longitude,
         "latitude": latitude,
+        "start_time":startTime,
+        "end_time":endTime
       },
       options: Options(
         headers: {
@@ -642,7 +644,11 @@ class TaskDataSource {
     required int? id,
     required String? longitude,
     required String? latitude,
+    required String startTime,
+    required String endTime,
   }) async {
+    print("taskdetails$startTime");
+    print("taskdetails$endTime");
     print("taskdetails$parant");
     print("location$longitude");
     print("taskdetails$jobid");
@@ -703,7 +709,9 @@ class TaskDataSource {
         "attachment_description": attachdescription,
         "longitude":longitude,
         "latitude":latitude,
-        "status_stages_id":statusStagesId
+        "status_stages_id":statusStagesId,
+        "start_time":startTime,
+        "end_time":endTime
       },
       options: Options(
         headers: {
@@ -714,7 +722,7 @@ class TaskDataSource {
       ),
     );
 
-    print("create response$response");
+    print("update response$response");
     if (response.data['status'] == 'success') {
       return DataResponse(
           data: response.data["status"] == "success",

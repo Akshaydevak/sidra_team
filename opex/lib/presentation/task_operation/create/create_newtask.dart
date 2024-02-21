@@ -309,10 +309,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
     ebdDate = DateFormat('yyyy-MM-dd').format(start2).toString();
     startDate2 = DateFormat('dd-MM-yyyy').format(end2).toString();
     startDate = DateFormat('yyyy-MM-dd').format(end2).toString();
-    print("Start daaa${startDate2}");
-    print("Start daaa${ebdDate2}");
-    print("Start daaa${ebdDate}");
-    print("Start daaa${startDate}");
+    print("Start data${startDate2}");
+    print("Start data${ebdDate2}");
+    print("Start data${ebdDate}");
+    print("Start data${startDate}");
     setState(() {});
   }
 
@@ -2839,12 +2839,10 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                                                   reportingPerson: readTask
                                                           ?.reportingPersonCode ??
                                                       "",
-                                                  endDate: "$ebdDate"
-                                                      " "
-                                                      "$endTime2",
-                                                  startDate: "$startDate"
-                                                      " "
-                                                      "$startTime2",
+                                                  endDate: "$ebdDate",
+                                                  endTime: endTime2,
+                                                  startDate: startDate,
+                                                  startTime: startTime2,
                                                   img5: readTask
                                                       ?.metaData?.image5,
                                                   img1: readTask

@@ -26,6 +26,7 @@ import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:url_launcher/url_launcher.dart';
 import '../../common_widgets/custom_radio_button.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/loading.dart';
@@ -112,14 +113,10 @@ class _TaskTitleState extends State<TaskTitle> {
         isActive: true,
         priority: getTaskRead?.priority ?? "",
         reportingPerson: getTaskRead?.reportingPersonCode ?? "",
-        endDate: "${getTaskRead?.endDate?.split("T")[0]}"
-                " "
-                "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-            "",
-        startDate: "${getTaskRead?.startDate?.split("T")[0]}"
-                " "
-                "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-            "",
+        endDate: "${getTaskRead?.endDate?.split("T")[0]}",
+        endTime: "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
+        startDate: "${getTaskRead?.startDate?.split("T")[0]}",
+        startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}"
       ));
     } else {
       PersistentNavBarNavigator.pushNewScreen(
@@ -641,178 +638,134 @@ class _TaskTitleState extends State<TaskTitle> {
                 Navigator.pop(context);
               },
               label: " ${getTaskRead?.taskName ?? ""}",
-              action: PopupMenuButton(
-                icon: SvgPicture.string(TaskSvg().moreIcon),
+              action:widget.isMyJob?
+              PopupMenuButton(
+                surfaceTintColor: Colors.white,
+                icon: Icon(Icons.more_horiz),
                 color: Colors.white,
-                elevation: 2,
-                padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                onSelected: (value) {
+                  // popUpItemSelected(
+                  //   value.toString(),
+                  //   context,
+                  //   address: address,
+                  //   isDefualt: isDefualt,
+                  //   addressID: addressID,
+                  // );
+                },
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                      padding: const EdgeInsets.all(0),
-                      height: 10,
                       value: 'a',
-                      enabled: true,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          widget.isMyJob
-                              ? GestureDetector(
-                                  onTap: () {
-                                    context.read<TaskBloc>().add(
-                                        GetTaskReadListEvent(
-                                            getTaskRead?.id ?? 0));
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: CreateNewTask(editTask: true),
-                                      withNavBar: true,
-                                      // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        // SvgPicture.string(TaskSvg().editorIcon),
-                                        // const SizedBox(
-                                        //   width: 10,
-                                        // ),
-                                        Text(
-                                          'Edit this Task',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    context.read<JobBloc>().add(
-                                        PinAJobPostEvent(
-                                            userCode: authentication
-                                                    .authenticatedUser.code ??
-                                                "",
-                                            taskId: getTaskRead?.id ?? 0,
-                                            isPinned:
-                                                getTaskRead?.isPinned == true
-                                                    ? false
-                                                    : true));
-                                    context.read<TaskBloc>().add(
-                                        GetTaskReadListEvent(
-                                            getTaskRead?.id ?? 0));
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          getTaskRead?.isPinned == true
-                                              ? 'Unpin this Task'
-                                              : 'Pin this Task',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                          // const Divider(
-                          //   indent: 30,
-                          // ),
-                          // Container(
-                          //   padding: const EdgeInsets.only(left: 10),
-                          //   child: Row(
-                          //     children: [
-                          //       SvgPicture.string(TaskSvg().msgSendIcon),
-                          //       const SizedBox(
-                          //         width: 10,
-                          //       ),
-                          //       Text(
-                          //         'Share by message',
-                          //         style: GoogleFonts.poppins(
-                          //             color: Colors.black54,
-                          //             fontSize: 13,
-                          //             fontWeight: FontWeight.w500),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // const Divider(
-                          //   indent: 30,
-                          // ),
-                          // Container(
-                          //   padding: const EdgeInsets.only(left: 10),
-                          //   child: Row(
-                          //     children: [
-                          //       SvgPicture.string(TaskSvg().shareJobIcon),
-                          //       const SizedBox(
-                          //         width: 10,
-                          //       ),
-                          //       Text(
-                          //         'Share this Job',
-                          //         style: GoogleFonts.poppins(
-                          //             color: Colors.black54,
-                          //             fontSize: 13,
-                          //             fontWeight: FontWeight.w500),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          widget.isMyJob
-                              ? Divider(
-                                  indent: 30,
-                                )
-                              : Container(),
-                          widget.isMyJob
-                              ? GestureDetector(
-                                  onTap: () {
-                                    context.read<EmployeeBloc>().add(
-                                        GetActivityLogListingEvent(
-                                            getTaskRead?.jobId));
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: ActivityLog(),
-                                      withNavBar:
-                                          false, // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        // SvgPicture.string(
-                                        //     TaskSvg().activityIcon),
-                                        // const SizedBox(
-                                        //   width: 10,
-                                        // ),
-                                        Text(
-                                          'View Activity Logs',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ))
+                      child:InkWell(
+                        onTap: (){
+                          context.read<TaskBloc>().add(
+                              GetTaskReadListEvent(
+                                  getTaskRead?.id ?? 0));
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen: CreateNewTask(editTask: true),
+                            withNavBar: true,
+                            // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation:
+                            PageTransitionAnimation.fade,
+                          );
+                        },
+                        child: Text(
+                          "Edit this Task",
+                          style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w / 28,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                      // :
+                      // InkWell(
+                      //   onTap: (){
+                      //     context.read<JobBloc>().add(
+                      //         PinAJobPostEvent(
+                      //             userCode: authentication
+                      //                 .authenticatedUser.code ??
+                      //                 "",
+                      //             taskId: getTaskRead?.id ?? 0,
+                      //             isPinned:
+                      //             getTaskRead?.isPinned == true
+                      //                 ? false
+                      //                 : true));
+                      //     context.read<TaskBloc>().add(
+                      //         GetTaskReadListEvent(
+                      //             getTaskRead?.id ?? 0));
+                      //     Navigator.pop(context);
+                      //   },
+                      //   child: Text(
+                      //     getTaskRead?.isPinned == true
+                      //         ? 'Unpin this Task'
+                      //         : 'Pin this Task',
+                      //     style: TextStyle(fontSize: 12),
+                        // ),
+                      // )
+        ),
+                PopupMenuItem(
+                      value: 'b',
+                      child: InkWell(
+                        onTap: () {
+                          context.read<EmployeeBloc>().add(
+                              GetActivityLogListingEvent(
+                                  getTaskRead?.jobId));
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen: ActivityLog(),
+                            withNavBar:
+                            false, // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation:
+                            PageTransitionAnimation.fade,
+                          );
+                        },
+                        child: const Text(
+                          "View Activity Logs",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
                 ],
-                onSelected: (value) {},
-              ),
+              ):
+              PopupMenuButton(
+                onSelected: (value) {
+                  // popUpItemSelected(
+                  //   value.toString(),
+                  //   context,
+                  //   address: address,
+                  //   isDefualt: isDefualt,
+                  //   addressID: addressID,
+                  // );
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: 'a',
+                      child:
+                      InkWell(
+                        onTap: (){
+                          context.read<JobBloc>().add(
+                              PinAJobPostEvent(
+                                  userCode: authentication
+                                      .authenticatedUser.code ??
+                                      "",
+                                  taskId: getTaskRead?.id ?? 0,
+                                  isPinned:
+                                  getTaskRead?.isPinned == true
+                                      ? false
+                                      : true));
+                          context.read<TaskBloc>().add(
+                              GetTaskReadListEvent(
+                                  getTaskRead?.id ?? 0));
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          getTaskRead?.isPinned == true
+                              ? 'Unpin this Task'
+                              : 'Pin this Task',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ],
+              )
             ),
           ),
           body: ScrollConfiguration(
@@ -856,10 +809,38 @@ class _TaskTitleState extends State<TaskTitle> {
                                         subText: getTaskRead?.jobDiscription,
                                       )),
                                   const SizedBox(
-                                    height: 15,
+                                    height: 10,
                                   ),
+                                  getTaskRead?.parentDict?.taskName==null?Container()
+                                      :Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Task Details",
+                                        style: GoogleFonts.roboto(
+                                          color: const Color(0xff151522),
+                                          fontSize: w / 24,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      TaskTitleCard(
+                                          paddingg: const EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          widget: TextCard(
+                                            isTask: true,
+                                            title: getTaskRead?.parentDict?.taskName,
+                                            subText: getTaskRead?.parentDict?.description,
+                                          )),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                    ],
+                                ),
                                   Text(
-                                    "Task Details",
+                                    "Your Task",
                                     style: GoogleFonts.roboto(
                                       color: const Color(0xff151522),
                                       fontSize: w / 24,
@@ -1332,6 +1313,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               jobId: getTaskRead?.jobId,
                                                               isSubTask: true,
                                                               backRead: true,
+                                                              startDateTime: "$startstdDate $startTime",
+                                                              endDateTime: "$endstdDate $endTime",
                                                               subTaskId: getTaskRead?.id,
                                                             ),
                                                             withNavBar: true,
@@ -1721,7 +1704,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  authentication.isAdmin == true || authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
+                                  authentication.isAdmin == true ||
+                                      authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
                                       ? Container()
                                       : getTaskRead?.latitude != null &&
                                               getTaskRead?.latitude != "" &&
@@ -1729,18 +1713,19 @@ class _TaskTitleState extends State<TaskTitle> {
                                               getTaskRead?.latitude != ""
                                           ? GestureDetector(
                                               onTap: () {
-                                                PersistentNavBarNavigator
-                                                    .pushNewScreen(
-                                                  context,
-                                                  screen: AddressPickFromMap(
-                                                    taskRead: getTaskRead,
-                                                    isUser: true,
-                                                  ),
-                                                  withNavBar: true,
-                                                  pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
-                                                );
+                                                navigateTo(double.tryParse(getTaskRead?.latitude??"")??0.0, double.tryParse(getTaskRead?.longitude??"")??0.0);
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: AddressPickFromMap(
+                                                //     taskRead: getTaskRead,
+                                                //     isUser: true,
+                                                //   ),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                               },
                                               child: TaskTitleCard(
                                                 paddingg: EdgeInsets.zero,
@@ -3576,15 +3561,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                     reportingPerson:
                                         getTaskRead?.reportingPersonCode ?? "",
                                     endDate:
-                                        "${getTaskRead?.endDate?.split("T")[0]}"
-                                                " "
-                                                "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-                                            "",
+                                        "${getTaskRead?.endDate?.split("T")[0]}",
                                     startDate:
-                                        "${getTaskRead?.startDate?.split("T")[0]}"
-                                                " "
-                                                "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-                                            "",
+                                        "${getTaskRead?.startDate?.split("T")[0]}",
+                                    endTime: "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                    startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}",
                                     AssigningCode:
                                         getTaskRead?.assigningCode ?? "",
                                     notas: getTaskRead?.notes ?? "",
@@ -3599,7 +3580,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             "",
                                     AssigningType:
                                         getTaskRead?.assigningType ?? "",
-                                    statusStagesId: statusList?[i].id,
+                                    statusStagesId: statusList[i].id,
                                     parant: getTaskRead?.parent,
                                     lastmodified: getTaskRead?.lastModified,
                                     jobid: getTaskRead?.jobId ?? 0,
@@ -3634,7 +3615,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   width: 10,
                                 ),
                                 Text(
-                                  statusList?[i].name ?? "",
+                                  statusList[i].name ?? "",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
                                     fontSize: 18,
@@ -3750,6 +3731,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   changeTappedTile(i);
                                                   BlocProvider.of<TaskBloc>(context)
                                                       .add(UpdateTaskEvent(
+
                                                     durationOption: getTaskRead?.duration??"",
                                                           longitude: getTaskRead
                                                                   ?.longitude ??
@@ -3774,15 +3756,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               getTaskRead?.reportingPersonCode ??
                                                                   "",
                                                           endDate:
-                                                              "${getTaskRead?.endDate?.split("T")[0]}"
-                                                                      " "
-                                                                      "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-                                                                  "",
+                                                              "${getTaskRead?.endDate?.split("T")[0]}",
+                                                          endTime:  "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
                                                           startDate:
-                                                              "${getTaskRead?.startDate?.split("T")[0]}"
-                                                                      " "
-                                                                      "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-                                                                  "",
+                                                              "${getTaskRead?.startDate?.split("T")[0]}",
+                                                          startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                           AssigningCode: getTaskRead
                                                                   ?.assigningCode ??
                                                               "",
@@ -4711,5 +4689,13 @@ class _TaskTitleState extends State<TaskTitle> {
             },
           );
         });
+  }
+  static void navigateTo(double lat, double lng) async {
+    var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      throw 'Could not launch ${uri.toString()}';
+    }
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
-import 'package:cluster/presentation/task_operation/more_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,12 +8,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_address_picker/models/location_result.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../common_widgets/gradient_button.dart';
 import '../../../core/common_snackBar.dart';
@@ -628,8 +625,10 @@ print("new mapp location got ${currentLocation}");
                                                 isActive: true,
                                                 priority: widget.taskRead?.priority??"",
                                                 reportingPerson: widget.taskRead?.reportingPersonCode??"",
-                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
+                                                endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"
                                               ));
 
 

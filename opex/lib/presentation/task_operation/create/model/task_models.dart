@@ -156,10 +156,13 @@ class GetTaskList extends Equatable {
   final PerfomerModel? assignToDict;
   @JsonKey(name: "reporting_person_dict")
   final PerfomerModel? reportingPersonDict;
+  @JsonKey(name: "parent_task_dict")
+  final ParentDict? parentDict;
 
   const GetTaskList({
     this.name,
     this.profile,
+    this.parentDict,
     this.parentGroupId,
     this.assignByDict,
     this.assignToDict,
@@ -225,6 +228,28 @@ class GetTaskList extends Equatable {
       _$GetTaskListFromJson(json);
 
   Map<String, dynamic> toJson() => _$GetTaskListToJson(this);
+}
+
+@JsonSerializable()
+class ParentDict extends Equatable {
+
+  @JsonKey(name: 'task_name')
+  final String? taskName;
+  @JsonKey(name: 'description')
+  final String? description;
+
+  const ParentDict({
+    this.description,
+    this.taskName,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory ParentDict.fromJson(Map<String, dynamic> json) =>
+      _$ParentDictFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ParentDictToJson(this);
 }
 
 @JsonSerializable()

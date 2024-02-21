@@ -424,9 +424,13 @@ class TaskRepo {
     required String? longitude,
     required String? latitude,
     required String durationOption,
+    required String startTime,
+    required String endTime,
   }) async {
     final restAPIresponse = await _dataSource.taskUpdatePost(
      latitude: latitude,
+        startTime: startTime,
+        endTime: endTime,
         longitude: longitude,
         durationOption: durationOption,
         img4: img4,

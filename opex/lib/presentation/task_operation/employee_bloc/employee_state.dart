@@ -296,3 +296,9 @@ class FcmLoading extends EmployeeState {}
 class FcmSuccess extends EmployeeState {}
 
 class FcmFailed extends EmployeeState {}
+
+class FcmLogoutLoading extends EmployeeState {}
+
+class FcmLogoutSuccess extends EmployeeState {}
+
+class FcmLogoutFailed extends EmployeeState {}

@@ -129,6 +129,9 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     else if (event is FcmTokenRegisterEvent) {
       yield* fcmRegister(fcmToken: event.fcmToken);
     }
+    else if (event is FcmTokenLogOutEvent) {
+      yield* fcmLogout(fcmToken: event.fcmToken);
+    }
   }
   Stream<EmployeeState> _mapEmployeeStateToState(
       {
@@ -483,6 +486,15 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
       yield FcmSuccess();
     } else {
       yield FcmFailed();
+    }
+  }
+  Stream<EmployeeState> fcmLogout({required String fcmToken}) async* {
+    yield FcmLogoutLoading();
+    final dataResponse = await _employeeDataSource.fcmLogout(fcmToken: fcmToken);
+    if (dataResponse == "success") {
+      yield FcmLogoutSuccess();
+    } else {
+      yield FcmLogoutFailed();
     }
   }
 
