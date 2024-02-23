@@ -347,9 +347,9 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                     prevUrl != ""
                                         ? GestureDetector(
                                             onTap: () {
-                                              context.read<JobBloc>().add(
-                                                  GetAssignedMeListEvent(
-                                                      '', '', prevUrl));
+                                              context.read<TaskBloc>().add(
+                                                  GetAllJobsListEvent(
+                                                      '', '', prevUrl, false, "", "", ""));
                                               // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
                                             },
                                             child: Text(
@@ -364,11 +364,15 @@ class _AllJobListAdminState extends State<AllJobListAdmin> {
                                     nextUrl != ""
                                         ? GestureDetector(
                                             onTap: () {
-                                              // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                              print("ggggg$nextUrl");
+
                                               setState(() {
-                                                context.read<JobBloc>().add(
-                                                    GetAssignedMeListEvent(
-                                                        '', nextUrl, ""));
+                                                context.read<TaskBloc>().add(
+                                                    GetAllJobsListEvent(
+                                                        '', nextUrl, '', false, "", "", ""));
+                                                // context.read<JobBloc>().add(
+                                                //     GetAssignedMeListEvent(
+                                                //         '', nextUrl, ""));
                                               });
                                             },
                                             child: Text(

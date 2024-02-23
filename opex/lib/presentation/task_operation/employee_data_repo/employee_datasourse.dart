@@ -544,4 +544,26 @@ print(groupRead.userId);
     print("statusCode${response.data}");
     return statusCode;
   }
+
+  Future<String> fcmLogout({required String fcmToken}) async {
+    String statusCode;
+    print("fcm logout group${ClusterUrls.logoutFCMUrl}");
+    final response = await client.post(
+      ClusterUrls.logoutFCMUrl,
+      data: {
+        "device_token":fcmToken
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': '${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print("fcm response${response.data}");
+    statusCode = (response.data['message']);
+    print("statusCode${response.data}");
+    return statusCode;
+  }
 }

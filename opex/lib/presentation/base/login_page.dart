@@ -59,6 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
         sound: true);
     final fcmToken=await _firebaseMessaging.getToken();
     print("FCM TOKEN.....$fcmToken");
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    pre.setString("fcm", fcmToken.toString());
 
     context.read<EmployeeBloc>().add( FcmTokenRegisterEvent(fcmToken.toString()??""));
     print("after fcm");
@@ -203,6 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           TextFormReusableNoLabel(
                               hint: "Enter password",
+                              password: true,
                               controller: passwordController),
                           SizedBox(height: 5,),
                           TextFormReusableNoLabel(

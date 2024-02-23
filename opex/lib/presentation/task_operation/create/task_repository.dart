@@ -222,6 +222,28 @@ class TaskRepo {
       error: "implement Error conersion Text",
     );
   }
+  ////
+
+  Future<DataResponse> getJobCreationRead() async {
+    try {
+      final apiResponse = await _dataSource.getJobCreationRead();
+
+      if (apiResponse.duration!.isNotEmpty) {
+        return DataResponse(
+          data: apiResponse,
+        );
+      } else {
+        return DataResponse(
+          error: "implement Error conersion Text",
+        );
+      }
+    } catch (e) {
+      debugPrint("implement Error conersion Text$e");
+    }
+    return DataResponse(
+      error: "implement Error conersion Text",
+    );
+  }
 
   //readRewards
   Future<DataResponse> getReadRewards(int? id,bool isTask) async {
@@ -424,9 +446,13 @@ class TaskRepo {
     required String? longitude,
     required String? latitude,
     required String durationOption,
+    required String startTime,
+    required String endTime,
   }) async {
     final restAPIresponse = await _dataSource.taskUpdatePost(
      latitude: latitude,
+        startTime: startTime,
+        endTime: endTime,
         longitude: longitude,
         durationOption: durationOption,
         img4: img4,

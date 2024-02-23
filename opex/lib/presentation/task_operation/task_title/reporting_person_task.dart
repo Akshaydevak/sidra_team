@@ -481,21 +481,23 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                               endDate: "${widget
                                                                   .readTask?.endDate
                                                                   ?.split(
-                                                                  "T")[0]}"" ""${widget
+                                                                  "T")[0]}",
+                                                              endTime: "${widget
                                                                   .readTask?.endDate
                                                                   ?.split("T")[1]
                                                                   .split(
-                                                                  "+")[0]}" ?? "",
+                                                                  "+")[0]}",
                                                               startDate: "${widget
                                                                   .readTask
                                                                   ?.startDate
                                                                   ?.split(
-                                                                  "T")[0]}"" ""${widget
+                                                                  "T")[0]}",
+                                                              startTime: "${widget
                                                                   .readTask
                                                                   ?.startDate
                                                                   ?.split("T")[1]
                                                                   .split(
-                                                                  "+")[0]}" ?? "",
+                                                                  "+")[0]}"
                                                             ));
                                                         context.read<TaskBloc>()
                                                             .add(

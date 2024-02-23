@@ -80,6 +80,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     else if (event is GetTaskReadCreateEvent) {
       yield* getTaskCreationRead();
     }
+    else if (event is GetJobReadCreateEvent) {
+      yield* getJobCreationRead();
+    }
     if (event is GetReadRewardsEvent) {
       yield* getReadRewards(event.id,event.isTask);
     }
@@ -151,6 +154,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is UpdateTaskEvent) {
       yield* updateTaskstate(
+        startTime: event.startTime,
+         endTime: event.endTime,
          durationOption: event.durationOption,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
@@ -187,6 +192,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is UpdateReportingTaskEvent) {
       yield* updateReportingTaskstate(
         durationOption: event.durationOption,
+        startTime: event.startTime,
+        endTime: event.endTime,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
         img5: event.img5,
@@ -514,6 +521,20 @@ Stream<TaskState> getTaskCreationRead() async* {
       );
     }
   }
+  ///
+  Stream<TaskState> getJobCreationRead() async* {
+
+    yield GetJobReadCreateLoading();
+
+    final dataResponse = await _taskRepo.getJobCreationRead();
+
+    if (dataResponse.hasData) {
+      yield GetJobReadCreateSuccess(createRead: dataResponse.data);
+    } else {
+      yield GetJobReadCreateFailed(dataResponse.error.toString(),
+      );
+    }
+  }
 
   //readRewards
   Stream<TaskState> getReadRewards(int id,bool isTask) async* {
@@ -701,12 +722,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,
@@ -778,12 +803,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateReportingTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,

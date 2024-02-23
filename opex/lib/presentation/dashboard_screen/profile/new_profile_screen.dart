@@ -50,6 +50,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
   dynamic imageId = 0;
   SharedPreferences? pref;
   String token='';
+  String fcm='';
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
@@ -754,7 +755,10 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async{
+                            pref=await SharedPreferences.getInstance();
+                            fcm = pref!.getString("fcm")!;
+                            print("SHIFAS FCM$fcm");
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -850,6 +854,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                   authentication
                                                       .clearAuthenticatedTokens();
 
+                                                  context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
                                                   Navigator.of(context)
                                                       .pushAndRemoveUntil(
                                                           MaterialPageRoute(
