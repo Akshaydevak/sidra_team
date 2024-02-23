@@ -238,17 +238,13 @@ class _ReportingPersonJobState extends State<ReportingPersonJob> {
                                         HapticFeedback.heavyImpact();
                                         BlocProvider.of<JobBloc>(context)
                                             .add(UpdateJobEvent(
+                                          durationOption: JobRead?.duration??"",
                                           id: JobRead?.id,
-                                          startDate:
-                                          "${JobRead?.startDate?.split("T")[0]}"
-                                              " "
-                                              "${JobRead?.startDate?.split("T")[1].split("+")[0]}" ??
-                                              "",
+                                          startDate: "${JobRead?.startDate?.split("T")[0]}",
+                                          startTime: "${JobRead?.startDate?.split("T")[1].split("+")[0]}",
                                           endDate:
-                                          "${JobRead?.endDate?.split("T")[0]}"
-                                              " "
-                                              "${JobRead?.endDate?.split("T")[1].split("+")[0]}" ??
-                                              "",
+                                          "${JobRead?.endDate?.split("T")[0]}",
+                                          endTime: "${JobRead?.endDate?.split("T")[1].split("+")[0]}",
                                           originFrom: JobRead?.orginFrom ?? "",
                                           reportingPerson: employee[i].userCode ?? "",
                                           priority: JobRead?.priority ?? "",

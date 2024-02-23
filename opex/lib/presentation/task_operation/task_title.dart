@@ -2166,7 +2166,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                             //       PersistentNavBarNavigator
                                             //           .pushNewScreen(
                                             //         context,
-                                            //         screen: MyTabScreen(),
+                                            //         screen: MyTabScreen(
+                                            //           getTaskRead: getTaskRead,
+                                            //         ),
                                             //         withNavBar:
                                             //         true, // OPTIONAL VALUE. True by default.
                                             //         pageTransitionAnimation:
@@ -2178,6 +2180,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             GestureDetector(
                                               onTap: () {
                                                 HapticFeedback.vibrate();
+
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,

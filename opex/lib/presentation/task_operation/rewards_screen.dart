@@ -231,6 +231,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
       },
       child: Scaffold(
           backgroundColor: Colors.white,
+
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child:  BackAppBar(

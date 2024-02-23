@@ -80,6 +80,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     else if (event is GetTaskReadCreateEvent) {
       yield* getTaskCreationRead();
     }
+    else if (event is GetJobReadCreateEvent) {
+      yield* getJobCreationRead();
+    }
     if (event is GetReadRewardsEvent) {
       yield* getReadRewards(event.id,event.isTask);
     }
@@ -515,6 +518,20 @@ Stream<TaskState> getTaskCreationRead() async* {
       yield GetTaskReadCreateSuccess(createRead: dataResponse.data);
     } else {
       yield GetTaskReadCreateFailed(dataResponse.error.toString(),
+      );
+    }
+  }
+  ///
+  Stream<TaskState> getJobCreationRead() async* {
+
+    yield GetJobReadCreateLoading();
+
+    final dataResponse = await _taskRepo.getJobCreationRead();
+
+    if (dataResponse.hasData) {
+      yield GetJobReadCreateSuccess(createRead: dataResponse.data);
+    } else {
+      yield GetJobReadCreateFailed(dataResponse.error.toString(),
       );
     }
   }

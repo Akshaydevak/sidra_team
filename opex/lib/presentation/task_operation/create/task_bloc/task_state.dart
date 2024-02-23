@@ -146,6 +146,19 @@ class GetTaskReadCreateFailed extends TaskState {
   final String error;
   GetTaskReadCreateFailed(this.error);
 }
+/////
+class GetJobReadCreateLoading extends TaskState {}
+
+class GetJobReadCreateSuccess extends TaskState {
+  final GetReadCreateTask createRead;
+  GetJobReadCreateSuccess({required this.createRead});
+
+}
+
+class GetJobReadCreateFailed extends TaskState {
+  final String error;
+  GetJobReadCreateFailed(this.error);
+}
 //readRewards
 class GetReadRewadsInitial extends TaskState {}
 
