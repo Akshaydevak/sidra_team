@@ -55,3 +55,11 @@ class GroupMemberDeleteEvent extends GroupEvent {
   final String userId;
   const GroupMemberDeleteEvent({required this.token, required this.chatId, required this.userId});
 }
+class GroupProfileEditEvent extends GroupEvent {
+  final String token;
+  final String chatId;
+  final String groupname;
+  final String groupdescription;
+  final File? image; 
+  const GroupProfileEditEvent({required this.token, required this.chatId, required this.groupname,required this.groupdescription,this.image});
+}

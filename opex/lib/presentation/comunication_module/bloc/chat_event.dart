@@ -15,3 +15,9 @@ class ChatScreenGetEvent extends ChatEvent {
   final String userId;
   const ChatScreenGetEvent({required this.token,required this.pageNo,required this.chatId,required this.grpchatId,required this.userId});
 }
+class Messagedeleteevent extends ChatEvent {
+  final int msgId;
+  final String chatId;
+  final String token;
+  const Messagedeleteevent({required this.token,required this.chatId,required this.msgId});
+}

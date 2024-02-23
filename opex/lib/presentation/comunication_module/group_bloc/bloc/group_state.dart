@@ -72,3 +72,13 @@ class GroupMemberDeleteFailed extends GroupState{
   final String error;
   const GroupMemberDeleteFailed({required this.error});
 }
+
+class GroupProfileEditLoading extends GroupState{}
+class GroupProfileEditSuccess extends GroupState{
+  final String successmsg;
+  const GroupProfileEditSuccess({ required this.successmsg});
+}
+class GroupProfileEditFailed extends GroupState{
+  final String error;
+  const GroupProfileEditFailed({required this.error});
+}

@@ -1704,7 +1704,6 @@ class _TaskTitleState extends State<TaskTitle> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  authentication.isAdmin == true ||
                                       authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
                                       ? Container()
                                       : getTaskRead?.latitude != null &&

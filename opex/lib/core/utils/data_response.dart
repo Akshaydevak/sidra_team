@@ -8,7 +8,7 @@ class DataResponse {
 
   bool get hasError => error != null;
 
-  DataResponse({
+  DataResponse( {
     this.error,
     this.data,
   });
