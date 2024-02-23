@@ -83,7 +83,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   void initState() {
-    print("isadminn ${widget.isadmin} name ${widget.redirectchatname} ame ${widget.redirectchatid} ${widget.isGroup}");
+    print("isadminn ${widget.isadmin} ${widget.loginUserId} name ${widget.redirectchatname} ame ${widget.redirectchatid} ${widget.isGroup}");
     // TODO: implement initState
     super.initState();
   }
@@ -91,6 +91,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
   @override
   void dispose() {
     widget.socket!.off('active.length');
+    widget.socket!.off("user.left");
     mounted = false;
     ismounted = false;
     ismount = false;
@@ -116,35 +117,32 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   onTap: () {
                     if (widget.isGroup == false) {
                       if(widget.redirectchatid != ""){
-                        print("push notificstion redirection");
+                        print("push notificstion redirection ${widget.loginUserId}");
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
-    ? widget.communicationUserModel?.chatid:
-    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,"userid":widget.loginUserId??""});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
+                          "userid":widget.loginUserId??""
                         });
                         print("user left too");
 
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
-                          if (mounted) {
-                            widget.socket!.off("get.clients");
+if (mounted) {
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
                             });
                           }
+                          
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
-                        widget.socket!.off("user.left");
+                        
+                        
                         widget.socket!.on("user.left", (data) {
                           print("user left");
 
@@ -158,7 +156,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           }
                         });
                         Navigator.pop(context);
-                        Navigator.pop(context);
+          // //               Navigator.pop(context);
                         PersistentNavBarNavigator.pushNewScreen(
             context,
             screen: DashBoard(
@@ -171,33 +169,29 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       }
                       else if (widget.chat == false) {
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
-    ? widget.communicationUserModel?.chatid:
-    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()}); 
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.id ?? ""
+                          "userid": widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
-                          if (mounted) {
-                            widget.socket!.off("get.clients");
+  if (mounted) {
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
                             });
                           }
+                         
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
-                        widget.socket!.off("user.left");
+                         
                         widget.socket!.on("user.left", (data) {
                           print("user left");
 
@@ -219,33 +213,30 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 chatFilter: "chats"));
                         Navigator.pop(context);
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid: widget.chat==false
-    ? widget.communicationUserModel?.chatid:
-    widget.communicationuser?.id,'userid':widget.chat==false?widget.redirectionsenduserId!.isNotEmpty?widget.redirectionsenduserId: widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()}); 
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':  widget.communicationuser?.id,'userid':widget.communicationuser?.users?[0].id.toString()}); 
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid":widget.redirectchatid!=""?widget.redirectchatid: widget.communicationuser?.users?[0].id ?? ""
+                          "userid":widget.communicationuser?.users?[0].id ?? ""
                         });
                         print("user left too");
 
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
                           if (mounted) {
-                            widget.socket!.off("get.clients");
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
                             });
                           }
+
+                          
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
-                        widget.socket!.off("user.left");
+                        
                         widget.socket!.on("user.left", (data) {
                           print("user left");
 
@@ -264,22 +255,19 @@ class _ChatAppBarState extends State<ChatAppBar> {
                        if(widget.redirectchatid != ""){
                         print("push notificstion redirection");
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
-    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
+                          "userid": widget.loginUserId
                         });
                         print("user left too");
 
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
+                          
                           if (mounted) {
-                            widget.socket!.off("get.clients");
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
@@ -292,10 +280,12 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 (data) => print("active userss $data"));
                           }
 
+
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
+                        
                         widget.socket!.off("user.left");
                         widget.socket!.on("user.left", (data) {
                           print("user left");
@@ -310,35 +300,31 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           }
                         });
                         Navigator.pop(context);
-                        Navigator.pop(context);
-                        PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: DashBoard(
-              // token: widget.token ?? ""
-              // socket: widget.socket,
-            ),
-            withNavBar: true, // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          //               Navigator.pop(context);
+          //               PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: DashBoard(
+          //     // token: widget.token ?? ""
+          //     // socket: widget.socket,
+          //   ),
+          //   withNavBar: true, // OPTIONAL VALUE. True by default.
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
                       }
                    else   if (widget.isgrp == false) {
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
-    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.communicationUserModel?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
-                          "userid": widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
+                          "userid": widget.loginUserId??""        //widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
                         });
                         print("user left too");
 
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
                           if (mounted) {
-                            widget.socket!.off("get.clients");
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
@@ -351,11 +337,13 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 (data) => print("active userss $data"));
                           }
 
+                          
+
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
-                        widget.socket!.off("user.left");
+                        
                         widget.socket!.on("user.left", (data) {
                           print("user left");
 
@@ -372,8 +360,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Navigator.pop(context);
                       } else {
                         widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid!=""?widget.redirectchatid:widget.cmntgrpid!=""?widget.cmntgrpid: widget.isgrp==false
-    ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});  
+                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.grpuser?.chatid,'userid':widget.loginUserId});  
                         widget.socket!.emit("leave.chat", {
                           "room": widget.roomId ?? "",
                           "userid": widget.loginUserId ?? ""
@@ -383,21 +370,25 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         print("user left too");
                         widget.socket!.on("left.room", (data) {
                           print("room left $data");
-
                           if (mounted) {
-                            widget.socket!.off("get.clients");
                             widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.off("active.length");
                             widget.socket!.on("active.length", (data) {
                               saveactiveusers(data);
                               print("ACTIVE ...length1 $data");
                             });
                           }
+                          if (ismount) {
+                            widget.socket
+                                ?.emit("group.message.seen", widget.roomId);
+                            widget.socket?.on("msg.seen.by",
+                                (data) => print("active userss $data"));
+                          }
+
                           widget.socket!.on("msg1.seen", (data) {
                             print("room leave message $data");
                           });
                         });
-                        widget.socket!.off("user.left");
+                        
                         widget.socket!.on("user.left", (data) {
                           print("user left");
 

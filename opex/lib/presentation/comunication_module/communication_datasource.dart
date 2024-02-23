@@ -167,6 +167,76 @@ class CommunicationDatasource {
     return DoubleResponse(
         response.data['status'] == 'success', response.data['userid']);
   }
+    Future<DataResponse> deleteMessage(
+      {required String chatId, required int msgId, required String token}) async {
+    print("at datasource");
+    print("....$chatId  $msgId");
+    final response = await client.delete(
+      CommunicationUrls.messagedelete,
+      data: {
+        "messageId":msgId
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print("response at datasource ${response.data}");
+    return DataResponse(data: response.data['message']);
+  }
+      Future<DataResponse> editgroupprofile(
+      {required String chatId, required String grpname,required String grpdescription,required String token, File? image}) async {
+        print("total result ${image}");
+    String filePath = "";
+    print("at datasource");
+    print("....$chatId  $grpname");
+    final response;
+    if (image != null) {
+      filePath = image.path;
+    final mime = lookupMimeType(filePath)!.split("/");
+
+    final fileData = await MultipartFile.fromFile(
+      filePath,
+      contentType: MediaType(mime.first, mime.last),
+    );
+    final FormData formData = FormData.fromMap({"upload": fileData});
+
+     response = await client.post(
+      CommunicationUrls.groupeditdetails+'$chatId',
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    }else{
+       response = await client.post(
+      CommunicationUrls.groupeditdetails+"$chatId",
+      data: {
+        "groupName":grpname,
+        "description":grpdescription,
+        "groupPhotoUrl":image
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    }
+    
+    print("response at group edit ${response.data}");
+    return DataResponse(data: response.data['message']);
+  }
+  
 
   Future<CommunicationUserModel> addAFriendUser(String token, String fname,
       String lname, String mail, String photo,String usercode) async {
@@ -356,6 +426,36 @@ class CommunicationDatasource {
     statusCode = (response.data['data']['upload']);
     return statusCode;
   }
+  
+  //   Future<String> groupimage({File? img}) async {
+  //   String statusCode;
+
+  //   print("total result ${img}");
+  //   String filePath = "";
+
+  //   if (img != null) filePath = img.path;
+  //   final mime = lookupMimeType(filePath)!.split("/");
+
+  //   final fileData = await MultipartFile.fromFile(
+  //     filePath,
+  //     contentType: MediaType(mime.first, mime.last),
+  //   );
+  //   final FormData formData = FormData.fromMap({"upload": fileData});
+
+  //   final response = await client.post(
+  //     CommunicationUrls.groupeditdetails+'chat'
+  //     data: formData,
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     ),
+  //   );
+  //   print("response is here ${response.data}");
+  //   statusCode = (response.data['data']['upload']);
+  //   return statusCode;
+  // }
   Future<String> uploadImageData({FilePickerResult? img}) async {
     String statusCode;
 

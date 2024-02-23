@@ -17,3 +17,14 @@ class ChatScreenGetSuccess extends ChatState {
 }
 
 class ChatScreenGetFailed extends ChatState {}
+
+class MessagedeleteInitial extends ChatState {}
+
+class MessagedeleteLoading extends ChatState {}
+
+class MessagedeleteSuccess extends ChatState {
+  final String msg1;
+  const MessagedeleteSuccess({required this.msg1});
+}
+
+class MessagedeleteFailed extends ChatState {}

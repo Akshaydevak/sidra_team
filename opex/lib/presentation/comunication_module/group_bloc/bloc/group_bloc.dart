@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cluster/presentation/comunication_module/communication_datasource.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -35,6 +37,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
     else if(event is GroupMemberDeleteEvent){
       yield* groupmemberdelete(token:event.token,chatid:event.chatId,userid:event.userId);
+    }
+    else if(event is GroupProfileEditEvent){
+      yield* groupprofileedit(token:event.token,chatid:event.chatId,groupname:event.groupname,groupdescription: event.groupdescription,image: event.image);
     }
   }
 
@@ -119,6 +124,18 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield GroupMemberDeleteSuccess(successmsg:dataResponse.data2);
     } else {
       yield GroupMemberDeleteFailed(error: dataResponse.data2);
+    }
+  }
+  Stream<GroupState> groupprofileedit(
+      {required String token, required String chatid,required String groupname,required String groupdescription,File? image}) async* {
+    yield GroupProfileEditLoading();
+    final dataResponse =
+        await _productData.editgroupprofile(chatId: chatid, grpname: groupname, grpdescription: groupdescription, token: token,image: image);
+    if (dataResponse.data != null) {
+      print("bloccccc${dataResponse}");
+      yield GroupProfileEditSuccess(successmsg:"Updated");
+    } else {
+      yield GroupProfileEditFailed(error:"Updation Failed");
     }
   }
 }

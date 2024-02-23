@@ -14,6 +14,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if(event is ChatScreenGetEvent){
       yield* getChatScreen(token: event.token,pageNo: event.pageNo,chatId: event.chatId,grpchatId: event.grpchatId,userId:event.userId);
     }
+    if(event is Messagedeleteevent){
+      yield* deletemsg(token: event.token,chatId: event.chatId,msgId:event.msgId);
+    }
   }
   Stream<ChatState> getChatScreen(
       {required String token,required String chatId,required String grpchatId, required int pageNo,required String userId}) async* {
@@ -25,4 +28,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           yield ChatScreenGetFailed();
         }
       }
+       Stream<ChatState> deletemsg(
+      {required String token,required String chatId,required int msgId}) async* {
+        yield MessagedeleteLoading();
+        final dataResponse=await _productData.deleteMessage(chatId: chatId, msgId: msgId, token: token);
+        if(dataResponse == "Message deleted successfully"){
+          yield MessagedeleteSuccess(msg1:"Message deleted");
+        }else{
+          yield MessagedeleteFailed();
+        }
+      }
 }
+ 
+

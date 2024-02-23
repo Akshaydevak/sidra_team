@@ -17,6 +17,8 @@ class CommunicationUrls {
   static const tokenCreationCommunicationUrl="${communicationBaseUrl}api/inventory/inventory-login";
   static const addGroupMember="${communicationBaseUrl}api/inventory/inventory-add-member/";
   static const deleteGroupMember="${communicationBaseUrl}api/inventory/inventory-delete-member/";
+  static const groupeditdetails="${communicationBaseUrl}api/inventory/inventory-group-update/";
+  static const messagedelete="${communicationBaseUrl}api/chat/message/delete";
   //image upload
   static const uploadImageUrl="https://api-uat-user.sidrabazar.com/file-upload";
   //inventory related

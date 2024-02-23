@@ -97,6 +97,8 @@ class ChatPage extends Equatable {
 class ChatModel extends Equatable {
   @JsonKey(name: "message")
   final String? message;
+  @JsonKey(name: "id")
+  final int? id;
   @JsonKey(name: "chatid")
   final String? chatid;
   @JsonKey(name: "groupid")
@@ -123,6 +125,7 @@ class ChatModel extends Equatable {
   const ChatModel(
       {this.type,
       this.message,
+      this.id,
       this.chatid,
       this.groupid,
       this.fromUser,

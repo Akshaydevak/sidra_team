@@ -87,6 +87,7 @@ Map<String, dynamic> _$ChatPageToJson(ChatPage instance) => <String, dynamic>{
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       type: json['type'] as String?,
       message: json['message'] as String?,
+      id: json['id'] as int?,
       chatid: json['chatid'] as String?,
       groupid: json['groupid'] as String?,
       fromUser: json['fromUser'] == null
@@ -104,6 +105,7 @@ ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
 
 Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'message': instance.message,
+      'id': instance.id,
       'chatid': instance.chatid,
       'groupid': instance.groupid,
       'type': instance.type,

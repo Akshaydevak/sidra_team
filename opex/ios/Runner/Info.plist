@@ -40,6 +40,9 @@
 	<string>We need access to device microphone when user need to record and send audio through the app</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires to access your photo library to upload profile picture</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Request to save images to the photo library</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

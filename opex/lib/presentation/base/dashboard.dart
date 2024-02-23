@@ -25,6 +25,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:upgrader/upgrader.dart';
 import 'dart:developer' as developer;
 import '../../common_widgets/gradient_button.dart';
@@ -79,39 +80,31 @@ String _previousConnectionState = 'Unknown';
     FirebaseMessaging.onMessage.listen((messages) {
       var data = messages.data;
       var message = messages.data;
+      String id = data['chat_id'];
       var size = MediaQuery.sizeOf(context);
       String? titleText = messages.notification?.title;
       String? descrption = messages.notification?.body;
-
-      Flushbar(
-
-        onTap: (flushbar) async {
-          print("jjijij: ${data['title']}");
-          print("jjijij: ${data['Sidra_teams_key']}");
-          print("wow message: ${messages.notification?.title}");
-          print("wow message: ${messages.notification?.body}");
-          print("wow message: ${data['is_group_chat']}");
-          print("wow message: ${data['chat_id']}");
-          print("wow message: ${data['to_user_id']}");
-          // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
-          //   'uid': data["uid"] ,
-          //   'serviceUid': data["serviceUid"] ,
-          // });
-          String id = data['chat_id'];
-          if (data['Sidra_teams_key'] == "task_and_operation") {
-            print("if condition");
-            context
-                .read<TaskBloc>()
-                .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: TaskTitle(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-          }
-          else if(data['Sidra_teams_key']=="comment"){
-print("inside the notifaction comment flush");
+      if(messages.messageId != oldmessageId){
+         oldmessageId = messages.messageId!;
+  showTopSnackBar(
+    Overlay.of(context), 
+  GestureDetector(
+    onTap: () async {
+      if (data['Sidra_teams_key'] == "task_and_operation") {
+       
+        print("if condition");
+        context
+            .read<TaskBloc>()
+            .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
+        PersistentNavBarNavigator.pushNewScreen(
+          context,
+          screen: TaskTitle(),
+          withNavBar: true, // OPTIONAL VALUE. True by default.
+          pageTransitionAnimation: PageTransitionAnimation.fade,
+        );
+      }
+      else if(data['Sidra_teams_key']=="comment"){
+print("inside the notification comment flush");
              print("else condition");
         pref=await SharedPreferences.getInstance();
         token = pref!.getString("token");
@@ -124,21 +117,9 @@ print("inside the notifaction comment flush");
               chatId: "",
               grpchatId: id,
               userId:logingrpuserId??"" ));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
-            token: token,
-            loginUserId: logingrpuserId,
-            socket: socketCon1,
-            grpchatid: id,
-            cmntgrpchatname:
-               messages.notification?.title??"",
-            isGroup: true,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-        // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
         //     token: token,
         //     loginUserId: logingrpuserId,
         //     socket: socketCon1,
@@ -146,10 +127,21 @@ print("inside the notifaction comment flush");
         //     cmntgrpchatname:
         //        messages.notification?.title??"",
         //     isGroup: true,
-        //   ),));
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+            token: token,
+            loginUserId: logingrpuserId,
+            socket: socketCon1,
+            grpchatid: id,
+            cmntgrpchatname:
+               messages.notification?.title??"",
+            isGroup: true,
+          ),));
         
-          }
-          else{
+          }else{
             print("else condition");
             print("inside the notifaction flush");
         pref=await SharedPreferences.getInstance();
@@ -164,63 +156,194 @@ print("inside the notifaction comment flush");
               chatId: id,
               grpchatId: "",
               userId: loginuserId??""));
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen:  ChatScreen(
+        // PersistentNavBarNavigator.pushNewScreen(
+        //   context,
+        //   screen:  ChatScreen(
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,
+        //     redirectchatid: id,
+        //     redirectchatname:messages.notification?.title??"",
+        //     redirectionsenduserId: data['to_user_id'],
+        //     isGroup: data['is_group_chat']=="true"?true:false,
+        //   ),
+        //   withNavBar: true, // OPTIONAL VALUE. True by default.
+        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+        // );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
             redirectchatid: id,
             redirectchatname:
                messages.notification?.title??"",
+               redirectionsenduserId: data['to_user_id'],
             isGroup: data['is_group_chat']=="true"?true:false,
-          ),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-        // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
-        //     token: token,
-        //     loginUserId: loginuserId,
-        //     socket: socketCon,
-        //     redirectchatid: id,
-        //     redirectchatname:
-        //        messages.notification?.title??"",
-        //        redirectionsenduserId: data['to_user_id'],
-        //     isGroup: data['is_group_chat']=="true"?true:false,
-        //   ),));
+          ),));
         }
-        },
-        backgroundColor: Colors.black,
-        titleColor: Colors.black,
-        // margin: EdgeInsets.symmetric(horizontal: 10),
-        titleText: Container(
-          child: Row(
-            children: [
-              // Padding(
-              //     padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-              //     child: SizedBox(
-              //       height: size.height*.05,
-              //       child: Image(
-              //         image:
-              //         AssetImage("assets/images/logos/logowithbg.png"),
-              //       ),
-              //     )),
-              Text(
-                titleText == null ? "New Notification Received" : titleText,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        ),
+    },
+    child: Container(width:MediaQuery.of(context).size.width,height: 100,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      color: Colors.black
+    ),
+     child: Padding(
+       padding: const EdgeInsets.only(top:20,left:10),
+       child: Column( crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text("$titleText",style: TextStyle(fontSize: MediaQuery.of(context).size.width/30,color: Colors.white,decoration: TextDecoration.none),),
+           Text("$descrption",maxLines: 1,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: MediaQuery.of(context).size.width/34,fontWeight: FontWeight.normal,color: Colors.white,decoration: TextDecoration.none,),)
+        ],
+       ),
+     ),
+    
+    ),
+  ));
+  setState(() {
+    
+  });
+      }
+//   Flushbar(
 
-        flushbarPosition: FlushbarPosition.TOP, // Set position to top
-        message: descrption,
+
+//         onTap: (flushbar) async {
+//           print("jjijij: ${data['title']}");
+//           print("jjijij: ${data['Sidra_teams_key']}");
+//           print("wow message: ${messages.notification?.title}");
+//           print("wow message: ${messages.notification?.body}");
+//           print("wow message: ${data['is_group_chat']}");
+//           print("wow message: ${data['chat_id']}");
+//           print("wow message: ${data['to_user_id']}");
+//           // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
+//           //   'uid': data["uid"] ,
+//           //   'serviceUid': data["serviceUid"] ,
+//           // });
+//           String id = data['chat_id'];
+//           if (data['Sidra_teams_key'] == "task_and_operation") {
+//             print("if condition");
+//             context
+//                 .read<TaskBloc>()
+//                 .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
+//             PersistentNavBarNavigator.pushNewScreen(
+//               context,
+//               screen: TaskTitle(),
+//               withNavBar: true, // OPTIONAL VALUE. True by default.
+//               pageTransitionAnimation: PageTransitionAnimation.fade,
+//             );
+//           }
+//           else if(data['Sidra_teams_key']=="comment"){
+// print("inside the notifaction comment flush");
+//              print("else condition");
+//         pref=await SharedPreferences.getInstance();
+//         token = pref!.getString("token");
+//         logingrpuserId=pref!.getString("logingrpuserid");
+//         print("else condition.. $token $loginuserId");
+//           context.read<ChatBloc>().add(
+//           ChatScreenGetEvent(
+//               token: token.toString(),
+//               pageNo: 1,
+//               chatId: "",
+//               grpchatId: id,
+//               userId:logingrpuserId??"" ));
+//         PersistentNavBarNavigator.pushNewScreen(
+//           context,
+//           screen:  ChatScreen(
+//             token: token,
+//             loginUserId: logingrpuserId,
+//             socket: socketCon1,
+//             grpchatid: id,
+//             cmntgrpchatname:
+//                messages.notification?.title??"",
+//             isGroup: true,
+//           ),
+//           withNavBar: true, // OPTIONAL VALUE. True by default.
+//           pageTransitionAnimation: PageTransitionAnimation.fade,
+//         );
+//         // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+//         //     token: token,
+//         //     loginUserId: logingrpuserId,
+//         //     socket: socketCon1,
+//         //     grpchatid: id,
+//         //     cmntgrpchatname:
+//         //        messages.notification?.title??"",
+//         //     isGroup: true,
+//         //   ),));
         
-        duration: Duration(seconds: 2),
-      )..show(context);
+//           }
+//           else{
+//             print("else condition");
+//             print("inside the notifaction flush");
+//         pref=await SharedPreferences.getInstance();
+//         token = pref!.getString("token");
+//         loginuserId=pref!.getString("loginuserid");
+//         print("else condition.. $token $loginuserId");
+        
+//            context.read<ChatBloc>().add(
+//           ChatScreenGetEvent(
+//               token: token.toString(),
+//               pageNo: 1,
+//               chatId: id,
+//               grpchatId: "",
+//               userId: loginuserId??""));
+//         PersistentNavBarNavigator.pushNewScreen(
+//           context,
+//           screen:  ChatScreen(
+//             token: token,
+//             loginUserId: loginuserId,
+//             socket: socketCon,
+//             redirectchatid: id,
+//             redirectchatname:
+//                messages.notification?.title??"",
+//             isGroup: data['is_group_chat']=="true"?true:false,
+//           ),
+//           withNavBar: true, // OPTIONAL VALUE. True by default.
+//           pageTransitionAnimation: PageTransitionAnimation.fade,
+//         );
+//         // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+//         //     token: token,
+//         //     loginUserId: loginuserId,
+//         //     socket: socketCon,
+//         //     redirectchatid: id,
+//         //     redirectchatname:
+//         //        messages.notification?.title??"",
+//         //        redirectionsenduserId: data['to_user_id'],
+//         //     isGroup: data['is_group_chat']=="true"?true:false,
+//         //   ),));
+//         }
+//         },isDismissible: true,
+//         backgroundColor: Colors.black,
+//         titleColor: Colors.black,
+//         // margin: EdgeInsets.symmetric(horizontal: 10),
+//         titleText: Container(
+//           child: Row(
+//             children: [
+//               // Padding(
+//               //     padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+//               //     child: SizedBox(
+//               //       height: size.height*.05,
+//               //       child: Image(
+//               //         image:
+//               //         AssetImage("assets/images/logos/logowithbg.png"),
+//               //       ),
+//               //     )),
+//               Text(
+//                 titleText == null ? "New Notification Received" : titleText,
+//                 style: TextStyle(
+//                     color: Colors.white,
+//                     fontSize: 14,
+//                     fontWeight: FontWeight.bold),
+//               )
+//             ],
+//           ),
+//         ),
+
+//         flushbarPosition: FlushbarPosition.TOP, // Set position to top
+//         message: descrption,
+        
+//         duration: Duration(seconds: 2),
+//       )..show(context));
+  
+     
     });
 
     // Handle message when the app is opened from the background
@@ -245,6 +368,9 @@ print("inside the notifaction comment flush");
           withNavBar: true, // OPTIONAL VALUE. True by default.
           pageTransitionAnimation: PageTransitionAnimation.fade,
         );
+        setState(() {
+          
+        });
       } else if (data['Sidra_teams_key'] == "comment") {
         oldmessageId = message.messageId!;
         print("background the notifaction comment");
@@ -275,7 +401,7 @@ print("inside the notifaction comment flush");
         //   withNavBar: true, // OPTIONAL VALUE. True by default.
         //   pageTransitionAnimation: PageTransitionAnimation.fade,
         // );
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: logingrpuserId,
             socket: socketCon1,
@@ -284,7 +410,9 @@ print("inside the notifaction comment flush");
             isGroup: true,
           ),));
         // }
-        
+        setState(() {
+          
+        });
           }
       else{
         print("else condition");
@@ -317,7 +445,7 @@ print("inside the notifaction comment flush");
         //   withNavBar: true, // OPTIONAL VALUE. True by default.
         //   pageTransitionAnimation: PageTransitionAnimation.fade,
         // );
-       Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(
             token: token,
             loginUserId: loginuserId,
             socket: socketCon,
@@ -328,7 +456,9 @@ print("inside the notifaction comment flush");
             isGroup: data['is_group_chat']=="true"?true:false,
           ),));
         // }
-        
+        setState(() {
+          
+        });
       }
       }
       
