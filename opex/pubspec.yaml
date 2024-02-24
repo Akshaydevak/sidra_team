@@ -118,6 +118,8 @@ dependencies:
   animated_emoji: ^3.0.0
   status_alert: ^1.0.1
   flutter_linkify: ^6.0.0
+  animated_icon: ^0.0.6
+
 
 dev_dependencies:
   flutter_test:

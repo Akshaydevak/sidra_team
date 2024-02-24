@@ -95,6 +95,9 @@ class GetJobTypeListEvent extends JobEvent {
 }
 class CreateJobEvent extends JobEvent {
   final String name;
+  final String startTime;
+  final String endTime;
+  final String durationOption;
   final int jobType;
   final String reportingPerson;
   final String createdBy;
@@ -110,7 +113,10 @@ class CreateJobEvent extends JobEvent {
 
   CreateJobEvent({
 
+    required this.durationOption,
     required this.name,
+    required this.startTime,
+    required this.endTime,
     required this.jobType,
     required this.reportingPerson,
     required this.createdBy,
@@ -159,6 +165,9 @@ class GetJobReadListEvent extends JobEvent {
 //updateJob
 class UpdateJobEvent extends JobEvent {
   final String name;
+  final String startTime;
+  final String endTime;
+  final String durationOption;
   final int? jobType;
   final int? id;
   final String reportingPerson;
@@ -174,6 +183,9 @@ class UpdateJobEvent extends JobEvent {
       {
         required this.name,
         required this.id,
+        required this.durationOption,
+        required this.startTime,
+        required this.endTime,
         required this.jobType,
         required this.reportingPerson,
         required this.createdBy,

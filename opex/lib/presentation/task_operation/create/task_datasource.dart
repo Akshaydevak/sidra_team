@@ -326,6 +326,27 @@ class TaskDataSource {
 
     return selectedItemDetails;
   }
+  ////
+
+  Future<GetReadCreateTask> getJobCreationRead() async {
+    GetReadCreateTask selectedItemDetails;
+
+    print("Task Read:${ClusterUrls.createJobUrl}");
+    final response = await client.get(
+      ClusterUrls.createJobUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    selectedItemDetails = GetReadCreateTask.fromJson((response.data['data']));
+
+    return selectedItemDetails;
+  }
 
   //readRwards
   Future<ReadRewards> getReadRewards(int id, bool isTask) async {

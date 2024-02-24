@@ -79,6 +79,12 @@ class GetTaskReadCreateEvent extends TaskEvent {
   // @override
   // List<Object> get props => [this.id];
 }
+class GetJobReadCreateEvent extends TaskEvent {
+  // final int id;
+  const GetJobReadCreateEvent();
+  // @override
+  // List<Object> get props => [this.id];
+}
 
 //readReward
 class GetReadRewardsEvent extends TaskEvent {

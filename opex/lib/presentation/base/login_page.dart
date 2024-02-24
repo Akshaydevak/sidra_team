@@ -205,6 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           TextFormReusableNoLabel(
                               hint: "Enter password",
+                              password: true,
                               controller: passwordController),
                           SizedBox(height: 5,),
                           TextFormReusableNoLabel(

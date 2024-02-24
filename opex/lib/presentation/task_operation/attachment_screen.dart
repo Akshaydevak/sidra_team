@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:animated_icon/animated_icon.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/color_palatte.dart';
@@ -28,7 +30,7 @@ class AttachmentScreen extends StatefulWidget {
   State<AttachmentScreen> createState() => _AttachmentScreenState();
 }
 
-class _AttachmentScreenState extends State<AttachmentScreen> {
+class _AttachmentScreenState extends State<AttachmentScreen> with SingleTickerProviderStateMixin{
   TextEditingController discription = TextEditingController();
   TextEditingController notes = TextEditingController();
   final picker = ImagePicker();
@@ -44,8 +46,19 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
   List<PicModel> picModelAttachment = [];
   int count = 0;
   bool loader=true;
+  late AnimationController _fabController;
+  late Animation<double> _fabAnimation;
   @override
   void initState() {
+    _fabController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+
+    _fabAnimation = CurvedAnimation(
+      parent: _fabController,
+      curve: Curves.easeInOut,
+    );
     Duration delayDuration = Duration(seconds: 2);
     Future.delayed(delayDuration, () {
       // Change the boolean value after the delay
@@ -65,7 +78,12 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
     print("that count$count");
     super.initState();
   }
-
+  @override
+  void dispose() {
+    // Dispose the animation controller to prevent memory leaks
+    _fabController.dispose();
+    super.dispose();
+  }
   bool? isValid = false;
   validationCheck() {
     if (discription.text != "" && notes.text != '') {
@@ -74,7 +92,39 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
       isValid = false;
     }
   }
+  bool _isFABExtended = false;
+  void _handleFABClick() {
+    buttonLoad=false;
+    setState(() {
+      _isFABExtended = !_isFABExtended;
+    });
 
+    if (_isFABExtended) {
+      // Additional actions when the FAB is extended (e.g., transition to tick icon)
+      _fabController.forward();
+    } else {
+      // Additional actions when the FAB is not extended (e.g., transition back to add icon)
+      _fabController.reverse();
+    }
+    Future.delayed(Duration(seconds: 4), () {
+      // Change the boolean value after the delay
+      buttonLoad = true;
+
+      // Print the updated value
+      print('Updated bool value: $loader');
+      setState(() {
+
+      });
+    });
+
+    // Additional actions if needed
+    print('FAB clicked!');
+  }
+
+  void handleSave(int tabIndex, dynamic data) {
+    print('Saving data for tab $tabIndex with data: $data');
+    // Implement your save logic here
+  }
   readAttach() {
     print("vvvvv${widget.readData?.metaData?.description}");
     discription.text = widget.readData?.metaData?.description ?? "";
@@ -221,6 +271,45 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             ),
           ),
         ),
+    //     floatingActionButton: AnimatedBuilder(
+    //       animation: _fabController,
+    //       builder: (context, child) {
+    //         return Transform.translate(
+    //           offset: Offset(0.0, -20 * _fabAnimation.value),
+    //           child: child,
+    //         );
+    //       },
+    //       child: FloatingActionButton(
+    //         backgroundColor: ColorPalette.primary, // Your custom color
+    //         foregroundColor: Colors.white,
+    //
+    //         onPressed: _handleFABClick,
+    //         shape: RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.circular(10.0),),
+    //         child:
+    //         //
+    //
+    //         // label:
+    //         buttonLoad==true?Icon(
+    //           // _isFABExtended ? Icons.check :
+    //           Icons.check,
+    //           size: 24.0, // Adjust icon size as needed
+    //         ):_isFABExtended?SpinKitFadingCircle(
+    //                         color: Colors.white,
+    //                         size: 25.0,
+    //                       ):
+    // Icon(
+    //   // _isFABExtended ? Icons.check :
+    //   Icons.add,
+    //   size: 24.0, // Adjust icon size as needed
+    // ),
+    //         // Text(
+    //         //   _isFABExtended ? 'Saved' : 'Add', // Change label based on state
+    //         //   style: TextStyle(fontSize: w/24), // Adjust label font size as needed
+    //         // ),
+    //       ),
+    //     ),
+    //     floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: MultiBlocListener(
           listeners: [
             BlocListener<EmployeeBloc, EmployeeState>(
@@ -323,7 +412,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                             decoration:  InputDecoration(
 
                               contentPadding: EdgeInsets.only(left:16,right: 16 ),
-                              hintText: "Enter description",
+                              hintText: "Enter Remarks",
                               hintStyle: TextStyle(
                                 color: Color(0x66151522),
                                 fontSize: w/26,
@@ -525,6 +614,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
                     ],
                   ),
                 )
+
               ],
             )),
           ),

@@ -239,7 +239,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      ebdDate,
+                                      startDate2,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: ColorPalette.black),
@@ -267,7 +267,7 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      startDate,
+                                      ebdDate2,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: ColorPalette.black),
