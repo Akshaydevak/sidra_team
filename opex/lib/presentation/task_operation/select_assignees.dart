@@ -1,15 +1,11 @@
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/variables.dart';
-import 'package:cluster/presentation/dashboard_screen/cart_screen/cart_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
-import 'package:cluster/presentation/mpos/search_card.dart';
-import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_card.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
-import 'package:cluster/presentation/task_operation/task_operation_appbar.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,16 +15,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../common_widgets/loading.dart';
 import '../../core/common_snackBar.dart';
 import 'create/create_svg.dart';
 import 'create/model/task_models.dart';
 import 'create/single_row.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'employee_model/employee_model.dart';
-import 'group_list.dart';
 
 class SelectAssignees extends StatefulWidget {
   final Function(bool val)? groupVal;

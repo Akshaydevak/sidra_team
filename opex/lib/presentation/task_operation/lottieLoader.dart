@@ -17,7 +17,7 @@ class _LottieLoaderState extends State<LottieLoader> {
     double w = w1 > 700 ? 400 : w1;
     return Container(
       height: h / 2,
-      color: Colors.white.withOpacity(0.5),
+      color: Colors.transparent,
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

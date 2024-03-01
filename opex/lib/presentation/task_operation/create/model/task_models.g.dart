@@ -582,3 +582,45 @@ Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>
       'profile_pic': instance.profile,
       'highest_average_points': instance.points,
     };
+
+SearchMapResultsModel _$SearchMapResultsModelFromJson(
+        Map<String, dynamic> json) =>
+    SearchMapResultsModel(
+      id: json['id'] as int?,
+      locationData: json['geometry'] == null
+          ? null
+          : GeometryLocation.fromJson(json['geometry'] as Map<String, dynamic>),
+      formattedAddress: json['formatted_address'] as String?,
+    );
+
+Map<String, dynamic> _$SearchMapResultsModelToJson(
+        SearchMapResultsModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'geometry': instance.locationData,
+      'formatted_address': instance.formattedAddress,
+    };
+
+GeometryLocation _$GeometryLocationFromJson(Map<String, dynamic> json) =>
+    GeometryLocation(
+      id: json['id'] as int?,
+      latAndLang: json['location'] == null
+          ? null
+          : Location.fromJson(json['location'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$GeometryLocationToJson(GeometryLocation instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'location': instance.latAndLang,
+    };
+
+Location _$LocationFromJson(Map<String, dynamic> json) => Location(
+      lat: (json['lat'] as num?)?.toDouble(),
+      lng: (json['lng'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+      'lat': instance.lat,
+      'lng': instance.lng,
+    };

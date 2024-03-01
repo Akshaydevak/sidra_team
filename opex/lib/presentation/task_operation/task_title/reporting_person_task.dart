@@ -90,7 +90,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
               }
               if (state is UpdateReportingSuccess) {
                 Fluttertoast.showToast(
-                    msg: state.taskId,
+                    msg: "Reporting Person Changed",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black,
@@ -127,9 +127,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetReportingPersonListLoading) {
-                customCupertinoLoading();
-              }
+
               if (state is GetReportingPersonListSuccess) {
                 employee = state.employeeList;
                 _isLoading=false;
@@ -142,9 +140,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetUserUderGroupLoading) {
-                customCupertinoLoading();
-              }
+
               if (state is GetUserUderGroupSuccess) {
                 userList = state.userlist;
                 setState(() {

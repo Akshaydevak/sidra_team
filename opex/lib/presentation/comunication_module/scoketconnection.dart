@@ -48,7 +48,7 @@ class scoketgrpProvider extends ChangeNotifier{
    IO.Socket? _socket;
   SharedPreferences? pref;
   IO.Socket? get socket => _socket;
-   void connect(String token) {
+   void connect(String token, {bool socketReady = false}) {
     _socket = IO.io(
       'https://api-communication-application.hilalcart.com/group',
       // 'http://192.168.1.187:5500/home',
@@ -61,7 +61,9 @@ class scoketgrpProvider extends ChangeNotifier{
     );
 
     _socket!.connect();
-      _socket!.on('connect', (_) => print('connectwt success: ${_socket!.id}'));
+      _socket!.on('connect', (_) {
+        print('connectwt success: ${_socket!.id}');
+      });
       _socket!.on('user.id', (data) {
       //loginuserId = data;
       print("vgyvgvh$data");

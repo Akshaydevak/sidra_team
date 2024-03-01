@@ -15,6 +15,7 @@ class AttachmentCard extends StatefulWidget {
 
 class _AttachmentCardState extends State<AttachmentCard> {
   List<PicModel> picModel = [];
+  List<PicModel> newPicModel = [];
   int picLength=0;
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _AttachmentCardState extends State<AttachmentCard> {
       picModel.add(PicModel(data: null,url: ""));
     }
     picData();
+
     super.initState();
   }
   picData(){
@@ -50,21 +52,21 @@ class _AttachmentCardState extends State<AttachmentCard> {
     for(var i=0;i<picModel.length;i++){
       if(picModel[i].url!=null){
         picLength++;
+        newPicModel.add(picModel[i]);
       }
     }
-    print("hgfhgfhgf${widget.readData?.metaData?.image1}");
-    print("hgfhgfhgf${picModel[0].url}");
-    print("hgfhgfhgf${picModel[1].url}");
-    print("hgfhgfhgf${picModel[2].url}");
-    print("hgfhgfhgf${picModel[3].url}");
-    print("hgfhgfhgf${picModel[4].url}");
-    print("hgfhgfhgf${picLength}");
+    print("Attachment%%%%${widget.readData?.metaData?.image1}");
+    print("Attachment${picModel[0].url}");
+    print("Attachment${picModel[1].url}");
+    print("Attachment${picModel[2].url}");
+    print("Attachment${picModel[3].url}");
+    print("Attachment${picModel[4].url}");
+    print("Attachment${picLength}");
 
   }
 
   @override
   Widget build(BuildContext context) {
-    // picData();
      var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return    Container(
@@ -109,7 +111,7 @@ class _AttachmentCardState extends State<AttachmentCard> {
                         border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
                         borderRadius: BorderRadius.all(Radius.circular(5))
                     ),
-                    child: Image.network(picModel[i].url??"",fit: BoxFit.cover,)));
+                    child: Image.network(newPicModel[i].url??"",fit: BoxFit.cover,)));
         }, separatorBuilder: (BuildContext context, int index) {
           return SizedBox(width: 5,); },
       ),
@@ -129,6 +131,7 @@ class RewardsCard extends StatefulWidget {
 
 class _RewardsCardState extends State<RewardsCard> {
   List<PicModel> picModel = [];
+  List<PicModel> newPicModel = [];
   @override
   void initState() {
     picModel.clear();
@@ -163,6 +166,7 @@ class _RewardsCardState extends State<RewardsCard> {
     for(var i=0;i<picModel.length;i++){
       if(picModel[i].url!=null){
         picLength++;
+        newPicModel.add(picModel[i]);
       }
     }
   }
@@ -210,7 +214,7 @@ class _RewardsCardState extends State<RewardsCard> {
                         border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
                         borderRadius: BorderRadius.all(Radius.circular(5))
                     ),
-                    child: Image.network(picModel[i].url??"",fit: BoxFit.cover,)));
+                    child: Image.network(newPicModel[i].url??"",fit: BoxFit.cover,)));
         }, separatorBuilder: (BuildContext context, int index) {
         return SizedBox(width: 5,); },
       ),
@@ -230,6 +234,7 @@ class PaymentCard extends StatefulWidget {
 
 class _PaymentCardState extends State<PaymentCard> {
   List<PicModel> picModel = [];
+  List<PicModel> newPicModel = [];
   int picLength=0;
   @override
   void initState() {
@@ -271,6 +276,7 @@ class _PaymentCardState extends State<PaymentCard> {
     for(var i=0;i<picModel.length;i++){
       if(picModel[i].url!=null){
         picLength++;
+        newPicModel.add(picModel[i]);
       }
     }
   }
@@ -317,7 +323,7 @@ class _PaymentCardState extends State<PaymentCard> {
                   border: Border.all(color: Color(0x4ca9a8a8), width: 1, ),
                   borderRadius: BorderRadius.all(Radius.circular(5))
               ),
-                child: Image.network(picModel[i].url??"",fit: BoxFit.cover,)));
+                child: Image.network(newPicModel[i].url??"",fit: BoxFit.cover,)));
         }, separatorBuilder: (BuildContext context, int index) {
         return SizedBox(width: 5,); },
       ),

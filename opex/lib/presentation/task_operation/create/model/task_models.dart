@@ -906,3 +906,58 @@ class PerfomerModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$PerfomerModelToJson(this);
 }
+
+
+@JsonSerializable()
+class SearchMapResultsModel extends Equatable{
+  final int? id;
+  @JsonKey(name: 'geometry')
+  final GeometryLocation? locationData;
+  @JsonKey(name: 'formatted_address')
+  final String? formattedAddress;
+  const SearchMapResultsModel({
+    this.id,this.locationData,this.formattedAddress
+  });
+  @override
+  List<Object> get props => [];
+
+  factory SearchMapResultsModel.fromJson(Map<String, dynamic> json) =>
+      _$SearchMapResultsModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SearchMapResultsModelToJson(this);
+
+}
+@JsonSerializable()
+class GeometryLocation extends Equatable{
+  final int? id;
+  @JsonKey(name: 'location')
+  final Location? latAndLang;
+
+  const GeometryLocation({
+    this.id,this.latAndLang,
+  });
+  @override
+  List<Object> get props => [];
+
+  factory GeometryLocation.fromJson(Map<String, dynamic> json) =>
+      _$GeometryLocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GeometryLocationToJson(this);
+
+}
+@JsonSerializable()
+class Location extends Equatable{
+  final double? lat;
+  final double? lng;
+  const Location({
+    this.lat,this.lng
+  });
+  @override
+  List<Object> get props => [];
+
+  factory Location.fromJson(Map<String, dynamic> json) =>
+      _$LocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LocationToJson(this);
+
+}

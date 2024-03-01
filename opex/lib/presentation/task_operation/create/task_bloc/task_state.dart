@@ -671,3 +671,12 @@ class ReplayReportFailed extends TaskState {
   @override
   List<Object> get props => [];
 }
+
+class SearchMapResultsLoading extends TaskState {}
+
+class SearchMapResultsSuccess extends TaskState {
+  final List<SearchMapResultsModel>? cartData;
+  const SearchMapResultsSuccess({this.cartData});
+}
+
+class SearchMapResultsFailed extends TaskState {}
