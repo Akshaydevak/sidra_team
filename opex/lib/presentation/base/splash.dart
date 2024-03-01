@@ -1,12 +1,14 @@
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
+import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/task_operation/task_title.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -22,8 +24,8 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
 
-
-
+SharedPreferences? pref;
+String token="";
   data() async {
 
     await Firebase.initializeApp();
@@ -53,7 +55,8 @@ data();
         const Duration(seconds: 2),
         () { 
            authentication.isAuthenticated
-                        ?context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent()):null;
+                        ?socketconnnect():
+                        null;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -66,6 +69,23 @@ data();
         }
                         );
                         
+  }
+  void socketconnnect() async {
+    final socketProvider = context.read<scoketProvider>();
+
+    final socketgrpProvider = context.read<scoketgrpProvider>();
+
+    pref = await SharedPreferences.getInstance();
+
+    token = pref!.getString("token")!;
+
+    print("socket token $token");
+
+    setState(() {});
+
+    socketProvider.connect(token.toString());
+
+    socketgrpProvider.connect(token.toString());
   }
 
   @override

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
+import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -2532,6 +2535,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                     onTap: () {
                                       HapticFeedback.heavyImpact();
                                       print("grp id $communicationGroupId");
+                                      context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: communicationGroupId, token: token??"")
+          );
                                       context.read<ChatBloc>().add(
                                           ChatScreenGetEvent(
                                               token: token.toString(),
@@ -4693,7 +4699,13 @@ class _TaskTitleState extends State<TaskTitle> {
         });
   }
   static void navigateTo(double lat, double lng) async {
-    var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+    var uri;
+    if (Platform.isAndroid) {
+     uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+    }
+    else{
+      uri = Uri.parse('https://maps.apple.com/?q=$lat,$lng');
+    }
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());
     } else {

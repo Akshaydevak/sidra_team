@@ -2,6 +2,7 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
+import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
@@ -110,6 +111,9 @@ int unreadCount=0;
           setState(() {
             
           });
+         widget.isGroup==true? context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: widget.communicationUserModel?.chatid??"", token: widget.token??"")
+          ):null;
         //   widget.socket!.emit("get.clients",roomId);
         // widget.socket!.on("active.length", (data) => print(data));
           //  widget.socket!.on("message.seen", (data) => print("message seen $data"));
@@ -146,29 +150,29 @@ int unreadCount=0;
                         onTap: () async {
               await showDialog(
                 context: context,
-                builder: (_) => imageDialog(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.isGroup,context)
+                builder: (_) => imageDialog(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.communicationUserModel?.photo,widget.isGroup,context)
               );
             },
                         child:
                          widget.isGroup?
-                        //  widget.communicationUserModel?.photo==null||
-                        // widget.communicationUserModel!.photo!.isEmpty ?
+                         widget.communicationUserModel?.photo==null||
+                        widget.communicationUserModel!.photo!.isEmpty ?
                      CircleAvatar(
                           radius: 24,
                           backgroundColor: ColorPalette.inactiveGrey,
                           backgroundImage:  
                               AssetImage("asset/chatgrpimg.png")
                         )
-                        // :CircleAvatar(
-                        //   radius: 24,
-                        //   backgroundColor: ColorPalette.inactiveGrey,
-                        //   backgroundImage:  
-                        //    NetworkImage(
-                        //       widget.communicationUserModel?.photo ?? ""
-                        //       // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
-                        //       // "${widget.communicationUserModel?.photo}"
-                        //       ),
-                        // )
+                        :CircleAvatar(
+                          radius: 24,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                           NetworkImage(
+                              widget.communicationUserModel?.photo ?? ""
+                              // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                              // "${widget.communicationUserModel?.photo}"
+                              ),
+                        )
                         :widget.communicationUserModel?.photoindividual==null||
                         widget.communicationUserModel!.photoindividual!.isEmpty 
                         ?TextAvatar(
@@ -836,7 +840,7 @@ int unreadCount=0;
       // ),
     );
   }
-  Widget imageDialog(text, path,group, context) {
+  Widget imageDialog(text, path,grppath,group, context) {
 return Dialog(
   // backgroundColor: Colors.transparent,
   // elevation: 0,
@@ -846,19 +850,14 @@ return Dialog(
     children: [
       Padding(
         padding: const EdgeInsets.only(left: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              height: 40,
-              child: Center(
-                child: Text(
-                  '${text.toString().toTitleCase()}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+        child: Container(
+          height: 40,
+          child: Center(
+            child: Text(
+              '${text.toString().toTitleCase()}',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          ],
+          ),
         ),
       ),
       Padding(
@@ -879,7 +878,7 @@ return Dialog(
           :Image.network(
             '$path',
             fit: BoxFit.cover,
-          ):Image.asset("asset/chatgrpimg.png"),
+          ):grppath==""?Image.asset("asset/chatgrpimg.png"):Image.network('$grppath'),
         ),
       ),
     ],

@@ -226,6 +226,35 @@ class ProfileGetModel extends Equatable {
 }
 
 @JsonSerializable()
+class ProfileGroupGetModel extends Equatable {
+  @JsonKey(name: "response_code")
+  final int? responsecode;
+  @JsonKey(name: "status")
+  final String? status;
+  @JsonKey(name: "data")
+  final GroupProfileDataModel? data;
+  const ProfileGroupGetModel({this.responsecode,this.status,this.data});
+  List<Object> get props => [];
+  factory ProfileGroupGetModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileGroupGetModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileGroupGetModelToJson(this);
+}
+@JsonSerializable()
+class GroupProfileDataModel extends Equatable {
+  @JsonKey(name: "photoUrl")
+  final String? photo;
+  @JsonKey(name: "name")
+  final String? name;
+  @JsonKey(name: "description")
+  final String? discription;
+  const GroupProfileDataModel({this.photo,this.name,this.discription});
+  List<Object> get props => [];
+  factory GroupProfileDataModel.fromJson(Map<String, dynamic> json) =>
+      _$GroupProfileDataModelFromJson(json);
+  Map<String, dynamic> toJson() => _$GroupProfileDataModelToJson(this);
+}
+
+@JsonSerializable()
 class Media extends Equatable {
   @JsonKey(name: "Users")
   final List<UserModel>? users;

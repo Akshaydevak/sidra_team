@@ -56,12 +56,7 @@ class _LoginDemoState extends State<LoginDemo> {
             // );
           }
           else if (state is TokenCreationCommunicationFailed) {
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: HomeScreen(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
+         
           }
         },
         child: Center(

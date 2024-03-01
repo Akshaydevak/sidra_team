@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:socket_io_common/src/util/event_emitter.dart';
 
 class scoketProvider extends ChangeNotifier{
    IO.Socket? _socket;
