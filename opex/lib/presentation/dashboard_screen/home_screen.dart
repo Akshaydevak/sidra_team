@@ -53,14 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
     var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: ColorPalette.white,
-      key: scaffoldKey,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: AppBarScreen(
-          scaffoldKey: scaffoldKey,
-        ),
-      ),
-      drawer: const AppDrawer(),
+
+
       body: ScrollConfiguration(
         behavior: NoGlow(),
         child: SingleChildScrollView(

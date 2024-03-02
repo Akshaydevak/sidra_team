@@ -27,8 +27,10 @@ import 'package:upgrader/upgrader.dart';
 import 'dart:developer' as developer;
 import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/cart_screen/cart_svg.dart';
+import '../dashboard_screen/drawer/appdrawer.dart';
 import '../dashboard_screen/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../task_operation/create/task_bloc/task_bloc.dart';
 import '../task_operation/task_title.dart';
 import 'icon_constants.dart';
@@ -799,6 +801,7 @@ pref = await SharedPreferences.getInstance();
 
     return false;
   }
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -867,6 +870,17 @@ pref = await SharedPreferences.getInstance();
                               }
                             : _onWillPop,
                         child: Scaffold(
+                          key: scaffoldKey,
+                          appBar: PreferredSize(
+                            preferredSize: const Size.fromHeight(58),
+                            child: AppBarScreen(
+                              scaffoldKey: scaffoldKey,
+                              label: newIndex==0?"Sidra Teams":newIndex==1?"Communication":newIndex==2?"Task & Operation":newIndex==3?"My Profile":"",
+
+                            ),
+                          ),
+                          drawer:  AppDrawer(
+                           ),
                           body: PersistentTabView(
 
                             context,
@@ -875,6 +889,7 @@ pref = await SharedPreferences.getInstance();
                             controller: _controller,
                               screens: _buildScreens(),
                             onItemSelected: (value) {
+
                               newIndex = value;
 
                               setState(() {});

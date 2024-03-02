@@ -430,58 +430,58 @@ class _AttachmentScreenState extends State<AttachmentScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-
-                                    // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+                                  // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
                                     child: TextFormField(
-                                  style: GoogleFonts.roboto(
-                                      fontWeight: FontWeight.w600),
-                                  onChanged: (l) {
-                                    validationCheck();
-                                    setState(() {});
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.only(left: 16, right: 16),
-                                    hintText: "Enter Remarks",
-                                    hintStyle: TextStyle(
-                                      color: Color(0x66151522),
-                                      fontSize: w / 26,
-                                    ),
-                                    border: InputBorder.none,
-                                    // suffixIcon: Text("INR"),
-                                  ),
-                                  // enabled: false,
-                                  // keyboardType: TextInputType.number,
-                                  // inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
-                                  controller: discription,
-                                )),
+                                      controller: notes,
+                                      maxLines: 4,
+                                      minLines: 1,
+                                      onChanged: (l) {
+                                        validationCheck();
+                                        setState(() {});
+                                      },
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.only(
+                                            left: 16,
+                                            top: 10,
+                                            right: 16,
+                                            bottom: 16),
+                                        hintText: "Notes",
+                                        hintStyle: TextStyle(
+                                          color: Color(0x66151522),
+                                          fontSize: w / 26,
+                                        ),
+                                        border: InputBorder.none,
+                                      ),
+                                    )),
                                 Divider(
                                   indent: 16,
                                 ),
                                 Container(
-                                    // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
+
+                                  // padding: EdgeInsets.only(left: 16,right: 16,top: 20,bottom: 10),
                                     child: TextFormField(
-                                  controller: notes,
-                                  maxLines: 4,
-                                  minLines: 1,
-                                  onChanged: (l) {
-                                    validationCheck();
-                                    setState(() {});
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(
-                                        left: 16,
-                                        top: 10,
-                                        right: 16,
-                                        bottom: 16),
-                                    hintText: "Add Notes",
-                                    hintStyle: TextStyle(
-                                      color: Color(0x66151522),
-                                      fontSize: w / 26,
-                                    ),
-                                    border: InputBorder.none,
-                                  ),
-                                )),
+                                      style: GoogleFonts.roboto(
+                                          fontWeight: FontWeight.w600),
+                                      onChanged: (l) {
+                                        validationCheck();
+                                        setState(() {});
+                                      },
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                        EdgeInsets.only(left: 16, right: 16),
+                                        hintText: "Remarks",
+                                        hintStyle: TextStyle(
+                                          color: Color(0x66151522),
+                                          fontSize: w / 26,
+                                        ),
+                                        border: InputBorder.none,
+                                        // suffixIcon: Text("INR"),
+                                      ),
+                                      // enabled: false,
+                                      // keyboardType: TextInputType.number,
+                                      // inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                                      controller: discription,
+                                    )),
                               ],
                             ),
                           ),

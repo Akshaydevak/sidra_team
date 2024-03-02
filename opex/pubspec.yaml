@@ -127,6 +127,7 @@ dependencies:
   android_path_provider: ^0.3.0
   animated_icon: ^0.0.6
   flutter_timezone: ^1.0.8
+  flutter_native_splash:
 
 dev_dependencies:
   flutter_test:

@@ -19,8 +19,8 @@ import '../home_svg.dart';
 
 class AppBarScreen extends StatefulWidget {
   var scaffoldKey;
-
-  AppBarScreen({Key? key, this.scaffoldKey}) : super(key: key);
+  final String label;
+  AppBarScreen({Key? key, this.scaffoldKey, required this.label}) : super(key: key);
 
   @override
   State<AppBarScreen> createState() => _AppBarState();
@@ -80,12 +80,14 @@ class _AppBarState extends State<AppBarScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
             leading: Container(
               padding: const EdgeInsets.only(left: 16),
               alignment: Alignment.center,
               child: GestureDetector(
                 onTap: () {
                   widget.scaffoldKey.currentState.openDrawer();
+
                 },
                 child: CircleAvatar(
                   radius: 22,
@@ -129,10 +131,10 @@ class _AppBarState extends State<AppBarScreen> {
             centerTitle: false,
             
             title: Text(
-              "Sidra Teams",
+              widget.label??"Sidra Teams",
               style: GoogleFonts.roboto(
                 color: Colors.black,
-                fontSize: w / 18,
+                fontSize: w / 22,
                 fontWeight: FontWeight.w500,
               ),
             ),

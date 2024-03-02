@@ -1570,7 +1570,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                             SizedBox(
                               height: 5,
                             ),
-                            GestureDetector(
+                            readTask?.id != null?Container():GestureDetector(
                               onTap: () {
                                 HapticFeedback.heavyImpact();
                                 // validationCheck();
