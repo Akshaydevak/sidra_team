@@ -41,12 +41,7 @@ class _EmailCheckPageState extends State<EmailCheckPage> {
 
           String? token;
           print("token${authentication.authenticatedUser.token}");
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: DashBoard(),
-            withNavBar: true, // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+           Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 0,)), (route) => false);
         }
         else if(state is LoginFailed){
 

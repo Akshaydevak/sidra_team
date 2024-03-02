@@ -1,3 +1,4 @@
+import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/base/dashboard.dart';
@@ -6,6 +7,7 @@ import 'package:cluster/presentation/comunication_module/chat-profile_screengrp.
 import 'package:cluster/presentation/comunication_module/chat_profile_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
+import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
@@ -39,6 +41,7 @@ class ChatAppBar extends StatefulWidget {
   final String? redirectionsenduserId;
   List<GroupUserList>? grpmember = [];
   final bool? isadmin;
+  final VoidCallback? ontap;
   // final VoidCallback ontap;
   ChatAppBar(
       {Key? key,
@@ -56,6 +59,7 @@ class ChatAppBar extends StatefulWidget {
       this.redirectionsenduserId="",
       this.isGroup,
       this.token,
+      this.ontap,
       this.roomId,
       this.chat = false,
       this.isgrp = false,
@@ -114,294 +118,305 @@ class _ChatAppBarState extends State<ChatAppBar> {
           Row(
             children: [
               GestureDetector(
-                  onTap: () {
-                    if (widget.isGroup == false) {
-                      if(widget.redirectchatid != ""){
-                        print("push notificstion redirection ${widget.loginUserId}");
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,"userid":widget.loginUserId??""});  
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid":widget.loginUserId??""
-                        });
-                        print("user left too");
+                  onTap: widget.ontap,
+//                   {
+//                     if (widget.isGroup == false) {
+//                       if(widget.redirectchatid != ""){
+//                         print("push notificstion redirection ${widget.loginUserId}");
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,"userid":widget.loginUserId??""});  
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid":widget.loginUserId??""
+//                         });
+//                         print("user left too");
 
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+// if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
                           
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
                         
                         
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
 
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
-                        Navigator.pop(context);
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
+//                         Navigator.pop(context);
+//           // //               Navigator.pop(context);
+//                         PersistentNavBarNavigator.pushNewScreen(
+//             context,
+//             screen: DashBoard(
+//               // token: widget.token ?? ""
+//               // socket: widget.socket,
+//             ),
+//             withNavBar: true, // OPTIONAL VALUE. True by default.
+//             pageTransitionAnimation: PageTransitionAnimation.fade,
+//           );
+//                       }
+//                       else if (widget.chat == false) {
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()}); 
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid": widget.communicationUserModel?.id ?? ""
+//                         });
+//                         print("user left too");
 
-                      }
-                      else if (widget.chat == false) {
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()}); 
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid": widget.communicationUserModel?.id ?? ""
-                        });
-                        print("user left too");
-
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-  if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+//   if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
                          
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
                          
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
 
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
 
-                        Navigator.pop(context);
-                      } else {
-                        BlocProvider.of<CommunicationBloc>(context).add(
-                            GetFilterdChatListEvent(
-                                token: widget.token ?? "",
-                                chatFilter: "chats"));
-                        Navigator.pop(context);
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':  widget.communicationuser?.id,'userid':widget.communicationuser?.users?[0].id.toString()}); 
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid":widget.communicationuser?.users?[0].id ?? ""
-                        });
-                        print("user left too");
+//                         Navigator.pop(context);
+//                       } else {
+//                         BlocProvider.of<CommunicationBloc>(context).add(
+//                             GetFilterdChatListEvent(
+//                                 token: widget.token ?? "",
+//                                 chatFilter: "chats"));
+//                         Navigator.pop(context);
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':  widget.communicationuser?.id,'userid':widget.communicationuser?.users?[0].id.toString()}); 
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid":widget.communicationuser?.users?[0].id ?? ""
+//                         });
+//                         print("user left too");
 
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-                          if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
-
-                          
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
-                        
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
-
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
-                        Navigator.pop(context);
-                      }
-                    } else {
-                       if(widget.redirectchatid != ""){
-                        print("push notificstion redirection");
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});  
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid": widget.loginUserId
-                        });
-                        print("user left too");
-
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-                          
-                          if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
-                          if (ismount) {
-                            widget.socket
-                                ?.emit("group.message.seen", widget.roomId);
-                            widget.socket?.on("msg.seen.by",
-                                (data) => print("active userss $data"));
-                          }
-
-
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
-                        
-                        widget.socket!.off("user.left");
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
-
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
-                        Navigator.pop(context);
-          //               Navigator.pop(context);
-          //               PersistentNavBarNavigator.pushNewScreen(
-          //   context,
-          //   screen: DashBoard(
-          //     // token: widget.token ?? ""
-          //     // socket: widget.socket,
-          //   ),
-          //   withNavBar: true, // OPTIONAL VALUE. True by default.
-          //   pageTransitionAnimation: PageTransitionAnimation.fade,
-          // );
-                      }
-                   else   if (widget.isgrp == false) {
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.communicationUserModel?.chatid,'userid':widget.loginUserId});  
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid": widget.loginUserId??""        //widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
-                        });
-                        print("user left too");
-
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-                          if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
-                          if (ismount) {
-                            widget.socket
-                                ?.emit("group.message.seen", widget.roomId);
-                            widget.socket?.on("msg.seen.by",
-                                (data) => print("active userss $data"));
-                          }
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+//                           if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
 
                           
-
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
                         
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
 
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
+//                         Navigator.pop(context);
+//                       }
+//                     } else {
 
-                        Navigator.pop(context);
-                      } else {
-                        widget.socket!.emit("update.list", {print("update")});
-                        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.grpuser?.chatid,'userid':widget.loginUserId});  
-                        widget.socket!.emit("leave.chat", {
-                          "room": widget.roomId ?? "",
-                          "userid": widget.loginUserId ?? ""
-                        });
-                        print("user left too");
+//                        if(widget.redirectchatid != ""){
+//                         print("push notificstion redirection");
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});  
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid": widget.loginUserId
+//                         });
+//                         print("user left too");
 
-                        print("user left too");
-                        widget.socket!.on("left.room", (data) {
-                          print("room left $data");
-                          if (mounted) {
-                            widget.socket!.emit("get.clients", widget.roomId);
-                            widget.socket!.on("active.length", (data) {
-                              saveactiveusers(data);
-                              print("ACTIVE ...length1 $data");
-                            });
-                          }
-                          if (ismount) {
-                            widget.socket
-                                ?.emit("group.message.seen", widget.roomId);
-                            widget.socket?.on("msg.seen.by",
-                                (data) => print("active userss $data"));
-                          }
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+                          
+//                           if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
+//                           if (ismount) {
+//                             widget.socket
+//                                 ?.emit("group.message.seen", widget.roomId);
+//                             widget.socket?.on("msg.seen.by",
+//                                 (data) => print("active userss $data"));
+//                           }
 
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-                          });
-                        });
+
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
                         
-                        widget.socket!.on("user.left", (data) {
-                          print("user left");
+//                         widget.socket!.off("user.left");
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
 
-                          if (data["userid"] == widget.loginUserId) {
-                            print("ACTIVE length sharedprefww");
-                            saveUnreadMessageCount(0, widget.roomId ?? "");
-                            print("user left the room1 ${data["chatid"]}");
-                            setState(() {});
-                          } else {
-                            print("same user id");
-                          }
-                        });
-                        Navigator.pop(context);
-                      }
-                      //           PersistentNavBarNavigator.pushNewScreen(
-                      //   context,
-                      //   screen: CommunicationModule(),
-                      //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                      //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                      // );
-                    }
-                  },
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
+//                         Navigator.pop(context);
+//           //               Navigator.pop(context);
+//           //               PersistentNavBarNavigator.pushNewScreen(
+//           //   context,
+//           //   screen: DashBoard(
+//           //     // token: widget.token ?? ""
+//           //     // socket: widget.socket,
+//           //   ),
+//           //   withNavBar: true, // OPTIONAL VALUE. True by default.
+//           //   pageTransitionAnimation: PageTransitionAnimation.fade,
+//           // );
+//                       }
+//                    else   if (widget.isgrp == false) {
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.communicationUserModel?.chatid,'userid':widget.loginUserId});  
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid": widget.loginUserId??""        //widget.cmntgrpid!=""?widget.cmntgrpid: widget.communicationUserModel?.id ?? ""
+//                         });
+//                         print("user left too");
+
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+//                           if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
+//                           if (ismount) {
+//                             widget.socket
+//                                 ?.emit("group.message.seen", widget.roomId);
+//                             widget.socket?.on("msg.seen.by",
+//                                 (data) => print("active userss $data"));
+//                           }
+
+                          
+
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
+                        
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
+
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
+
+//                         Navigator.pop(context);
+//                       } else {
+//                         widget.socket!.emit("update.list", {print("update")});
+//                         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.cmntgrpid!=""?widget.cmntgrpid:widget.grpuser?.chatid,'userid':widget.loginUserId});  
+//                         widget.socket!.emit("leave.chat", {
+//                           "room": widget.roomId ?? "",
+//                           "userid": widget.loginUserId ?? ""
+//                         });
+//                         print("user left too");
+
+//                         print("user left too");
+//                         widget.socket!.on("left.room", (data) {
+//                           print("room left $data");
+//                           if (mounted) {
+//                             widget.socket!.emit("get.clients", widget.roomId);
+//                             widget.socket!.on("active.length", (data) {
+//                               saveactiveusers(data);
+//                               print("ACTIVE ...length1 $data");
+//                             });
+//                           }
+//                           if (ismount) {
+//                             widget.socket
+//                                 ?.emit("group.message.seen", widget.roomId);
+//                             widget.socket?.on("msg.seen.by",
+//                                 (data) => print("active userss $data"));
+//                           }
+
+//                           widget.socket!.on("msg1.seen", (data) {
+//                             print("room leave message $data");
+//                           });
+//                         });
+                        
+//                         widget.socket!.on("user.left", (data) {
+//                           print("user left");
+
+//                           if (data["userid"] == widget.loginUserId) {
+//                             print("ACTIVE length sharedprefww");
+//                             saveUnreadMessageCount(0, widget.roomId ?? "");
+//                             print("user left the room1 ${data["chatid"]}");
+//                             setState(() {});
+//                           } else {
+//                             print("same user id");
+//                           }
+//                         });
+//                         Navigator.pop(context);
+//                       }
+//                       //           PersistentNavBarNavigator.pushNewScreen(
+//                       //   context,
+//                       //   screen: CommunicationModule(),
+//                       //   withNavBar: true, // OPTIONAL VALUE. True by default.
+//                       //   pageTransitionAnimation: PageTransitionAnimation.fade,
+//                       // );
+//                     }
+//                   },
                   child: const Icon(
                     Icons.arrow_back,
                     color: Colors.white,
@@ -410,7 +425,12 @@ if (mounted) {
               const SizedBox(
                 width: 5,
               ),
-              GestureDetector(
+             widget.isGroup==true? BlocBuilder<GroupBloc,GroupState>(
+                builder: (context,state){
+                if(state is GetGroupProfiledataDetailsLoading){
+                  customCupertinoLoading();
+                }else if(state is GetGroupProfiledataDetailsSuccess){
+                  return GestureDetector(
                 onTap: () {
                   if (widget.isGroup == false) {
                     // PersistentNavBarNavigator.pushNewScreen(
@@ -428,6 +448,15 @@ if (mounted) {
                     //   pageTransitionAnimation: PageTransitionAnimation.fade,
                     // );
                   } else if(widget.cmntgrpid=="") {
+                    // BlocProvider(
+          //   create: (context) => GroupBloc()
+          //     ..add(GroupProfileGet(
+          //         chatid: widget.communicationUserModel?.chatid ?? "",
+          //         token: widget.token ?? "")),
+          // ),
+          context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: widget.roomId??"", token: widget.token??"")
+          );
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
                       screen: ChatProfileScreen2(
@@ -450,80 +479,84 @@ if (mounted) {
                     );
                   }
                 },
-                child:widget.isGroup==false? 
-             widget.chat==true?widget.communicationuser?.users![0].photo == null||widget.communicationuser!.users![0].photo!.isEmpty?
-             TextAvatar(
-                        shape: Shape.Circular,
-                        size: h / 95,
-                        numberLetters: 2,
-                        fontSize: w / 22,
-                        textColor: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        text: widget.isGroup == false
-                            ? widget.chat == false
-                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
-                                : "${widget.communicationuser?.name.toString().toUpperCase()}"
-                            : widget.isgrp == false
-                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
-                                : widget.cmntgrpid == ""
-                                    ? "${widget.grpuser?.gname.toString().toUpperCase()}"
-                                    : "${widget.cmntgrpname.toString().toUpperCase()}",
-                      )
-                    :  CircleAvatar(
+                child: 
+               Container(
+                 child: Row(
+                  children: [
+                     state.profileGetModel?.photo==null||
+                          state.profileGetModel!.photo!.isEmpty ?
+                       CircleAvatar(
+                            radius: 24,
+                            backgroundColor: ColorPalette.inactiveGrey,
+                            backgroundImage:  
+                                AssetImage("asset/chatgrpimg.png")
+                          )
+                          :CircleAvatar(
                             radius: w / 23,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(
-                                    widget.communicationuser?.users![0].photo ?? ""
-                                //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                            backgroundColor: ColorPalette.inactiveGrey,
+                            backgroundImage:  
+                             NetworkImage(
+                                state.profileGetModel?.photo ?? ""
+                                // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
                                 // "${widget.communicationUserModel?.photo}"
-                                // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
-                                ))
-             
-                :widget.communicationUserModel?.photoindividual == null ||
-                        widget.communicationUserModel!.photoindividual!.isEmpty 
-                    ? TextAvatar(
-                        shape: Shape.Circular,
-                        size: h / 95,
-                        numberLetters: 2,
-                        fontSize: w / 22,
-                        textColor: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        text: widget.isGroup == false
-                            ? widget.chat == false
-                              ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
-                                : "${widget.communicationuser?.name.toString().toUpperCase()}"
-                            : widget.isgrp == false
-                                ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
-                                : widget.cmntgrpid == ""
-                                    ? "${widget.grpuser?.gname.toString().toUpperCase()}"
-                                    : "${widget.cmntgrpname.toString().toUpperCase()}",
-                      )
-                    :  CircleAvatar(
-                            radius: w / 23,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(widget.communicationUserModel?.photoindividual ?? ""
-                                //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
-                                // "${widget.communicationUserModel?.photo}"
-                                // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
-                                ))
-                        // : CircleAvatar(
-                        //     radius: w / 23,
-                        //     backgroundColor: Colors.grey,
-                        //     backgroundImage:
-                        //         AssetImage("asset/chatgrpimg.png"))
-                                :CircleAvatar(
-                            radius: w / 23,
-                            backgroundColor: Colors.grey,
-                            backgroundImage:
-                                AssetImage("asset/chatgrpimg.png")),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+                                ),
+                          ),
+                          const SizedBox(
+                  width: 10,
+                               ),
+                  //              Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  // children: [
+                     Text("${state.profileGetModel?.name?.toTitleCase()}",
+                                    
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: w / 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                               
+                    // groupTypingUser != null
+                    //     ? Row(
+                    //         children: [
+                    //           CircleAvatar(
+                    //               backgroundColor: Colors.white,
+                    //               radius: 14,
+                    //               child: CircleAvatar(
+                    //                 backgroundImage: NetworkImage(
+                    //                     groupTypingUser?.photo ?? ""),
+                    //                 radius: 12,
+                    //               )),
+                    //           Text(
+                    //             "${groupTypingUser?.name} typing",
+                    //             style: const TextStyle(
+                    //               color: Color(0xff151522),
+                    //               fontSize: 16,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       )
+                    //     : Text(
+                    //         typing == true ? "typing" : "",
+                    //         style: const TextStyle(
+                    //           color: Color(0xff151522),
+                    //           fontSize: 16,
+                    //         ),
+                    //       )
+                  // ],
+                  //              )
+                  ],
+                 ),
+               )
+              );
+                }
+               return
               GestureDetector(
                 onTap: () {
                   if (widget.isGroup == false) {
-                    //    PersistentNavBarNavigator.pushNewScreen(
+                    // PersistentNavBarNavigator.pushNewScreen(
                     //   context,
                     //   screen: ChatProfileScreen(
                     //     chat: widget.chat,
@@ -531,13 +564,22 @@ if (mounted) {
                     //     roomId: widget.roomId,
                     //     socket: widget.socket,
                     //     isGroup: widget.communicationUserModel?.isgrp ?? false,
-                    //     communicationUserModel:widget.communicationUserModel,
+                    //     communicationUserModel: widget.communicationUserModel,
                     //     communicationuser: widget.communicationuser,
                     //   ),
                     //   withNavBar: true, // OPTIONAL VALUE. True by default.
                     //   pageTransitionAnimation: PageTransitionAnimation.fade,
                     // );
-                  } else if (widget.cmntgrpid == "") {
+                  } else if(widget.cmntgrpid=="") {
+                    // BlocProvider(
+          //   create: (context) => GroupBloc()
+          //     ..add(GroupProfileGet(
+          //         chatid: widget.communicationUserModel?.chatid ?? "",
+          //         token: widget.token ?? "")),
+          // ),
+          context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: widget.roomId??"", token: widget.token??"")
+          );
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
                       screen: ChatProfileScreen2(
@@ -545,23 +587,111 @@ if (mounted) {
                         token: widget.token,
                         roomId: widget.roomId,
                         socket: widget.socket,
+                        loginuserid: widget.loginUserId,
                         isGroup: true,
+                        isadmin: widget.isadmin,
                         redirectchatid: widget.redirectchatid,
                         redirectchatname: widget.redirectchatname,
-                        isadmin: widget.isadmin,
                         communicationUserModel: widget.communicationUserModel,
                         communicationuser: widget.grpuser,
                         grpmember: widget.grpmember,
+
                       ),
                       withNavBar: true, // OPTIONAL VALUE. True by default.
                       pageTransitionAnimation: PageTransitionAnimation.fade,
                     );
                   }
                 },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: 
+               Container(
+                 child: Row(
                   children: [
+                     widget.isGroup==false? 
+                              widget.chat==true?widget.communicationuser?.users![0].photo == null||widget.communicationuser!.users![0].photo!.isEmpty?
+                              TextAvatar(
+                          shape: Shape.Circular,
+                          size: h / 95,
+                          numberLetters: 2,
+                          fontSize: w / 22,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          text: widget.isGroup == false
+                              ? widget.chat == false
+                                ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                              : widget.isgrp == false
+                                  ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : widget.cmntgrpid == ""
+                                      ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                      : "${widget.cmntgrpname.toString().toUpperCase()}",
+                        )
+                      :  CircleAvatar(
+                              radius: w / 23,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(
+                                      widget.communicationuser?.users![0].photo ?? ""
+                                  //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                  // "${widget.communicationUserModel?.photo}"
+                                  // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                  ))
+                              
+                  :widget.communicationUserModel?.photoindividual == null ||
+                          widget.communicationUserModel!.photoindividual!.isEmpty 
+                      ? TextAvatar(
+                          shape: Shape.Circular,
+                          size: h / 95,
+                          numberLetters: 2,
+                          fontSize: w / 22,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          text: widget.isGroup == false
+                              ? widget.chat == false
+                                ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                              : widget.isgrp == false
+                                  ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : widget.cmntgrpid == ""
+                                      ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                      : "${widget.cmntgrpname.toString().toUpperCase()}",
+                        )
+                      :  CircleAvatar(
+                              radius: w / 23,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(widget.communicationUserModel?.photoindividual ?? ""
+                                  //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                  // "${widget.communicationUserModel?.photo}"
+                                  // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                  ))
+                          // : CircleAvatar(
+                          //     radius: w / 23,
+                          //     backgroundColor: Colors.grey,
+                          //     backgroundImage:
+                          //         AssetImage("asset/chatgrpimg.png"))
+                                  :widget.communicationUserModel?.photo==null||
+                          widget.communicationUserModel!.photo!.isEmpty ?
+                       CircleAvatar(
+                            radius: 24,
+                            backgroundColor: ColorPalette.inactiveGrey,
+                            backgroundImage:  
+                                AssetImage("asset/chatgrpimg.png")
+                          )
+                          :CircleAvatar(
+                            radius: w / 23,
+                            backgroundColor: ColorPalette.inactiveGrey,
+                            backgroundImage:  
+                             NetworkImage(
+                                widget.communicationUserModel?.photo ?? ""
+                                // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                                // "${widget.communicationUserModel?.photo}"
+                                ),
+                          ),
+                          const SizedBox(
+                  width: 10,
+                               ),
+                  //              Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  // children: [
                     widget.isGroup == false
                         ? Container(
                             // color: Colors.green,
@@ -603,7 +733,7 @@ if (mounted) {
                                   ),
                                 ),
                               )
-
+                               
                     // groupTypingUser != null
                     //     ? Row(
                     //         children: [
@@ -631,9 +761,211 @@ if (mounted) {
                     //           fontSize: 16,
                     //         ),
                     //       )
+                  // ],
+                  //              )
                   ],
-                ),
-              )
+                 ),
+               )
+              );
+               }
+              ):GestureDetector(
+                onTap: () {
+                  // if (widget.isGroup == false) {
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: ChatProfileScreen(
+                    //     chat: widget.chat,
+                    //     token: widget.token,
+                    //     roomId: widget.roomId,
+                    //     socket: widget.socket,
+                    //     isGroup: widget.communicationUserModel?.isgrp ?? false,
+                    //     communicationUserModel: widget.communicationUserModel,
+                    //     communicationuser: widget.communicationuser,
+                    //   ),
+                    //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
+                  // } else if(widget.cmntgrpid=="") {
+                    // BlocProvider(
+          //   create: (context) => GroupBloc()
+          //     ..add(GroupProfileGet(
+          //         chatid: widget.communicationUserModel?.chatid ?? "",
+          //         token: widget.token ?? "")),
+          // ),
+          // context.read<GroupBloc>().add(
+          //   GroupProfileGetdata(chatid: widget.roomId??"", token: widget.token??"")
+          // );
+          //           PersistentNavBarNavigator.pushNewScreen(
+          //             context,
+          //             screen: ChatProfileScreen2(
+          //               chat: widget.isgrp,
+          //               token: widget.token,
+          //               roomId: widget.roomId,
+          //               socket: widget.socket,
+          //               loginuserid: widget.loginUserId,
+          //               isGroup: true,
+          //               isadmin: widget.isadmin,
+          //               redirectchatid: widget.redirectchatid,
+          //               redirectchatname: widget.redirectchatname,
+          //               communicationUserModel: widget.communicationUserModel,
+          //               communicationuser: widget.grpuser,
+          //               grpmember: widget.grpmember,
+
+          //             ),
+          //             withNavBar: true, // OPTIONAL VALUE. True by default.
+          //             pageTransitionAnimation: PageTransitionAnimation.fade,
+          //           );
+                  // }
+                },
+                child: 
+               Container(
+                 child: Row(
+                  children: [
+                     
+                              widget.chat==true?widget.communicationuser?.users![0].photo == null||widget.communicationuser!.users![0].photo!.isEmpty?
+                              TextAvatar(
+                          shape: Shape.Circular,
+                          size: h / 95,
+                          numberLetters: 2,
+                          fontSize: w / 22,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          text: widget.isGroup == false
+                              ? widget.chat == false
+                                ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                              : widget.isgrp == false
+                                  ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : widget.cmntgrpid == ""
+                                      ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                      : "${widget.cmntgrpname.toString().toUpperCase()}",
+                        )
+                      :  CircleAvatar(
+                              radius: w / 23,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(
+                                      widget.communicationuser?.users![0].photo ?? ""
+                                  //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                  // "${widget.communicationUserModel?.photo}"
+                                  // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                  ))
+                              
+                  :widget.communicationUserModel?.photoindividual == null ||
+                          widget.communicationUserModel!.photoindividual!.isEmpty 
+                      ? TextAvatar(
+                          shape: Shape.Circular,
+                          size: h / 95,
+                          numberLetters: 2,
+                          fontSize: w / 22,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          text: widget.isGroup == false
+                              ? widget.chat == false
+                                ?widget.redirectchatname!=""?widget.redirectchatname:  "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : "${widget.communicationuser?.name.toString().toUpperCase()}"
+                              : widget.isgrp == false
+                                  ? "${widget.communicationUserModel?.name.toString().toUpperCase()}"
+                                  : widget.cmntgrpid == ""
+                                      ? "${widget.grpuser?.gname.toString().toUpperCase()}"
+                                      : "${widget.cmntgrpname.toString().toUpperCase()}",
+                        )
+                      :  CircleAvatar(
+                              radius: w / 23,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(widget.communicationUserModel?.photoindividual ?? ""
+                                  //  "https://api-uat-user.sidrabazar.com/media/${communicationUserModel?.users?[0].photo}"
+                                  // "${widget.communicationUserModel?.photo}"
+                                  // widget.isgrp==false ? widget.communicationUserModel?.photo?? "": widget.grpuser?.gphoto??"",
+                                  )),
+                          // : CircleAvatar(
+                          //     radius: w / 23,
+                          //     backgroundColor: Colors.grey,
+                          //     backgroundImage:
+                          //         AssetImage("asset/chatgrpimg.png"))
+                                  
+                          const SizedBox(
+                  width: 10,
+                               ),
+                  //              Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  // children: [
+                    widget.isGroup == false
+                        ? Container(
+                            // color: Colors.green,
+                            width: w / 1.9,
+                            child: Text(
+                              widget.chat == false
+                                  ?  widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                  : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationuser?.users![0].name?.toTitleCase()}",
+                              // maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: w / 25,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          )
+                        : widget.cmntgrpid == ""
+                            ? Text(
+                                widget.isgrp == false
+                                    ? widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.communicationUserModel?.name?.toTitleCase()}"
+                                    : widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}":"${widget.grpuser?.gname?.toTitleCase()}",
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: w / 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : Container(
+                                width: w / 1.8,
+                                child: Text(
+                                 widget.redirectchatid!=""?"${widget.redirectchatname.toTitleCase()}": "${widget.cmntgrpname.toTitleCase()}",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.white,
+                                    fontSize: w / 25,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              )
+                               
+                    // groupTypingUser != null
+                    //     ? Row(
+                    //         children: [
+                    //           CircleAvatar(
+                    //               backgroundColor: Colors.white,
+                    //               radius: 14,
+                    //               child: CircleAvatar(
+                    //                 backgroundImage: NetworkImage(
+                    //                     groupTypingUser?.photo ?? ""),
+                    //                 radius: 12,
+                    //               )),
+                    //           Text(
+                    //             "${groupTypingUser?.name} typing",
+                    //             style: const TextStyle(
+                    //               color: Color(0xff151522),
+                    //               fontSize: 16,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       )
+                    //     : Text(
+                    //         typing == true ? "typing" : "",
+                    //         style: const TextStyle(
+                    //           color: Color(0xff151522),
+                    //           fontSize: 16,
+                    //         ),
+                    //       )
+                  // ],
+                  //              )
+                  ],
+                 ),
+               )
+              ),
+              
             ],
           ),
           // PopupMenuButton(

@@ -29,7 +29,10 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
           userIdList: event.userIdList);
     } else if (event is GroupProfileGet) {
       yield* getGroupProfileDetails(chatId: event.chatid, token: event.token);
-    } else if (event is GroupLeaveEvent) {
+    }else if (event is GroupProfileGetdata) {
+      yield* getGroupProfiledataDetails(chatId: event.chatid, token: event.token);
+    }  
+    else if (event is GroupLeaveEvent) {
       yield* groupLeaveMap(roomId: event.roomId, token: event.token);
     } 
     else if(event is GroupMemberAddEvent){
@@ -40,6 +43,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
     else if(event is GroupProfileEditEvent){
       yield* groupprofileedit(token:event.token,chatid:event.chatId,groupname:event.groupname,groupdescription: event.groupdescription,image: event.image);
+    }
+    else if(event is GroupUploadPictureEvent){
+      yield* uploadImageMap(image: event.image);
     }
   }
 
@@ -63,6 +69,18 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield GetGroupProfileDetailsSuccess(profileGetModel: dataResponse);
     } else {
       yield GetGroupProfileDetailsFailed();
+    }
+  }
+  Stream<GroupState> getGroupProfiledataDetails(
+      {String? token, String? chatId}) async* {
+    yield GetGroupProfiledataDetailsLoading();
+    final dataResponse =
+        await _productData.getGroupProfileData(token ?? "", chatId ?? "");
+        print("state found ${dataResponse.status}");
+    if (dataResponse.status =="success") {
+      yield GetGroupProfiledataDetailsSuccess(profileGetModel: dataResponse.data);
+    } else {
+      yield GetGroupProfiledataDetailsFailed();
     }
   }
 
@@ -127,7 +145,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
   }
   Stream<GroupState> groupprofileedit(
-      {required String token, required String chatid,required String groupname,required String groupdescription,File? image}) async* {
+      {required String token, required String chatid,required String groupname,required String groupdescription,String? image}) async* {
     yield GroupProfileEditLoading();
     final dataResponse =
         await _productData.editgroupprofile(chatId: chatid, grpname: groupname, grpdescription: groupdescription, token: token,image: image);
@@ -136,6 +154,16 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield GroupProfileEditSuccess(successmsg:"Updated");
     } else {
       yield GroupProfileEditFailed(error:"Updation Failed");
+    }
+  }
+  Stream<GroupState> uploadImageMap(
+      {required File image}) async* {
+    yield GroupUploadPictureLoading();
+    final dataResponse = await _productData.uploadImageData1(img: image);
+    if (dataResponse.isNotEmpty) {
+      yield GroupUploadPictureSuccess(upload: dataResponse);
+    } else {
+      yield const GroupUploadPictureFailed(error: "failed");
     }
   }
 }

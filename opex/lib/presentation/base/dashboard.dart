@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
@@ -16,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -28,432 +29,518 @@ import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/cart_screen/cart_svg.dart';
 import '../dashboard_screen/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../task_operation/create/task_bloc/task_bloc.dart';
 import '../task_operation/task_title.dart';
 import 'icon_constants.dart';
-
 
 class DashBoard extends StatefulWidget {
   final int? index;
 
   const DashBoard({Key? key, this.index}) : super(key: key);
-
   @override
   State<DashBoard> createState() => _DashBoardState();
 }
 
 class _DashBoardState extends State<DashBoard> {
   String? token = '';
+
   IO.Socket? socketCon;
+
   IO.Socket? socketCon1;
+
   String? loginuserId;
+
   String? logingrpuserId;
+
   SharedPreferences? pref;
-  String oldmessageId="";
+
+  String oldmessageId = "";
+
   var data;
-  bool soketReady=false;
-String _previousConnectionState = 'Unknown';
 
+  bool soketReady = false;
 
-  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
+  String _previousConnectionState = 'Unknown';
 
+  void onDidReceiveNotificationResponse(
+      NotificationResponse notificationResponse) async {
     final String? payload = notificationResponse.payload;
 
-      if (data['Sidra_teams_key'] == "task_and_operation") {
+    if (data['Sidra_teams_key'] == "task_and_operation") {
+      context
+          .read<TaskBloc>()
+          .add(GetTaskReadListEvent(int.tryParse(data['chat_id']) ?? 0));
 
-        context
-            .read<TaskBloc>()
-            .add(GetTaskReadListEvent(int.tryParse(data['chat_id']) ?? 0));
-        PersistentNavBarNavigator.pushNewScreen(
+      PersistentNavBarNavigator.pushNewScreen(
+        context,
+
+        screen: TaskTitle(),
+
+        withNavBar: true, // OPTIONAL VALUE. True by default.
+
+        pageTransitionAnimation: PageTransitionAnimation.fade,
+      );
+
+      setState(() {});
+    } else if (data['Sidra_teams_key'] == "comment") {
+      print("else condition");
+
+      pref = await SharedPreferences.getInstance();
+
+      token = pref!.getString("token");
+
+      logingrpuserId = pref!.getString("logingrpuserid");
+
+      print("else condition.. $token $logingrpuserId");
+
+// if(!Navigator.canPop(context)){
+
+      context.read<ChatBloc>().add(ChatScreenGetEvent(
+          token: token.toString(),
+          pageNo: 1,
+          chatId: "",
+          grpchatId: data['chat_id'],
+          userId: logingrpuserId ?? ""));
+
+      Navigator.push(
           context,
-          screen: TaskTitle(),
-          withNavBar: true, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.fade,
-        );
-        setState(() {
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              token: token,
+              loginUserId: logingrpuserId,
+              socket: socketCon1,
+              grpchatid: data['chat_id'],
+              cmntgrpchatname: data['title'] ?? "",
+              isGroup: true,
+            ),
+          ));
 
-        });
-      } else if (data['Sidra_teams_key'] == "comment") {
+// }
 
-        print("else condition");
-        pref = await SharedPreferences.getInstance();
-        token = pref!.getString("token");
-        logingrpuserId = pref!.getString("logingrpuserid");
-        print("else condition.. $token $logingrpuserId");
-        // if(!Navigator.canPop(context)){
-        context.read<ChatBloc>().add(
-            ChatScreenGetEvent(
-                token: token.toString(),
-                pageNo: 1,
-                chatId: "",
-                grpchatId: data['chat_id'],
-                userId: logingrpuserId??""));
+      setState(() {});
+    } else {
+      print("else condition");
 
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
-          token: token,
-          loginUserId: logingrpuserId,
-          socket: socketCon1,
-          grpchatid: data['chat_id'],
-          cmntgrpchatname: data['title'] ?? "",
-          isGroup: true,
-        ),));
-        // }
-        setState(() {
+      pref = await SharedPreferences.getInstance();
 
-        });
-      }
-      else{
-        print("else condition");
+      token = pref!.getString("token");
 
-        pref = await SharedPreferences.getInstance();
-        token = pref!.getString("token");
-        loginuserId = pref!.getString("loginuserid");
-        print("else condition.. $token $loginuserId");
-        // if(!Navigator.canPop(context)){
-        print("background the notifaction");
-        context.read<ChatBloc>().add(
-            ChatScreenGetEvent(
-                token: token.toString(),
-                pageNo: 1,
-                chatId: data['chat_id'],
-                grpchatId: "",
-                userId: loginuserId??""));
+      loginuserId = pref!.getString("loginuserid");
 
-        // PersistentNavBarNavigator.pushNewScreen(
-        //   context,
-        //   screen:  ChatScreen(
-        //     token: token,
-        //     loginUserId: loginuserId,
-        //     socket: socketCon,
-        //     redirectchatid: id,
-        //     redirectchatname:
-        //        message.notification?.title??"",
-        //     isGroup: data['is_group_chat']=="true"?true:false,
-        //   ),
-        //   withNavBar: true, // OPTIONAL VALUE. True by default.
-        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-        // );
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
-          token: token,
-          loginUserId: loginuserId,
-          socket: socketCon,
-          redirectchatid: data['chat_id'],
-          redirectchatname:data['title']??"",
-          redirectionsenduserId: data['to_user_id'],
-          isGroup: data['is_group_chat']=="true"?true:false,
-        ),));
-        // }
-        setState(() {
+      print("else condition.. $token $loginuserId");
 
-        });
-      }
+// if(!Navigator.canPop(context)){
 
-    // if (notificationResponse.payload != null) {
-    //   debugPrint('notification payload: $payload');
-    // }
-    // print("sruthy vannu${data['title']}");
-    // await Navigator.push(
-    //   context,
-    //   MaterialPageRoute<void>(builder: (context) => CreateJob()),
-    // );
+      print("background the notifaction");
+
+      context.read<ChatBloc>().add(ChatScreenGetEvent(
+          token: token.toString(),
+          pageNo: 1,
+          chatId: data['chat_id'],
+          grpchatId: "",
+          userId: loginuserId ?? ""));
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              token: token,
+              loginUserId: loginuserId,
+              socket: socketCon,
+              redirectchatid: data['chat_id'],
+              redirectchatname: data['title'] ?? "",
+              redirectionsenduserId: data['to_user_id'],
+              isGroup: data['is_group_chat'] == "true" ? true : false,
+            ),
+          ));
+
+// }
+
+      setState(() {});
+    }
   }
 
-  Future<void> setupInteractedMessage() async {
-    final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins = FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings androidinitializationsettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings darwinInitializationSettings =
-    DarwinInitializationSettings();
-    const InitializationSettings initializationSettings =
-    InitializationSettings(
-        android: androidinitializationsettings,
-        iOS: darwinInitializationSettings);
+  Future<void> setupInteractedMessage(BuildContext context) async {
+    final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
+        FlutterLocalNotificationsPlugin();
 
+    const AndroidInitializationSettings androidinitializationsettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings darwinInitializationSettings =
+        DarwinInitializationSettings();
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: androidinitializationsettings,
+            iOS: darwinInitializationSettings);
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'messages', 'Messages',
         description: "This is for flutter firebase",
-        importance: Importance.max);
+        importance: Importance.max,playSound: true,enableVibration: true,ledColor:Colors.white);
 
-    flutterlocalnotificationplugins.initialize(initializationSettings,
+    flutterlocalnotificationplugins.initialize(
+      initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-        );
+    );
+if(Platform.isAndroid){
+//    print("notification dict");
+   FirebaseMessaging.onMessage.listen((event) async {
+final notification = event.notification;
+      final android = event.notification?.android;
 
+      data = event.data;
 
-    FirebaseMessaging.onMessage.listen((event) async {
-    // final notification = event.notification;
-    final android = event.notification?.android;
-    data = event.data;
-    // print("notification dict${data?}");
-    // print("notification dict${data?.body}");
-    print("notification dict$data");
-    if (data != null) {
-      flutterlocalnotificationplugins.show(
+// print("notification dict${data?}");
 
-        data.hashCode,
-        data['title'],
-        data['body'],
+// print("notification dict${data}");
 
+      print("notification dict$data");
+
+      if (data != null) {
+        flutterlocalnotificationplugins.show(
+          data.hashCode,
+          data['title'],
+          data['body'],
           NotificationDetails(
-              android: AndroidNotificationDetails(
-                  channel.id, channel.name,
-                  channelDescription: channel.description
+              android: AndroidNotificationDetails(channel.id, channel.name,
+                  channelDescription: channel.description,playSound: true,priority: Priority.high
 
-                  // icon: android.
-              ),
-          iOS: DarwinNotificationDetails(threadIdentifier: channel.id)),
-      );
+// icon: android.
 
-    }
+                  ),
+              // iOS: DarwinNotificationDetails(threadIdentifier: channel.id,
+              // presentSound: true,
+              // presentAlert: true
+              // )
+),
+        );
+      }
+    });
 
-  });
+}
 
-    // if(lifecycleEventHandler.inBackground==2){
+// if(lifecycleEventHandler.inBackground==2){
 
-      FirebaseMessaging.onMessageOpenedApp.listen((message) async {
-        print('Message opened while the app was in the background: $message');
-        data = message.data;
-        // Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
-        //   'uid': data["uid"] ,
-        //   'serviceUid': data["serviceUid"] ,
-        // });
-        String id = data['chat_id'];
-        print("hahaha${message.messageId} $id ..... ${message.notification?.title}");
-        if(message.messageId != oldmessageId){
-          if (data['Sidra_teams_key'] == "task_and_operation") {
-            oldmessageId = message.messageId!;
-            context
-                .read<TaskBloc>()
-                .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
-            PersistentNavBarNavigator.pushNewScreen(
+    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+      print('Message opened while the app was in the background: $message');
+
+      data = message.data;
+
+// Navigator.pushNamed(context,"/${data['Sidra_teams_key']}" , arguments: {
+
+// 'uid': data["uid"] ,
+
+// 'serviceUid': data["serviceUid"] ,
+
+// });
+
+      String id = data['chat_id'];
+
+      print(
+          "hahaha${message.messageId} $id ..... ${message.notification?.title}");
+
+      if (message.messageId != oldmessageId) {
+        if (data['Sidra_teams_key'] == "task_and_operation") {
+          oldmessageId = message.messageId!;
+
+          context
+              .read<TaskBloc>()
+              .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
+
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+
+            screen: TaskTitle(),
+
+            withNavBar: true, // OPTIONAL VALUE. True by default.
+
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+
+          setState(() {});
+        } else if (data['Sidra_teams_key'] == "comment") {
+          oldmessageId = message.messageId!;
+
+          print("background the notifaction comment");
+
+          print("else condition");
+
+          pref = await SharedPreferences.getInstance();
+
+          token = pref!.getString("token");
+
+          logingrpuserId = pref!.getString("logingrpuserid");
+
+          print("else condition.. $token $logingrpuserId");
+
+// if(!Navigator.canPop(context)){
+
+          context.read<ChatBloc>().add(ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id,
+              userId: logingrpuserId ?? ""));
+
+// PersistentNavBarNavigator.pushNewScreen(
+
+// context,
+
+// screen: ChatScreen(
+
+// token: token,
+
+// loginUserId: logingrpuserId,
+
+// socket: socketCon1,
+
+// grpchatid: id,
+
+// cmntgrpchatname:
+
+// message.notification?.title??"",
+
+// isGroup: true,
+
+// ),
+
+// withNavBar: true, // OPTIONAL VALUE. True by default.
+
+// pageTransitionAnimation: PageTransitionAnimation.fade,
+
+// );
+
+          Navigator.push(
               context,
-              screen: TaskTitle(),
-              withNavBar: true, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-            setState(() {
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  token: token,
+                  loginUserId: logingrpuserId,
+                  socket: socketCon1,
+                  grpchatid: id,
+                  cmntgrpchatname: message.notification?.title ?? "",
+                  isGroup: true,
+                ),
+              ));
 
-            });
-          } else if (data['Sidra_teams_key'] == "comment") {
-            oldmessageId = message.messageId!;
-            print("background the notifaction comment");
-            print("else condition");
-            pref = await SharedPreferences.getInstance();
-            token = pref!.getString("token");
-            logingrpuserId = pref!.getString("logingrpuserid");
-            print("else condition.. $token $logingrpuserId");
-            // if(!Navigator.canPop(context)){
-            context.read<ChatBloc>().add(
-                ChatScreenGetEvent(
-                    token: token.toString(),
-                    pageNo: 1,
-                    chatId: "",
-                    grpchatId: id,
-                    userId: logingrpuserId??""));
-            // PersistentNavBarNavigator.pushNewScreen(
-            //   context,
-            //   screen: ChatScreen(
-            //     token: token,
-            //     loginUserId: logingrpuserId,
-            //     socket: socketCon1,
-            //     grpchatid: id,
-            //     cmntgrpchatname:
-            //        message.notification?.title??"",
-            //     isGroup: true,
-            //   ),
-            //   withNavBar: true, // OPTIONAL VALUE. True by default.
-            //   pageTransitionAnimation: PageTransitionAnimation.fade,
-            // );
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+// }
+
+          setState(() {});
+        } else {
+          print("else condition");
+
+          oldmessageId = message.messageId!;
+
+          pref = await SharedPreferences.getInstance();
+
+          token = pref!.getString("token");
+
+          loginuserId = pref!.getString("loginuserid");
+
+          print("else condition.. $token $loginuserId");
+
+// if(!Navigator.canPop(context)){
+
+          print("background the notifaction");
+
+          context.read<ChatBloc>().add(ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: id,
+              grpchatId: "",
+              userId: loginuserId ?? ""));
+
+// PersistentNavBarNavigator.pushNewScreen(
+
+// context,
+
+// screen: ChatScreen(
+
+// token: token,
+
+// loginUserId: loginuserId,
+
+// socket: socketCon,
+
+// redirectchatid: id,
+
+// redirectchatname:
+
+// message.notification?.title??"",
+
+// isGroup: data['is_group_chat']=="true"?true:false,
+
+// ),
+
+// withNavBar: true, // OPTIONAL VALUE. True by default.
+
+// pageTransitionAnimation: PageTransitionAnimation.fade,
+
+// );
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  token: token,
+                  loginUserId: loginuserId,
+                  socket: socketCon,
+                  redirectchatid: id,
+                  redirectchatname: message.notification?.title ?? "",
+                  redirectionsenduserId: data['to_user_id'],
+                  isGroup: data['is_group_chat'] == "true" ? true : false,
+                ),
+              ));
+
+// }
+
+          setState(() {});
+        }
+      }
+    });
+
+// }
+
+    if (lifecycleEventHandler.inBackground == 4) {
+      FirebaseMessaging.instance
+          .getInitialMessage()
+          .then((RemoteMessage? message) async {
+        print("bfore msg open");
+
+        print('Message opened whilee the app was in the background: $message');
+
+        data = message?.data;
+
+        String id = data['chat_id'];
+
+// print("hahaha${message?.messageId} $id ..... ${message?.notification?.title}");
+
+// if(message?.messageId != oldmessageId){
+
+        if (data['Sidra_teams_key'] == "task_and_operation") {
+          // Fluttertoast.showToast(
+          //     msg: 'T & A',
+          //     backgroundColor: Colors.white,
+          //     textColor: Colors.black);
+
+// oldmessageId = message?.messageId??"";
+
+          context
+              .read<TaskBloc>()
+              .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
+
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+
+            screen: TaskTitle(),
+
+            withNavBar: false, // OPTIONAL VALUE. True by default.
+
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+        } else if (data['Sidra_teams_key'] == "comment") {
+          // Fluttertoast.showToast(
+          //     msg: 'COME TAS',
+          //     backgroundColor: Colors.white,
+          //     textColor: Colors.black);
+
+// oldmessageId = message?.messageId??"";
+
+          print("background the notifaction comment");
+
+          print("else condition");
+pref = await SharedPreferences.getInstance();
+          token = pref!.getString("token");
+          logingrpuserId = pref!.getString("logingrpuserid");
+
+          print("else condition.. $token $logingrpuserId");
+
+// if(!Navigator.canPop(context)){
+
+          context.read<ChatBloc>().add(ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: "",
+              grpchatId: id,
+              userId: logingrpuserId ?? ""));
+
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+
+            screen: ChatScreen(
               token: token,
               loginUserId: logingrpuserId,
               socket: socketCon1,
               grpchatid: id,
-              cmntgrpchatname: message.notification?.title ?? "",
+              cmntgrpchatname: data['title'] ?? "",
               isGroup: true,
-            ),));
-            // }
-            setState(() {
+            ),
 
-            });
-          }
-          else{
-            print("else condition");
-            oldmessageId = message.messageId!;
-            pref = await SharedPreferences.getInstance();
-            token = pref!.getString("token");
-            loginuserId = pref!.getString("loginuserid");
-            print("else condition.. $token $loginuserId");
-            // if(!Navigator.canPop(context)){
-            print("background the notifaction");
-            context.read<ChatBloc>().add(
-                ChatScreenGetEvent(
-                    token: token.toString(),
-                    pageNo: 1,
-                    chatId: id,
-                    grpchatId: "",
-                    userId: loginuserId??""));
+            withNavBar: false, // OPTIONAL VALUE. True by default.
 
-            // PersistentNavBarNavigator.pushNewScreen(
-            //   context,
-            //   screen:  ChatScreen(
-            //     token: token,
-            //     loginUserId: loginuserId,
-            //     socket: socketCon,
-            //     redirectchatid: id,
-            //     redirectchatname:
-            //        message.notification?.title??"",
-            //     isGroup: data['is_group_chat']=="true"?true:false,
-            //   ),
-            //   withNavBar: true, // OPTIONAL VALUE. True by default.
-            //   pageTransitionAnimation: PageTransitionAnimation.fade,
-            // );
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
+        } else {
+          // Fluttertoast.showToast(
+          //     msg: 'COMMU',
+          //     backgroundColor: Colors.white,
+          //     textColor: Colors.black);
+
+          print("else condition");
+
+// oldmessageId = message?.messageId??"";
+
+pref = await SharedPreferences.getInstance();
+
+          token = pref!.getString("token");
+
+          loginuserId = pref!.getString("loginuserid");
+
+          print("else condition.. $token $loginuserId");
+
+// if(!Navigator.canPop(context)){
+
+          print("background the notifaction");
+
+          context.read<ChatBloc>().add(ChatScreenGetEvent(
+              token: token.toString(),
+              pageNo: 1,
+              chatId: id,
+              grpchatId: "",
+              userId: loginuserId ?? ""));
+
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+
+            screen: ChatScreen(
               token: token,
               loginUserId: loginuserId,
               socket: socketCon,
               redirectchatid: id,
-              redirectchatname: message.notification?.title??"",
+              redirectchatname: data['title'] ?? "",
               redirectionsenduserId: data['to_user_id'],
-              isGroup: data['is_group_chat']=="true"?true:false,
-            ),));
-            // }
-            setState(() {
+              isGroup: data['is_group_chat'] == "true" ? true : false,
+            ),
 
-            });
-          }
+            withNavBar: false, // OPTIONAL VALUE. True by default.
+
+            pageTransitionAnimation: PageTransitionAnimation.fade,
+          );
         }
-
       });
-    // }
-
-
-    if(lifecycleEventHandler.inBackground==0){
-
-      FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) async{
-        if(message!=null){
-          print("bfore msg open");
-
-
-          print('Message opened while the app was in the background: $message');
-          data = message?.data;
-
-          String id = data['chat_id'];
-          // print("hahaha${message?.messageId} $id ..... ${message?.notification?.title}");
-          // if(message?.messageId != oldmessageId){
-
-          if (data['Sidra_teams_key'] == "task_and_operation") {
-            Fluttertoast.showToast(
-                msg: 'T & A',
-                backgroundColor: Colors.white,
-                textColor: Colors.black
-            );
-            // oldmessageId = message?.messageId??"";
-            context
-                .read<TaskBloc>()
-                .add(GetTaskReadListEvent(int.tryParse(id) ?? 0));
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: TaskTitle(),
-              withNavBar: false, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-
-          } else if (data['Sidra_teams_key'] == "comment") {
-            Fluttertoast.showToast(
-                msg: 'COME TAS',
-                backgroundColor: Colors.white,
-                textColor: Colors.black
-            );
-            // oldmessageId = message?.messageId??"";
-            print("background the notifaction comment");
-            print("else condition");
-            // pref = await SharedPreferences.getInstance();
-            token = pref!.getString("token");
-            logingrpuserId = pref!.getString("logingrpuserid");
-            print("else condition.. $token $logingrpuserId");
-            // if(!Navigator.canPop(context)){
-            context.read<ChatBloc>().add(
-                ChatScreenGetEvent(
-                    token: token.toString(),
-                    pageNo: 1,
-                    chatId: "",
-                    grpchatId: id,
-                    userId: logingrpuserId??""));
-
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: ChatScreen(
-                token: token,
-                loginUserId: logingrpuserId,
-                socket: socketCon1,
-                grpchatid: id,
-                cmntgrpchatname: data['title'] ?? "",
-                isGroup: true,
-              ),
-              withNavBar: false, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-
-
-          }
-          else{
-            Fluttertoast.showToast(
-                msg: 'COMMU',
-                backgroundColor: Colors.white,
-                textColor: Colors.black
-            );
-            print("else condition");
-            // oldmessageId = message?.messageId??"";
-            // pref = await SharedPreferences.getInstance();
-            token = pref!.getString("token");
-            loginuserId = pref!.getString("loginuserid");
-            print("else condition.. $token $loginuserId");
-            // if(!Navigator.canPop(context)){
-            print("background the notifaction");
-
-            context.read<ChatBloc>().add(
-                ChatScreenGetEvent(
-                    token: token.toString(),
-                    pageNo: 1,
-                    chatId: id,
-                    grpchatId: "",
-                    userId: loginuserId??""));
-
-
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen:
-              ChatScreen(
-                token: token,
-                loginUserId: loginuserId,
-                socket: socketCon,
-                redirectchatid: id,
-                redirectchatname:
-                data['title']??"",
-                redirectionsenduserId: data['to_user_id'],
-                isGroup: data['is_group_chat']=="true"?true:false,
-              ),
-              withNavBar: false, // OPTIONAL VALUE. True by default.
-              pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
-
-
-          }
-        }
-
-
-      });
-
     }
-
   }
+
+
 
   StreamController<String> connectionStatusController =
       StreamController<String>.broadcast();
+
   Future<void> initConnectivity() async {
     var connectivityResult = await Connectivity().checkConnectivity();
+
     updateConnectionStatus(connectivityResult);
   }
 
@@ -465,11 +552,7 @@ String _previousConnectionState = 'Unknown';
     pref = await SharedPreferences.getInstance();
 
     token = pref!.getString("token");
-
-    Fluttertoast.showToast(
-        msg: 'token kitty monea$token',
-        backgroundColor: Colors.white,
-        textColor: Colors.black);
+    
 
     print("socket token $token");
 
@@ -479,7 +562,6 @@ String _previousConnectionState = 'Unknown';
 
     socketgrpProvider.connect(token.toString());
   }
-
 
   void updateConnectionStatus(ConnectivityResult connectivityResult) {
     if (connectivityResult == ConnectivityResult.mobile) {
@@ -508,26 +590,70 @@ String _previousConnectionState = 'Unknown';
   //   }
   // }
 
-  Future _showNotificationWithDefaultSound() async {
-    // if (!lifecycleEventHandler.inBackground){
-    //   return;
-    // }
-    print("shifas${lifecycleEventHandler.inBackground}");
-    //otherwise show a notification
+// @override
 
+// void didChangeAppLifecycleState(AppLifecycleState state) {
+
+// switch (state) {
+
+// case AppLifecycleState.resumed:
+
+// print("app in resumed");
+
+// break;
+
+// case AppLifecycleState.inactive:
+
+// print("app in inactive");
+
+// break;
+
+// case AppLifecycleState.paused:
+
+// print("app in paused");
+
+// break;
+
+// case AppLifecycleState.detached:
+
+// print("app in detached");
+
+// break;
+
+// }
+
+// }
+
+  Future _showNotificationWithDefaultSound() async {
+// if (!lifecycleEventHandler.inBackground){
+
+// return;
+
+// }
+
+    print("shifas${lifecycleEventHandler.inBackground}");
+
+//otherwise show a notification
   }
+
   @override
   void initState() {
     _showNotificationWithDefaultSound();
-    setupInteractedMessage();
-    newIndex=widget.index??0;
-    setState(() {
 
-    });
+    setupInteractedMessage(context);
+
+    newIndex = widget.index ?? 0;
+
+    setState(() {});
+
     initConnectivity();
+
     Connectivity().onConnectivityChanged.listen(updateConnectionStatus);
+
     _controller = PersistentTabController(initialIndex: widget.index ?? 0);
+
     context.read<ProfileBloc>().add(GetProfileEvent());
+
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
     super.initState();
   }
@@ -535,7 +661,9 @@ String _previousConnectionState = 'Unknown';
   @override
   void dispose() {
     connectionStatusController.close();
-    // WidgetsBinding.instance.removeObserver();
+
+// WidgetsBinding.instance.removeObserver();
+
     super.dispose();
   }
 
@@ -547,14 +675,20 @@ String _previousConnectionState = 'Unknown';
 
   List<Widget> _buildScreens() {
     return [
-      const HomeScreen(),
+       HomeScreen(homeTap: (){
+           _controller.jumpToTab(1);
+       },taskTap: (){
+        print("tapppppeeyyy");
+       _controller.jumpToTab(2);
+        // setState(() {
+          
+        // });
+       },),
       CommunicationModule(),
       const TaskAndOperation(),
       const NewProfileScreen(),
     ];
   }
- 
-
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
@@ -567,6 +701,7 @@ String _previousConnectionState = 'Unknown';
               color: ColorPalette.inactiveGrey),
           activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
+
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().chatIcon,
@@ -577,10 +712,8 @@ String _previousConnectionState = 'Unknown';
           activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey,
           routeAndNavigatorSettings: RouteAndNavigatorSettings(
-            initialRoute: '/',
-            defaultTitle: "communication"
-          )
-          ),
+              initialRoute: '/', defaultTitle: "communication")),
+
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().taskIcon,
@@ -590,6 +723,7 @@ String _previousConnectionState = 'Unknown';
               color: ColorPalette.inactiveGrey),
           activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
+
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
             IconConstants().profileIcon,
@@ -599,36 +733,60 @@ String _previousConnectionState = 'Unknown';
               color: ColorPalette.inactiveGrey),
           activeColorPrimary: Color(0xff222222),
           inactiveColorPrimary: ColorPalette.inactiveGrey),
-      // PersistentBottomNavBarItem(
-      //     icon: SvgPicture.string(
-      //       IconConstants().infinityIcon,color: ColorPalette.primary,
-      //     ),
-      //     inactiveIcon: SvgPicture.string(
-      //         IconConstants().infinityInactiveIcon,color:ColorPalette.inactiveGrey
-      //     ),
-      //     activeColorPrimary: ColorPalette.primary,
-      //     inactiveColorPrimary: ColorPalette.inactiveGrey
-      // ),
-      // PersistentBottomNavBarItem(
-      //     icon: SvgPicture.string(
-      //       IconConstants().infinityIcon,color: ColorPalette.primary,
-      //     ),
-      //     inactiveIcon: SvgPicture.string(
-      //         IconConstants().infinityInactiveIcon,color:ColorPalette.inactiveGrey
-      //     ),
-      //     activeColorPrimary: ColorPalette.primary,
-      //     inactiveColorPrimary: ColorPalette.inactiveGrey
-      // ),
+
+// PersistentBottomNavBarItem(
+
+// icon: SvgPicture.string(
+
+// IconConstants().infinityIcon,color: ColorPalette.primary,
+
+// ),
+
+// inactiveIcon: SvgPicture.string(
+
+// IconConstants().infinityInactiveIcon,color:ColorPalette.inactiveGrey
+
+// ),
+
+// activeColorPrimary: ColorPalette.primary,
+
+// inactiveColorPrimary: ColorPalette.inactiveGrey
+
+// ),
+
+// PersistentBottomNavBarItem(
+
+// icon: SvgPicture.string(
+
+// IconConstants().infinityIcon,color: ColorPalette.primary,
+
+// ),
+
+// inactiveIcon: SvgPicture.string(
+
+// IconConstants().infinityInactiveIcon,color:ColorPalette.inactiveGrey
+
+// ),
+
+// activeColorPrimary: ColorPalette.primary,
+
+// inactiveColorPrimary: ColorPalette.inactiveGrey
+
+// ),
     ];
   }
 
   bool _doubleBackToExitPressedOnce = false;
+
   Future<bool> _onWillPop() async {
     print("new index $newIndex");
+
     if (_doubleBackToExitPressedOnce) {
       print("new index $newIndex");
+
       return true;
     }
+
     _doubleBackToExitPressedOnce = true;
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -645,43 +803,56 @@ String _previousConnectionState = 'Unknown';
   @override
   Widget build(BuildContext context) {
     final socketpro = context.watch<scoketProvider>();
+
     socketCon = socketpro.socket;
+
     final socketpro1 = context.watch<scoketgrpProvider>();
+
     socketCon1 = socketpro1.socket;
+
     double w1 = MediaQuery.of(context).size.width;
+
     double w = w1 > 700 ? 400 : w1;
+
     return StreamBuilder(
         stream: connectionStatusController.stream,
         initialData: 'Unknown',
         builder: (context, snapshot) {
           print("enthaayiii ${snapshot.data}");
-                _previousConnectionState = snapshot.data.toString();
+
+          _previousConnectionState = snapshot.data.toString();
 
           if (_previousConnectionState != 'WiFi' &&
-            _previousConnectionState != 'Mobile data' &&
-            (snapshot.data == 'WiFi' || snapshot.data == 'Mobile data')) {
-          // Trigger event to connect to the socket only if there was no internet connection before
-          // context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
-          socketconnnect();
-        }
-          // context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+              _previousConnectionState != 'Mobile data' &&
+              (snapshot.data == 'WiFi' || snapshot.data == 'Mobile data')) {
+// Trigger event to connect to the socket only if there was no internet connection before
+
+// context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+
+            socketconnnect();
+          }
+
+// context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
+
           return snapshot.data == "WiFi" || snapshot.data == "Mobile data"
               ? MultiBlocListener(
-  listeners: [
-    BlocListener<ProfileBloc, ProfileState>(
-      listener: (context, state) {
-        if(state is ProfileSuccess){
-          Variable.profilePic=state.user.userMete?.profile??"";
-          print("profile vannu${Variable.profilePic}");
-          setState(() {
+                  listeners: [
+                    BlocListener<ProfileBloc, ProfileState>(
+                      listener: (context, state) {
+                        if (state is ProfileSuccess) {
+                          Variable.profilePic =
+                              state.user.userMete?.profile ?? "";
 
-          });
-        }
-        // TODO: implement listener
-      },
-    ),
-  ],
-  child: UpgradeAlert(
+                          print("profile vannu${Variable.profilePic}");
+
+                          setState(() {});
+                        }
+
+// TODO: implement listener
+                      },
+                    ),
+                  ],
+                  child: UpgradeAlert(
                     child: MediaQuery(
                       data:
                           MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -689,20 +860,27 @@ String _previousConnectionState = 'Unknown';
                         onWillPop: newIndex != 0
                             ? () async {
                                 newIndex = 0;
+
                                 setState(() {});
+
                                 return true;
                               }
                             : _onWillPop,
                         child: Scaffold(
                           body: PersistentTabView(
+
                             context,
                             padding:
                                 const NavBarPadding.only(left: 10, right: 10),
                             controller: _controller,
+                              screens: _buildScreens(),
                             onItemSelected: (value) {
                               newIndex = value;
+
                               setState(() {});
+
                               print("llllll$newIndex");
+
                               if (newIndex == 0 || newIndex == 3) {
                                 setState(() {});
                               } else if (newIndex == 2) {
@@ -711,7 +889,7 @@ String _previousConnectionState = 'Unknown';
                                     .add(GetProfileEvent());
                               }
                             },
-                            screens: _buildScreens(),
+                          
                             items: _navBarsItems(),
                             confineInSafeArea: true,
                             hideNavigationBarWhenKeyboardShows: true,
@@ -722,7 +900,9 @@ String _previousConnectionState = 'Unknown';
                             decoration: NavBarDecoration(boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.shade200.withOpacity(0.8),
+
                                 blurRadius: 2.0,
+
                                 spreadRadius: 1, //New
                               )
                             ]),
@@ -745,7 +925,7 @@ String _previousConnectionState = 'Unknown';
                       ),
                     ),
                   ),
-)
+                )
               : Scaffold(
                   backgroundColor: Colors.white,
                   body: Container(
@@ -793,14 +973,9 @@ String _previousConnectionState = 'Unknown';
                                 context
                                     .read<DummyLoginBloc>()
                                     .add(TokenCreationCommunicationEvent());
-                                PersistentNavBarNavigator.pushNewScreen(
-                                  context,
-                                  screen: DashBoard(),
-                                  withNavBar:
-                                      false, // OPTIONAL VALUE. True by default.
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.fade,
-                                );
+
+                                  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 0,)), (route) => false);
+
                                 setState(() {});
                               },
                               gradient: const LinearGradient(
@@ -842,10 +1017,11 @@ String _previousConnectionState = 'Unknown';
 
   }
 }
+
 final lifecycleEventHandler = LifecycleEventHandler._();
 
 class LifecycleEventHandler extends WidgetsBindingObserver {
-  var inBackground =0;
+  var inBackground = 0;
 
   LifecycleEventHandler._();
 
@@ -857,38 +1033,63 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        inBackground =2;
+        inBackground = 2;
+
         print("shifas app in resumed${lifecycleEventHandler.inBackground}");
+
         break;
+
       case AppLifecycleState.inactive:
-        inBackground =2;
+        inBackground = 2;
+
         print("shifas app in inactive${lifecycleEventHandler.inBackground}");
+
         break;
+
       case AppLifecycleState.paused:
-        inBackground =2;
+        inBackground = 2;
+
         print("shifas app in paused${lifecycleEventHandler.inBackground}");
+
         break;
+
       case AppLifecycleState.detached:
-        inBackground =4;
+        inBackground = 4;
+
         print("shifas app in detached${lifecycleEventHandler.inBackground}");
+
         break;
+
       case AppLifecycleState.hidden:
-        inBackground =2;
+        inBackground = 2;
+
         print("shifas app in hidden${lifecycleEventHandler.inBackground}");
+
         break;
     }
 
-    // switch (state) {
-    //   case AppLifecycleState.resumed:
-    //     inBackground = true;
-    //     print('in foreground');
-    //     break;
-    //   case AppLifecycleState.inactive:
-    //   case AppLifecycleState.paused:
-    //   case AppLifecycleState.detached:
-    //     inBackground = false;
-    //     print('in background');
-    //     break;
-    // }
+// switch (state) {
+
+// case AppLifecycleState.resumed:
+
+// inBackground = true;
+
+// print('in foreground');
+
+// break;
+
+// case AppLifecycleState.inactive:
+
+// case AppLifecycleState.paused:
+
+// case AppLifecycleState.detached:
+
+// inBackground = false;
+
+// print('in background');
+
+// break;
+
+// }
   }
 }

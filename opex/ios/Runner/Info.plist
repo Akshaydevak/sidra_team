@@ -49,7 +49,6 @@
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
-		<string>location</string>
 	</array>		
 	<key>LSApplicationQueriesSchemes</key>
 	<array>

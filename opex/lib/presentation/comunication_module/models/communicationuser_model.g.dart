@@ -187,6 +187,41 @@ Map<String, dynamic> _$ProfileGetModelToJson(ProfileGetModel instance) =>
       'groups': instance.groups,
     };
 
+ProfileGroupGetModel _$ProfileGroupGetModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileGroupGetModel(
+      responsecode: json['response_code'] as int?,
+      status: json['status'] as String?,
+      data: json['data'] == null
+          ? null
+          : GroupProfileDataModel.fromJson(
+              json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProfileGroupGetModelToJson(
+        ProfileGroupGetModel instance) =>
+    <String, dynamic>{
+      'response_code': instance.responsecode,
+      'status': instance.status,
+      'data': instance.data,
+    };
+
+GroupProfileDataModel _$GroupProfileDataModelFromJson(
+        Map<String, dynamic> json) =>
+    GroupProfileDataModel(
+      photo: json['photoUrl'] as String?,
+      name: json['name'] as String?,
+      discription: json['description'] as String?,
+    );
+
+Map<String, dynamic> _$GroupProfileDataModelToJson(
+        GroupProfileDataModel instance) =>
+    <String, dynamic>{
+      'photoUrl': instance.photo,
+      'name': instance.name,
+      'description': instance.discription,
+    };
+
 Media _$MediaFromJson(Map<String, dynamic> json) => Media(
       users: (json['Users'] as List<dynamic>?)
           ?.map((e) => UserModel.fromJson(e as Map<String, dynamic>))
