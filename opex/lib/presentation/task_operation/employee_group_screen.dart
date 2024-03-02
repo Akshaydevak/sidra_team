@@ -359,7 +359,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
-                                  HapticFeedback.vibrate();
+                                  HapticFeedback.heavyImpact();
                                   context.read<EmployeeBloc>().add( GetEmployeeReadEvent(state.assignMeList?[i].id??0));
                                   // _showModalBottomAdditionalRole(state.assignMeList?[i]);
                                 },
@@ -418,7 +418,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
-                                  HapticFeedback.vibrate();
+                                  HapticFeedback.heavyImpact();
                                   print("tapped grou");
                                 },
                                 child: GroupCard(groupList:state.groupList[i] ),

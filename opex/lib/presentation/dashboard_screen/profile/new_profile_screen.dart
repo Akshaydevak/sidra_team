@@ -853,7 +853,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                   socketProvider.disconnect();
                                                   authentication
                                                       .clearAuthenticatedTokens();
-
+                                                  Variable.profilePic='';
                                                   context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
                                                   Navigator.of(context)
                                                       .pushAndRemoveUntil(

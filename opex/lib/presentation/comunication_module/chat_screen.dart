@@ -99,6 +99,8 @@ class _ChatScreenState extends State<ChatScreen>
 AudioPlayer? player = AudioPlayer();
 bool ismount1=true;
   bool isMount = true;
+  bool ismounted =true;
+  bool mountedis =true;
   bool isactivelen=true;
   bool isSecondMount = true;
   bool isThirdMount = true;
@@ -202,7 +204,9 @@ XFile? image;
         print("unreaded messages....");
         widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.chat==false
     ? widget.communicationUserModel?.chatid:
-    widget.communicationuser?.id,'userid':widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()});  
+    widget.communicationuser?.id,'userid':
+    widget.chat==false? widget.communicationUserModel?.id.toString():widget.communicationuser?.users?[0].id.toString()
+    });  
     }
     }else if(widget.isGroup==true && widget.isg==false && widget.redirectchatid==""){
         print("unreaded messagess....");
@@ -210,7 +214,7 @@ XFile? image;
     ? widget.communicationUserModel?.chatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
     }else if(widget.redirectchatid!=""){
         print("unreaded messagess....");
-        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});
+        widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.redirectionsenduserId});
     }
      
       widget.socket!.on("unread.update1", (data) {
@@ -496,17 +500,21 @@ widget.socket!.on("user.deleted.done",(data){
 
   if (activeUsersLength == 1) {
     print("fchgjh $sendMessageCount");
-    sendMessageCount += 1;
+    sendMessageCount = 1;
   } else {
     sendMessageCount = 0;
     print("lenght 2");
   }
+  widget.socket?.emit("unread.messages.group", {
+        'unreadMessageCount': sendMessageCount,
+        'chatid': widget.chat == false ? widget.redirectchatid != "" ? widget.redirectchatid : widget.communicationUserModel?.chatid : widget.communicationuser?.id,
+        'userids': widget.loginUserId });
 
-  widget.socket?.emit("unread.messages", {
-    'unreadMessageCount': sendMessageCount,
-    'chatid': widget.chat == false ? widget.redirectchatid != "" ? widget.redirectchatid : widget.communicationUserModel?.chatid : widget.communicationuser?.id,
-    'userid': widget.loginUserId.toString(),
-  });
+  // widget.socket?.emit("unread.messages", {
+  //   'unreadMessageCount': sendMessageCount,
+  //   'chatid': widget.chat == false ? widget.redirectchatid != "" ? widget.redirectchatid : widget.communicationUserModel?.chatid : widget.communicationuser?.id,
+  //   'userid': widget.loginUserId.toString(),
+  // });
 
   widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
   print("my msg count $sendMessageCount,'userid':${widget.communicationUserModel?.id} ");
@@ -585,6 +593,17 @@ widget.socket!.on("user.deleted.done",(data){
         'userids': unseenuser
       });
     }
+    widget.socket!.emit("update.list",{
+                        print("update ")
+                      });
+                         widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+                      widget.socket!.emit("update.list",{
+                        print("update ")
+                      });
+                         widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
+    widget.socket!.emit("update.list",{
+                        print("update ")
+                      });
     widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
     print("my msg count $unreadMessageCount,'userid':${widget.communicationUserModel?.chatid} ");
   }
@@ -801,6 +820,8 @@ widget.socket?.on("update.chat.list", (data) => print("fxgf  $data"));
     isMount = false;
     ismount1=false;
     isgrp=false;
+    ismounted=false;
+    mountedis=false;
     isdelete=false;
     isSecondMount = false;
     isThirdMount = false;
@@ -837,7 +858,7 @@ double currentScrollPosition= 0.0;
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
-                      widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.loginUserId??""});  
+                      widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.redirectionsenduserId??""});  
                       widget.socket!.emit("leave.chat",{
                         "room": roomId??"",
                         "userid":widget.loginUserId??""
@@ -847,9 +868,11 @@ double currentScrollPosition= 0.0;
                        print("user left too");
                      
     print("user left too");
+    
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                   if(mounted){
+                   if(ismounted){
+                    print("roooom left $data");
                      widget.socket!.emit("get.clients",roomId);
                       widget.socket!.on("active.length", handleActiveLength 
        );
@@ -861,22 +884,24 @@ double currentScrollPosition= 0.0;
                    
                    } );
                   });
-                   
+                    
                         
                         widget.socket!.on("user.left", (data){
-                          print("user left");
+                          print("user left $data");
                          
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
+                              saveUnreadMessageCount(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
-                          setState(() {
-                           
-                          });
+                          
                         }else{
                           print("same user id");
                         }
                         });
+                       
+                         widget.socket!.emit("update.list",{
+                        print("update")
+                      });
                         // Navigator.pop(context);
                         // Navigator.pop(context);
                         Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false);
@@ -918,7 +943,7 @@ double currentScrollPosition= 0.0;
                    
                    } );
                   });    widget.socket!.on("user.left", (data){
-                          print("user left");
+                          print("user left $data");
                          
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
@@ -955,7 +980,7 @@ double currentScrollPosition= 0.0;
     print("user left too");
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                   if(mounted){
+                   if(mountedis){
                      widget.socket!.emit("get.clients",roomId);
                       widget.socket!.on("active.length", handleActiveLength 
        );
@@ -1732,7 +1757,7 @@ print("qwerty3 ${entereduser.length}");
                        widget.socket!.emit("update.list",{
                         print("update")
                       });
-                      widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.loginUserId??""});  
+                      widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.redirectionsenduserId??""});  
                       widget.socket!.emit("leave.chat",{
                         "room": roomId??"",
                         "userid":widget.loginUserId??""
@@ -1742,9 +1767,11 @@ print("qwerty3 ${entereduser.length}");
                        print("user left too");
                      
     print("user left too");
+    
                   widget.socket!.on("left.room", (data) {
                     print("room left $data");
-                   if(mounted){
+                   if(ismounted){
+                    print("roooom left $data");
                      widget.socket!.emit("get.clients",roomId);
                       widget.socket!.on("active.length", handleActiveLength 
        );
@@ -1756,24 +1783,27 @@ print("qwerty3 ${entereduser.length}");
                    
                    } );
                   });
-                   
+                    
                         
                         widget.socket!.on("user.left", (data){
-                          print("user left");
+                          print("user left $data");
                          
                           if(data["userid"] == widget.loginUserId){
                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
+                              saveUnreadMessageCount(0,roomId??"");
                           print("user left the room1 ${data["chatid"]}");
-                          setState(() {
-                           
-                          });
+                          
                         }else{
                           print("same user id");
                         }
                         });
-                      Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false);
+                       
+                         widget.socket!.emit("update.list",{
+                        print("update")
+                      });
                         // Navigator.pop(context);
+                        // Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false);
           //               PersistentNavBarNavigator.pushNewScreen(
           //   context,
           //   screen: DashBoard(

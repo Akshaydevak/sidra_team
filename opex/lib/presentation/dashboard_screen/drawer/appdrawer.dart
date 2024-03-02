@@ -15,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:cluster/presentation/base/login_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/utils/variables.dart';
 import '../profile/profile_bloc/profile_bloc.dart';
 import 'drawer_svg.dart';
 import '../home_screen/homescreen_widget/list_tile.dart';
@@ -393,7 +394,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                                       onTap: () {
                                                         authentication
                                                             .clearAuthenticatedTokens();
-
+                                                        Variable.profilePic='';
                                                         Navigator.of(context)
                                                             .pushAndRemoveUntil(
                                                             MaterialPageRoute(

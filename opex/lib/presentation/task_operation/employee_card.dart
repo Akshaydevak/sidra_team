@@ -173,7 +173,7 @@ class EmployeeCardUnderGroup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // employeeList?.profile==""?
+      userList?.profile==""?
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: TextAvatar(
@@ -185,12 +185,16 @@ class EmployeeCardUnderGroup extends StatelessWidget {
               fontWeight: FontWeight.w500,
               text:"${userList?.email.toString().toUpperCase()} " ,
             ),
+          )
+              :
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: CircleAvatar(
+
+              radius: 20,
+              backgroundImage: NetworkImage(userList?.profile??"",),
+            ),
           ),
-          //     :
-          // CircleAvatar(
-          //   radius: 20,
-          //   backgroundImage: NetworkImage(employeeList?.profile??"",),
-          // ),
           SizedBox(width: 8,),
           SizedBox(
             width: w/1.4,
@@ -228,7 +232,7 @@ class EmployeeCardUnderGroup extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.roboto(
                       color: Colors.black,
-                      fontSize: w/24,
+                      fontSize: w/26,
                       // fontWeight: FontWeight.w500,
                     ),
                   ),

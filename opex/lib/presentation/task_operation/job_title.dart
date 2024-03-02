@@ -4,6 +4,7 @@ import 'package:cluster/presentation/order_app/activity_log.dart';
 import 'package:cluster/presentation/task_operation/create/model/task_models.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/payment_option.dart';
 import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/task_card.dart';
@@ -24,6 +25,7 @@ import '../../common_widgets/custom_checkbox.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import '2_in_1_Tab.dart';
 import 'create/create_job.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
@@ -77,7 +79,8 @@ class _JobTitleState extends State<JobTitle> {
     }
     // dialog();
     super.initState();
-    widget.isCreated==true?WidgetsBinding.instance.addPostFrameCallback((_) async {
+    widget.isCreated==true?
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await showDialog(
           useSafeArea: true,
           barrierDismissible: true,
@@ -113,7 +116,7 @@ class _JobTitleState extends State<JobTitle> {
               };
             });
             Future.delayed(Duration(seconds: 2), () {
-              Navigator.of(context).pop(true);
+              Navigator.pop(context);
             });
             return Material(
               color: Colors.transparent,
@@ -143,7 +146,7 @@ class _JobTitleState extends State<JobTitle> {
                         bottom: 140,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+
                           },
                           child: Container(
                             width: 100,
@@ -341,9 +344,12 @@ class _JobTitleState extends State<JobTitle> {
                                                         PageTransitionAnimation.fade,
                                                   );
                           },
-                          child: const Text(
+                          child:  Text(
                             "View Activity Logs",
-                            style: TextStyle(fontSize: 12),
+                            style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: w / 28,
+                                fontWeight: FontWeight.w500),
                           ),
                         )),
                   ],
@@ -454,28 +460,7 @@ class _JobTitleState extends State<JobTitle> {
                         BlocBuilder<TaskBloc, TaskState>(
                           builder: (context, state) {
                             if (state is GetTaskListLoading) {
-                              return  Container(
-                                height: h / 3,
-                                color: Colors.white.withOpacity(0.5),
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Lottie.asset(
-                                      'asset/loadingteams.json',
-                                    ),
-                                    Text(
-                                      "Loading...",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: w / 24,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                // Image.asset('asset/Logo'),
-                                //child: SvgPicture.string(IconConstants().SplashIcon),
-                              );
+                              return LottieLoader();
                             }
 
                             if (state is GetTaskListSuccess) {
@@ -1017,108 +1002,108 @@ class _JobTitleState extends State<JobTitle> {
                         SizedBox(
                           height: 26,
                         ),
-                        Container(
-                          width: w1,
-                          // padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Color(0xffe6ecf0),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x05000000),
-                                blurRadius: 8,
-                                offset: Offset(1, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.vibrate();
-                                  context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ReportingPersonJob(),
-                                    withNavBar: true,
-                                    // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  );
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 10, top: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4)
-                                  ),
-                                  child: SingleRow(
-                                    label: "Reporting Person",
-                                    color: Color(0xffAD51E0),
-                                    svg: TaskSvg().personIcon,
-                                    endIcon: Container(),
-                                    onTap: () {
-                                      setState(() {
-                                        // isReporting = !isReporting;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                indent: 10,
-                                height: 2,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.vibrate();
-                                  context
-                                      .read<JobBloc>()
-                                      .add(GetJobReadListEvent(JobRead?.id??0));
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-
-                                    screen: ReportingPersonJob(),
-
-                                    withNavBar:
-                                        true, // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  );
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 16, top: 10),
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.string(TaskSvg().profileReporting),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          JobRead?.reportingMail ?? "",
-                                          style: TextStyle(
-                                            color: ColorPalette.primary,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
+                        // Container(
+                        //   width: w1,
+                        //   // padding: EdgeInsets.all(16),
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(4),
+                        //     border: Border.all(
+                        //       color: Color(0xffe6ecf0),
+                        //       width: 1,
+                        //     ),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Color(0x05000000),
+                        //         blurRadius: 8,
+                        //         offset: Offset(1, 1),
+                        //       ),
+                        //     ],
+                        //     color: Colors.white,
+                        //   ),
+                        //   child: Column(
+                        //     children: [
+                        //       GestureDetector(
+                        //         onTap: () {
+                        //           HapticFeedback.heavyImpact();
+                        //           context.read<JobBloc>().add(GetJobReadListEvent(JobRead?.id??0));
+                        //           PersistentNavBarNavigator.pushNewScreen(
+                        //             context,
+                        //             screen: ReportingPersonJob(),
+                        //             withNavBar: true,
+                        //             // OPTIONAL VALUE. True by default.
+                        //             pageTransitionAnimation:
+                        //                 PageTransitionAnimation.fade,
+                        //           );
+                        //         },
+                        //         child: Container(
+                        //           margin: EdgeInsets.only(
+                        //               left: 16, right: 16, bottom: 10, top: 10),
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(4)
+                        //           ),
+                        //           child: SingleRow(
+                        //             label: "Reporting Person",
+                        //             color: Color(0xffAD51E0),
+                        //             svg: TaskSvg().personIcon,
+                        //             endIcon: Container(),
+                        //             onTap: () {
+                        //               setState(() {
+                        //                 // isReporting = !isReporting;
+                        //               });
+                        //             },
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       Divider(
+                        //         indent: 10,
+                        //         height: 2,
+                        //       ),
+                        //       GestureDetector(
+                        //         onTap: () {
+                        //           HapticFeedback.heavyImpact();
+                        //           context
+                        //               .read<JobBloc>()
+                        //               .add(GetJobReadListEvent(JobRead?.id??0));
+                        //           PersistentNavBarNavigator.pushNewScreen(
+                        //             context,
+                        //
+                        //             screen: ReportingPersonJob(),
+                        //
+                        //             withNavBar:
+                        //                 true, // OPTIONAL VALUE. True by default.
+                        //             pageTransitionAnimation:
+                        //                 PageTransitionAnimation.fade,
+                        //           );
+                        //         },
+                        //         child: Container(
+                        //           margin: EdgeInsets.only(
+                        //               left: 16, right: 16, bottom: 16, top: 10),
+                        //           child: Row(
+                        //             children: [
+                        //               SvgPicture.string(TaskSvg().profileReporting),
+                        //               SizedBox(
+                        //                 width: 10,
+                        //               ),
+                        //               Container(
+                        //                 alignment: Alignment.centerLeft,
+                        //                 child: Text(
+                        //                   JobRead?.reportingMail ?? "",
+                        //                   style: TextStyle(
+                        //                     color: ColorPalette.primary,
+                        //                     fontSize: 16,
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 5,
+                        // ),
                         widget.isAllJob?Container(
                           width: w1,
                           // padding: EdgeInsets.all(16),
@@ -1189,7 +1174,7 @@ class _JobTitleState extends State<JobTitle> {
                         widget.isAllJob?SizedBox(height: 5,):Container(),
                         GestureDetector(
                           onTap: () {
-                            HapticFeedback.vibrate();
+                            HapticFeedback.heavyImpact();
                             JobRead?.paymentId != null
                                 ? context.read<TaskBloc>().add(
                                     GetPaymentReadListEvent(
@@ -1197,14 +1182,9 @@ class _JobTitleState extends State<JobTitle> {
                                 : null;
                             PersistentNavBarNavigator.pushNewScreen(
                               context,
-                              screen: PaymentOption(
-                                currencyCode: JobRead?.currency,
-                                isJob: true,
-                                isTask: false,
-                                update: JobRead?.paymentId == null ? false : true,
-                                jobId: JobRead?.id,
-                                paymentId: JobRead?.paymentId ?? 0,
-                                joblist: JobRead,
+                              screen: MyTabScreenTwoInOne(
+                                index: 0,
+                                getJobRead: JobRead,
                               ),
                               withNavBar: true, // OPTIONAL VALUE. True by default.
                               pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -1248,21 +1228,17 @@ class _JobTitleState extends State<JobTitle> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            HapticFeedback.vibrate();
+                            HapticFeedback.heavyImpact();
                             JobRead?.rewardId != null
                                 ? context.read<TaskBloc>().add(
                                     GetReadRewardsEvent(JobRead?.id ?? 0, false))
                                 : null;
                             PersistentNavBarNavigator.pushNewScreen(
                               context,
-                              screen: RewardsScreen(
-                                  type: "Job",
-                                  typeId: JobRead?.id ?? 0,
-                                  update: JobRead?.rewardId == null
-                                      ? false
-                                      : JobRead?.rewardId == null
-                                          ? false
-                                          : true),
+                              screen: MyTabScreenTwoInOne(
+                                 getJobRead: JobRead,
+                                index: 1,
+                              ),
                               withNavBar: true, // OPTIONAL VALUE. True by default.
                               pageTransitionAnimation: PageTransitionAnimation.fade,
                             );

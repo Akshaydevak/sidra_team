@@ -49,7 +49,7 @@ String token="";
   }
   @override
   void initState() {
-data();
+    data();
     super.initState();
     Timer(
         const Duration(seconds: 2),
@@ -58,17 +58,17 @@ data();
                         ?socketconnnect():
                         null;
           Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    // HomePage()
-                    authentication.isAuthenticated
-                        ? const DashBoard()
-                        : const OnBoarding())
-                        );
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                  // HomePage()
+                  authentication.isAuthenticated
+                      ? const DashBoard()
+                      : const OnBoarding())
+          );
         }
-                        );
-                        
+    );
+
   }
   void socketconnnect() async {
     final socketProvider = context.read<scoketProvider>();
@@ -79,6 +79,11 @@ data();
 
     token = pref!.getString("token")!;
 
+    // Fluttertoast.showToast(
+    //     msg: 'token kitty monea$token',
+    //     backgroundColor: Colors.white,
+    //     textColor: Colors.black);
+
     print("socket token $token");
 
     setState(() {});
@@ -87,6 +92,23 @@ data();
 
     socketgrpProvider.connect(token.toString());
   }
+  // void socketconnnect() async {
+  //   final socketProvider = context.read<scoketProvider>();
+
+  //   final socketgrpProvider = context.read<scoketgrpProvider>();
+
+  //   pref = await SharedPreferences.getInstance();
+
+  //   token = pref!.getString("token")!;
+
+  //   print("socket token $token");
+
+  //   setState(() {});
+
+  //   socketProvider.connect(token.toString());
+
+  //   socketgrpProvider.connect(token.toString());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -114,4 +136,3 @@ data();
   }
 
 }
-

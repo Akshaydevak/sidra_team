@@ -456,7 +456,8 @@ int unreadCount=0;
                                                 ),
                                               ],
                                             ):widget.communicationUserModel?.type=='video'?
-                                            widget.isGroup==true?Row(
+                                            widget.isGroup==true?
+                                            Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -484,7 +485,8 @@ int unreadCount=0;
                                                   ),
                                                 ),
                                               ],
-                                            ): Row(
+                                            ): 
+                                            Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [

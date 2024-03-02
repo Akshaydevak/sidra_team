@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -178,7 +178,7 @@ class _DashBoardState extends State<DashBoard> {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'messages', 'Messages',
         description: "This is for flutter firebase",
-        importance: Importance.max);
+        importance: Importance.max,playSound: true,enableVibration: true,ledColor:Colors.white);
 
     flutterlocalnotificationplugins.initialize(
       initializationSettings,
@@ -186,7 +186,7 @@ class _DashBoardState extends State<DashBoard> {
     );
 if(Platform.isAndroid){
 //    print("notification dict");
-    FirebaseMessaging.onMessage.listen((event) async {
+   FirebaseMessaging.onMessage.listen((event) async {
 final notification = event.notification;
       final android = event.notification?.android;
 
@@ -205,7 +205,7 @@ final notification = event.notification;
           data['body'],
           NotificationDetails(
               android: AndroidNotificationDetails(channel.id, channel.name,
-                  channelDescription: channel.description
+                  channelDescription: channel.description,playSound: true,priority: Priority.high
 
 // icon: android.
 
@@ -533,6 +533,8 @@ pref = await SharedPreferences.getInstance();
     }
   }
 
+
+
   StreamController<String> connectionStatusController =
       StreamController<String>.broadcast();
 
@@ -570,6 +572,23 @@ pref = await SharedPreferences.getInstance();
       connectionStatusController.add('No internet connection');
     }
   }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   switch (state) {
+  //     case AppLifecycleState.resumed:
+  //       print("app in resumed");
+  //       break;
+  //     case AppLifecycleState.inactive:
+  //       print("app in inactive");
+  //       break;
+  //     case AppLifecycleState.paused:
+  //       print("app in paused");
+  //       break;
+  //     case AppLifecycleState.detached:
+  //       print("app in detached");
+  //       break;
+  //   }
+  // }
 
 // @override
 
@@ -636,7 +655,6 @@ pref = await SharedPreferences.getInstance();
     context.read<ProfileBloc>().add(GetProfileEvent());
 
     context.read<ProfileBloc>().add(const GetProfilePicEvent());
-
     super.initState();
   }
 
@@ -648,6 +666,7 @@ pref = await SharedPreferences.getInstance();
 
     super.dispose();
   }
+
 
   int newIndex = 0;
 
@@ -995,6 +1014,7 @@ pref = await SharedPreferences.getInstance();
                   ),
                 );
         });
+
   }
 }
 

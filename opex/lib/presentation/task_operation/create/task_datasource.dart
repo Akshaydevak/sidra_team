@@ -1586,4 +1586,33 @@ class TaskDataSource {
       return DataResponse(data: false, error: response.data['message']);
     }
   }
+
+  Future<List<SearchMapResultsModel>> searchMapLocation(
+      String? searchQuery) async {
+    List<SearchMapResultsModel> varientDetails = [];
+    print(
+        "state is api${"https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchQuery&key=AIzaSyDJavpenypIG-Kd1sTSUeEk6jyJ4NpsAFA"}");
+    final response = await client.get(
+        "${"https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchQuery&key=AIzaSyDJavpenypIG-Kd1sTSUeEk6jyJ4NpsAFA"}",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ));
+    print("respoooooooooooooonsss ${response.data}");
+    if (response.data['results'].isNotEmpty) {
+      (response.data['results'] as List).forEach((element) {
+        varientDetails.add(SearchMapResultsModel.fromJson(element));
+      });
+      print("respoooooooooooooonsss $varientDetails");
+      return varientDetails;
+    } else {
+      return [];
+    }
+    // (response.data['data']['results'] as List).forEach((element) {
+    //   varientDetails.add(ProductItem.fromJson(element));
+    // });
+    // return varientDetails;
+  }
 }

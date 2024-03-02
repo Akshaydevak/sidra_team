@@ -10,21 +10,22 @@ import '../../core/color_palatte.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import 'attachment_screen.dart';
 import 'create/model/task_models.dart';
-import 'create/task_bloc/task_bloc.dart';
+import 'home/bloc/job_bloc.dart';
+import 'home/model/joblist_model.dart';
 
-class MyTabScreen extends StatefulWidget {
+class MyTabScreenTwoInOne extends StatefulWidget {
   final int? index;
-  final GetTaskList? getTaskRead;
-  const MyTabScreen({
+  final GetJobList? getJobRead;
+  const MyTabScreenTwoInOne({
     Key? key,
-    this.getTaskRead, this.index,
+    this.getJobRead, this.index,
   }) : super(key: key);
 
   @override
-  State<MyTabScreen> createState() => _MyTabScreenState();
+  State<MyTabScreenTwoInOne> createState() => _MyTabScreenTwoInOneState();
 }
 
-class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStateMixin{
+class _MyTabScreenTwoInOneState extends State<MyTabScreenTwoInOne> with SingleTickerProviderStateMixin{
   int _selectedIndex = 0;
   late TabController _tabController;
   @override
@@ -39,8 +40,9 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
     print(
         'init Tab: Index ${widget.index}, Text: ${_getTabText(widget.index??0)}');
     // Create TabController
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
 
+    // Set the initial index
     // Set the initial index
     _tabController.index = widget.index ?? 0;
 
@@ -53,7 +55,6 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
     setState(() {
 
     });
-    // TODO: implement initState
     super.initState();
   }
 
@@ -63,14 +64,14 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return WillPopScope(
-      onWillPop: ()async{
-
-            context.read<TaskBloc>()
-            .add(GetTaskReadListEvent(widget.getTaskRead?.id ?? 0));
+      onWillPop: () async {
+        context.read<JobBloc>().add(
+            GetJobReadListEvent(widget.getJobRead?.id??0));
         return true;
+
       },
       child: DefaultTabController(
-        length: 3, // Number of tabs
+        length: 2, // Number of tabs
         child: Scaffold(
           backgroundColor: ColorPalette.white,
 
@@ -136,7 +137,6 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
               labelColor: ColorPalette.primary,
 
               tabs: [
-                Tab(text: 'Notes'),
                 Tab(text: 'Payment'),
                 Tab(text: 'Rewards'),
               ],
@@ -149,37 +149,32 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
             controller: _tabController,
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              // Content for "Notes" Tab
-              Center(
-                child: AttachmentScreen(
-                  readData: widget.getTaskRead,
-                ),
-              ),
-
               // Content for "Payment" Tab
               Center(
                 child: PaymentOption(
-                  assignCode: widget.getTaskRead?.assignToDict?.userCode,
-                  assignType: widget.getTaskRead?.assigningType,
-                  currencyCode: widget.getTaskRead?.currency,
-                  isJob: false,
-                  isTask: true,
-                  update: widget.getTaskRead?.paymentId == null
-                      ? false
-                      : widget.getTaskRead?.paymentId == null
-                          ? false
-                          : true,
-                  paymentId: widget.getTaskRead?.paymentId ?? 0,
-                  taskId: widget.getTaskRead?.id ?? 0,
-                  jobId: null,
+                  currencyCode: widget.getJobRead?.currency,
+                  isJob: true,
+                  isTask: false,
+                  update: widget.getJobRead?.paymentId == null ? false : true,
+                  jobId: widget.getJobRead?.id,
+                  paymentId: widget.getJobRead?.paymentId ?? 0,
+                  joblist: widget.getJobRead,
                 ),
               ),
+
+              // Content for "Rewards" Tab
               Center(
                 child: RewardsScreen(
-                  type: "Task",
-                  typeId: widget.getTaskRead?.id ?? 0,
+                  type: "Job",
+                  typeId: widget.getJobRead?.id ?? 0,
+                  // update: JobRead?.rewardId == null
+                  //     ? false
+                  //     : JobRead?.rewardId == null
+                  //         ? false
+                  //         : true
                 ),
               ),
+
             ],
           ),
         ),
@@ -189,7 +184,7 @@ class _MyTabScreenState extends State<MyTabScreen> with SingleTickerProviderStat
 
   String _getTabText(int index) {
     // Function to get the text of the tab at the given index
-    final tabTexts = ['Notes & Attachments', 'Payment Option', 'Rewards'];
+    final tabTexts = ['Payment Option', 'Rewards'];
     return tabTexts[index];
   }
 }
