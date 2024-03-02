@@ -15,6 +15,7 @@ import 'package:day_night_time_picker/lib/constants.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
@@ -2290,8 +2291,10 @@ class _CreateJobState extends State<CreateJob> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            isValid==true?GestureDetector(
+                            isValid==true?
+                            GestureDetector(
                               onTap: (){
+                                HapticFeedback.heavyImpact();
                                 buttonLoad=true;
                                 setState(() {
 

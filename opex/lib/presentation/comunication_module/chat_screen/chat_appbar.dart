@@ -156,16 +156,7 @@ if (mounted) {
                           }
                         });
                         Navigator.pop(context);
-          // //               Navigator.pop(context);
-                        PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: DashBoard(
-              // token: widget.token ?? ""
-              // socket: widget.socket,
-            ),
-            withNavBar: true, // OPTIONAL VALUE. True by default.
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+
                       }
                       else if (widget.chat == false) {
                         widget.socket!.emit("update.list", {print("update")});

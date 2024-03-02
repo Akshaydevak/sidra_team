@@ -650,3 +650,8 @@ class ReplayReportEvent extends TaskEvent {
     reportStatus??"",
   ];
 }
+
+class SearchMapResults extends TaskEvent {
+  final String searchQuery;
+  const SearchMapResults({required this.searchQuery});
+}

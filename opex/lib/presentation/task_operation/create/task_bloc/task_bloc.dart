@@ -356,6 +356,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           prev: event.prev?.trim(),
       );
     }
+    if (event is SearchMapResults) {
+      yield* searchMapLocation(searchQuery: event.searchQuery);
+    }
   }
 
 
@@ -1325,6 +1328,18 @@ userId: userId,
       print("failed ${dataResponse.error}");
       yield ReplayReportFailed(
         dataResponse.error ?? "",);
+    }
+  }
+
+  Stream<TaskState> searchMapLocation(
+      {required String searchQuery}) async* {
+    yield SearchMapResultsLoading();
+    final dataResponse =
+    await _taskDataSource.searchMapLocation(searchQuery);
+    if (dataResponse.isNotEmpty) {
+      yield SearchMapResultsSuccess(cartData: dataResponse);
+    } else {
+      yield SearchMapResultsFailed();
     }
   }
 

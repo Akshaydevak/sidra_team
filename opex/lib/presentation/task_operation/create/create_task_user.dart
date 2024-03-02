@@ -83,7 +83,7 @@ class _CreateUserState extends State<CreateUser> {
   String contactNumber = '';
   String completeNumber="";
   String countryCode="IN";
-  String userRoleName = 'Normal User';
+  String userRoleName = '';
   String contactNumberWhatsapp = '';
   String completeNumberWhatsapp="";
   String countryCodeWhatsapp="IN";
@@ -328,6 +328,7 @@ class _CreateUserState extends State<CreateUser> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                widget.edit==true?Container():
                 BlocBuilder<EmployeeBloc, EmployeeState>(
                   builder: (context, state) {
                     if (state is GetReadTypeLoading) {

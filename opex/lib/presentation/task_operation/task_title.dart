@@ -719,22 +719,18 @@ class _TaskTitleState extends State<TaskTitle> {
                             PageTransitionAnimation.fade,
                           );
                         },
-                        child: const Text(
+                        child:  Text(
                           "View Activity Logs",
-                          style: TextStyle(fontSize: 12),
+                          style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w / 28,
+                              fontWeight: FontWeight.w500),
                         ),
                       )),
                 ],
               ):
               PopupMenuButton(
                 onSelected: (value) {
-                  // popUpItemSelected(
-                  //   value.toString(),
-                  //   context,
-                  //   address: address,
-                  //   isDefualt: isDefualt,
-                  //   addressID: addressID,
-                  // );
                 },
                 itemBuilder: (context) => [
                   PopupMenuItem(
@@ -797,12 +793,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   TaskTitleCard(
-                                      paddingg: const EdgeInsets.symmetric(
-                                          vertical: 16),
+                                      paddingg:  EdgeInsets.symmetric(vertical: 8),
+                                      
                                       widget: TextCard(
                                         isTask: true,
                                         title: getTaskRead?.jobTitle,
@@ -823,12 +816,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
                                       TaskTitleCard(
-                                          paddingg: const EdgeInsets.symmetric(
-                                              vertical: 16),
+                                          paddingg:  EdgeInsets.symmetric(vertical: 8),
                                           widget: TextCard(
                                             isTask: true,
                                             title: getTaskRead?.parentDict?.taskName,
@@ -840,19 +829,16 @@ class _TaskTitleState extends State<TaskTitle> {
                                     ],
                                 ),
                                   Text(
-                                    "Your Task",
+                                    getTaskRead?.assignByDict?.userCode==authentication.authenticatedUser.code?
+                                    getTaskRead?.parentDict?.taskName==null?"Task Details":"Sub Task":"Your Task",
                                     style: GoogleFonts.roboto(
                                       color: const Color(0xff151522),
                                       fontSize: w / 24,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   TaskTitleCard(
-                                      paddingg: const EdgeInsets.symmetric(
-                                          vertical: 16),
+                                      paddingg:  EdgeInsets.symmetric(vertical: 8),
                                       widget: TextCard(
                                         isTask: true,
                                         title: getTaskRead?.taskName,
@@ -1028,7 +1014,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             getTaskRead?.assigningType=="Task_Group"?
                                             GestureDetector(
                                               onTap: (){
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 print("task Group");
                                                 getTaskRead?.assigningType=="Task_Group"&&taskListNew.isEmpty?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1150,7 +1136,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ):
                                             GestureDetector(
                                               onTap: (){
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 print("group id${getTaskRead?.groupId}");
                                                 widget.groupId!=null?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1297,7 +1283,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                   color: Colors.white
                                                               ),)),
                                                       onTap: () async{
-                                                        HapticFeedback.vibrate();
+                                                        HapticFeedback.heavyImpact();
                                                         final SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
@@ -1712,7 +1698,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                               getTaskRead?.latitude != ""
                                           ? GestureDetector(
                                               onTap: () {
-                                                navigateTo(double.tryParse(getTaskRead?.latitude??"")??0.0, double.tryParse(getTaskRead?.longitude??"")??0.0);
+                                                navigateTo(double.tryParse(getTaskRead?.latitude??"")??0.0,
+                                                    double.tryParse(getTaskRead?.longitude??"")??0.0);
                                                 // PersistentNavBarNavigator
                                                 //     .pushNewScreen(
                                                 //   context,
@@ -2033,7 +2020,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             // ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 setState(() {
                                                   isLocation = !isLocation;
                                                   location();
@@ -2074,7 +2061,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                         svg: CreateSvg()
                                                             .locationIcon,
                                                         onTap: () {
-                                                          HapticFeedback.vibrate();
+                                                          HapticFeedback.heavyImpact();
                                                           setState(() {
                                                             // if(isLocation==false){
                                                             isLocation =
@@ -2119,7 +2106,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                       screen:
                                                                           AddressPickFromMap(
                                                                         taskRead:
-                                                                            getTaskRead,
+                                                                        getTaskRead,
                                                                       ),
                                                                       withNavBar:
                                                                           true,
@@ -2160,36 +2147,22 @@ class _TaskTitleState extends State<TaskTitle> {
                                             SizedBox(
                                               height: 5,
                                             ),
-                                            // GestureDetector(
-                                            //     onTap: (){
-                                            //       PersistentNavBarNavigator
-                                            //           .pushNewScreen(
-                                            //         context,
-                                            //         screen: MyTabScreen(
-                                            //           getTaskRead: getTaskRead,
-                                            //         ),
-                                            //         withNavBar:
-                                            //         true, // OPTIONAL VALUE. True by default.
-                                            //         pageTransitionAnimation:
-                                            //         PageTransitionAnimation
-                                            //             .fade,
-                                            //       );
-                                            //     },
-                                            //     child: Text("3 IN TAB")),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
 
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: AttachmentScreen(
-                                                      readData: getTaskRead),
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 0,
+                                                  ),
                                                   withNavBar:
-                                                      true, // OPTIONAL VALUE. True by default.
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
                                               },
                                               child: Container(
@@ -2241,7 +2214,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 getTaskRead?.paymentId != null
                                                     ? context.read<TaskBloc>().add(
                                                         GetPaymentReadListEvent(
@@ -2254,35 +2227,48 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: PaymentOption(
-                                                    assignCode: getTaskRead?.assignToDict?.userCode,
-                                                    assignType: getTaskRead?.assigningType,
-                                                    currencyCode:
-                                                        getTaskRead?.currency,
-                                                    isJob: false,
-                                                    isTask: true,
-                                                    update: getTaskRead
-                                                                ?.paymentId ==
-                                                            null
-                                                        ? false
-                                                        : getTaskRead
-                                                                    ?.paymentId ==
-                                                                null
-                                                            ? false
-                                                            : true,
-                                                    paymentId: getTaskRead
-                                                            ?.paymentId ??
-                                                        0,
-                                                    taskId:
-                                                        getTaskRead?.id ?? 0,
-                                                    jobId: null,
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 1,
                                                   ),
                                                   withNavBar:
-                                                      true, // OPTIONAL VALUE. True by default.
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: PaymentOption(
+                                                //     assignCode: getTaskRead?.assignToDict?.userCode,
+                                                //     assignType: getTaskRead?.assigningType,
+                                                //     currencyCode:
+                                                //         getTaskRead?.currency,
+                                                //     isJob: false,
+                                                //     isTask: true,
+                                                //     update: getTaskRead
+                                                //                 ?.paymentId ==
+                                                //             null
+                                                //         ? false
+                                                //         : getTaskRead
+                                                //                     ?.paymentId ==
+                                                //                 null
+                                                //             ? false
+                                                //             : true,
+                                                //     paymentId: getTaskRead
+                                                //             ?.paymentId ??
+                                                //         0,
+                                                //     taskId:
+                                                //         getTaskRead?.id ?? 0,
+                                                //     jobId: null,
+                                                //   ),
+                                                //   withNavBar:
+                                                //       true, // OPTIONAL VALUE. True by default.
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                               },
                                               child: Container(
                                                 width: w1,
@@ -2332,7 +2318,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 getTaskRead?.rewardid != null
                                                     ? context
                                                         .read<TaskBloc>()
@@ -2343,27 +2329,40 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                     0,
                                                                 true))
                                                     : null;
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: RewardsScreen(
+                                                //     type: "Task",
+                                                //     typeId:
+                                                //         getTaskRead?.id ?? 0,
+                                                //     update: getTaskRead
+                                                //                 ?.rewardid ==
+                                                //             null
+                                                //         ? false
+                                                //         : getTaskRead
+                                                //                     ?.rewardid ==
+                                                //                 null
+                                                //             ? false
+                                                //             : true,
+                                                //   ),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: RewardsScreen(
-                                                    type: "Task",
-                                                    typeId:
-                                                        getTaskRead?.id ?? 0,
-                                                    update: getTaskRead
-                                                                ?.rewardid ==
-                                                            null
-                                                        ? false
-                                                        : getTaskRead
-                                                                    ?.rewardid ==
-                                                                null
-                                                            ? false
-                                                            : true,
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 2,
                                                   ),
-                                                  withNavBar: true,
+                                                  withNavBar:
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
                                               },
                                               child: Container(
@@ -2413,7 +2412,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                         )
                                       : GestureDetector(
                                           onTap: () {
-                                            HapticFeedback.vibrate();
+                                            HapticFeedback.heavyImpact();
                                             if (getTaskRead?.statusStagesId ==
                                                     5 &&
                                                 authentication.isAdmin ==
