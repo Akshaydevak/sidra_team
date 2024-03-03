@@ -86,6 +86,7 @@ class _AppBarState extends State<AppBarScreen> {
               child: GestureDetector(
                 onTap: () {
                   widget.scaffoldKey.currentState.openDrawer();
+
                 },
                 child: CircleAvatar(
                   radius: 22,

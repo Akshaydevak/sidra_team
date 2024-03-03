@@ -1,6 +1,10 @@
 
 import 'package:cluster/core/color_palatte.dart';
+import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../../inventory/new_list_tab/profiling_tab.dart';
 import '../create/model/task_models.dart';
 import '../image_preview_task.dart';
@@ -86,22 +90,44 @@ class _AttachmentCardState extends State<AttachmentCard> {
             GestureDetector(
               onTap: (){
 
-                showDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
+                showGeneralDialog(
+                  context: context,
+                  barrierColor: Colors.white, // Background color
+                  barrierDismissible: true,
+                  barrierLabel: ' Full Screen Dialog',
+                  transitionDuration: const Duration(milliseconds: 400),
+                  pageBuilder: (_, __, ___) {
+                    return Scaffold(
+                      backgroundColor: Colors.white,
+                      appBar: PreferredSize(
+                          preferredSize: Size.fromHeight(60),
+                          child: BackAppBar(
+                            label: "",
+                            isAction: false,
+                          )
+                      ),
+                      body: Container(
+                        // height: 100,
+                        child: CarouselSlider.builder(
+                          initialPage: i,
+                            slideTransform: DefaultTransform(),
+                            slideIndicator: CircularSlideIndicator(
+                                padding: EdgeInsets.only(bottom: 10, left: 0),
+                                alignment: Alignment.bottomCenter,
+                                indicatorBorderWidth: 0.2,
+                                indicatorRadius: 3.5,
+                                itemSpacing: 10,
 
-                        surfaceTintColor: Colors.white,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),),
-
-                        content: ImagePreview(
-                          assetName: picModel[i].url??"",
-                        ),
-                      );
-                    }
+                                currentIndicatorColor: Color(0xff086DB5),
+                                indicatorBackgroundColor: ColorPalette.cardBackground),
+                            itemCount: newPicModel.length,
+                            slideBuilder: (int index) {
+                              return Image.network(newPicModel[index].url??"");
+                            }),
+                      ),
+                    );
+                      // Image.network(newPicModel[i].url??"");
+                  },
                 );
               },
                 child: Container(
@@ -191,20 +217,44 @@ class _RewardsCardState extends State<RewardsCard> {
           return GestureDetector(
               onTap: (){
 
-                showDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        surfaceTintColor: Colors.white,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),),
-                        content: ImagePreview(
-                          assetName: picModel[i].url??"",
-                        ),
-                      );
-                    }
+                showGeneralDialog(
+                  context: context,
+                  barrierColor: Colors.white, // Background color
+                  barrierDismissible: true,
+                  barrierLabel: ' Full Screen Dialog',
+                  transitionDuration: const Duration(milliseconds: 400),
+                  pageBuilder: (_, __, ___) {
+                    return Scaffold(
+                      backgroundColor: Colors.white,
+                      appBar: PreferredSize(
+                          preferredSize: Size.fromHeight(60),
+                          child: BackAppBar(
+                            label: "",
+                            isAction: false,
+                          )
+                      ),
+                      body: Container(
+                        // height: 100,
+                        child: CarouselSlider.builder(
+                            initialPage: i,
+                            slideTransform: DefaultTransform(),
+                            slideIndicator: CircularSlideIndicator(
+                                padding: EdgeInsets.only(bottom: 10, left: 0),
+                                alignment: Alignment.bottomCenter,
+                                indicatorBorderWidth: 0.2,
+                                indicatorRadius: 3.5,
+                                itemSpacing: 10,
+
+                                currentIndicatorColor: Color(0xff086DB5),
+                                indicatorBackgroundColor: ColorPalette.cardBackground),
+                            itemCount: newPicModel.length,
+                            slideBuilder: (int index) {
+                              return Image.network(newPicModel[index].url??"");
+                            }),
+                      ),
+                    );
+                    // Image.network(newPicModel[i].url??"");
+                  },
                 );
               },
                 child: Container(
@@ -301,20 +351,44 @@ class _PaymentCardState extends State<PaymentCard> {
           return
             GestureDetector(onTap: (){
 
-              showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      surfaceTintColor: Colors.white,
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),),
-                      content: ImagePreview(
-                        assetName: picModel[i].url??"",
-                      ),
-                    );
-                  }
+              showGeneralDialog(
+                context: context,
+                barrierColor: Colors.white, // Background color
+                barrierDismissible: true,
+                barrierLabel: ' Full Screen Dialog',
+                transitionDuration: const Duration(milliseconds: 400),
+                pageBuilder: (_, __, ___) {
+                  return Scaffold(
+                    backgroundColor: Colors.white,
+                    appBar: PreferredSize(
+                        preferredSize: Size.fromHeight(60),
+                        child: BackAppBar(
+                          label: "",
+                          isAction: false,
+                        )
+                    ),
+                    body: Container(
+                      // height: 100,
+                      child: CarouselSlider.builder(
+                          initialPage: i,
+                          slideTransform: DefaultTransform(),
+                          slideIndicator: CircularSlideIndicator(
+                              padding: EdgeInsets.only(bottom: 10, left: 0),
+                              alignment: Alignment.bottomCenter,
+                              indicatorBorderWidth: 0.2,
+                              indicatorRadius: 3.5,
+                              itemSpacing: 10,
+
+                              currentIndicatorColor: Color(0xff086DB5),
+                              indicatorBackgroundColor: ColorPalette.cardBackground),
+                          itemCount: newPicModel.length,
+                          slideBuilder: (int index) {
+                            return Image.network(newPicModel[index].url??"");
+                          }),
+                    ),
+                  );
+                  // Image.network(newPicModel[i].url??"");
+                },
               );
             },child: Container(
               height: h/10,

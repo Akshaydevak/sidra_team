@@ -60,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       drawer: const AppDrawer(),
+
       body: ScrollConfiguration(
         behavior: NoGlow(),
         child: SingleChildScrollView(

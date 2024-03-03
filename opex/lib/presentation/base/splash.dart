@@ -79,10 +79,6 @@ class SplashScreenState extends State<SplashScreen> {
 
     token = pref!.getString("token")!;
 
-    Fluttertoast.showToast(
-        msg: 'token kitty monea$token',
-        backgroundColor: Colors.white,
-        textColor: Colors.black);
 
     print("socket token $token");
 
