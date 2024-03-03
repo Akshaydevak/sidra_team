@@ -1,8 +1,8 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
-      "https://api-communication-application.hilalcart.com/";
+      // "https://api-communication-application.hilalcart.com/";
       // "http://192.168.1.187:5500/";
-      // "https://5z7l1nh4-5500.inc1.devtunnels.ms/";
+      "https://5z7l1nh4-5500.inc1.devtunnels.ms/";
 
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";
@@ -13,6 +13,7 @@ class CommunicationUrls {
   static const getFilteredChatList="${communicationBaseUrl}api/chat?query=";
   static const getChatScreenUrl="${communicationBaseUrl}api/chat/messages/";
   static const getGroupProfileDetailsUrl="${communicationBaseUrl}api/chat/user/profile/";
+  static const getGroupProfileDataUrl="${communicationBaseUrl}api/chat/group/update/";
   static const getGroupAttachmentsInProfileUrl="${communicationBaseUrl}api/chat/details/group/";
   static const tokenCreationCommunicationUrl="${communicationBaseUrl}api/inventory/inventory-login";
   static const addGroupMember="${communicationBaseUrl}api/inventory/inventory-add-member/";
@@ -21,6 +22,7 @@ class CommunicationUrls {
   static const messagedelete="${communicationBaseUrl}api/chat/message/delete";
   //image upload
   static const uploadImageUrl="https://api-uat-user.sidrabazar.com/file-upload";
+  static const uploadImagegroupUrl="https://api-uat-user.sidrabazar.com/file-upload/";
   //inventory related
   static const sidraBazarBaseUrl="https://api-uat-user.sidrabazar.com/";
   static const getAllRegisteredUsersInInventory="${sidraBazarBaseUrl}user-employee_employeeuser";

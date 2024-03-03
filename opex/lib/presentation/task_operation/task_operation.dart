@@ -157,43 +157,43 @@ class _TaskAndOperationState extends State<TaskAndOperation> {
   ],
   child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Column(
-            children: [
-              AppBar(
-                surfaceTintColor: Colors.white,
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  systemNavigationBarColor: Colors.white, // Navigation bar
-                  statusBarColor: Colors.white, // Status bar
-                ),
-                elevation: 0,
-                backgroundColor: Colors.white,
-                centerTitle: false,
-
-                title: Text(
-                  "Task & Operation",
-                  style:  TextStyle(color: Colors.black,fontSize: w/22),
-                ),
-                titleSpacing: 10,
-                leading: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: SvgPicture.string(
-                    AppsSvg().appbarIcon,
-                  ),
-                ),
-                leadingWidth: 28,
-              ),
-              Container(
-                width: w1,
-                height: 1.50,
-                decoration: const BoxDecoration(
-                  color: Color(0xb2e6e6e6),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // appBar: PreferredSize(
+        //   preferredSize: Size.fromHeight(60),
+        //   child: Column(
+        //     children: [
+        //       AppBar(
+        //         surfaceTintColor: Colors.white,
+        //         systemOverlayStyle: const SystemUiOverlayStyle(
+        //           systemNavigationBarColor: Colors.white, // Navigation bar
+        //           statusBarColor: Colors.white, // Status bar
+        //         ),
+        //         elevation: 0,
+        //         backgroundColor: Colors.white,
+        //         centerTitle: false,
+        //
+        //         title: Text(
+        //           "Task & Operation",
+        //           style:  TextStyle(color: Colors.black,fontSize: w/22),
+        //         ),
+        //         titleSpacing: 10,
+        //         leading: Padding(
+        //           padding: const EdgeInsets.only(left: 10),
+        //           child: SvgPicture.string(
+        //             AppsSvg().appbarIcon,
+        //           ),
+        //         ),
+        //         leadingWidth: 28,
+        //       ),
+        //       Container(
+        //         width: w1,
+        //         height: 1.50,
+        //         decoration: const BoxDecoration(
+        //           color: Color(0xb2e6e6e6),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         body: BlocListener<JobBloc, JobState>(
           listener: (context, state) {
             print("Entered listener$state");

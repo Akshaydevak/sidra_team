@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/color_palatte.dart';
@@ -137,9 +136,8 @@ class _MyChatListState extends State<MyChatList> {
     final file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     _downloadStatus[imageUrl] = true;
-    
     await ImageGallerySaver.saveFile(file.path);
-    await GallerySaver.saveImage(file.path);
+    // await GallerySaver.saveImage(file.path);
     setState(() {});
   }
   @override
@@ -148,12 +146,12 @@ class _MyChatListState extends State<MyChatList> {
     var h = MediaQuery.of(context).size.height;
     return Column(
                                     crossAxisAlignment:
-                                       widget.messageList!.fromuserid !=
+                                       widget.messageList.fromuserid !=
                                                 widget.loginUserId
                                             ? CrossAxisAlignment.start
                                             : CrossAxisAlignment.end,
                                     children: [
-                                    widget.messageList!.firstMessageOfDay == true ?
+                                    widget.messageList.firstMessageOfDay == true ?
                                       Padding(
                                            padding: const EdgeInsets.only(top:5,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -259,11 +257,14 @@ class _MyChatListState extends State<MyChatList> {
                                                                                     .white)),
                                                                       );
                                                                     },
+                                                                    width: 500,height:400,
                                                                     fit: BoxFit.fill,
-                                                                    image:ResizeImage( NetworkImage(
-                                                                        widget.messageList!
+                                                                    image:
+                                                                    
+                                                                    ResizeImage( NetworkImage(
+                                                                        widget.messageList
                                                                                 .message ??
-                                                                            ""),width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
+                                                                            "",),width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
                                                                     ),
                                                                     Positioned(child:_downloadStatus[widget.messageList?.message??""] ==false? BlurryContainer(color: Colors.transparent,
                                                                    
@@ -553,7 +554,7 @@ class _MyChatListState extends State<MyChatList> {
                                                 child: GestureDetector(
                                                   onLongPress: (){
                                                   print("enterreeeeeeeeee");
-                                                  widget.ontap!();
+                                                  widget.ontap();
                                                 },
                                                 
                                                   child: Container(
@@ -602,13 +603,13 @@ class _MyChatListState extends State<MyChatList> {
                                                                     throw Exception('Could not launch ${link.url}');
                                                                   }
                                                                 },
-                                                              text: widget.messageList!
+                                                              text: widget.messageList
                                                                       .message ??
                                                                   "",
                                                                   
                                                                   textAlign: TextAlign.left,
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
+                                                              style:  TextStyle(
+                                                                  fontSize:Platform.isAndroid?w/29:w/27,
                                                                   color: Colors.black),),
                                                               // Text(
                                                               // widget.messageList!
@@ -642,7 +643,7 @@ class _MyChatListState extends State<MyChatList> {
                                             )
                                           }
                                         } else ...{
-                                          if(widget.messageList!.type=="notify")...{
+                                          if(widget.messageList.type=="notify")...{
                                                    Padding(
                                            padding: const EdgeInsets.only(top:10,left: 25,right: 25,bottom: 10),
                                            child: Center(
@@ -657,7 +658,7 @@ class _MyChatListState extends State<MyChatList> {
                                                  color: Color.fromARGB(236, 233, 232, 232)
                                                ),
                                                child: Text(
-                                                "${widget.messageList!
+                                                "${widget.messageList
                                                                  .message.toString()}"
                                                          ,
                                                              textAlign: TextAlign.center,
@@ -1187,7 +1188,7 @@ class _MyChatListState extends State<MyChatList> {
                                                               MentionText(
               text: widget.messageList! .message ??"",
               grpmember: widget.grpmember,
-              mentionStyle: TextStyle(color: getRandomColor(),),),
+              mentionStyle: TextStyle(color: getRandomColor(),fontSize: Platform.isAndroid? w/29:w/27),),
                                                                 // Text(
                                                                 // widget.messageList!
                                                                 //         .message ??
@@ -1302,13 +1303,13 @@ class _MyChatListState extends State<MyChatList> {
                                                                     throw Exception('Could not launch ${link.url}');
                                                                   }
                                                                 },
-                                                              text: widget.messageList!
+                                                              text: widget.messageList
                                                                       .message ??
                                                                   "",
                                                                   
                                                                   textAlign: TextAlign.left,
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
+                                                              style:  TextStyle(
+                                                                  fontSize: Platform.isAndroid?w/29:w/27,
                                                                   color: Colors.black),),
                                                                 // Text(
                                                                 // widget.messageList!
@@ -1854,7 +1855,7 @@ class _MyChatListState extends State<MyChatList> {
                                                             MentionText(
               text: widget.messageList.message ??"",
               grpmember: widget.grpmember,
-              mentionStyle: TextStyle(color: Color.fromARGB(255, 105, 212, 205),decoration: TextDecoration.underline),
+              mentionStyle: TextStyle(color: Color.fromARGB(255, 105, 212, 205),decoration: TextDecoration.underline,fontSize: Platform.isAndroid? w/29:w/27),
               color: true,),
                                                             // Text(
                                                             // widget.messageList!
@@ -1989,7 +1990,7 @@ class _MyChatListState extends State<MyChatList> {
                                                                   
                                                                   textAlign: TextAlign.left,
                                                               style:  TextStyle(
-                                                                  fontSize: 16,
+                                                                  fontSize: Platform.isAndroid?w/29:w/27,
                                                                   color:Colors.white),),
                                                             // Text(
                                                             // widget.messageList!
@@ -2218,7 +2219,7 @@ class MentionText extends StatelessWidget {
     }
 
     return RichText(
-      text: TextSpan(children: textSpans ,style: TextStyle(color:color==true?Colors.white:Colors.black)),
+      text: TextSpan(children: textSpans ,style: TextStyle(color:color==true?Colors.white:Colors.black,)),
     );
   }
 }

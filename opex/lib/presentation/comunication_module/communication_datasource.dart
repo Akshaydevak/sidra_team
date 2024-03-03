@@ -188,25 +188,19 @@ class CommunicationDatasource {
     return DataResponse(data: response.data['message']);
   }
       Future<DataResponse> editgroupprofile(
-      {required String chatId, required String grpname,required String grpdescription,required String token, File? image}) async {
+      {required String chatId, required String grpname,required String grpdescription,required String token, String? image}) async {
         print("total result ${image}");
-    String filePath = "";
     print("at datasource");
     print("....$chatId  $grpname");
     final response;
     if (image != null) {
-      filePath = image.path;
-    final mime = lookupMimeType(filePath)!.split("/");
-
-    final fileData = await MultipartFile.fromFile(
-      filePath,
-      contentType: MediaType(mime.first, mime.last),
-    );
-    final FormData formData = FormData.fromMap({"upload": fileData});
-
-     response = await client.post(
-      CommunicationUrls.groupeditdetails+'$chatId',
-      data: formData,
+      response = await client.post(
+      CommunicationUrls.groupeditdetails+"$chatId",
+      data: {
+        "groupName":grpname,
+        "description":grpdescription,
+        "groupPhotoUrl":image
+      },
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -215,13 +209,13 @@ class CommunicationDatasource {
         },
       ),
     );
+     
     }else{
        response = await client.post(
       CommunicationUrls.groupeditdetails+"$chatId",
       data: {
         "groupName":grpname,
         "description":grpdescription,
-        "groupPhotoUrl":image
       },
       options: Options(
         headers: {
@@ -380,7 +374,23 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
-
+ Future<ProfileGroupGetModel> getGroupProfileData(
+      String token, String chatId) async {
+    ProfileGroupGetModel profileGetModel;
+    print("profile get api ${CommunicationUrls.getGroupProfileDataUrl + chatId}");
+    final response =
+        await client.get(CommunicationUrls.getGroupProfileDataUrl + chatId,
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+            ));
+            print("profile get ${response.data}");
+    profileGetModel = ProfileGroupGetModel.fromJson(response.data);
+    return profileGetModel;
+  }
   Future<ProfileGetModel> getGroupAttachmentsData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;

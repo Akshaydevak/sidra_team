@@ -38,6 +38,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           yield MessagedeleteFailed();
         }
       }
+      
 }
  
 

@@ -173,6 +173,9 @@ class _CreateChatGroupState extends State<CreateChatGroup> {
         widget.socket!.emit("group.message",{
         "type": "notify", "chatid": state.list.chatid, "content": "Group Created By ${state.list.createdBy.toString().toTitleCase()}\n ${state.list.addedUsers?.join(',').toString().toTitleCase()} are added to the group"
       });
+      context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: state.list.chatid??"", token: widget.token??"")
+          );
       BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
             token: widget.token ?? "",
             grpchatId: "",

@@ -13,6 +13,9 @@ class Variable{
   static String? reportingEmail="";
   static String? reportingName="";
   static bool isselected=true;
+  static bool fromBackground=false;
+   static bool fromRecent=false;
+    static bool fromApp=false;
   static String locationUrl="";
   static String errorMessage="";
   static String profilePic="";

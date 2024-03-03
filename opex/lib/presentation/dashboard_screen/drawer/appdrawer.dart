@@ -21,7 +21,8 @@ import 'drawer_svg.dart';
 import '../home_screen/homescreen_widget/list_tile.dart';
 
 class AppDrawer extends StatefulWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+
+  const AppDrawer({Key? key,}) : super(key: key);
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();

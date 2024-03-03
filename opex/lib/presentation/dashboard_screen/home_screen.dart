@@ -25,8 +25,9 @@ import 'home_screen/homescreen_widget/apps_svg.dart';
 import 'home_screen/homescreen_widget/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+   HomeScreen({Key? key,required this.homeTap,required this.taskTap}) : super(key: key);
+VoidCallback homeTap;
+VoidCallback taskTap;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -52,14 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     var h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: ColorPalette.white,
-      key: scaffoldKey,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: AppBarScreen(
-          scaffoldKey: scaffoldKey,
-        ),
-      ),
-      drawer: const AppDrawer(),
+
 
       body: ScrollConfiguration(
         behavior: NoGlow(),
@@ -102,17 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: AppHomeCard(
-                      onTap: () {
-
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: DashBoard(
-                            index: 1,
-                          ),
-                          withNavBar: false,
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
+                      onTap: widget.homeTap,
                       appTitle: "Communication",
                       appDescription:
                           "This app tailored for efficient internal communication within organization.",
@@ -124,15 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: AppHomeCard(
-                      onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: const DashBoard(index: 2),
-                          withNavBar: false,
-                          // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
-                      },
+                      onTap: widget.taskTap,
                       appTitle: "Task & Operations",
                       appDescription:
                           "For seamless internal organization task assign and team collaboration.",

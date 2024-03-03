@@ -24,8 +24,8 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
 
-  SharedPreferences? pref;
-  String token="";
+SharedPreferences? pref;
+String token="";
   data() async {
 
     await Firebase.initializeApp();
@@ -53,10 +53,10 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(
         const Duration(seconds: 2),
-            () {
-          authentication.isAuthenticated
-              ?socketconnnect():
-          null;
+        () { 
+           authentication.isAuthenticated
+                        ?socketconnnect():
+                        null;
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -88,6 +88,23 @@ class SplashScreenState extends State<SplashScreen> {
 
     socketgrpProvider.connect(token.toString());
   }
+  // void socketconnnect() async {
+  //   final socketProvider = context.read<scoketProvider>();
+
+  //   final socketgrpProvider = context.read<scoketgrpProvider>();
+
+  //   pref = await SharedPreferences.getInstance();
+
+  //   token = pref!.getString("token")!;
+
+  //   print("socket token $token");
+
+  //   setState(() {});
+
+  //   socketProvider.connect(token.toString());
+
+  //   socketgrpProvider.connect(token.toString());
+  // }
 
   @override
   Widget build(BuildContext context) {
