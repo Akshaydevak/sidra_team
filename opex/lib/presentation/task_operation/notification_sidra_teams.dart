@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'create/create_svg.dart';
 import 'create/model/task_models.dart';
 import 'create/task_bloc/task_bloc.dart';
 import 'home/comments_screen.dart';
@@ -31,6 +32,7 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
         return true;
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: BackAppBar(
@@ -48,6 +50,13 @@ class _NotificationInSidraTeamsState extends State<NotificationInSidraTeams> {
             child: Container(
               child: Column(
                 children: [
+                  widget.notification!.isEmpty?Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 100,),
+                          SvgPicture.string(CreateSvg().notificationEmpty,height: 250,width: 250,),
+                        ],
+                      )):
                   ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,

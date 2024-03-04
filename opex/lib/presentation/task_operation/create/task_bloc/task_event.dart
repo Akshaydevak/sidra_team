@@ -79,6 +79,12 @@ class GetTaskReadCreateEvent extends TaskEvent {
   // @override
   // List<Object> get props => [this.id];
 }
+class GetJobReadCreateEvent extends TaskEvent {
+  // final int id;
+  const GetJobReadCreateEvent();
+  // @override
+  // List<Object> get props => [this.id];
+}
 
 //readReward
 class GetReadRewardsEvent extends TaskEvent {
@@ -145,9 +151,13 @@ class CreateTaskEvent extends TaskEvent {
   final String? lastmodified;
   final String? longitude;
   final String? latitude;
+  final String? startTime;
+  final String? endTime;
   const CreateTaskEvent(  {
     required this.longitude,
     required this.latitude,
+    required this.endTime,
+    required this.startTime,
     required this.durationOption,
     this.parant,
     required this.jobId,
@@ -204,6 +214,8 @@ class UpdateTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String startTime;
+  final String endTime;
   final String durationOption;
   final String createdBy;
   final String taskName;
@@ -234,6 +246,8 @@ class UpdateTaskEvent extends TaskEvent {
     required this.longitude,
     required this.latitude,
     required this.img4,
+    required this.startTime,
+    required this.endTime,
     required this.img3,
     required this.durationOption,
     required this.img2,
@@ -275,6 +289,8 @@ class UpdateReportingTaskEvent extends TaskEvent {
   final int id;
   final int? statusStagesId;
   final String reportingPerson;
+  final String startTime;
+  final String endTime;
   final String durationOption;
   final String createdBy;
   final String taskName;
@@ -306,6 +322,8 @@ class UpdateReportingTaskEvent extends TaskEvent {
     required this.durationOption,
     required this.latitude,
     required this.img4,
+    required this.startTime,
+    required this.endTime,
     required this.img3,
     required this.img2,
     required this.img5,
@@ -631,4 +649,9 @@ class ReplayReportEvent extends TaskEvent {
   List<Object> get props => [
     reportStatus??"",
   ];
+}
+
+class SearchMapResults extends TaskEvent {
+  final String searchQuery;
+  const SearchMapResults({required this.searchQuery});
 }

@@ -112,6 +112,9 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     if (event is CreateJobEvent) {
       yield* _mapCreateJobStateToState(
         startDate: event.startDate.trim(),
+        startTime: event.startTime,
+        endTime: event.endTime,
+        durationOption: event.durationOption.trim(),
         endDate: event.endDate.trim(),
         reportingPerson: event.reportingPerson,
         relatedJob: event.relatedJob,
@@ -127,6 +130,9 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     }
     else if (event is UpdateJobEvent) {
       yield* updateJobState(
+        durationOption: event.durationOption,
+        startTime: event.startTime,
+        endTime: event.endTime,
         id: event.id,
           startDate: event.startDate.trim(),
           endDate: event.endDate.trim(),
@@ -289,7 +295,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     final dataResponse = await _jobRepo.getGroupList();
 
-    if (dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null) {
       yield GetGroupListSuccess(dataResponse.data);
     } else {
       yield GetGroupListFailed();
@@ -432,10 +438,16 @@ class JobBloc extends Bloc<JobEvent, JobState> {
         required String? endDate,
         required String? priority,
         required int? relatedJob,
+        required String? durationOption,
+        required String? startTime,
+        required String? endTime,
       }) async* {
     yield CreateJobLoading();
 
     final dataResponse = await _jobRepo.jobCreatePost(
+      endTime: endTime,
+      startTime: startTime,
+      durationOption: durationOption,
       startDate: startDate,
       endDate: endDate,
       assignedBy: assignedBy,
@@ -491,12 +503,18 @@ class JobBloc extends Bloc<JobEvent, JobState> {
         required String? startDate,
         required String? endDate,
         required String? priority,
+        required String? durationOption,
+        required String? startTime,
+        required String? endTime,
       }) async* {
     yield UpdateJobLoading();
 
     final dataResponse = await _jobRepo.jobUpdatePost(
         startDate: startDate,
         endDate: endDate,
+        endTime: endTime,
+        startTime: startTime,
+        durationOption: durationOption,
         id: id,
         assignedBy: assignedBy,
         createdBy: createdBy,

@@ -90,7 +90,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
               }
               if (state is UpdateReportingSuccess) {
                 Fluttertoast.showToast(
-                    msg: state.taskId,
+                    msg: "Reporting Person Changed",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black,
@@ -127,9 +127,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetReportingPersonListLoading) {
-                customCupertinoLoading();
-              }
+
               if (state is GetReportingPersonListSuccess) {
                 employee = state.employeeList;
                 _isLoading=false;
@@ -142,9 +140,7 @@ class _ReportingPersonState extends State<ReportingPerson> {
           ),
           BlocListener<JobBloc, JobState>(
             listener: (context, state) {
-              if (state is GetUserUderGroupLoading) {
-                customCupertinoLoading();
-              }
+
               if (state is GetUserUderGroupSuccess) {
                 userList = state.userlist;
                 setState(() {
@@ -481,21 +477,23 @@ class _ReportingPersonState extends State<ReportingPerson> {
                                                               endDate: "${widget
                                                                   .readTask?.endDate
                                                                   ?.split(
-                                                                  "T")[0]}"" ""${widget
+                                                                  "T")[0]}",
+                                                              endTime: "${widget
                                                                   .readTask?.endDate
                                                                   ?.split("T")[1]
                                                                   .split(
-                                                                  "+")[0]}" ?? "",
+                                                                  "+")[0]}",
                                                               startDate: "${widget
                                                                   .readTask
                                                                   ?.startDate
                                                                   ?.split(
-                                                                  "T")[0]}"" ""${widget
+                                                                  "T")[0]}",
+                                                              startTime: "${widget
                                                                   .readTask
                                                                   ?.startDate
                                                                   ?.split("T")[1]
                                                                   .split(
-                                                                  "+")[0]}" ?? "",
+                                                                  "+")[0]}"
                                                             ));
                                                         context.read<TaskBloc>()
                                                             .add(

@@ -10,12 +10,16 @@ class GetJobList extends Equatable {
   final String? jobCode;
   @JsonKey(name: 'name')
   final String? name;
+  @JsonKey(name: 'job_type_name')
+  final String? jobTypeName;
   @JsonKey(name: 'currency_code')
   final String? currency;
   @JsonKey(name: 'task_name')
   final String? taskName;
   @JsonKey(name: 'task_code')
   final String? taskCode;
+  @JsonKey(name: 'duration')
+  final String? duration;
   @JsonKey(name: 'related_job')
   final int? relatedJob;
   @JsonKey(name: 'origin_from')
@@ -76,12 +80,14 @@ class GetJobList extends Equatable {
 
    GetJobList( {
     this.statusName,
+    this.jobTypeName,
     this.createdPerson,
     this.imgCount,
     this.currency,
     this.rewCount,
     this.taskName,this.taskCode,
     this.reportingMail,
+    this.duration,
     this.reportingName,
     this.reportingCode,
     this.assignByName,

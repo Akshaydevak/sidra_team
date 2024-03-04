@@ -27,6 +27,10 @@ Map<String, dynamic> _$GetTaskTypeListToJson(GetTaskTypeList instance) =>
 GetTaskList _$GetTaskListFromJson(Map<String, dynamic> json) => GetTaskList(
       name: json['name'] as String?,
       profile: json['profile_pic'] as String?,
+      parentDict: json['parent_task_dict'] == null
+          ? null
+          : ParentDict.fromJson(
+              json['parent_task_dict'] as Map<String, dynamic>),
       parentGroupId: json['parent_group_id'] as int?,
       assignByDict: json['assigned_by_dict'] == null
           ? null
@@ -166,6 +170,18 @@ Map<String, dynamic> _$GetTaskListToJson(GetTaskList instance) =>
       'assigned_by_dict': instance.assignByDict,
       'assigned_to_dict': instance.assignToDict,
       'reporting_person_dict': instance.reportingPersonDict,
+      'parent_task_dict': instance.parentDict,
+    };
+
+ParentDict _$ParentDictFromJson(Map<String, dynamic> json) => ParentDict(
+      description: json['description'] as String?,
+      taskName: json['task_name'] as String?,
+    );
+
+Map<String, dynamic> _$ParentDictToJson(ParentDict instance) =>
+    <String, dynamic>{
+      'task_name': instance.taskName,
+      'description': instance.description,
     };
 
 GetCountTask _$GetCountTaskFromJson(Map<String, dynamic> json) => GetCountTask(
@@ -565,4 +581,46 @@ Map<String, dynamic> _$PerfomerModelToJson(PerfomerModel instance) =>
       'user_code': instance.userCode,
       'profile_pic': instance.profile,
       'highest_average_points': instance.points,
+    };
+
+SearchMapResultsModel _$SearchMapResultsModelFromJson(
+        Map<String, dynamic> json) =>
+    SearchMapResultsModel(
+      id: json['id'] as int?,
+      locationData: json['geometry'] == null
+          ? null
+          : GeometryLocation.fromJson(json['geometry'] as Map<String, dynamic>),
+      formattedAddress: json['formatted_address'] as String?,
+    );
+
+Map<String, dynamic> _$SearchMapResultsModelToJson(
+        SearchMapResultsModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'geometry': instance.locationData,
+      'formatted_address': instance.formattedAddress,
+    };
+
+GeometryLocation _$GeometryLocationFromJson(Map<String, dynamic> json) =>
+    GeometryLocation(
+      id: json['id'] as int?,
+      latAndLang: json['location'] == null
+          ? null
+          : Location.fromJson(json['location'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$GeometryLocationToJson(GeometryLocation instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'location': instance.latAndLang,
+    };
+
+Location _$LocationFromJson(Map<String, dynamic> json) => Location(
+      lat: (json['lat'] as num?)?.toDouble(),
+      lng: (json['lng'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+      'lat': instance.lat,
+      'lng': instance.lng,
     };

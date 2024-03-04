@@ -125,12 +125,18 @@ class CommunicationDatasource {
         response.data['status'] == 'success', response.data['message']);
   }
   Future<DoubleResponse> addanGroupMember(
-      {required String chatId, required String userId, required String token}) async {
+      {required String chatId, required String userId, required String token,required String emailid,
+  required String fname,
+  required String lname,
+  required String photo}) async {
     print("at datasource");
-    print("....$chatId...$userId");
+    print("....$chatId...$userId....$fname....$lname......$emailid....$photo");
     final response = await client.post(
       CommunicationUrls.addGroupMember+chatId,
-      data: {"userCode": userId},
+      data: {
+        "userCode": userId,
+        "fname": fname, "lname": lname, "email": emailid, "photo": photo
+        },
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -161,6 +167,70 @@ class CommunicationDatasource {
     return DoubleResponse(
         response.data['status'] == 'success', response.data['userid']);
   }
+    Future<DataResponse> deleteMessage(
+      {required String chatId, required int msgId, required String token}) async {
+    print("at datasource");
+    print("....$chatId  $msgId");
+    final response = await client.delete(
+      CommunicationUrls.messagedelete,
+      data: {
+        "messageId":msgId
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print("response at datasource ${response.data}");
+    return DataResponse(data: response.data['message']);
+  }
+      Future<DataResponse> editgroupprofile(
+      {required String chatId, required String grpname,required String grpdescription,required String token, String? image}) async {
+        print("total result ${image}");
+    print("at datasource");
+    print("....$chatId  $grpname");
+    final response;
+    if (image != null) {
+      response = await client.post(
+      CommunicationUrls.groupeditdetails+"$chatId",
+      data: {
+        "groupName":grpname,
+        "description":grpdescription,
+        "groupPhotoUrl":image
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+     
+    }else{
+       response = await client.post(
+      CommunicationUrls.groupeditdetails+"$chatId",
+      data: {
+        "groupName":grpname,
+        "description":grpdescription,
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    }
+    
+    print("response at group edit ${response.data}");
+    return DataResponse(data: response.data['message']);
+  }
+  
 
   Future<CommunicationUserModel> addAFriendUser(String token, String fname,
       String lname, String mail, String photo,String usercode) async {
@@ -304,7 +374,23 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
-
+ Future<ProfileGroupGetModel> getGroupProfileData(
+      String token, String chatId) async {
+    ProfileGroupGetModel profileGetModel;
+    print("profile get api ${CommunicationUrls.getGroupProfileDataUrl + chatId}");
+    final response =
+        await client.get(CommunicationUrls.getGroupProfileDataUrl + chatId,
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+            ));
+            print("profile get ${response.data}");
+    profileGetModel = ProfileGroupGetModel.fromJson(response.data);
+    return profileGetModel;
+  }
   Future<ProfileGetModel> getGroupAttachmentsData(
       String token, String chatId) async {
     ProfileGetModel profileGetModel;
@@ -350,6 +436,36 @@ class CommunicationDatasource {
     statusCode = (response.data['data']['upload']);
     return statusCode;
   }
+  
+  //   Future<String> groupimage({File? img}) async {
+  //   String statusCode;
+
+  //   print("total result ${img}");
+  //   String filePath = "";
+
+  //   if (img != null) filePath = img.path;
+  //   final mime = lookupMimeType(filePath)!.split("/");
+
+  //   final fileData = await MultipartFile.fromFile(
+  //     filePath,
+  //     contentType: MediaType(mime.first, mime.last),
+  //   );
+  //   final FormData formData = FormData.fromMap({"upload": fileData});
+
+  //   final response = await client.post(
+  //     CommunicationUrls.groupeditdetails+'chat'
+  //     data: formData,
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     ),
+  //   );
+  //   print("response is here ${response.data}");
+  //   statusCode = (response.data['data']['upload']);
+  //   return statusCode;
+  // }
   Future<String> uploadImageData({FilePickerResult? img}) async {
     String statusCode;
 

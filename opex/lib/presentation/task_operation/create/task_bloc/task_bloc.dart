@@ -80,6 +80,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     else if (event is GetTaskReadCreateEvent) {
       yield* getTaskCreationRead();
     }
+    else if (event is GetJobReadCreateEvent) {
+      yield* getJobCreationRead();
+    }
     if (event is GetReadRewardsEvent) {
       yield* getReadRewards(event.id,event.isTask);
     }
@@ -103,6 +106,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is CreateTaskEvent) {
       yield* createTaskstate(
+        endTime: event.endTime??"",
+        startTime: event.startTime??"",
         longitude: event.longitude,
           durationOption: event.durationOption,
           latitude: event.latitude,
@@ -149,6 +154,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
     if (event is UpdateTaskEvent) {
       yield* updateTaskstate(
+        startTime: event.startTime,
+         endTime: event.endTime,
          durationOption: event.durationOption,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
@@ -185,6 +192,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event is UpdateReportingTaskEvent) {
       yield* updateReportingTaskstate(
         durationOption: event.durationOption,
+        startTime: event.startTime,
+        endTime: event.endTime,
         attachNote: event.attachmentNote?.trim(),
         attachdescription: event.attachmentDescription?.trim(),
         img5: event.img5,
@@ -347,6 +356,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           prev: event.prev?.trim(),
       );
     }
+    if (event is SearchMapResults) {
+      yield* searchMapLocation(searchQuery: event.searchQuery);
+    }
   }
 
 
@@ -420,7 +432,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) async* {
     yield GetNotificationListLoading();
     final dataResponse = await _taskRepo.getNotificationList(search,next,prev);
-    if (dataResponse.data !=null &&dataResponse.data.isNotEmpty) {
+    if (dataResponse.data !=null ) {
       yield GetNotificationListSuccess(
           prevPageUrl: dataResponse.previousUrl??"",
           nextPageUrl: dataResponse.nextPageUrl ?? "",
@@ -512,6 +524,20 @@ Stream<TaskState> getTaskCreationRead() async* {
       );
     }
   }
+  ///
+  Stream<TaskState> getJobCreationRead() async* {
+
+    yield GetJobReadCreateLoading();
+
+    final dataResponse = await _taskRepo.getJobCreationRead();
+
+    if (dataResponse.hasData) {
+      yield GetJobReadCreateSuccess(createRead: dataResponse.data);
+    } else {
+      yield GetJobReadCreateFailed(dataResponse.error.toString(),
+      );
+    }
+  }
 
   //readRewards
   Stream<TaskState> getReadRewards(int id,bool isTask) async* {
@@ -585,6 +611,8 @@ Stream<TaskState> getTaskCreationRead() async* {
         required int priorityLeval,
         required String startDate,
         required String endDate,
+        required String startTime,
+        required String endTime,
         required bool isActive,
         required String AssigningType,
         required String AssigningCode,
@@ -601,6 +629,8 @@ Stream<TaskState> getTaskCreationRead() async* {
 
     final dataResponse = await _taskRepo.taskCreatePost(
       latitude: latitude,
+      startTime: startTime,
+      endTime: endTime,
       durationOption: durationOption,
       longitude: longitude,
       statusStagesId:statusStagesId,
@@ -695,12 +725,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,
@@ -772,12 +806,16 @@ userId: userId,
         required String? longitude,
         required String? latitude,
         required String durationOption,
+        required String startTime,
+        required String endTime,
       }) async* {
     yield UpdateReportingTaskLoading();
 
     final dataResponse = await _taskRepo.taskUpdatePost(
       longitude: longitude,
       durationOption: durationOption,
+      endTime: endTime,
+      startTime: startTime,
       latitude: latitude,
       img4: img4,
       img3: img3,
@@ -1290,6 +1328,18 @@ userId: userId,
       print("failed ${dataResponse.error}");
       yield ReplayReportFailed(
         dataResponse.error ?? "",);
+    }
+  }
+
+  Stream<TaskState> searchMapLocation(
+      {required String searchQuery}) async* {
+    yield SearchMapResultsLoading();
+    final dataResponse =
+    await _taskDataSource.searchMapLocation(searchQuery);
+    if (dataResponse.isNotEmpty) {
+      yield SearchMapResultsSuccess(cartData: dataResponse);
+    } else {
+      yield SearchMapResultsFailed();
     }
   }
 

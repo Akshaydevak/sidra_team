@@ -25,7 +25,7 @@ class GroupCard extends StatelessWidget {
     var h=MediaQuery.of(context).size.height;
     return InkWell(
       onTap: (){
-        HapticFeedback.vibrate();
+        HapticFeedback.heavyImpact();
         context.read<EmployeeBloc>().add(
             GetGroupTReadEvent(groupList?.id?? 0));
         PersistentNavBarNavigator.pushNewScreen(

@@ -34,7 +34,7 @@ import 'group_list.dart';
 import 'home/model/joblist_model.dart';
 
 class PaymentOption extends StatefulWidget {
-  final bool update;
+   bool update;
   final bool isJob;
   final bool isTask;
   final int taskId;
@@ -42,14 +42,18 @@ class PaymentOption extends StatefulWidget {
   final int paymentId;
   final GetJobList? joblist;
   final String? currencyCode;
-  final GetTaskList? taskList;
-  const PaymentOption(
+  final String? assignType;
+  final String? assignCode;
+   GetTaskList? taskList;
+   PaymentOption(
       {Key? key,
       this.update = false,
       this.isJob = false,
       this.isTask = false,
       this.taskId = 0,
       this.jobId = 0,
+      this.assignCode = '',
+      this.assignType = '',
       required this.paymentId,
       this.joblist,
       this.taskList,
@@ -91,6 +95,13 @@ class _PaymentOptionState extends State<PaymentOption> {
   List<PicModel> picModelPayment = [];
   @override
   void initState() {
+    widget.isJob==false?
+    context
+        .read<TaskBloc>()
+        .add(GetTaskReadListEvent(widget.taskId ?? 0)):
+    context
+        .read<JobBloc>()
+        .add(GetJobReadListEvent(widget.jobId ?? 0));
     picModelPayment.clear();
     for (int i = 0; i < 5; i++) {
       picModelPayment.add(PicModel(data: null, url: null));
@@ -119,10 +130,13 @@ class _PaymentOptionState extends State<PaymentOption> {
   }
 
   int count = 0;
+  bool loader=true;
   @override
   Widget build(BuildContext context) {
-    print("Task Id${widget.taskId}");
-    var w = MediaQuery.of(context).size.width;
+    var h = MediaQuery.of(context).size.height;
+    double w1 = MediaQuery.of(context).size.width;
+    double w = w1 > 700 ? 400 : w1;
+
     return WillPopScope(
       onWillPop: () async {
         widget.isJob
@@ -151,6 +165,47 @@ class _PaymentOptionState extends State<PaymentOption> {
           ),
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
+              if (state is GetTaskReadSuccess) {
+                widget.taskList=state.getTaskRead;
+                widget.taskList?.paymentId == null?loader=false:null;
+                widget.taskList?.paymentId != null
+                    ? context.read<TaskBloc>().add(
+                    GetPaymentReadListEvent(
+                        widget.taskList?.id ??
+                            0,
+                        true))
+                    : null;
+                // readAttach();
+                // loader = false;
+                setState(() {
+
+                });
+              }
+            },
+          ),
+          BlocListener<JobBloc, JobState>(
+            listener: (context, state) {
+              if (state is GetJobReadSuccess) {
+
+                state.getjobRead.paymentId == null?loader=false:null;
+                state.getjobRead.paymentId != null
+                    ? context.read<TaskBloc>().add(
+                    GetPaymentReadListEvent(
+                        state.getjobRead.id ??
+                            0,
+
+                        false))
+                    : null;
+                // readAttach();
+                // loader = false;
+                setState(() {
+
+                });
+              }
+            },
+          ),
+          BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) {
               if (state is CreatePaymentFailed) {
                 buttonLoad = false;
                 showSnackBar(
@@ -163,6 +218,8 @@ class _PaymentOptionState extends State<PaymentOption> {
               }
               if (state is CreatePaymentSuccess) {
                 buttonLoad = false;
+                isValid=false;
+
                 // createJob = state.user;
 
                 Fluttertoast.showToast(
@@ -171,13 +228,16 @@ class _PaymentOptionState extends State<PaymentOption> {
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black,
                     textColor: Colors.white);
-                context
-                    .read<JobBloc>()
-                    .add(GetJobReadListEvent(widget.jobId ?? 0));
-                context
-                    .read<TaskBloc>()
-                    .add(GetTaskReadListEvent(widget.taskId));
-                Navigator.pop(context);
+                // context
+                //     .read<JobBloc>()
+                //     .add(GetJobReadListEvent(widget.jobId ?? 0));
+                // context
+                //     .read<TaskBloc>()
+                //     .add(GetTaskReadListEvent(widget.taskId));
+                setState(() {
+
+                });
+                // Navigator.pop(context);
               }
             },
           ),
@@ -194,8 +254,9 @@ class _PaymentOptionState extends State<PaymentOption> {
                 setState(() {});
               }
               if (state is UpdatePaymentSuccess) {
+
                 buttonLoad = false;
-                // createJob = state.user;
+                isValid=false;
 
                 Fluttertoast.showToast(
                     msg: 'Successfully Updated',
@@ -203,13 +264,13 @@ class _PaymentOptionState extends State<PaymentOption> {
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black,
                     textColor: Colors.white);
-                context
-                    .read<JobBloc>()
-                    .add(GetJobReadListEvent(widget.jobId ?? 0));
-                context
-                    .read<TaskBloc>()
-                    .add(GetTaskReadListEvent(Variable.taskReadId));
-                Navigator.pop(context);
+                // context
+                //     .read<JobBloc>()
+                //     .add(GetJobReadListEvent(widget.jobId ?? 0));
+                // context
+                //     .read<TaskBloc>()
+                //     .add(GetTaskReadListEvent(widget.taskList?.id??0));
+                // Navigator.pop(context);
                 setState(() {});
               }
             },
@@ -218,6 +279,8 @@ class _PaymentOptionState extends State<PaymentOption> {
           BlocListener<TaskBloc, TaskState>(
             listener: (context, state) {
               if (state is GetPaymentReadSuccess) {
+                loader=false;
+                widget.update=true;
                 paymentRead = state.paymentRead;
                 budgetController.text = paymentRead?.budget.toString() ?? "";
                 discriptionController.text = paymentRead?.description ?? "";
@@ -239,6 +302,9 @@ class _PaymentOptionState extends State<PaymentOption> {
                 widget.update == false
                     ? count = 0
                     : count = picModelPayment.length;
+                print("fffff${paymentRead?.costingMeta?.image1}");
+                print("fffff${picModelPayment[0].url}");
+                print("fffff${picModelPayment.length}");
                 setState(() {});
               }
             },
@@ -246,124 +312,225 @@ class _PaymentOptionState extends State<PaymentOption> {
         ],
         child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: BackAppBar(
-              label: "Payment Option",
-              isAction: false,
-              isBack: false,
-              onTap: () {
-                widget.isJob
-                    ? context.read<TaskBloc>().add(GetTaskListEvent(
-                        widget.jobId, '', '', '', false, '', ''))
-                    : null;
-                Navigator.pop(context);
-              },
-              action: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  isValid == false
-                      ? GestureDetector(
-                          child: Container(
-                            // width: 110,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xffd3d3d3),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              widget.update ? "Update" : "Create",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontSize: w / 22,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                            buttonLoad = true;
-                            setState(() {});
-                            widget.update
-                                ? BlocProvider.of<TaskBloc>(context).add(UpdatePaymentEvent(
-                                    isActive: true,
-                                    discription: discriptionController.text,
-                                    taskId: paymentRead?.taskId,
-                                    budget: double.tryParse(budgetController.text) ??
-                                        0.0,
-                                    expense:
-                                        double.tryParse(expenceController.text) ??
-                                            0.0,
-                                    notas: notesController.text,
-                                    jobId: paymentRead?.jobId,
-                                    AssigningCode: selCode ?? "",
-                                    assigningType: selectedType ?? "",
-                                    payId: paymentRead?.id,
-                                    img1: picModelPayment[0].data ??
-                                        picModelPayment[0].url,
-                                    img5: picModelPayment[4].data ??
-                                        picModelPayment[4].url,
-                                    img4: picModelPayment[3].data ??
-                                        picModelPayment[3].url,
-                                    img3: picModelPayment[2].data ??
-                                        picModelPayment[2].url,
-                                    img2: picModelPayment[1].data ??
-                                        picModelPayment[1].url))
-                                : BlocProvider.of<TaskBloc>(context).add(
-                                    CreatePaymentEvent(
-                                        discription: discriptionController.text,
-                                        taskId: widget.taskId,
-                                        budget:
-                                            double.tryParse(budgetController.text) ??
-                                                0.0,
-                                        expense: double.tryParse(expenceController.text) ?? 0.0,
-                                        notas: notesController.text,
-                                        jobId: widget.jobId,
-                                        AssigningCode: selCode ?? "",
-                                        assigningType: selectedType ?? "",
-                                        img1: picModelPayment[0].data ?? 0,
-                                        img5: picModelPayment[4].data ?? 0,
-                                        img4: picModelPayment[3].data ?? 0,
-                                        img3: picModelPayment[2].data ?? 0,
-                                        img2: picModelPayment[1].data ?? 0));
-                          },
-                          child: Container(
-                            // width: 110,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: ColorPalette.primary,
-                            ),
-                            alignment: Alignment.center,
-                            child: buttonLoad == true
-                                ? SpinKitThreeBounce(
-                                    color: Colors.white,
-                                    size: 15.0,
-                                  )
-                                : Text(
-                                    widget.update ? "Update" : "Create",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.white,
-                                      fontSize: w / 22,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                ],
+          // appBar: PreferredSize(
+          //   preferredSize: Size.fromHeight(60),
+          //   child: BackAppBar(
+          //     label: "Payment Option",
+          //     isAction: false,
+          //     isBack: false,
+          //     onTap: () {
+          //       widget.isJob
+          //           ? context.read<TaskBloc>().add(GetTaskListEvent(
+          //               widget.jobId, '', '', '', false, '', ''))
+          //           : null;
+          //       Navigator.pop(context);
+          //     },
+          //     // action: Column(
+          //     //   mainAxisAlignment: MainAxisAlignment.center,
+          //     //   children: [
+          //     //     isValid == false
+          //     //         ? GestureDetector(
+          //     //             child: Container(
+          //     //               // width: 110,
+          //     //               padding: EdgeInsets.symmetric(
+          //     //                   horizontal: 16, vertical: 8),
+          //     //               decoration: BoxDecoration(
+          //     //                 borderRadius: BorderRadius.circular(5),
+          //     //                 color: Color(0xffd3d3d3),
+          //     //               ),
+          //     //               alignment: Alignment.center,
+          //     //               child: Text(
+          //     //                 widget.update ? "Update" : "Create",
+          //     //                 textAlign: TextAlign.center,
+          //     //                 style: GoogleFonts.roboto(
+          //     //                   color: Colors.white,
+          //     //                   fontSize: w / 22,
+          //     //                   fontWeight: FontWeight.w500,
+          //     //                 ),
+          //     //               ),
+          //     //             ),
+          //     //           )
+          //     //         : GestureDetector(
+          //     //             onTap: () {
+          //     //               HapticFeedback.heavyImpact();
+          //     //               buttonLoad = true;
+          //     //               setState(() {});
+          //     //               widget.update
+          //     //                   ? BlocProvider.of<TaskBloc>(context).add(UpdatePaymentEvent(
+          //     //                       isActive: true,
+          //     //                       discription: discriptionController.text,
+          //     //                       taskId: paymentRead?.taskId,
+          //     //                       budget: double.tryParse(budgetController.text) ??
+          //     //                           0.0,
+          //     //                       expense:
+          //     //                           double.tryParse(expenceController.text) ??
+          //     //                               0.0,
+          //     //                       notas: notesController.text,
+          //     //                       jobId: paymentRead?.jobId,
+          //     //                       AssigningCode: widget.assignCode ?? "",
+          //     //                       assigningType: widget.assignType ?? "",
+          //     //                       payId: paymentRead?.id,
+          //     //                       img1: picModelPayment[0].data ??
+          //     //                           picModelPayment[0].url,
+          //     //                       img5: picModelPayment[4].data ??
+          //     //                           picModelPayment[4].url,
+          //     //                       img4: picModelPayment[3].data ??
+          //     //                           picModelPayment[3].url,
+          //     //                       img3: picModelPayment[2].data ??
+          //     //                           picModelPayment[2].url,
+          //     //                       img2: picModelPayment[1].data ??
+          //     //                           picModelPayment[1].url))
+          //     //                   : BlocProvider.of<TaskBloc>(context).add(
+          //     //                       CreatePaymentEvent(
+          //     //                           discription: discriptionController.text,
+          //     //                           taskId: widget.taskId,
+          //     //                           budget:
+          //     //                               double.tryParse(budgetController.text) ??
+          //     //                                   0.0,
+          //     //                           expense: double.tryParse(expenceController.text) ?? 0.0,
+          //     //                           notas: notesController.text,
+          //     //                           jobId: widget.jobId,
+          //     //                           AssigningCode: widget.assignCode ?? "",
+          //     //                           assigningType: widget.assignType ?? "",
+          //     //                           img1: picModelPayment[0].data ?? 0,
+          //     //                           img5: picModelPayment[4].data ?? 0,
+          //     //                           img4: picModelPayment[3].data ?? 0,
+          //     //                           img3: picModelPayment[2].data ?? 0,
+          //     //                           img2: picModelPayment[1].data ?? 0));
+          //     //             },
+          //     //             child: Container(
+          //     //               // width: 110,
+          //     //               padding: EdgeInsets.symmetric(
+          //     //                   horizontal: 16, vertical: 8),
+          //     //               decoration: BoxDecoration(
+          //     //                 borderRadius: BorderRadius.circular(4),
+          //     //                 color: ColorPalette.primary,
+          //     //               ),
+          //     //               alignment: Alignment.center,
+          //     //               child: buttonLoad == true
+          //     //                   ? SpinKitThreeBounce(
+          //     //                       color: Colors.white,
+          //     //                       size: 15.0,
+          //     //                     )
+          //     //                   : Text(
+          //     //                       widget.update ? "Update" : "Create",
+          //     //                       textAlign: TextAlign.center,
+          //     //                       style: GoogleFonts.roboto(
+          //     //                         color: Colors.white,
+          //     //                         fontSize: w / 22,
+          //     //                         fontWeight: FontWeight.w500,
+          //     //                       ),
+          //     //                     ),
+          //     //             ),
+          //     //           ),
+          //     //   ],
+          //     // ),
+          //
+          //   ),
+          // ),
+          floatingActionButton: isValid == false
+              ? GestureDetector(
+            child: Container(
+              height: 45,
+              width: w1,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Color(0xffd3d3d3),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                "Save",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(
+                  color: Colors.white,
+                  fontSize: w / 22,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          )
+              : GestureDetector(
+            onTap: () {
+              HapticFeedback.heavyImpact();
+              buttonLoad = true;
+              setState(() {});
+              widget.update
+                  ? BlocProvider.of<TaskBloc>(context).add(UpdatePaymentEvent(
+                  isActive: true,
+                  discription: discriptionController.text,
+                  taskId: paymentRead?.taskId,
+                  budget: double.tryParse(budgetController.text) ??
+                      0.0,
+                  expense:
+                  double.tryParse(expenceController.text) ??
+                      0.0,
+                  notas: notesController.text,
+                  jobId: paymentRead?.jobId,
+                  AssigningCode: widget.assignCode ?? "",
+                  assigningType: widget.assignType ?? "",
+                  payId: paymentRead?.id,
+                  img1: picModelPayment[0].data ??
+                      picModelPayment[0].url,
+                  img5: picModelPayment[4].data ??
+                      picModelPayment[4].url,
+                  img4: picModelPayment[3].data ??
+                      picModelPayment[3].url,
+                  img3: picModelPayment[2].data ??
+                      picModelPayment[2].url,
+                  img2: picModelPayment[1].data ??
+                      picModelPayment[1].url))
+                  : BlocProvider.of<TaskBloc>(context).add(
+                  CreatePaymentEvent(
+                      discription: discriptionController.text,
+                      taskId: widget.taskId,
+                      budget:
+                      double.tryParse(budgetController.text) ??
+                          0.0,
+                      expense: double.tryParse(expenceController.text) ?? 0.0,
+                      notas: notesController.text,
+                      jobId: widget.jobId,
+                      AssigningCode: widget.assignCode ?? "",
+                      assigningType: widget.assignType ?? "",
+                      img1: picModelPayment[0].data ?? 0,
+                      img5: picModelPayment[4].data ?? 0,
+                      img4: picModelPayment[3].data ?? 0,
+                      img3: picModelPayment[2].data ?? 0,
+                      img2: picModelPayment[1].data ?? 0));
+            },
+            child: Container(
+              height: 45,
+              width: w1,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: ColorPalette.primary,
+              ),
+              alignment: Alignment.center,
+              child: buttonLoad == true
+                  ? SpinKitThreeBounce(
+                color: Colors.white,
+                size: 15.0,
+              )
+                  : Text(
+               "Save",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(
+                  color: Colors.white,
+                  fontSize: w / 22,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           body: SafeArea(
             child: SingleChildScrollView(
-              child: Column(children: [
+              child: loader == true
+                  ? LottieLoader()
+                  : Column(children: [
                 Container(
                   width: w,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -371,127 +538,127 @@ class _PaymentOptionState extends State<PaymentOption> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      widget.isJob
-                          ? Container()
-                          : widget.isTask
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    widget.update
-                                        ? Container()
-                                        : Text(
-                                            "Assigning Type",
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.black,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                    widget.update
-                                        ? Container()
-                                        : SizedBox(
-                                            height: 10,
-                                          ),
-                                    widget.update
-                                        ? ReadDropDownCard(
-                                            label: "Assigning Type",
-                                            selValue:
-                                                paymentRead?.assigningType ??
-                                                    "",
-                                          )
-                                        : Container(
-                                            width: w / 1,
-                                            // padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            //height: 20.0,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                              border: Border.all(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2),
-                                                  width: 1),
-                                            ),
-                                            child: DropdownButton(
-                                                isExpanded: true,
-                                                dropdownColor: Colors.white,
-                                                icon: Icon(Icons
-                                                    .keyboard_arrow_down_outlined),
-                                                underline: Container(),
-                                                items: assignTypeList
-                                                    .map((String items) {
-                                                  return DropdownMenuItem(
-                                                    enabled: true,
-                                                    value: items,
-                                                    child: Text(items,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black)),
-                                                  );
-                                                }).toList(),
-                                                value: selectedType,
-                                                onChanged: (dynamic value) {
-                                                  setState(() {
-                                                    selectedType = value;
-                                                    selectedType == "Individual"
-                                                        ? context
-                                                            .read<JobBloc>()
-                                                            .add(
-                                                                GetEmployeeListEvent(
-                                                                    '', '', ''))
-                                                        : selectedType ==
-                                                                "Task_Group"
-                                                            ? context
-                                                                .read<JobBloc>()
-                                                                .add(
-                                                                    GetGroupListEvent())
-                                                            : null;
-                                                  });
-                                                },
-                                                hint: Text(
-                                                  "Assign Type",
-                                                  style: GoogleFonts.poppins(
-                                                      color: Colors.grey,
-                                                      fontSize: 14),
-                                                )),
-                                          ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    widget.update
-                                        ? ReadDropDownCard(
-                                            label: "Assigning Code",
-                                            selValue:
-                                                paymentRead?.assigningName ??
-                                                    "",
-                                          )
-                                        : selectedType == "Task_Group"
-                                            ? DropDownCard(
-                                                label: "Assigning Name",
-                                                selValue: selName,
-                                                onTap: () {
-                                                  context
-                                                      .read<JobBloc>()
-                                                      .add(GetGroupListEvent());
-                                                  _showModalBottomGroupList();
-                                                },
-                                              )
-                                            : selectedType == "Individual"
-                                                ? DropDownCard(
-                                                    label: "Assigning Name",
-                                                    selValue: selName,
-                                                    onTap: () {
-                                                      context.read<JobBloc>().add(
-                                                          GetEmployeeListEvent(
-                                                              '', '', ''));
-                                                      _showModalBottomAdditionalRole();
-                                                    },
-                                                  )
-                                                : Container(),
-                                  ],
-                                )
-                              : Container(),
+                      // widget.isJob
+                      //     ? Container()
+                      //     : widget.isTask
+                      //         ? Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: [
+                      //               widget.update
+                      //                   ? Container()
+                      //                   : Text(
+                      //                       "Assigning Type",
+                      //                       style: GoogleFonts.roboto(
+                      //                         color: Colors.black,
+                      //                         fontSize: w / 24,
+                      //                         fontWeight: FontWeight.w500,
+                      //                       ),
+                      //                     ),
+                      //               widget.update
+                      //                   ? Container()
+                      //                   : SizedBox(
+                      //                       height: 10,
+                      //                     ),
+                      //               widget.update
+                      //                   ? ReadDropDownCard(
+                      //                       label: "Assigning Type",
+                      //                       selValue:
+                      //                           paymentRead?.assigningType ??
+                      //                               "",
+                      //                     )
+                      //                   : Container(
+                      //                       width: w / 1,
+                      //                       // padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      //                       //height: 20.0,
+                      //                       padding: EdgeInsets.symmetric(
+                      //                           horizontal: 12.0),
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius:
+                      //                             BorderRadius.circular(4),
+                      //                         border: Border.all(
+                      //                             color: Colors.grey
+                      //                                 .withOpacity(0.2),
+                      //                             width: 1),
+                      //                       ),
+                      //                       child: DropdownButton(
+                      //                           isExpanded: true,
+                      //                           dropdownColor: Colors.white,
+                      //                           icon: Icon(Icons
+                      //                               .keyboard_arrow_down_outlined),
+                      //                           underline: Container(),
+                      //                           items: assignTypeList
+                      //                               .map((String items) {
+                      //                             return DropdownMenuItem(
+                      //                               enabled: true,
+                      //                               value: items,
+                      //                               child: Text(items,
+                      //                                   style: TextStyle(
+                      //                                       color:
+                      //                                           Colors.black)),
+                      //                             );
+                      //                           }).toList(),
+                      //                           value: selectedType,
+                      //                           onChanged: (dynamic value) {
+                      //                             setState(() {
+                      //                               selectedType = value;
+                      //                               selectedType == "Individual"
+                      //                                   ? context
+                      //                                       .read<JobBloc>()
+                      //                                       .add(
+                      //                                           GetEmployeeListEvent(
+                      //                                               '', '', ''))
+                      //                                   : selectedType ==
+                      //                                           "Task_Group"
+                      //                                       ? context
+                      //                                           .read<JobBloc>()
+                      //                                           .add(
+                      //                                               GetGroupListEvent())
+                      //                                       : null;
+                      //                             });
+                      //                           },
+                      //                           hint: Text(
+                      //                             "Assign Type",
+                      //                             style: GoogleFonts.poppins(
+                      //                                 color: Colors.grey,
+                      //                                 fontSize: 14),
+                      //                           )),
+                      //                     ),
+                      //               SizedBox(
+                      //                 height: 10,
+                      //               ),
+                      //               widget.update
+                      //                   ? ReadDropDownCard(
+                      //                       label: "Assigning Code",
+                      //                       selValue:
+                      //                           paymentRead?.assigningName ??
+                      //                               "",
+                      //                     )
+                      //                   : selectedType == "Task_Group"
+                      //                       ? DropDownCard(
+                      //                           label: "Assigning Name",
+                      //                           selValue: selName,
+                      //                           onTap: () {
+                      //                             context
+                      //                                 .read<JobBloc>()
+                      //                                 .add(GetGroupListEvent());
+                      //                             _showModalBottomGroupList();
+                      //                           },
+                      //                         )
+                      //                       : selectedType == "Individual"
+                      //                           ? DropDownCard(
+                      //                               label: "Assigning Name",
+                      //                               selValue: selName,
+                      //                               onTap: () {
+                      //                                 context.read<JobBloc>().add(
+                      //                                     GetEmployeeListEvent(
+                      //                                         '', '', ''));
+                      //                                 _showModalBottomAdditionalRole();
+                      //                               },
+                      //                             )
+                      //                           : Container(),
+                      //             ],
+                      //           )
+                      //         : Container(),
 
                       SizedBox(
                         height: 10,
@@ -737,6 +904,9 @@ class _PaymentOptionState extends State<PaymentOption> {
                       ],
                     ],
                   ),
+                ),
+                SizedBox(
+                  height: 40,
                 )
               ]),
             ),

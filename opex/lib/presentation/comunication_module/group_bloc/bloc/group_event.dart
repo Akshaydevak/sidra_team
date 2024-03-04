@@ -31,6 +31,11 @@ class GroupProfileGet extends GroupEvent {
   final String token;
   const GroupProfileGet({required this.chatid, required this.token});
 }
+class GroupProfileGetdata extends GroupEvent {
+  final String chatid;
+  final String token;
+  const GroupProfileGetdata({required this.chatid, required this.token});
+}
 
 class GroupLeaveEvent extends GroupEvent {
   final String token;
@@ -42,7 +47,11 @@ class GroupMemberAddEvent extends GroupEvent {
   final String token;
   final String chatId;
   final String userId;
-  const GroupMemberAddEvent({required this.token, required this.chatId, required this.userId});
+  final String emailid;
+  final String fname;
+  final String lname;
+  final String photo;
+  const GroupMemberAddEvent({required this.token, required this.chatId, required this.userId,required this.emailid,required this.fname,required this.lname,required this.photo});
 }
 
 class GroupMemberDeleteEvent extends GroupEvent {
@@ -50,4 +59,17 @@ class GroupMemberDeleteEvent extends GroupEvent {
   final String chatId;
   final String userId;
   const GroupMemberDeleteEvent({required this.token, required this.chatId, required this.userId});
+}
+class GroupProfileEditEvent extends GroupEvent {
+  final String token;
+  final String chatId;
+  final String groupname;
+  final String groupdescription;
+  final String? image; 
+  const GroupProfileEditEvent({required this.token, required this.chatId, required this.groupname,required this.groupdescription,this.image});
+}
+class GroupUploadPictureEvent extends GroupEvent {
+  final File image;
+
+  const GroupUploadPictureEvent({required this.image});
 }

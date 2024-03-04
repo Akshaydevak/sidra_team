@@ -50,6 +50,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
   dynamic imageId = 0;
   SharedPreferences? pref;
   String token='';
+  String fcm='';
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
@@ -138,98 +139,98 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
           child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: ColorPalette.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Column(
-            children: [
-              AppBar(
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  systemNavigationBarColor: Colors.white, // Navigation bar
-                  statusBarColor: Colors.white, // Status bar
-                ),
-                elevation: 0,
-                backgroundColor: Colors.white,
-                surfaceTintColor: Colors.white,
-                centerTitle: false,
-                title: Text(
-                  "My Profile",
-                  style: TextStyle(color: Colors.black, fontSize: w / 22),
-                ),
-                titleSpacing: 10,
-                leading: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: SvgPicture.string(
-                    AppsSvg().appbarIcon,
-                  ),
-                ),
-                leadingWidth: 28,
-                actions: [
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 20, left: 16),
-                  //   child: InkWell(
-                  //     onTap: () {
-                  //       if (activeTextfield == true) {
-                  //         context.read<ProfileBloc>().add(UpdateProfileEvent(
-                  //               mobile: mobileController.text,
-                  //               lname: "",
-                  //               fname: nameController.text,
-                  //               dob: "",
-                  //               email: emailController.text,
-                  //             ));
-                  //       } else {
-                  //         Future.delayed(Duration(seconds: 0), () {
-                  //           myfocus
-                  //               .requestFocus(); //auto focus on second text field.
-                  //         });
-                  //
-                  //         setState(() {
-                  //           focus = true;
-                  //           print("focusss$focus");
-                  //         });
-                  //         // activeTextfield=false;
-                  //       }
-                  //       myfocus.unfocus();
-                  //       myfocus1.unfocus();
-                  //       myfocus2.unfocus();
-                  //       activeTextfield = false;
-                  //     },
-                  //     child: Text(
-                  //       activeTextfield == true ? "Save" : "Edit Profile",
-                  //       style: GoogleFonts.roboto(
-                  //         color:
-                  //             // activeTextfield==true?
-                  //             Color(0xFF2871AF),
-                  //         // :Color(0xFFD3D3D3),
-                  //         fontSize: w / 26,
-                  //         fontWeight: FontWeight.w500,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // SvgPicture.string(HomeSvg().msgIcon),
-                  //         const SizedBox(
-                  //           width: 16,
-                  //         ),
-                  //         GestureDetector(
-                  //           onTap: widget.onTap,
-                  //             child: SvgPicture.string(HomeSvg().addIcon)),
-
-                  const SizedBox(
-                    width: 16,
-                  )
-                ],
-              ),
-              Container(
-                width: w1,
-                height: 1.50,
-                decoration: const BoxDecoration(
-                  color: Color(0xb2e6e6e6),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // appBar: PreferredSize(
+        //   preferredSize: Size.fromHeight(60),
+        //   child: Column(
+        //     children: [
+        //       AppBar(
+        //         systemOverlayStyle: const SystemUiOverlayStyle(
+        //           systemNavigationBarColor: Colors.white, // Navigation bar
+        //           statusBarColor: Colors.white, // Status bar
+        //         ),
+        //         elevation: 0,
+        //         backgroundColor: Colors.white,
+        //         surfaceTintColor: Colors.white,
+        //         centerTitle: false,
+        //         title: Text(
+        //           "My Profile",
+        //           style: TextStyle(color: Colors.black, fontSize: w / 22),
+        //         ),
+        //         titleSpacing: 10,
+        //         leading: Padding(
+        //           padding: const EdgeInsets.only(left: 10),
+        //           child: SvgPicture.string(
+        //             AppsSvg().appbarIcon,
+        //           ),
+        //         ),
+        //         leadingWidth: 28,
+        //         actions: [
+        //           // Padding(
+        //           //   padding: const EdgeInsets.only(top: 20, left: 16),
+        //           //   child: InkWell(
+        //           //     onTap: () {
+        //           //       if (activeTextfield == true) {
+        //           //         context.read<ProfileBloc>().add(UpdateProfileEvent(
+        //           //               mobile: mobileController.text,
+        //           //               lname: "",
+        //           //               fname: nameController.text,
+        //           //               dob: "",
+        //           //               email: emailController.text,
+        //           //             ));
+        //           //       } else {
+        //           //         Future.delayed(Duration(seconds: 0), () {
+        //           //           myfocus
+        //           //               .requestFocus(); //auto focus on second text field.
+        //           //         });
+        //           //
+        //           //         setState(() {
+        //           //           focus = true;
+        //           //           print("focusss$focus");
+        //           //         });
+        //           //         // activeTextfield=false;
+        //           //       }
+        //           //       myfocus.unfocus();
+        //           //       myfocus1.unfocus();
+        //           //       myfocus2.unfocus();
+        //           //       activeTextfield = false;
+        //           //     },
+        //           //     child: Text(
+        //           //       activeTextfield == true ? "Save" : "Edit Profile",
+        //           //       style: GoogleFonts.roboto(
+        //           //         color:
+        //           //             // activeTextfield==true?
+        //           //             Color(0xFF2871AF),
+        //           //         // :Color(0xFFD3D3D3),
+        //           //         fontSize: w / 26,
+        //           //         fontWeight: FontWeight.w500,
+        //           //       ),
+        //           //     ),
+        //           //   ),
+        //           // ),
+        //
+        //           // SvgPicture.string(HomeSvg().msgIcon),
+        //           //         const SizedBox(
+        //           //           width: 16,
+        //           //         ),
+        //           //         GestureDetector(
+        //           //           onTap: widget.onTap,
+        //           //             child: SvgPicture.string(HomeSvg().addIcon)),
+        //
+        //           const SizedBox(
+        //             width: 16,
+        //           )
+        //         ],
+        //       ),
+        //       Container(
+        //         width: w1,
+        //         height: 1.50,
+        //         decoration: const BoxDecoration(
+        //           color: Color(0xb2e6e6e6),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -754,7 +755,10 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async{
+                            pref=await SharedPreferences.getInstance();
+                            fcm = pref!.getString("fcm")!;
+                            print("SHIFAS FCM$fcm");
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -849,7 +853,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                   socketProvider.disconnect();
                                                   authentication
                                                       .clearAuthenticatedTokens();
-
+                                                  Variable.profilePic='';
+                                                  context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
                                                   Navigator.of(context)
                                                       .pushAndRemoveUntil(
                                                           MaterialPageRoute(

@@ -8,6 +8,7 @@ part of 'joblist_model.dart';
 
 GetJobList _$GetJobListFromJson(Map<String, dynamic> json) => GetJobList(
       statusName: json['status_name'] as String?,
+      jobTypeName: json['job_type_name'] as String?,
       createdPerson: json['created_person'] as String?,
       imgCount: json['image_count'] as int?,
       currency: json['currency_code'] as String?,
@@ -15,6 +16,7 @@ GetJobList _$GetJobListFromJson(Map<String, dynamic> json) => GetJobList(
       taskName: json['task_name'] as String?,
       taskCode: json['task_code'] as String?,
       reportingMail: json['reporting_person_mail'] as String?,
+      duration: json['duration'] as String?,
       reportingName: json['reporting_person_name'] as String?,
       reportingCode: json['reporting_person_code'] as String?,
       assignByName: json['assigned_by_name'] as String?,
@@ -48,9 +50,11 @@ Map<String, dynamic> _$GetJobListToJson(GetJobList instance) =>
       'id': instance.id,
       'job_code': instance.jobCode,
       'name': instance.name,
+      'job_type_name': instance.jobTypeName,
       'currency_code': instance.currency,
       'task_name': instance.taskName,
       'task_code': instance.taskCode,
+      'duration': instance.duration,
       'related_job': instance.relatedJob,
       'origin_from': instance.orginFrom,
       'status_name': instance.statusName,

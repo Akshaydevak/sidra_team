@@ -2,6 +2,7 @@ import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
+import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
@@ -110,6 +111,9 @@ int unreadCount=0;
           setState(() {
             
           });
+         widget.isGroup==true? context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: widget.communicationUserModel?.chatid??"", token: widget.token??"")
+          ):null;
         //   widget.socket!.emit("get.clients",roomId);
         // widget.socket!.on("active.length", (data) => print(data));
           //  widget.socket!.on("message.seen", (data) => print("message seen $data"));
@@ -143,26 +147,33 @@ int unreadCount=0;
                   Stack(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          // PersistentNavBarNavigator.pushNewScreen(
-                          //   context,
-                          //   screen: ChatProfileScreen(
-                          //       token: widget.token,
-                          //       isGroup: widget.isGroup,
-                          //       communicationUserModel:
-                          //           widget.communicationUserModel),
-                          //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                          //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                          // );
-                        },
+                        onTap: () async {
+              await showDialog(
+                context: context,
+                builder: (_) => imageDialog(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.communicationUserModel?.photo,widget.isGroup,context)
+              );
+            },
                         child:
                          widget.isGroup?
+                         widget.communicationUserModel?.photo==null||
+                        widget.communicationUserModel!.photo!.isEmpty ?
                      CircleAvatar(
                           radius: 24,
                           backgroundColor: ColorPalette.inactiveGrey,
                           backgroundImage:  
                               AssetImage("asset/chatgrpimg.png")
-                        ):widget.communicationUserModel?.photoindividual==null||
+                        )
+                        :CircleAvatar(
+                          radius: 24,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                           NetworkImage(
+                              widget.communicationUserModel?.photo ?? ""
+                              // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                              // "${widget.communicationUserModel?.photo}"
+                              ),
+                        )
+                        :widget.communicationUserModel?.photoindividual==null||
                         widget.communicationUserModel!.photoindividual!.isEmpty 
                         ?TextAvatar(
                             shape: Shape.Circular,
@@ -262,7 +273,7 @@ int unreadCount=0;
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: w1/4,
+                                                        width: w1/5,
                                                         child: Text(
                                                           widget.communicationUserModel
                                                                   ?.latestMessage ??
@@ -445,7 +456,8 @@ int unreadCount=0;
                                                 ),
                                               ],
                                             ):widget.communicationUserModel?.type=='video'?
-                                            widget.isGroup==true?Row(
+                                            widget.isGroup==true?
+                                            Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -473,7 +485,8 @@ int unreadCount=0;
                                                   ),
                                                 ),
                                               ],
-                                            ): Row(
+                                            ): 
+                                            Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
@@ -829,4 +842,49 @@ int unreadCount=0;
       // ),
     );
   }
+  Widget imageDialog(text, path,grppath,group, context) {
+return Dialog(
+  // backgroundColor: Colors.transparent,
+  // elevation: 0,
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Container(
+          height: 40,
+          child: Center(
+            child: Text(
+              '${text.toString().toTitleCase()}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top:8.0,right: 8.0,left: 8.0,bottom:25),
+        child: Container(
+          width: MediaQuery.of(context).size.width/5,
+          height: MediaQuery.of(context).size.height/3,
+          child:group==false? 
+          path==""?TextAvatar(
+                            shape: Shape.Circular,
+                            size: 20,
+                            numberLetters: 2,
+                            fontSize: MediaQuery.of(context).size.width/5,
+                            textColor: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            text:"${text.toString().toUpperCase()}" ,
+                          )
+          :Image.network(
+            '$path',
+            fit: BoxFit.cover,
+          ):grppath==""?Image.asset("asset/chatgrpimg.png"):Image.network('$grppath'),
+        ),
+      ),
+    ],
+  ),
+);}
+
 }

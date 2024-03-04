@@ -97,6 +97,8 @@ class ChatPage extends Equatable {
 class ChatModel extends Equatable {
   @JsonKey(name: "message")
   final String? message;
+  @JsonKey(name: "id")
+  final int? id;
   @JsonKey(name: "chatid")
   final String? chatid;
   @JsonKey(name: "groupid")
@@ -123,6 +125,7 @@ class ChatModel extends Equatable {
   const ChatModel(
       {this.type,
       this.message,
+      this.id,
       this.chatid,
       this.groupid,
       this.fromUser,
@@ -220,6 +223,35 @@ class ProfileGetModel extends Equatable {
   factory ProfileGetModel.fromJson(Map<String, dynamic> json) =>
       _$ProfileGetModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileGetModelToJson(this);
+}
+
+@JsonSerializable()
+class ProfileGroupGetModel extends Equatable {
+  @JsonKey(name: "response_code")
+  final int? responsecode;
+  @JsonKey(name: "status")
+  final String? status;
+  @JsonKey(name: "data")
+  final GroupProfileDataModel? data;
+  const ProfileGroupGetModel({this.responsecode,this.status,this.data});
+  List<Object> get props => [];
+  factory ProfileGroupGetModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileGroupGetModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileGroupGetModelToJson(this);
+}
+@JsonSerializable()
+class GroupProfileDataModel extends Equatable {
+  @JsonKey(name: "photoUrl")
+  final String? photo;
+  @JsonKey(name: "name")
+  final String? name;
+  @JsonKey(name: "description")
+  final String? discription;
+  const GroupProfileDataModel({this.photo,this.name,this.discription});
+  List<Object> get props => [];
+  factory GroupProfileDataModel.fromJson(Map<String, dynamic> json) =>
+      _$GroupProfileDataModelFromJson(json);
+  Map<String, dynamic> toJson() => _$GroupProfileDataModelToJson(this);
 }
 
 @JsonSerializable()

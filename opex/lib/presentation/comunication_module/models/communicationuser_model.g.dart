@@ -87,6 +87,7 @@ Map<String, dynamic> _$ChatPageToJson(ChatPage instance) => <String, dynamic>{
 ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       type: json['type'] as String?,
       message: json['message'] as String?,
+      id: json['id'] as int?,
       chatid: json['chatid'] as String?,
       groupid: json['groupid'] as String?,
       fromUser: json['fromUser'] == null
@@ -104,6 +105,7 @@ ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
 
 Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'message': instance.message,
+      'id': instance.id,
       'chatid': instance.chatid,
       'groupid': instance.groupid,
       'type': instance.type,
@@ -183,6 +185,41 @@ Map<String, dynamic> _$ProfileGetModelToJson(ProfileGetModel instance) =>
     <String, dynamic>{
       'media': instance.media,
       'groups': instance.groups,
+    };
+
+ProfileGroupGetModel _$ProfileGroupGetModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileGroupGetModel(
+      responsecode: json['response_code'] as int?,
+      status: json['status'] as String?,
+      data: json['data'] == null
+          ? null
+          : GroupProfileDataModel.fromJson(
+              json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProfileGroupGetModelToJson(
+        ProfileGroupGetModel instance) =>
+    <String, dynamic>{
+      'response_code': instance.responsecode,
+      'status': instance.status,
+      'data': instance.data,
+    };
+
+GroupProfileDataModel _$GroupProfileDataModelFromJson(
+        Map<String, dynamic> json) =>
+    GroupProfileDataModel(
+      photo: json['photoUrl'] as String?,
+      name: json['name'] as String?,
+      discription: json['description'] as String?,
+    );
+
+Map<String, dynamic> _$GroupProfileDataModelToJson(
+        GroupProfileDataModel instance) =>
+    <String, dynamic>{
+      'photoUrl': instance.photo,
+      'name': instance.name,
+      'description': instance.discription,
     };
 
 Media _$MediaFromJson(Map<String, dynamic> json) => Media(

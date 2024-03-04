@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
+import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/home_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/appbar.dart';
@@ -12,6 +15,7 @@ import 'package:cluster/presentation/task_operation/rewards_screen.dart';
 import 'package:cluster/presentation/task_operation/select_assignees.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:cluster/presentation/task_operation/task_title/attachment_card.dart';
+import 'package:cluster/presentation/task_operation/task_title/reporting_person_task.dart';
 import 'package:cluster/presentation/task_operation/task_title/task_title_card.dart';
 import 'package:cluster/presentation/task_operation/task_title/text_card.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
@@ -26,6 +30,7 @@ import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:url_launcher/url_launcher.dart';
 import '../../common_widgets/custom_radio_button.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/loading.dart';
@@ -33,6 +38,7 @@ import '../../core/color_palatte.dart';
 import '../../core/common_snackBar.dart';
 import '../../core/utils/variables.dart';
 import '../comunication_module/chat_screen.dart';
+import '3_in_1_Tab.dart';
 import 'attachment_screen.dart';
 import 'create/create_newtask.dart';
 import 'create/create_svg.dart';
@@ -111,14 +117,10 @@ class _TaskTitleState extends State<TaskTitle> {
         isActive: true,
         priority: getTaskRead?.priority ?? "",
         reportingPerson: getTaskRead?.reportingPersonCode ?? "",
-        endDate: "${getTaskRead?.endDate?.split("T")[0]}"
-                " "
-                "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-            "",
-        startDate: "${getTaskRead?.startDate?.split("T")[0]}"
-                " "
-                "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-            "",
+        endDate: "${getTaskRead?.endDate?.split("T")[0]}",
+        endTime: "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
+        startDate: "${getTaskRead?.startDate?.split("T")[0]}",
+        startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}"
       ));
     } else {
       PersistentNavBarNavigator.pushNewScreen(
@@ -155,6 +157,7 @@ class _TaskTitleState extends State<TaskTitle> {
   String communicationGroupname = '';
 
   int tappedTile = 0;
+  String statusName = '';
   List<StatusListing> statusList = [];
   List<GetTaskList> taskListNew = [];
   void changeTappedTile(int val) {
@@ -162,7 +165,9 @@ class _TaskTitleState extends State<TaskTitle> {
 
     setState(() {});
   }
-
+  void refreshPage() {
+    setState(() {});
+  }
   var endstdDate = "";
   var startstdDate = "";
   String startTime = '';
@@ -341,6 +346,7 @@ class _TaskTitleState extends State<TaskTitle> {
                       .read<EmployeeBloc>()
                       .add(GetGroupTReadEvent(getTaskRead?.groupId ?? 0));
                 }
+                statusName=getTaskRead?.statusName??"";
 
                 var date = getTaskRead?.endDate;
                 var date2 = getTaskRead?.startDate;
@@ -640,178 +646,130 @@ class _TaskTitleState extends State<TaskTitle> {
                 Navigator.pop(context);
               },
               label: " ${getTaskRead?.taskName ?? ""}",
-              action: PopupMenuButton(
-                icon: SvgPicture.string(TaskSvg().moreIcon),
+              action:widget.isMyJob?
+              PopupMenuButton(
+                surfaceTintColor: Colors.white,
+                icon: Icon(Icons.more_horiz),
                 color: Colors.white,
-                elevation: 2,
-                padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                onSelected: (value) {
+                  // popUpItemSelected(
+                  //   value.toString(),
+                  //   context,
+                  //   address: address,
+                  //   isDefualt: isDefualt,
+                  //   addressID: addressID,
+                  // );
+                },
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                      padding: const EdgeInsets.all(0),
-                      height: 10,
                       value: 'a',
-                      enabled: true,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          widget.isMyJob
-                              ? GestureDetector(
-                                  onTap: () {
-                                    context.read<TaskBloc>().add(
-                                        GetTaskReadListEvent(
-                                            getTaskRead?.id ?? 0));
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: CreateNewTask(editTask: true),
-                                      withNavBar: true,
-                                      // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        // SvgPicture.string(TaskSvg().editorIcon),
-                                        // const SizedBox(
-                                        //   width: 10,
-                                        // ),
-                                        Text(
-                                          'Edit this Task',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    context.read<JobBloc>().add(
-                                        PinAJobPostEvent(
-                                            userCode: authentication
-                                                    .authenticatedUser.code ??
-                                                "",
-                                            taskId: getTaskRead?.id ?? 0,
-                                            isPinned:
-                                                getTaskRead?.isPinned == true
-                                                    ? false
-                                                    : true));
-                                    context.read<TaskBloc>().add(
-                                        GetTaskReadListEvent(
-                                            getTaskRead?.id ?? 0));
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          getTaskRead?.isPinned == true
-                                              ? 'Unpin this Task'
-                                              : 'Pin this Task',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                          // const Divider(
-                          //   indent: 30,
-                          // ),
-                          // Container(
-                          //   padding: const EdgeInsets.only(left: 10),
-                          //   child: Row(
-                          //     children: [
-                          //       SvgPicture.string(TaskSvg().msgSendIcon),
-                          //       const SizedBox(
-                          //         width: 10,
-                          //       ),
-                          //       Text(
-                          //         'Share by message',
-                          //         style: GoogleFonts.poppins(
-                          //             color: Colors.black54,
-                          //             fontSize: 13,
-                          //             fontWeight: FontWeight.w500),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // const Divider(
-                          //   indent: 30,
-                          // ),
-                          // Container(
-                          //   padding: const EdgeInsets.only(left: 10),
-                          //   child: Row(
-                          //     children: [
-                          //       SvgPicture.string(TaskSvg().shareJobIcon),
-                          //       const SizedBox(
-                          //         width: 10,
-                          //       ),
-                          //       Text(
-                          //         'Share this Job',
-                          //         style: GoogleFonts.poppins(
-                          //             color: Colors.black54,
-                          //             fontSize: 13,
-                          //             fontWeight: FontWeight.w500),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          widget.isMyJob
-                              ? Divider(
-                                  indent: 30,
-                                )
-                              : Container(),
-                          widget.isMyJob
-                              ? GestureDetector(
-                                  onTap: () {
-                                    context.read<EmployeeBloc>().add(
-                                        GetActivityLogListingEvent(
-                                            getTaskRead?.jobId));
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: ActivityLog(),
-                                      withNavBar:
-                                          false, // OPTIONAL VALUE. True by default.
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.fade,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Row(
-                                      children: [
-                                        // SvgPicture.string(
-                                        //     TaskSvg().activityIcon),
-                                        // const SizedBox(
-                                        //   width: 10,
-                                        // ),
-                                        Text(
-                                          'View Activity Logs',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black54,
-                                              fontSize: w / 26,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ))
+                      child:InkWell(
+                        onTap: (){
+                          context.read<TaskBloc>().add(
+                              GetTaskReadListEvent(
+                                  getTaskRead?.id ?? 0));
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen: CreateNewTask(editTask: true),
+                            withNavBar: true,
+                            // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation:
+                            PageTransitionAnimation.fade,
+                          );
+                        },
+                        child: Text(
+                          "Edit this Task",
+                          style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w / 28,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                      // :
+                      // InkWell(
+                      //   onTap: (){
+                      //     context.read<JobBloc>().add(
+                      //         PinAJobPostEvent(
+                      //             userCode: authentication
+                      //                 .authenticatedUser.code ??
+                      //                 "",
+                      //             taskId: getTaskRead?.id ?? 0,
+                      //             isPinned:
+                      //             getTaskRead?.isPinned == true
+                      //                 ? false
+                      //                 : true));
+                      //     context.read<TaskBloc>().add(
+                      //         GetTaskReadListEvent(
+                      //             getTaskRead?.id ?? 0));
+                      //     Navigator.pop(context);
+                      //   },
+                      //   child: Text(
+                      //     getTaskRead?.isPinned == true
+                      //         ? 'Unpin this Task'
+                      //         : 'Pin this Task',
+                      //     style: TextStyle(fontSize: 12),
+                        // ),
+                      // )
+        ),
+                PopupMenuItem(
+                      value: 'b',
+                      child: InkWell(
+                        onTap: () {
+                          context.read<EmployeeBloc>().add(
+                              GetActivityLogListingEvent(
+                                  getTaskRead?.jobId));
+                          PersistentNavBarNavigator.pushNewScreen(
+                            context,
+                            screen: ActivityLog(),
+                            withNavBar:
+                            false, // OPTIONAL VALUE. True by default.
+                            pageTransitionAnimation:
+                            PageTransitionAnimation.fade,
+                          );
+                        },
+                        child:  Text(
+                          "View Activity Logs",
+                          style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize: w / 28,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )),
                 ],
-                onSelected: (value) {},
-              ),
+              ):
+              PopupMenuButton(
+                onSelected: (value) {
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: 'a',
+                      child:
+                      InkWell(
+                        onTap: (){
+                          context.read<JobBloc>().add(
+                              PinAJobPostEvent(
+                                  userCode: authentication
+                                      .authenticatedUser.code ??
+                                      "",
+                                  taskId: getTaskRead?.id ?? 0,
+                                  isPinned:
+                                  getTaskRead?.isPinned == true
+                                      ? false
+                                      : true));
+                          context.read<TaskBloc>().add(
+                              GetTaskReadListEvent(
+                                  getTaskRead?.id ?? 0));
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          getTaskRead?.isPinned == true
+                              ? 'Unpin this Task'
+                              : 'Pin this Task',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ],
+              )
             ),
           ),
           body: ScrollConfiguration(
@@ -843,34 +801,52 @@ class _TaskTitleState extends State<TaskTitle> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   TaskTitleCard(
-                                      paddingg: const EdgeInsets.symmetric(
-                                          vertical: 16),
+                                      paddingg:  EdgeInsets.symmetric(vertical: 8),
+                                      
                                       widget: TextCard(
                                         isTask: true,
                                         title: getTaskRead?.jobTitle,
                                         subText: getTaskRead?.jobDiscription,
                                       )),
                                   const SizedBox(
-                                    height: 15,
+                                    height: 10,
                                   ),
+                                  getTaskRead?.parentDict?.taskName==null?Container()
+                                      :Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Task Details",
+                                        style: GoogleFonts.roboto(
+                                          color: const Color(0xff151522),
+                                          fontSize: w / 24,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      TaskTitleCard(
+                                          paddingg:  EdgeInsets.symmetric(vertical: 8),
+                                          widget: TextCard(
+                                            isTask: true,
+                                            title: getTaskRead?.parentDict?.taskName,
+                                            subText: getTaskRead?.parentDict?.description,
+                                          )),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                    ],
+                                ),
                                   Text(
-                                    "Task Details",
+                                    getTaskRead?.assignByDict?.userCode==authentication.authenticatedUser.code?
+                                    getTaskRead?.parentDict?.taskName==null?"Task Details":"Sub Task":"Your Task",
                                     style: GoogleFonts.roboto(
                                       color: const Color(0xff151522),
                                       fontSize: w / 24,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   TaskTitleCard(
-                                      paddingg: const EdgeInsets.symmetric(
-                                          vertical: 16),
+                                      paddingg:  EdgeInsets.symmetric(vertical: 8),
                                       widget: TextCard(
                                         isTask: true,
                                         title: getTaskRead?.taskName,
@@ -1046,7 +1022,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             getTaskRead?.assigningType=="Task_Group"?
                                             GestureDetector(
                                               onTap: (){
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 print("task Group");
                                                 getTaskRead?.assigningType=="Task_Group"&&taskListNew.isEmpty?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1168,7 +1144,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ):
                                             GestureDetector(
                                               onTap: (){
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 print("group id${getTaskRead?.groupId}");
                                                 widget.groupId!=null?
                                                 PersistentNavBarNavigator.pushNewScreen(
@@ -1315,7 +1291,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                   color: Colors.white
                                                               ),)),
                                                       onTap: () async{
-                                                        HapticFeedback.vibrate();
+                                                        HapticFeedback.heavyImpact();
                                                         final SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
@@ -1331,6 +1307,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               jobId: getTaskRead?.jobId,
                                                               isSubTask: true,
                                                               backRead: true,
+                                                              startDateTime: "$startstdDate $startTime",
+                                                              endDateTime: "$endstdDate $endTime",
                                                               subTaskId: getTaskRead?.id,
                                                             ),
                                                             withNavBar: true,
@@ -1720,7 +1698,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  authentication.isAdmin == true || authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
+                                      authentication.authenticatedUser.code==getTaskRead?.createdPersonCode
                                       ? Container()
                                       : getTaskRead?.latitude != null &&
                                               getTaskRead?.latitude != "" &&
@@ -1728,18 +1706,20 @@ class _TaskTitleState extends State<TaskTitle> {
                                               getTaskRead?.latitude != ""
                                           ? GestureDetector(
                                               onTap: () {
-                                                PersistentNavBarNavigator
-                                                    .pushNewScreen(
-                                                  context,
-                                                  screen: AddressPickFromMap(
-                                                    taskRead: getTaskRead,
-                                                    isUser: true,
-                                                  ),
-                                                  withNavBar: true,
-                                                  pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
-                                                );
+                                                navigateTo(double.tryParse(getTaskRead?.latitude??"")??0.0,
+                                                    double.tryParse(getTaskRead?.longitude??"")??0.0);
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: AddressPickFromMap(
+                                                //     taskRead: getTaskRead,
+                                                //     isUser: true,
+                                                //   ),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                               },
                                               child: TaskTitleCard(
                                                 paddingg: EdgeInsets.zero,
@@ -1800,13 +1780,36 @@ class _TaskTitleState extends State<TaskTitle> {
                                             label: "Reporting Person",
                                             color: const Color(0xffAD51E0),
                                             svg: TaskSvg().personIcon,
-                                            endIcon: Container(),
+                                            endIcon: Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 10,vertical: 4),
+                                                decoration: BoxDecoration(
+                                                    color: ColorPalette.primary,
+                                                    borderRadius: BorderRadius.circular(4)
+
+                                                ),
+                                                child: Text("Change",
+
+                                                  style: GoogleFonts.roboto(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: w/28,
+                                                      color: Colors.white
+                                                  ),)),
                                             onTap: () {
-                                              widget.isMyJob
-                                                  ? setState(() {
-                                                      // isReporting = !isReporting;
-                                                    })
-                                                  : print("");
+                                              PersistentNavBarNavigator
+                                                  .pushNewScreen(
+                                                context,
+                                                screen: ReportingPerson(
+                                                  refresh: refreshPage,
+                                                  editTask: true,
+                                                  readTask: getTaskRead,
+                                                  task: true,
+                                                  job: false,
+                                                ),
+                                                withNavBar:
+                                                true, // OPTIONAL VALUE. True by default.
+                                                pageTransitionAnimation:
+                                                PageTransitionAnimation.fade,
+                                              );
                                             },
                                           ),
                                         ),
@@ -1883,65 +1886,79 @@ class _TaskTitleState extends State<TaskTitle> {
                                       ],
                                     ),
                                   ),
-                                  getTaskRead?.notes == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 15,
-                                        ),
-                                  getTaskRead?.notes == ""
-                                      ? Container()
-                                      : TaskTitleCard(
+                                  authentication.authenticatedUser?.code==getTaskRead?.assignByDict?.userCode?Container():
+                                  Column(
+                                    children: [
+                                      getTaskRead?.metaData?.note == null
+
+                                          ? Container()
+                                          : SizedBox(
+                                        height: 15,
+                                      ),
+                                      getTaskRead?.metaData?.note == null
+                                          ? Container()
+                                          : TaskTitleCard(
                                           paddingg: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           widget: TextCard(
                                               title: "Note",
-                                              subText: getTaskRead?.notes)),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 5,
-                                        ),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : TaskTitleCard(
+                                              subText: getTaskRead?.metaData?.note)),
+
+                                      getTaskRead?.metaData?.description == null
+                                          ? Container()
+                                          : TaskTitleCard(
                                           paddingg: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           widget: TextCard(
                                               title: "Remarks",
-                                              subText: getTaskRead?.remarks)),
-                                  getTaskRead?.remarks == ""
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 5,
-                                        ),
-                                  authentication.isAdmin == false &&
-                                          getTaskRead?.rewardsData?.name != null
-                                      ? SizedBox(
+                                              subText: getTaskRead?.metaData?.description)),
+                                      getTaskRead?.metaData?.description == null
+                                          ? Container()
+                                          : SizedBox(
+                                        height: 5,
+                                      ),
+                                      
+                                    ],
+                                  ),
+
+                              authentication.isAdmin == false &&
+                                  getTaskRead?.metaData?.image1 !=
+                                      null||getTaskRead?.metaData?.image2 !=
+                                  null||getTaskRead?.metaData?.image3 !=
+                                  null||
+                                  getTaskRead?.metaData?.image4 !=
+                                      null||
+                                  getTaskRead?.metaData?.image5 !=
+                                      null
+                              ? SizedBox(
                                           height: 5,
                                         )
                                       : Container(),
-                                  authentication.isAdmin == false &&
-                                          getTaskRead?.rewardsData?.name != null
+                                  authentication.authenticatedUser.code == getTaskRead?.assignByDict?.userCode ?Container():
+                                  // authentication.authenticatedUser.code == getTaskRead?.assignByDict?.userCode &&
+                                      getTaskRead?.metaData?.image1 !=
+                                          null||getTaskRead?.metaData?.image2 !=
+                                      null||getTaskRead?.metaData?.image3 !=
+                                      null||
+                                      getTaskRead?.metaData?.image4 !=
+                                          null||
+                                      getTaskRead?.metaData?.image5 !=
+                                          null
                                       ? TaskTitleCard(
-                                          paddingg: const EdgeInsets.symmetric(
-                                              vertical: 16),
-                                          widget: Column(
-                                            children: [
-                                              TextCard(
-                                                  title: "Rewards",
-                                                  subText: getTaskRead
-                                                      ?.rewardsData?.name),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, right: 10),
-                                                child: RewardsCard(
-                                                    readData: getTaskRead),
-                                              ),
-                                            ],
-                                          ))
+                                      paddingg: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      widget: Column(
+                                        children: [
+                                          TextCard(title: "Attachment",),
+
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            child: AttachmentCard(
+                                                readData: getTaskRead),
+                                          ),
+                                        ],
+                                      ))
                                       : Container(),
                                   SizedBox(
                                     height: 5,
@@ -1973,29 +1990,29 @@ class _TaskTitleState extends State<TaskTitle> {
                                       : Container(),
                                   SizedBox(height: 5),
                                   authentication.isAdmin == false &&
-                                          getTaskRead?.metaData?.description !=
-                                              null
+                                      getTaskRead?.rewardsData?.name != null
                                       ? TaskTitleCard(
-                                          paddingg: const EdgeInsets.symmetric(
-                                              vertical: 16),
-                                          widget: Column(
-                                            children: [
-                                              TextCard(
-                                                  title: "Attachment",
-                                                  subText: getTaskRead
-                                                      ?.metaData?.note),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, right: 10),
-                                                child: AttachmentCard(
-                                                    readData: getTaskRead),
-                                              ),
-                                            ],
-                                          ))
+                                      paddingg: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      widget: Column(
+                                        children: [
+                                          TextCard(
+                                              title: "Rewards",
+                                              subText: getTaskRead
+                                                  ?.rewardsData?.name),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            child: RewardsCard(
+                                                readData: getTaskRead),
+                                          ),
+                                        ],
+                                      ))
                                       : Container(),
+
                                   SizedBox(
                                     height: 30,
                                   ),
@@ -2049,7 +2066,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             // ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 setState(() {
                                                   isLocation = !isLocation;
                                                   location();
@@ -2090,7 +2107,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                         svg: CreateSvg()
                                                             .locationIcon,
                                                         onTap: () {
-                                                          HapticFeedback.vibrate();
+                                                          HapticFeedback.heavyImpact();
                                                           setState(() {
                                                             // if(isLocation==false){
                                                             isLocation =
@@ -2135,7 +2152,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                       screen:
                                                                           AddressPickFromMap(
                                                                         taskRead:
-                                                                            getTaskRead,
+                                                                        getTaskRead,
                                                                       ),
                                                                       withNavBar:
                                                                           true,
@@ -2178,17 +2195,20 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
+
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: AttachmentScreen(
-                                                      readData: getTaskRead),
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 0,
+                                                  ),
                                                   withNavBar:
-                                                      true, // OPTIONAL VALUE. True by default.
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
                                               },
                                               child: Container(
@@ -2214,7 +2234,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                                 child: SingleRow(
                                                   color: Color(0xffFFC800),
-                                                  label: "Add Attachments",
+                                                  label: "Notes & Attachments",
                                                   svg: TaskSvg().attachmentIcon,
                                                   onTap: () {},
                                                   endIcon: getTaskRead?.metaData
@@ -2234,12 +2254,13 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 ),
                                               ),
                                             ),
+                                            
                                             SizedBox(
                                               height: 5,
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 getTaskRead?.paymentId != null
                                                     ? context.read<TaskBloc>().add(
                                                         GetPaymentReadListEvent(
@@ -2252,33 +2273,48 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: PaymentOption(
-                                                    currencyCode:
-                                                        getTaskRead?.currency,
-                                                    isJob: false,
-                                                    isTask: true,
-                                                    update: getTaskRead
-                                                                ?.paymentId ==
-                                                            null
-                                                        ? false
-                                                        : getTaskRead
-                                                                    ?.paymentId ==
-                                                                null
-                                                            ? false
-                                                            : true,
-                                                    paymentId: getTaskRead
-                                                            ?.paymentId ??
-                                                        0,
-                                                    taskId:
-                                                        getTaskRead?.id ?? 0,
-                                                    jobId: null,
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 1,
                                                   ),
                                                   withNavBar:
-                                                      true, // OPTIONAL VALUE. True by default.
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: PaymentOption(
+                                                //     assignCode: getTaskRead?.assignToDict?.userCode,
+                                                //     assignType: getTaskRead?.assigningType,
+                                                //     currencyCode:
+                                                //         getTaskRead?.currency,
+                                                //     isJob: false,
+                                                //     isTask: true,
+                                                //     update: getTaskRead
+                                                //                 ?.paymentId ==
+                                                //             null
+                                                //         ? false
+                                                //         : getTaskRead
+                                                //                     ?.paymentId ==
+                                                //                 null
+                                                //             ? false
+                                                //             : true,
+                                                //     paymentId: getTaskRead
+                                                //             ?.paymentId ??
+                                                //         0,
+                                                //     taskId:
+                                                //         getTaskRead?.id ?? 0,
+                                                //     jobId: null,
+                                                //   ),
+                                                //   withNavBar:
+                                                //       true, // OPTIONAL VALUE. True by default.
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                               },
                                               child: Container(
                                                 width: w1,
@@ -2328,7 +2364,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.vibrate();
+                                                HapticFeedback.heavyImpact();
                                                 getTaskRead?.rewardid != null
                                                     ? context
                                                         .read<TaskBloc>()
@@ -2339,27 +2375,40 @@ class _TaskTitleState extends State<TaskTitle> {
                                                                     0,
                                                                 true))
                                                     : null;
+                                                // PersistentNavBarNavigator
+                                                //     .pushNewScreen(
+                                                //   context,
+                                                //   screen: RewardsScreen(
+                                                //     type: "Task",
+                                                //     typeId:
+                                                //         getTaskRead?.id ?? 0,
+                                                //     update: getTaskRead
+                                                //                 ?.rewardid ==
+                                                //             null
+                                                //         ? false
+                                                //         : getTaskRead
+                                                //                     ?.rewardid ==
+                                                //                 null
+                                                //             ? false
+                                                //             : true,
+                                                //   ),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation:
+                                                //       PageTransitionAnimation
+                                                //           .fade,
+                                                // );
                                                 PersistentNavBarNavigator
                                                     .pushNewScreen(
                                                   context,
-                                                  screen: RewardsScreen(
-                                                    type: "Task",
-                                                    typeId:
-                                                        getTaskRead?.id ?? 0,
-                                                    update: getTaskRead
-                                                                ?.rewardid ==
-                                                            null
-                                                        ? false
-                                                        : getTaskRead
-                                                                    ?.rewardid ==
-                                                                null
-                                                            ? false
-                                                            : true,
+                                                  screen: MyTabScreen(
+                                                    getTaskRead: getTaskRead,
+                                                    index: 2,
                                                   ),
-                                                  withNavBar: true,
+                                                  withNavBar:
+                                                  true, // OPTIONAL VALUE. True by default.
                                                   pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
+                                                  PageTransitionAnimation
+                                                      .fade,
                                                 );
                                               },
                                               child: Container(
@@ -2409,7 +2458,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                         )
                                       : GestureDetector(
                                           onTap: () {
-                                            HapticFeedback.vibrate();
+                                            HapticFeedback.heavyImpact();
                                             if (getTaskRead?.statusStagesId ==
                                                     5 &&
                                                 authentication.isAdmin ==
@@ -2528,6 +2577,9 @@ class _TaskTitleState extends State<TaskTitle> {
                                     onTap: () {
                                       HapticFeedback.heavyImpact();
                                       print("grp id $communicationGroupId");
+                                      context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: communicationGroupId, token: token??"")
+          );
                                       context.read<ChatBloc>().add(
                                           ChatScreenGetEvent(
                                               token: token.toString(),
@@ -2610,79 +2662,79 @@ class _TaskTitleState extends State<TaskTitle> {
                                       ),
                                     ),
                                   ),
-                                  authentication.authenticatedUser.code==getTaskRead?.assignToDict?.userCode?Container():
-                                  getTaskRead?.assigningType == "Individual" &&
-                                          authentication.isAdmin
-                                      ? Column(
-                                          children: [
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                print("FFFFFF$getTaskRead");
-                                                context.read<TaskBloc>().add(
-                                                    GetPerformanceListEvent(
-                                                        getTaskRead?.id ?? 0,
-                                                        getTaskRead
-                                                                ?.assigningCode ??
-                                                            ""));
-                                                context.read<TaskBloc>().add(
-                                                    GetPerformanceReadEvent(
-                                                        getTaskRead?.id ?? 0));
-                                                PersistentNavBarNavigator
-                                                    .pushNewScreen(
-                                                  context,
-                                                  screen: PerformanceAppraisal(
-                                                    tasklist: getTaskRead,
-                                                  ),
-                                                  withNavBar: false,
-                                                  // OPTIONAL VALUE. True by default.
-                                                  pageTransitionAnimation:
-                                                      PageTransitionAnimation
-                                                          .fade,
-                                                );
-                                              },
-                                              child: Container(
-                                                width: w1,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 10),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  border: Border.all(
-                                                    color: Color(0xffe6ecf0),
-                                                    width: 1,
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Color(0x05000000),
-                                                      blurRadius: 8,
-                                                      offset: Offset(1, 1),
-                                                    ),
-                                                  ],
-                                                  color: Colors.white,
-                                                ),
-                                                child: SingleRow(
-                                                  label:
-                                                      "Performance Appraisal",
-                                                  color: Color(0xffE05151),
-                                                  svg:
-                                                      TaskSvg().performanceIcon,
-                                                  endIcon: Icon(
-                                                    Icons
-                                                        .arrow_forward_ios_sharp,
-                                                    size: 18,
-                                                    color: ColorPalette.primary,
-                                                  ),
-                                                  onTap: () {},
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : Container(),
+                                  // authentication.authenticatedUser.code==getTaskRead?.assignToDict?.userCode?Container():
+                                  // getTaskRead?.assigningType == "Individual" &&
+                                  //         authentication.isAdmin
+                                  //     ? Column(
+                                  //         children: [
+                                  //           SizedBox(
+                                  //             height: 5,
+                                  //           ),
+                                  //           GestureDetector(
+                                  //             onTap: () {
+                                  //               print("FFFFFF$getTaskRead");
+                                  //               context.read<TaskBloc>().add(
+                                  //                   GetPerformanceListEvent(
+                                  //                       getTaskRead?.id ?? 0,
+                                  //                       getTaskRead
+                                  //                               ?.assigningCode ??
+                                  //                           ""));
+                                  //               context.read<TaskBloc>().add(
+                                  //                   GetPerformanceReadEvent(
+                                  //                       getTaskRead?.id ?? 0));
+                                  //               PersistentNavBarNavigator
+                                  //                   .pushNewScreen(
+                                  //                 context,
+                                  //                 screen: PerformanceAppraisal(
+                                  //                   tasklist: getTaskRead,
+                                  //                 ),
+                                  //                 withNavBar: false,
+                                  //                 // OPTIONAL VALUE. True by default.
+                                  //                 pageTransitionAnimation:
+                                  //                     PageTransitionAnimation
+                                  //                         .fade,
+                                  //               );
+                                  //             },
+                                  //             child: Container(
+                                  //               width: w1,
+                                  //               padding: EdgeInsets.symmetric(
+                                  //                   horizontal: 16,
+                                  //                   vertical: 10),
+                                  //               decoration: BoxDecoration(
+                                  //                 borderRadius:
+                                  //                     BorderRadius.circular(4),
+                                  //                 border: Border.all(
+                                  //                   color: Color(0xffe6ecf0),
+                                  //                   width: 1,
+                                  //                 ),
+                                  //                 boxShadow: [
+                                  //                   BoxShadow(
+                                  //                     color: Color(0x05000000),
+                                  //                     blurRadius: 8,
+                                  //                     offset: Offset(1, 1),
+                                  //                   ),
+                                  //                 ],
+                                  //                 color: Colors.white,
+                                  //               ),
+                                  //               child: SingleRow(
+                                  //                 label:
+                                  //                     "Performance Appraisal",
+                                  //                 color: Color(0xffE05151),
+                                  //                 svg:
+                                  //                     TaskSvg().performanceIcon,
+                                  //                 endIcon: Icon(
+                                  //                   Icons
+                                  //                       .arrow_forward_ios_sharp,
+                                  //                   size: 18,
+                                  //                   color: ColorPalette.primary,
+                                  //                 ),
+                                  //                 onTap: () {},
+                                  //               ),
+                                  //             ),
+                                  //           ),
+                                  //         ],
+                                  //       )
+                                  //     : Container(),
                                   SizedBox(
                                     height: 5,
                                   ),
@@ -2887,7 +2939,8 @@ class _TaskTitleState extends State<TaskTitle> {
                                                   textColor: Colors.white)
                                               : _showModalBottomAdditionalRole();
                                     },
-                                    child: Container(
+                                    child:  getTaskRead?.statusName=="VERIFIED"?Container():
+                                    Container(
                                       width: w1,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 10),
@@ -2918,7 +2971,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 // fontWeight: FontWeight.w500,
                                               ),
                                             )
-                                          : Row(
+                                          :Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
@@ -3559,15 +3612,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                     reportingPerson:
                                         getTaskRead?.reportingPersonCode ?? "",
                                     endDate:
-                                        "${getTaskRead?.endDate?.split("T")[0]}"
-                                                " "
-                                                "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-                                            "",
+                                        "${getTaskRead?.endDate?.split("T")[0]}",
                                     startDate:
-                                        "${getTaskRead?.startDate?.split("T")[0]}"
-                                                " "
-                                                "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-                                            "",
+                                        "${getTaskRead?.startDate?.split("T")[0]}",
+                                    endTime: "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
+                                    startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}",
                                     AssigningCode:
                                         getTaskRead?.assigningCode ?? "",
                                     notas: getTaskRead?.notes ?? "",
@@ -3582,7 +3631,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                             "",
                                     AssigningType:
                                         getTaskRead?.assigningType ?? "",
-                                    statusStagesId: statusList?[i].id,
+                                    statusStagesId: statusList[i].id,
                                     parant: getTaskRead?.parent,
                                     lastmodified: getTaskRead?.lastModified,
                                     jobid: getTaskRead?.jobId ?? 0,
@@ -3617,7 +3666,7 @@ class _TaskTitleState extends State<TaskTitle> {
                                   width: 10,
                                 ),
                                 Text(
-                                  statusList?[i].name ?? "",
+                                  statusList[i].name ?? "",
                                   style: GoogleFonts.roboto(
                                     color: Colors.black,
                                     fontSize: 18,
@@ -3729,10 +3778,13 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 (BuildContext context, int i) {
                                               return GestureDetector(
                                                 onTap: () async {
+
+                                                  statusName=statusList[i].name??"";
                                                   refresh();
                                                   changeTappedTile(i);
                                                   BlocProvider.of<TaskBloc>(context)
                                                       .add(UpdateTaskEvent(
+
                                                     durationOption: getTaskRead?.duration??"",
                                                           longitude: getTaskRead
                                                                   ?.longitude ??
@@ -3757,15 +3809,11 @@ class _TaskTitleState extends State<TaskTitle> {
                                                               getTaskRead?.reportingPersonCode ??
                                                                   "",
                                                           endDate:
-                                                              "${getTaskRead?.endDate?.split("T")[0]}"
-                                                                      " "
-                                                                      "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}" ??
-                                                                  "",
+                                                              "${getTaskRead?.endDate?.split("T")[0]}",
+                                                          endTime:  "${getTaskRead?.endDate?.split("T")[1].split("+")[0]}",
                                                           startDate:
-                                                              "${getTaskRead?.startDate?.split("T")[0]}"
-                                                                      " "
-                                                                      "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}" ??
-                                                                  "",
+                                                              "${getTaskRead?.startDate?.split("T")[0]}",
+                                                          startTime: "${getTaskRead?.startDate?.split("T")[1].split("+")[0]}",
                                                           AssigningCode: getTaskRead
                                                                   ?.assigningCode ??
                                                               "",
@@ -3804,17 +3852,22 @@ class _TaskTitleState extends State<TaskTitle> {
                                                 },
                                                 child: Container(
                                                   padding: EdgeInsets.all(16),
-                                                  color: tappedTile == i
+                                                  color: statusName == statusList[i].name
                                                       ? ColorPalette
                                                           .cardBackground
                                                       : ColorPalette.white,
                                                   child: Row(
                                                     children: [
-                                                      // tappedTile == i
-                                                      //     ? SvgPicture.string(
-                                                      //         TaskSvg().checkActiveIcon)
-                                                      //     : SvgPicture.string(
-                                                      //         TaskSvg().checkInActiveIcon),
+                                                      statusName == statusList[i].name
+                                                          ? SvgPicture.string(
+                                                        HomeSvg()
+                                                            .radioButtonActive,
+                                                        // color: ColorPalette
+                                                        //     .primary,
+                                                      )
+                                                          : SvgPicture.string(
+                                                          CreateSvg()
+                                                              .radioInActiveButton),
                                                       const SizedBox(
                                                         width: 10,
                                                       ),
@@ -3825,7 +3878,10 @@ class _TaskTitleState extends State<TaskTitle> {
                                                             GoogleFonts.roboto(
                                                           color: Colors.black,
                                                           fontSize: w / 24,
-                                                          // fontWeight: FontWeight.w500,
+                                                          fontWeight:   statusName == statusList[i].name?
+                                                          FontWeight.w500
+                                                              :
+                                                          FontWeight.w400,
                                                         ),
                                                       )
                                                     ],
@@ -3856,41 +3912,6 @@ class _TaskTitleState extends State<TaskTitle> {
                         ),
                       ],
                     ),
-                    // Positioned(
-                    //   bottom: 0,
-                    //   left: 0,
-                    //   right: 0,
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(
-                    //         left: 15, right: 15, bottom: 10),
-                    //     child: GradientButton(
-                    //         color: ColorPalette.primary,
-                    //         onPressed: () {
-                    //           context.read<TaskBloc>().add(CreateReportEvent(
-                    //               toipicId: topicId,
-                    //               taskId: getTaskRead?.id,
-                    //               notes: reportNotes.text,
-                    //               userId:
-                    //                   authentication.authenticatedUser.code));
-                    //         },
-                    //         gradient: const LinearGradient(
-                    //             begin: Alignment.topCenter,
-                    //             end: Alignment.bottomCenter,
-                    //             colors: [
-                    //               ColorPalette.primary,
-                    //               ColorPalette.primary
-                    //             ]),
-                    //         child: Text(
-                    //           "Report this Task",
-                    //           textAlign: TextAlign.center,
-                    //           style: GoogleFonts.roboto(
-                    //             color: Colors.white,
-                    //             fontSize: w / 22,
-                    //             fontWeight: FontWeight.w600,
-                    //           ),
-                    //         )),
-                    //   ),
-                    // )
                   ],
                 ),
               );
@@ -4694,5 +4715,19 @@ class _TaskTitleState extends State<TaskTitle> {
             },
           );
         });
+  }
+  static void navigateTo(double lat, double lng) async {
+    var uri;
+    if (Platform.isAndroid) {
+     uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+    }
+    else{
+      uri = Uri.parse('https://maps.apple.com/?q=$lat,$lng');
+    }
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      throw 'Could not launch ${uri.toString()}';
+    }
   }
 }

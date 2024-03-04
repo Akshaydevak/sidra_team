@@ -45,13 +45,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: h/9,),
                 GradientButton(
                     onPressed: () {
-                      PersistentNavBarNavigator.pushNewScreen(
-                        context,
-                        screen: DashBoard(),
-                        withNavBar: true,
-                        // OPTIONAL VALUE. True by default.
-                        pageTransitionAnimation: PageTransitionAnimation.fade,
-                      );
+                       Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 0,)), (route) => false);
                       //OtpScreen
                     },
                     gradient: const LinearGradient(

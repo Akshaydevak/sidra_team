@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -28,6 +29,7 @@ import '../../../../common_widgets/loading.dart';
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/reusable_textfield.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import 'create/create_svg.dart';
 import 'create/create_task_user.dart';
 import 'employee_card.dart';
 import 'employee_model/employee_model.dart';
@@ -357,7 +359,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
-                                  HapticFeedback.vibrate();
+                                  HapticFeedback.heavyImpact();
                                   context.read<EmployeeBloc>().add( GetEmployeeReadEvent(state.assignMeList?[i].id??0));
                                   // _showModalBottomAdditionalRole(state.assignMeList?[i]);
                                 },
@@ -380,7 +382,14 @@ BlocProvider.of<CommunicationBloc>(context).add(
                 }
                 if (state is GetGroupListSuccess) {
                   print("Sucsess shifu");
-                  return Column(
+                  return state.groupList.isEmpty?
+                  Column(
+                    children: [
+                      SizedBox(height: 25,),
+                      SvgPicture.string(CreateSvg().groupEmpty,height: 250,width: 250,),
+                    ],
+                  ):
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -409,7 +418,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                             itemBuilder: (BuildContext context, int i) {
                               return InkWell(
                                 onTap: () {
-                                  HapticFeedback.vibrate();
+                                  HapticFeedback.heavyImpact();
                                   print("tapped grou");
                                 },
                                 child: GroupCard(groupList:state.groupList[i] ),

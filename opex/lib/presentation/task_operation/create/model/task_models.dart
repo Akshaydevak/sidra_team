@@ -156,10 +156,13 @@ class GetTaskList extends Equatable {
   final PerfomerModel? assignToDict;
   @JsonKey(name: "reporting_person_dict")
   final PerfomerModel? reportingPersonDict;
+  @JsonKey(name: "parent_task_dict")
+  final ParentDict? parentDict;
 
   const GetTaskList({
     this.name,
     this.profile,
+    this.parentDict,
     this.parentGroupId,
     this.assignByDict,
     this.assignToDict,
@@ -225,6 +228,28 @@ class GetTaskList extends Equatable {
       _$GetTaskListFromJson(json);
 
   Map<String, dynamic> toJson() => _$GetTaskListToJson(this);
+}
+
+@JsonSerializable()
+class ParentDict extends Equatable {
+
+  @JsonKey(name: 'task_name')
+  final String? taskName;
+  @JsonKey(name: 'description')
+  final String? description;
+
+  const ParentDict({
+    this.description,
+    this.taskName,
+  });
+
+  @override
+  List<Object> get props => [];
+
+  factory ParentDict.fromJson(Map<String, dynamic> json) =>
+      _$ParentDictFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ParentDictToJson(this);
 }
 
 @JsonSerializable()
@@ -880,4 +905,59 @@ class PerfomerModel extends Equatable {
       _$PerfomerModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PerfomerModelToJson(this);
+}
+
+
+@JsonSerializable()
+class SearchMapResultsModel extends Equatable{
+  final int? id;
+  @JsonKey(name: 'geometry')
+  final GeometryLocation? locationData;
+  @JsonKey(name: 'formatted_address')
+  final String? formattedAddress;
+  const SearchMapResultsModel({
+    this.id,this.locationData,this.formattedAddress
+  });
+  @override
+  List<Object> get props => [];
+
+  factory SearchMapResultsModel.fromJson(Map<String, dynamic> json) =>
+      _$SearchMapResultsModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SearchMapResultsModelToJson(this);
+
+}
+@JsonSerializable()
+class GeometryLocation extends Equatable{
+  final int? id;
+  @JsonKey(name: 'location')
+  final Location? latAndLang;
+
+  const GeometryLocation({
+    this.id,this.latAndLang,
+  });
+  @override
+  List<Object> get props => [];
+
+  factory GeometryLocation.fromJson(Map<String, dynamic> json) =>
+      _$GeometryLocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GeometryLocationToJson(this);
+
+}
+@JsonSerializable()
+class Location extends Equatable{
+  final double? lat;
+  final double? lng;
+  const Location({
+    this.lat,this.lng
+  });
+  @override
+  List<Object> get props => [];
+
+  factory Location.fromJson(Map<String, dynamic> json) =>
+      _$LocationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LocationToJson(this);
+
 }

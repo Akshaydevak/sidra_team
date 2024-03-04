@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
 import 'package:cluster/core/common_snackBar.dart';
@@ -10,6 +12,7 @@ import 'package:cluster/presentation/comunication_module/communication_homescree
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
+import 'package:cluster/presentation/dashboard_screen/profile/profile_svg.dart';
 import 'package:cluster/presentation/task_operation/create/single_row.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:cluster/presentation/task_operation/task_svg.dart';
@@ -19,7 +22,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -66,8 +71,17 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   bool isM=true;
   bool issMount= true;
   String uid='';
+  bool readonly=true;
   SharedPreferences? preff;
+  String grpPic="";
   List<ChatModel> attachments=[];
+  final ImagePicker picker = ImagePicker();
+  XFile? image;
+  late File _imageFile;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController =TextEditingController();
+  FocusNode foucus = FocusNode();
+  FocusNode foucus1 = FocusNode();
   @override
   void initState() {
     
@@ -94,6 +108,7 @@ print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${
     });
      
 widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$data"));
+
     // TODO: implement initState
     super.initState();
   }
@@ -109,12 +124,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
     var w = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
         providers: [
-          // BlocProvider(
-          //   create: (context) => GroupBloc()
-          //     ..add(GroupProfileGet(
-          //         chatid: widget.communicationUserModel?.chatid ?? "",
-          //         token: widget.token ?? "")),
-          // ),
+          
           BlocProvider(
             create: (context) => AttachmentBloc()
               ..add(GroupProfileAttachmentsGet(
@@ -156,12 +166,30 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
       },
     ),
     BlocListener<GroupBloc, GroupState>(
+      listener: (context, state) {
+        if (state is GroupProfileEditLoading) {
+          print("group update loading");
+        } else if (state is GroupProfileEditSuccess) {
+          widget.socket!.emit("update.list",{
+                        print("update ")
+                      });
+                      context.read<GroupBloc>().add(
+            GroupProfileGetdata(chatid: widget.roomId??"", token: widget.token??"")
+          );
+          Fluttertoast.showToast(msg: "Profile Updated");
+          
+        }else if(state is GroupProfileEditFailed){
+          Fluttertoast.showToast(msg: "Profile Updation Failed");
+        }
+        }
+    ),
+    BlocListener<GroupBloc, GroupState>(
       listener: (context, state) async {
-        print("state found ${state}");
         if (state is GroupMemberDeleteLoading) {
           print("group delete loading");
         } else if (state is GroupMemberDeleteSuccess){
           print("success");
+           
            preff = await SharedPreferences.getInstance();
         widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                       
@@ -195,11 +223,64 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
         }
       },
     ),
+    BlocListener<GroupBloc, GroupState>(
+              listener: (context, state) {
+            if (state is GroupUploadPictureLoading) {
+              print("Loading");
+            } else if (state is GroupUploadPictureSuccess) {
+                 context.read<GroupBloc>().add(GroupProfileEditEvent(
+                  token: widget.token??"", 
+                  chatId: widget.roomId??"", 
+                  groupname: nameController.text, 
+                  groupdescription: descriptionController.text,
+                  image: state.upload));              
+            }
+            else if (state is GroupUploadPictureFailed) {
+              print("failed");
+            }
+              }       
+    ),
     ],
       
         child:Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
+          appBar:readonly==false?AppBar(
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.white, // Navigation bar
+              statusBarColor: Colors.white, // Status bar
+            ),
+            surfaceTintColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                 readonly=true;
+                 setState(() {
+                   
+                 });
+              },
+              icon: const Icon(
+                Icons.close,
+                color: Colors.black,
+              ),
+            ),
+            actions: [
+              IconButton(onPressed: (){
+                context.read<GroupBloc>().add(GroupProfileEditEvent(
+                  token: widget.token??"", 
+                  chatId: widget.roomId??"", 
+                  groupname: nameController.text, 
+                  groupdescription: descriptionController.text,
+                  ));
+                readonly=true;
+                
+                setState(() {
+                  
+                });
+              }, icon: Icon(Icons.save)),
+              SizedBox(width: 10,),
+            ],
+            elevation: 0,
+            backgroundColor: Colors.white,
+          ) :AppBar(
             systemOverlayStyle: const SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.white, // Navigation bar
               statusBarColor: Colors.white, // Status bar
@@ -208,6 +289,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
             leading: IconButton(
               onPressed: () {
                  widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
+                 
                 Navigator.pop(context);
               },
               icon: const Icon(
@@ -215,6 +297,16 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                 color: Colors.black,
               ),
             ),
+            actions: [
+            widget.isadmin==true?  IconButton(onPressed: (){
+                readonly=false;
+                FocusScope.of(context).requestFocus();
+                setState(() {
+                  
+                });
+              }, icon: Icon(Icons.edit)):SizedBox(),
+              SizedBox(width: 10,),
+            ],
             elevation: 0,
             backgroundColor: Colors.white,
           ),
@@ -223,56 +315,103 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
               child: Column(
                 children: [
                   SizedBox(
-                    // width: w,
-            //         child: widget.communicationUserModel?.photo==null||
-            //           widget.communicationUserModel!.photo!.isEmpty 
-            //           ?TextAvatar(
-            //    shape: Shape.Circular,
-            //    size: 120,
-            //    numberLetters: 2,
-            //    fontSize: w/11,
-            //    textColor: Colors.white,
-            //    fontWeight: FontWeight.w500,
-            //    text:widget.chat==false?"${widget.communicationUserModel?.name.toString().toUpperCase()}":"${widget.communicationuser?.gname.toString().toUpperCase()}" ,
-            //  ):
-                    
-               child:     CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: AssetImage("asset/chatgrpimg.png")
-                        // NetworkImage(
-                        //   widget.isGroup?
-                        //   widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? "":
-                        //   //  "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}"
-                        //   // "${widget.communicationUserModel?.photo}"
-                        //   widget.chat==false?widget.communicationUserModel?.photo ?? "":widget.communicationuser?.gphoto ?? ""
-                        //   ,
-                        // )
-                        ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  widget.communicationUserModel?.isgrp == false
-                      ? Text(
-                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
-                          style: GoogleFonts.roboto(
-                            color: const Color(0xff151522),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                    width: w,
+                    child: Column(
+                      children: [
+                        widget.isGroup==true?
+                        BlocBuilder<GroupBloc,GroupState>(
+                          builder: (context,state){
+ print("state found ${state}");
+                            if(state is GetGroupProfiledataDetailsLoading){
+                              customCupertinoLoading();
+                            }
+                            if(state is GetGroupProfiledataDetailsSuccess){
+                              if( widget.communicationUserModel?.isgrp == false){
+  nameController=TextEditingController(text:state.profileGetModel?.name );
+  descriptionController=TextEditingController(text: state.profileGetModel?.discription);
+}else{
+    nameController=TextEditingController(text: state.profileGetModel?.name,);
+    descriptionController=TextEditingController(text:state.profileGetModel?.discription);
+}
+                              return Column(
+                                children: [
+                                  SizedBox(               
+                    child: Stack(
+                            children: [
+                             
+                                   state.profileGetModel?.photo==null||
+                        state.profileGetModel!.photo!.isEmpty ?
+                     CircleAvatar(
+                          radius: 70,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                              AssetImage("asset/chatgrpimg.png")
                         )
-                      : Text(
-                          widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",
-                          style: GoogleFonts.roboto(
-                            color: const Color(0xff151522),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        :CircleAvatar(
+                          radius: 70,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                           NetworkImage(
+                              state.profileGetModel?.photo ?? ""
+                              // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                              // "${widget.communicationUserModel?.photo}"
+                              ),
                         ),
-                  const SizedBox(
-                    height: 5,
+
+                         widget.isadmin==true? Positioned(
+                                  bottom: 7,
+                                  right: 0,
+                                  // left: 0,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      getImage(ImageSource.gallery);
+                                    },
+                                    child: SvgPicture.string(
+                                      ProfileSvg().editProfileIcon,
+                                    ),
+                                  )
+                                  ):SizedBox()
+                            ],
+                          ),
+              //  child:     CircleAvatar(
+              //           radius: 50,
+              //           backgroundColor: Colors.grey,
+              //           backgroundImage: AssetImage("asset/chatgrpimg.png")
+                        
+              //           ),
                   ),
+                  const SizedBox(
+                    height:3,
+                  ),
+                  
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16,right: 16),
+                        child: SizedBox(
+                          height: 50,
+                          child: TextFormField(
+                           enableInteractiveSelection:false,
+                            readOnly: readonly,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:readonly==false? BorderSide(color: ColorPalette.primary):BorderSide.none
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none
+                              
+                              )
+                              
+                            ),
+                              controller: nameController,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0xff151522),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                        ),
+                      ),
+                   
                   Text(
                    
                     widget.isGroup 
@@ -285,16 +424,190 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                   ),
                   
                   Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(  
-                      widget.chat ==false 
-                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
-                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",
-                          textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
+                    padding: const EdgeInsets.only(left:16,right: 16),
+                    child: SizedBox(
+                      child: TextFormField(  
+                        // expands: true,
+                        enableInteractiveSelection:false,
+                        readOnly: readonly,
+                        controller: descriptionController,
+                            textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        maxLines:null,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                              
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                                  borderSide:readonly==false? BorderSide(color: ColorPalette.primary):BorderSide.none
+                                ),
+                            
+                          ),
                       ),
+                    ),
+                  ),
+                                ],
+                              );
+
+                            }
+                            else if(state is GetGroupProfiledataDetailsFailed){
+                              if( widget.communicationUserModel?.isgrp == false){
+  nameController=TextEditingController(text:widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "", );
+  descriptionController=TextEditingController(text: widget.chat ==false 
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",);
+}else{
+    nameController=TextEditingController(text: widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",);
+    descriptionController=TextEditingController(text: widget.chat ==false 
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",);
+}
+                            }
+                            if( widget.communicationUserModel?.isgrp == false){
+  nameController=TextEditingController(text:widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "", );
+  descriptionController=TextEditingController(text: widget.chat ==false 
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",);
+}else{
+    nameController=TextEditingController(text: widget.chat==false?widget.redirectchatname!=""?"${widget.redirectchatname}":widget.communicationUserModel?.name ?? "":widget.communicationuser?.gname ?? "",);
+    descriptionController=TextEditingController(text: widget.chat ==false 
+                          ?widget.redirectchatname!=""?"Welcome to ${widget.redirectchatname}\nRemember, teamwork makes the dream work! 🚀": widget.communicationUserModel!.description != null? "${widget.communicationUserModel?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀"
+                          :widget.communicationuser!.description != null? "${widget.communicationuser?.description}":"Welcome to ${widget.communicationUserModel?.name ?? ""}\nRemember, teamwork makes the dream work! 🚀",);
+}
+                            return Column(
+                              children: [
+                                SizedBox(               
+                    child: Stack(
+                            children: [
+                              grpPic != ""
+                                  ? CircleAvatar(
+                                    radius: 70,
+                                    backgroundImage: NetworkImage("https://api-uat-user.sidrabazar.com/media/$grpPic")
+                                  )
+                                  :   widget.communicationUserModel?.photo==null||
+                        widget.communicationUserModel!.photo!.isEmpty ?
+                     CircleAvatar(
+                          radius: 70,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                              AssetImage("asset/chatgrpimg.png")
+                        )
+                        :CircleAvatar(
+                          radius: 70,
+                          backgroundColor: ColorPalette.inactiveGrey,
+                          backgroundImage:  
+                           NetworkImage(
+                              widget.communicationUserModel?.photo ?? ""
+                              // "https://api-uat-user.sidrabazar.com/media/${widget.communicationUserModel?.users?[0].photo}" 
+                              // "${widget.communicationUserModel?.photo}"
+                              ),
+                        ),
+
+                         widget.isadmin==true? Positioned(
+                                  bottom: 7,
+                                  right: 0,
+                                  // left: 0,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      getImage(ImageSource.gallery);
+                                    },
+                                    child: SvgPicture.string(
+                                      ProfileSvg().editProfileIcon,
+                                    ),
+                                  )
+                                  ):SizedBox()
+                            ],
+                          ),
+              //  child:     CircleAvatar(
+              //           radius: 50,
+              //           backgroundColor: Colors.grey,
+              //           backgroundImage: AssetImage("asset/chatgrpimg.png")
+                        
+              //           ),
+                  ),
+                  const SizedBox(
+                    height:3,
+                  ),
+                  
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16,right: 16),
+                        child: SizedBox(
+                          height: 50,
+                          child: TextFormField(
+                           enableInteractiveSelection:false,
+                            readOnly: readonly,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:readonly==false? BorderSide(color: ColorPalette.primary):BorderSide.none
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none
+                              
+                              )
+                              
+                            ),
+                              controller: nameController,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0xff151522),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                        ),
+                      ),
+                   
+                  Text(
+                   
+                    widget.isGroup 
+                        ? "created by ${widget.grpmember?[0].createdBy.toString().toTitleCase()}"
+                        : "",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: const EdgeInsets.only(left:16,right: 16),
+                    child: SizedBox(
+                      child: TextFormField(  
+                        enableInteractiveSelection:false,
+                        readOnly: readonly,
+                        controller: descriptionController,
+                            textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        maxLines: 7,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                              
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                                  borderSide:readonly==false? BorderSide(color: ColorPalette.primary):BorderSide.none
+                                ),
+                            
+                          ),
+                      ),
+                    ),
+                  ),
+                              ],
+                            );
+                          }
+                          )
+                        
+                        
+                          :SizedBox()
+                      ],
                     ),
                   ),
                   Container(
@@ -376,7 +689,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
-                                                    chatid:widget.redirectchatid==""?widget.communicationUserModel?.chatid:widget.redirectchatid,
+                                                    chatid:widget.redirectchatid==""?widget.roomId:widget.redirectchatid,
                                                     socket: widget.socket,
                                                     isGroup: widget.isGroup,
                                                     communicationUserModel: widget.communicationUserModel,
@@ -449,7 +762,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         fontWeight: FontWeight.w500,
                                                         text:"${grpmember[index].name.toString().toUpperCase()}" ,
                                                       ):CircleAvatar(
-                                                        radius: w / 23,
+                                                        radius: w / 18,
                                                         backgroundColor: Colors.grey,
                                                         backgroundImage: NetworkImage("${grpmember[index].photo}"
                                                             )),
@@ -561,9 +874,9 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                                                 //   widget.socket!.emit("group.members",{widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid:widget.communicationuser?.chatid,uid});
                                                                                 //   showSnackBar(context, message: data, color: Colors.black);
                                                                                 // } );
-                                                                                widget.socket!.emit("group.message",{
-                                                                                  "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
-                                                                                }); 
+                                                                               widget.socket!.emit("group.message",{
+              "type": "notify", "chatid":widget.redirectchatid!=""?widget.redirectchatid:  widget.communicationUserModel?.chatid, "content": "${grpmember[index].name.toString().toTitleCase()} is removed from group"
+            }); 
                                                                                 isM=true;
                                                                                 Navigator.pop(context);
                                                                                  
@@ -657,7 +970,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                   Navigator.push(context,MaterialPageRoute(builder: (context)=>
                                                   AddGroupMembers(
                                                     token: widget.token,
-                                                    chatid:widget.communicationUserModel?.chatid,
+                                                    chatid:widget.redirectchatid==""?widget.roomId:widget.redirectchatid,
                                                     socket: widget.socket,
                                                     isGroup: widget.isGroup,
                                                     communicationUserModel: widget.communicationUserModel,
@@ -712,7 +1025,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                         fontWeight: FontWeight.w500,
                                                         text:"${grpmember[index].name.toString().toUpperCase()}" ,
                                                       ):CircleAvatar(
-                            radius: w / 23,
+                            radius: w / 17,
                             backgroundColor: Colors.grey,
                             backgroundImage: NetworkImage("${grpmember[index].photo}"
                                 )),
@@ -846,8 +1159,8 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                             separatorBuilder:
                                                 (context, index) =>
                                                     const Divider(
-                                                      indent: 50,
-                                                      thickness: 1.1,
+                                                      indent: 55,
+                                                      thickness: .5,
                                                     ),
                                             
                                             ),
@@ -1206,5 +1519,20 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
         );
       },
       );
+  }
+  Future<void> getImage(source) async {
+      image = await picker.pickImage(
+        source: source,
+      );
+      _imageFile = File(image!.path);
+      if(image != null){
+        grpPic=_imageFile.path;
+
+        BlocProvider.of<GroupBloc>(context)
+           .add(GroupUploadPictureEvent(image:_imageFile));
+       
+      }else{
+        Navigator.pop(context);
+      }
   }
 }

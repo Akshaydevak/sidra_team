@@ -927,7 +927,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                                                       children: [
                                                         Text(
                                                           state
-                                                                  .profileGetModel
+                                                                  .profileGetModel!
                                                                   .groups?[
                                                                       index]
                                                                   .name ??

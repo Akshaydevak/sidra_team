@@ -115,7 +115,7 @@ class TaskRepo {
   Future<PaginatedResponse> getNotificationList(String? search,String? next,String? prev) async {
     final apiResponse = await _dataSource.getNotificationList(search,next,prev);
     try {
-      if (apiResponse.data!= null &&apiResponse.data!.isNotEmpty) {
+      if (apiResponse.data !=null) {
         return PaginatedResponse(apiResponse.data,apiResponse.nextPageUrl,apiResponse.count,
           previousUrl: apiResponse.previousUrl,
 
@@ -205,6 +205,28 @@ class TaskRepo {
   Future<DataResponse> getTaskCreationRead() async {
     try {
       final apiResponse = await _dataSource.getTaskCreationRead();
+
+      if (apiResponse.duration!.isNotEmpty) {
+        return DataResponse(
+          data: apiResponse,
+        );
+      } else {
+        return DataResponse(
+          error: "implement Error conersion Text",
+        );
+      }
+    } catch (e) {
+      debugPrint("implement Error conersion Text$e");
+    }
+    return DataResponse(
+      error: "implement Error conersion Text",
+    );
+  }
+  ////
+
+  Future<DataResponse> getJobCreationRead() async {
+    try {
+      final apiResponse = await _dataSource.getJobCreationRead();
 
       if (apiResponse.duration!.isNotEmpty) {
         return DataResponse(
@@ -315,6 +337,8 @@ class TaskRepo {
   Future<DataResponse> taskCreatePost({
     required int? parant,
     required int jobId,
+    required String startTime,
+    required String endTime,
     required int taskType,
     final int? statusStagesId,
     required String reportingPerson,
@@ -339,6 +363,8 @@ class TaskRepo {
     final restAPIresponse = await _dataSource.taskCreatePost(
     longitude: longitude,
         latitude: latitude,
+        endTime: endTime,
+        startTime: startTime,
         durationOption: durationOption,
         reportingPerson: reportingPerson,
         createdBy:createdBy,
@@ -420,9 +446,13 @@ class TaskRepo {
     required String? longitude,
     required String? latitude,
     required String durationOption,
+    required String startTime,
+    required String endTime,
   }) async {
     final restAPIresponse = await _dataSource.taskUpdatePost(
      latitude: latitude,
+        startTime: startTime,
+        endTime: endTime,
         longitude: longitude,
         durationOption: durationOption,
         img4: img4,

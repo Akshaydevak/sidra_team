@@ -357,7 +357,7 @@ class JobDataSource {
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
         ));
-    print("api $api");
+    print("api my ad $api");
     print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
       nationalityModel.add(GetJobList.fromJson(element));
@@ -498,6 +498,9 @@ print("DATASS${response.data['data']}");
     required String? startDate,
     required String? endDate,
     required String? priority,
+    required String? durationOption,
+    required String? startTime,
+    required String? endTime,
     required int? relatedJob,
   }) async {
 
@@ -513,6 +516,7 @@ print("DATASS${response.data['data']}");
     print("JOB CREATION$endDate");
     print("JOB CREATION$priority");
     print("JOB CREATION$relatedJob");
+    print("JOB CREATION$durationOption");
     print("JOB api${ClusterUrls.createJobUrl}");
     final response = await client.post(
       ClusterUrls.createJobUrl,
@@ -529,6 +533,9 @@ print("DATASS${response.data['data']}");
         "end_date":endDate,
         "priority":priority,
         "related_job":relatedJob,
+        "duration_option":durationOption,
+        "start_time":startTime,
+        "end_time":endTime,
       },
       options: Options(
         headers: {
@@ -621,6 +628,9 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
     required String? startDate,
     required String? endDate,
     required String? priority,
+    required String? durationOption,
+    required String? startTime,
+    required String? endTime,
   }) async {
     print("Update JOB:${ClusterUrls.updateUrl+id.toString()}");
     print("NAMESS${name}");
@@ -648,6 +658,9 @@ print("${ClusterUrls.updateTaskGroupUrl}${userGroopId}");
         "start_date":startDate,
         "end_date":endDate,
         "priority":priority,
+        "duration_option":durationOption,
+        "start_time":startTime,
+        "end_time":endTime,
       },
       options: Options(
         headers: {

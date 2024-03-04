@@ -22,20 +22,19 @@ class TextCard extends StatelessWidget {
           padding: EdgeInsets.only(left: 16.0),
           child: Text(
             title??"",
-            style:isTask? TextStyle(
-              color: ColorPalette.black,
-              fontSize: w/24,
-            ):GoogleFonts.roboto(
+            style:GoogleFonts.roboto(
               color: Color(0xff151522),
               fontSize: w/24,
-
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
-        const Divider(
-          indent: 16,
+        SizedBox(height: 3.5,),
+        Divider(
+          indent: 10,
+          height: 2,
         ),
+        SizedBox(height: 3.5,),
         Container(
           padding: EdgeInsets.only(left: 16, right: 5),
           width: w1/1.15,
@@ -45,7 +44,7 @@ class TextCard extends StatelessWidget {
             subText?? "",
             style: TextStyle(
               color: ColorPalette.black,
-              fontSize: w/24,
+              fontSize: w/26,
             ),
             textAlign: TextAlign.justify,
           ),

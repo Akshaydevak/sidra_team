@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen/image_details_screen.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';

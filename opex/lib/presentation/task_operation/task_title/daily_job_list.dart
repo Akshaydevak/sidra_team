@@ -1,0 +1,350 @@
+import 'package:cluster/presentation/task_operation/lottieLoader.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
+import '../../../../../common_widgets/loading.dart';
+import '../../../common_widgets/gradient_button.dart';
+import '../../../core/color_palatte.dart';
+import '../../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
+import '../home/bloc/job_bloc.dart';
+import '../home/model/joblist_model.dart';
+import '../task_operation_appbar.dart';
+import '../task_svg.dart';
+import 'create_daily_job.dart';
+import 'job_card.dart';
+
+class DailyJobList extends StatefulWidget {
+  final String? startDate;
+  final String? endDate;
+  const DailyJobList({Key? key,  this.startDate,  this.endDate}) : super(key: key);
+
+  @override
+  State<DailyJobList> createState() => _DailyJobListState();
+}
+
+class _DailyJobListState extends State<DailyJobList> {
+  List<String> assignTypeList = [
+    "All Jobs",
+    "Pending Jobs",
+    "On Progress",
+    "Completed"
+  ];
+  List<GetJobList> joblist = [];
+  String? selectedType;
+  bool isFilter=false;
+  @override
+  void initState() {
+    context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+    super.initState();
+  }
+  String nextUrl = "";
+  String prevUrl = "";
+  bool filtering=false;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
+  @override
+  Widget build(BuildContext context) {
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    var h = MediaQuery.of(context).size.height;
+    return RefreshIndicator(
+      onRefresh: ()async{
+        context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+        // context.read<TaskBloc>().add(GetReviewListEvent(widget.taskId));
+        return Future<void>.delayed(const Duration(seconds: 3));
+      },
+      key: _refreshIndicatorKey,
+      color: ColorPalette.primary,
+      // backgroundColor: Colors.transparent,
+
+      strokeWidth: 2.0,
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<JobBloc, JobState>(
+            listener: (context, state) {
+              print("stateeeeee $state");
+              if (state is GetFilterJobListSuccess) {
+                joblist = state.jobList;
+                filtering=false;
+                setState(() {});
+              }
+              if (state is GetFilterJobListFailed) {
+
+                joblist.clear();
+                setState(() {});
+              }
+            },
+          ),
+        ],
+        child: WillPopScope(
+          onWillPop: ()async{
+            BlocProvider.of<JobBloc>(
+                context)
+                .add(
+                FilterAssignTaskCountEvent(
+                    startDate:
+                    widget.startDate??"",
+                    endDate:
+                    widget.endDate??""));
+            return true;
+
+          },
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(60),
+              child: BackAppBar(
+                label: "Daily Job List",
+                isAction: false,
+                action: Container(
+                  width: w1/5,
+                  height: 30,
+                  child: GradientButton(
+                      onPressed: () {
+                        PersistentNavBarNavigator.pushNewScreen(
+                          context,
+                          screen: CreateNewDailyJob(),
+                          withNavBar: true,
+                          // OPTIONAL VALUE. True by default.
+                          pageTransitionAnimation: PageTransitionAnimation.fade,
+                        );
+                        //OtpScreen
+                      },
+                      gradient: const LinearGradient(
+                        colors: [
+                          ColorPalette.primary, ColorPalette.primary
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      color:  Colors.transparent,
+                      child: Text(
+                        "ADD NEW",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontSize: w/28,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                ),
+                isBack: false,
+                onTap: () {
+                  BlocProvider.of<JobBloc>(
+                      context)
+                      .add(
+                      FilterAssignTaskCountEvent(
+                          startDate:
+                          widget.startDate??"",
+                          endDate:
+                          widget.endDate??""));
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: BlocBuilder<JobBloc, JobState>(
+              builder: (context, state) {
+                if (state is GetNewJobListLoading) {
+                  return LottieLoader();
+                }
+                if (state is GetNewJobListSuccess) {
+                  nextUrl=state.nextPageUrl??"";
+                  prevUrl=state.prevPageUrl??"";
+                  joblist = state.jobList??[];
+                  return SafeArea(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Text(
+                                  "Total ${joblist.length} Jobs",
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: w / 26,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              // Spacer(),
+                              // Container(
+                              //   width: 120,
+                              //   height: 35,
+                              //   padding: EdgeInsets.symmetric(horizontal: 5),
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     border: Border.all(
+                              //       color: Color(0xffe6ecf0),
+                              //       width: 1,
+                              //     ),
+                              //     boxShadow: const [
+                              //       BoxShadow(
+                              //         color: Color(0x05000000),
+                              //         blurRadius: 8,
+                              //         offset: Offset(1, 1),
+                              //       ),
+                              //     ],
+                              //     color: Colors.white,
+                              //   ),
+                              //   child: DropdownButton(
+                              //       isExpanded: true,
+                              //       icon: Icon(Icons.keyboard_arrow_down_outlined),
+                              //       underline: Container(),
+                              //       items: assignTypeList.map((String items) {
+                              //         return DropdownMenuItem(
+                              //           enabled: true,
+                              //           value: items,
+                              //           child: Text(items,
+                              //               style: TextStyle(color: Colors.black)),
+                              //         );
+                              //       }).toList(),
+                              //       value: selectedType,
+                              //       onChanged: (dynamic value) {
+                              //         setState(() {
+                              //           isFilter=true;
+                              //           selectedType = value;
+                              //           selectedType == "Pending Jobs"
+                              //               ? context.read<JobBloc>().add(
+                              //               GetFilterJobListEvent("PENDING"))
+                              //               : selectedType == "On Progress"
+                              //               ? context.read<JobBloc>().add(
+                              //               GetFilterJobListEvent(
+                              //                   "ON PROGRESS"))
+                              //               : selectedType == "Completed"
+                              //               ? context.read<JobBloc>().add(
+                              //               GetFilterJobListEvent(
+                              //                   "COMPLETED"))
+                              //               : context.read<JobBloc>().add(GetNewJobListEvent('','',''));
+                              //         });
+                              //       },
+                              //       hint: Text(
+                              //         "All Jobs",
+                              //         style: GoogleFonts.poppins(
+                              //             color: Colors.grey, fontSize: 14),
+                              //       )),
+                              // ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                            ],
+                          ),
+                          joblist.isEmpty?
+                          Container(
+                            padding: EdgeInsets.only(top: 10),
+                            alignment: Alignment.center,
+                            height: h / 3.5,
+                            child: SvgPicture.string(TaskSvg().nolistSvg),
+                          ):
+                          Container(
+                            // height: h/1.3,
+                            padding:
+                            const EdgeInsets.only(left: 16, right: 16, top: 16),
+                            width: w1,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Text(
+                                //   "New Jobs",
+                                //   style: GoogleFonts.roboto(
+                                //     color: Color(0xff151522),
+                                //     fontSize: 18,
+                                //     fontWeight: FontWeight.w500,
+                                //   ),
+                                // ),
+
+                                Container(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: ListView.separated(
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      separatorBuilder: (BuildContext cxt, int i) {
+                                        return const SizedBox(
+                                          height: 5,
+                                        );
+                                      },
+                                      itemBuilder: (BuildContext context, int i) {
+                                        return InkWell(
+                                          onTap: () {},
+                                          child: JobCard(joblist: joblist[i]),
+                                        );
+                                      },
+                                      itemCount: joblist.length),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 15,bottom: 20,right: 15,left: 15
+                            ),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                prevUrl != ""
+                                    ? GestureDetector(
+                                  onTap: () {
+                                    context.read<JobBloc>().add(
+                                        GetNewJobListEvent(
+                                            '',
+                                            '',
+                                            prevUrl));
+                                    // context.read<InventoryBloc>().add(ProductStockListEvent("",state.product.count.toString()??""));
+                                  },
+                                  child: Text(
+                                    "Previous",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 24),
+                                  ),
+                                )
+                                    : Container(),
+                                nextUrl != ""
+                                    ? GestureDetector(
+                                  onTap: () {
+                                    // context.read<InventoryBloc>().add(ProductStockListEvent(state.product.nextPageUrl??"",""));
+                                    setState(() {
+                                      context.read<JobBloc>().add(
+                                          GetNewJobListEvent(
+                                              '',
+                                              nextUrl,
+                                              ""));
+                                    });
+                                  },
+                                  child: Text(
+                                    "Next",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: ColorPalette.primary,
+                                        fontSize: w / 24),
+                                  ),
+                                )
+                                    : Text("")
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return  Container();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

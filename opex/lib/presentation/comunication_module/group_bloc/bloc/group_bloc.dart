@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cluster/presentation/comunication_module/communication_datasource.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
@@ -27,14 +29,23 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
           userIdList: event.userIdList);
     } else if (event is GroupProfileGet) {
       yield* getGroupProfileDetails(chatId: event.chatid, token: event.token);
-    } else if (event is GroupLeaveEvent) {
+    }else if (event is GroupProfileGetdata) {
+      yield* getGroupProfiledataDetails(chatId: event.chatid, token: event.token);
+    }  
+    else if (event is GroupLeaveEvent) {
       yield* groupLeaveMap(roomId: event.roomId, token: event.token);
     } 
     else if(event is GroupMemberAddEvent){
-      yield* groupmemberadd(token:event.token,chatid:event.chatId,userid:event.userId);
+      yield* groupmemberadd(token:event.token,chatid:event.chatId,userid:event.userId,emailid: event.emailid,fname: event.fname,lname: event.lname,photo: event.photo);
     }
     else if(event is GroupMemberDeleteEvent){
       yield* groupmemberdelete(token:event.token,chatid:event.chatId,userid:event.userId);
+    }
+    else if(event is GroupProfileEditEvent){
+      yield* groupprofileedit(token:event.token,chatid:event.chatId,groupname:event.groupname,groupdescription: event.groupdescription,image: event.image);
+    }
+    else if(event is GroupUploadPictureEvent){
+      yield* uploadImageMap(image: event.image);
     }
   }
 
@@ -58,6 +69,18 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield GetGroupProfileDetailsSuccess(profileGetModel: dataResponse);
     } else {
       yield GetGroupProfileDetailsFailed();
+    }
+  }
+  Stream<GroupState> getGroupProfiledataDetails(
+      {String? token, String? chatId}) async* {
+    yield GetGroupProfiledataDetailsLoading();
+    final dataResponse =
+        await _productData.getGroupProfileData(token ?? "", chatId ?? "");
+        print("state found ${dataResponse.status}");
+    if (dataResponse.status =="success") {
+      yield GetGroupProfiledataDetailsSuccess(profileGetModel: dataResponse.data);
+    } else {
+      yield GetGroupProfiledataDetailsFailed();
     }
   }
 
@@ -95,10 +118,13 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   }
   
   Stream<GroupState> groupmemberadd(
-      {required String token, required String chatid,required String userid}) async* {
+      {required String token, required String chatid,required String userid,required String emailid,
+  required String fname,
+  required String lname,
+  required String photo}) async* {
     yield GroupMemberAddLoading();
     final dataResponse =
-        await _productData.addanGroupMember(chatId: chatid, userId: userid, token: token);
+        await _productData.addanGroupMember(chatId: chatid, userId: userid, token: token,emailid: emailid,fname: fname,lname: lname,photo: photo);
     if (dataResponse.data1) {
       print("ghhsucess");
       yield GroupMemberAddSuccess(successmsg: dataResponse.data2);
@@ -116,6 +142,28 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       yield GroupMemberDeleteSuccess(successmsg:dataResponse.data2);
     } else {
       yield GroupMemberDeleteFailed(error: dataResponse.data2);
+    }
+  }
+  Stream<GroupState> groupprofileedit(
+      {required String token, required String chatid,required String groupname,required String groupdescription,String? image}) async* {
+    yield GroupProfileEditLoading();
+    final dataResponse =
+        await _productData.editgroupprofile(chatId: chatid, grpname: groupname, grpdescription: groupdescription, token: token,image: image);
+    if (dataResponse.data != null) {
+      print("bloccccc${dataResponse}");
+      yield GroupProfileEditSuccess(successmsg:"Updated");
+    } else {
+      yield GroupProfileEditFailed(error:"Updation Failed");
+    }
+  }
+  Stream<GroupState> uploadImageMap(
+      {required File image}) async* {
+    yield GroupUploadPictureLoading();
+    final dataResponse = await _productData.uploadImageData1(img: image);
+    if (dataResponse.isNotEmpty) {
+      yield GroupUploadPictureSuccess(upload: dataResponse);
+    } else {
+      yield const GroupUploadPictureFailed(error: "failed");
     }
   }
 }

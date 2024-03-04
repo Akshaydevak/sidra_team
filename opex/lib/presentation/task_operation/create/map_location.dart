@@ -1,20 +1,19 @@
 import 'dart:async';
+import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
-import 'package:cluster/presentation/task_operation/more_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_address_picker/models/location_result.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../../common_widgets/gradient_button.dart';
 import '../../../core/common_snackBar.dart';
@@ -30,6 +29,7 @@ class AddressPickFromMap extends StatefulWidget {
   const AddressPickFromMap({Key? key, this.countryCode, this.taskRead, this.isUser=false}) : super(key: key);
 
   @override
+
   State<AddressPickFromMap> createState() => _AddressPickFromMapState();
 }
 
@@ -143,6 +143,7 @@ print("new mapp location got ${currentLocation}");
   LatLng initialCenter = const LatLng(28.612925, 77.229512);
   String address = 'turn on location';
   bool buttonLoad=false;
+  bool isValid=false;
 
   @override
   void initState() {
@@ -191,9 +192,9 @@ print("new mapp location got ${currentLocation}");
       ));
     }
 
-    // context
-    //     .read<SearchMapBloc>()
-    //     .add(SearchMapResults(searchQuery: _searchController.text));
+    context
+        .read<TaskBloc>()
+        .add(SearchMapResults(searchQuery: _searchController.text));
     if (automaticallyAnimateToCurrentLocation && !requiredGPS) {
       _initCurrentLocation();
     }
@@ -248,7 +249,9 @@ print("new mapp location got ${currentLocation}");
     selectedMapType ??= MapType.normal;
     bool darkIcons = ((selectedMapType == MapType.hybrid) ||
         (selectedMapType == MapType.satellite));
-    return BlocListener<TaskBloc, TaskState>(
+    return MultiBlocListener(
+  listeners: [
+    BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
 
          if (state is UpdateTaskSuccess) {
@@ -274,6 +277,16 @@ print("new mapp location got ${currentLocation}");
         }
 
       },
+),
+    BlocListener<TaskBloc, TaskState>(
+      listener: (context, state) {
+        if (state is SearchMapResultsSuccess) {
+          searchLength = state.cartData?.length ?? 0;
+          setState(() {});
+        }
+      },
+    ),
+  ],
   child: Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -311,6 +324,7 @@ print("new mapp location got ${currentLocation}");
                       },
                       markers: _markers,
                       onTap: (argument) {
+                        isValid=true;
                         _lastMapPosition = argument;
                          print("lattttt........ ${_lastMapPosition?.latitude}");
                          print("lattttt++++++ ${_lastMapPosition?.longitude}");
@@ -348,198 +362,186 @@ print("new mapp location got ${currentLocation}");
                         bottom: kBottomNavigationBarHeight + 60,
                       ),
                     ),
-                    // Positioned(
-                    //     top: 100,
-                    //     child: Container(
-                    //       width: w1,
-                    //       child: Column(
-                    //         mainAxisAlignment: MainAxisAlignment.start,
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Container(
-                    //             padding: const EdgeInsets.symmetric(
-                    //                 horizontal: 10, vertical: 5),
-                    //
-                    //             // color: Colors.white,
-                    //             // height: 50,
-                    //             child: Container(
-                    //               decoration: BoxDecoration(
-                    //                 color: Colors.white,
-                    //                 borderRadius: BorderRadius.circular(10),
-                    //                 boxShadow: [
-                    //                   BoxShadow(
-                    //                     color: Colors.grey.withOpacity(0.5),
-                    //                     spreadRadius: 2,
-                    //                     blurRadius: 7,
-                    //                     offset: const Offset(0, 3),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //               child: Row(
-                    //                 children: [
-                    //                   const SizedBox(width: 10),
-                    //                   const Icon(Icons.search, color: Colors.grey),
-                    //                   const SizedBox(width: 10),
-                    //                   Expanded(
-                    //                     child: TextFormField(
-                    //                         controller: _searchController,
-                    //                         decoration: const InputDecoration(
-                    //                           border: InputBorder.none,
-                    //                           hintText: 'Search Location',
-                    //                         ),
-                    //                         onChanged: (query) {
-                    //                           // context.read<SearchMapBloc>().add(
-                    //                           //     SearchMapResults(
-                    //                           //         searchQuery:
-                    //                           //         _searchController.text));
-                    //                         },
-                    //                         onEditingComplete: () {
-                    //                           // context.read<SearchMapBloc>().add(
-                    //                           //     SearchMapResults(
-                    //                           //         searchQuery:
-                    //                           //         _searchController.text));
-                    //                           FocusScopeNode currentFocus =
-                    //                           FocusScope.of(context);
-                    //
-                    //                           if (!currentFocus.hasPrimaryFocus) {
-                    //                             currentFocus.unfocus();
-                    //                           }
-                    //
-                    //                           // setState(() {});
-                    //                         }),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //             // TextFormField(
-                    //             //     controller: _searchController,
-                    //             // onEditingComplete: () {
-                    //             //   context.read<SearchMapBloc>().add(
-                    //             //       SearchMapResults(
-                    //             //           searchQuery: _searchController.text));
-                    //             //   FocusScopeNode currentFocus =
-                    //             //       FocusScope.of(context);
-                    //
-                    //             //   if (!currentFocus.hasPrimaryFocus) {
-                    //             //     currentFocus.unfocus();
-                    //             //   }
-                    //
-                    //             //   // setState(() {});
-                    //             // }),
-                    //           ),
-                    //
-                    //   // Container(
-                    //   //                 padding: const EdgeInsets.symmetric(
-                    //   //                     horizontal: 10, vertical: 5),
-                    //   //                 height: searchLength >= 5 ? h / 1.5 : null,
-                    //   //                 child: ListView.separated(
-                    //   //                     padding: EdgeInsets.zero,
-                    //   //                     shrinkWrap: true,
-                    //   //                     // physics: NeverScrollableScrollPhysics(),
-                    //   //                     // primary: true,
-                    //   //                     itemBuilder: (context, index) {
-                    //   //                       return InkWell(
-                    //   //                         onTap: () {
-                    //   //                           // latitude = state.cartData?[index]
-                    //   //                           //     .locationData?.latAndLang?.lat;
-                    //   //                           // longitude = state.cartData?[index]
-                    //   //                           //     .locationData?.latAndLang?.lng;
-                    //   //                           // getAddressFromLatLong(
-                    //   //                           //   LatLng(
-                    //   //                           //       state
-                    //   //                           //           .cartData?[index]
-                    //   //                           //           .locationData
-                    //   //                           //           ?.latAndLang
-                    //   //                           //           ?.lat ??
-                    //   //                           //           0.0,
-                    //   //                           //       state
-                    //   //                           //           .cartData?[index]
-                    //   //                           //           .locationData
-                    //   //                           //           ?.latAndLang
-                    //   //                           //           ?.lng ??
-                    //   //                           //           0.0),
-                    //   //                           // );
-                    //   //                           // moveToNewPosition(LatLng(
-                    //   //                           //     state
-                    //   //                           //         .cartData?[index]
-                    //   //                           //         .locationData
-                    //   //                           //         ?.latAndLang
-                    //   //                           //         ?.lat ??
-                    //   //                           //         0.0,
-                    //   //                           //     state
-                    //   //                           //         .cartData?[index]
-                    //   //                           //         .locationData
-                    //   //                           //         ?.latAndLang
-                    //   //                           //         ?.lng ??
-                    //   //                           //         0.0));
-                    //   //                           // _markers.add(Marker(
-                    //   //                           //   markerId:
-                    //   //                           //   const MarkerId("defaultMarker"),
-                    //   //                           //   position: LatLng(
-                    //   //                           //       state
-                    //   //                           //           .cartData?[index]
-                    //   //                           //           .locationData
-                    //   //                           //           ?.latAndLang
-                    //   //                           //           ?.lat ??
-                    //   //                           //           0.0,
-                    //   //                           //       state
-                    //   //                           //           .cartData?[index]
-                    //   //                           //           .locationData
-                    //   //                           //           ?.latAndLang
-                    //   //                           //           ?.lng ??
-                    //   //                           //           0.0),
-                    //   //                           //   icon: customIcon!,
-                    //   //                           // ));
-                    //   //                           // setState(() {
-                    //   //
-                    //   //                           // _markers.add(Marker(
-                    //   //                           //   icon: customIcon!,
-                    //   //                           //   markerId: const MarkerId(
-                    //   //                           //       "defaultMarker"),
-                    //   //                           //   position: LatLng(
-                    //   //                           //       state
-                    //   //                           //               .cartData?[index]
-                    //   //                           //               .locationData
-                    //   //                           //               ?.latAndLang
-                    //   //                           //               ?.lat ??
-                    //   //                           //           0.0,
-                    //   //                           //       state
-                    //   //                           //               .cartData?[index]
-                    //   //                           //               .locationData
-                    //   //                           //               ?.latAndLang
-                    //   //                           //               ?.lng ??
-                    //   //                           //           0.0),
-                    //   //                           // ));
-                    //   //                           // });
-                    //   //
-                    //   //                           // context.read<SearchMapBloc>().add(
-                    //   //                           //     const SearchMapResults(
-                    //   //                           //         searchQuery: ""));
-                    //   //                         },
-                    //   //                         child: Container(
-                    //   //                           padding: const EdgeInsets.symmetric(
-                    //   //                               horizontal: 5, vertical: 10),
-                    //   //
-                    //   //                           color: Colors.grey.shade100,
-                    //   //                           // height: 40,
-                    //   //                           width: w,
-                    //   //                           child: Text("state.cartData?[index].formattedAddress" ??
-                    //   //                               ""),
-                    //   //                         ),
-                    //   //                       );
-                    //   //                     },
-                    //   //                     separatorBuilder: (context, index) {
-                    //   //                       return const Divider(
-                    //   //                         height: 1,
-                    //   //                       );
-                    //   //                     },
-                    //   //                     itemCount: 1 ?? 1),
-                    //   //               )
-                    //
-                    //
-                    //         ],
-                    //       ),
-                    //     )),
+                    Positioned(
+                        top: 100,
+                        child: Container(
+                          width: w1,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+
+                                // color: Colors.white,
+                                // height: 50,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 7,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      const Icon(Icons.search, color: Colors.grey),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: TextFormField(
+                                            controller: _searchController,
+                                            decoration:  InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: 'Search Location',
+                                              hintStyle: GoogleFonts.roboto(
+                                                fontSize: w/26,
+                                                color: ColorPalette.borderGrey
+
+                                              )
+                                            ),
+                                            onChanged: (query) {
+                                              context.read<TaskBloc>().add(
+                                                  SearchMapResults(
+                                                      searchQuery:
+                                                      _searchController.text));
+                                            },
+                                            onEditingComplete: () {
+                                              context.read<TaskBloc>().add(
+                                                  SearchMapResults(
+                                                      searchQuery:
+                                                      _searchController.text));
+                                              FocusScopeNode currentFocus =
+                                              FocusScope.of(context);
+
+                                              if (!currentFocus.hasPrimaryFocus) {
+                                                currentFocus.unfocus();
+                                              }
+
+                                              // setState(() {});
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              BlocBuilder<TaskBloc, TaskState>(
+                                builder: (context, state) {
+                                  if (state is SearchMapResultsSuccess) {
+                                    // searchLength = state.cartData?.length ?? 0;
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 0),
+                                      height: searchLength >= 5 ? h / 2 : null,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 7,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ]),
+                                      child: ListView.separated(
+                                          padding: EdgeInsets.all(8),
+                                          shrinkWrap: true,
+                                          // physics: NeverScrollableScrollPhysics(),
+                                          // primary: true,
+                                          itemBuilder: (context, index) {
+                                            return InkWell(
+                                              onTap: () {
+                                                isValid=true;
+
+                                                HapticFeedback.heavyImpact();
+
+                                              latitude = state.cartData?[index]
+                                                  .locationData?.latAndLang?.lat;
+                                              longitude = state.cartData?[index]
+                                                  .locationData?.latAndLang?.lng;
+                                            _lastMapPosition=LatLng(state.cartData?[index].locationData?.latAndLang?.lat??0.0,
+                                                state.cartData?[index].locationData?.latAndLang?.lng??0.0);
+                                                getAddressFromLatLong(_lastMapPosition);
+                                              moveToNewPosition(LatLng(
+                                                  state
+                                                      .cartData?[index]
+                                                      .locationData
+                                                      ?.latAndLang
+                                                      ?.lat ??
+                                                      0.0,
+                                                  state
+                                                      .cartData?[index]
+                                                      .locationData
+                                                      ?.latAndLang
+                                                      ?.lng ??
+                                                      0.0));
+                                              _markers.add(Marker(
+                                                markerId:
+                                                const MarkerId("defaultMarker"),
+                                                position: LatLng(
+                                                    state
+                                                        .cartData?[index]
+                                                        .locationData
+                                                        ?.latAndLang
+                                                        ?.lat ??
+                                                        0.0,
+                                                    state
+                                                        .cartData?[index]
+                                                        .locationData
+                                                        ?.latAndLang
+                                                        ?.lng ??
+                                                        0.0),
+                                                icon: customIcon!,
+                                              ));
+
+                                              context.read<TaskBloc>().add(
+                                                  const SearchMapResults(
+                                                      searchQuery: ""));
+                                              setState(() {
+
+                                              });
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 5, vertical: 10),
+
+                                                color: Colors.white,
+                                                // height: 40,
+                                                width: w,
+                                                child: Text(
+                                                  state.cartData?[index].formattedAddress ??
+                                                      "",
+                                                  style: TextStyle(fontSize: w / 28),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) {
+                                            return const Divider(
+                                              height: .5,
+                                            );
+                                          },
+                                          itemCount: state.cartData?.length ?? 1),
+                                    );
+                                  }
+                                  if (state is SearchMapResultsLoading) {
+                                    return customCupertinoLoading();
+                                  }
+                                  return Container();
+                                },
+                              )
+
+                            ],
+                          ),
+                        )),
                     Positioned(
                         bottom: 0,
                         left: 0,
@@ -565,9 +567,7 @@ print("new mapp location got ${currentLocation}");
                               ),
                             ),
                             Container(
-                              // padding: EdgeInsets.all(10),
                               width: w1,
-                              height: h / 5,
                               alignment: Alignment.center,
                               color: Colors.white,
                               child: Column(
@@ -584,14 +584,15 @@ print("new mapp location got ${currentLocation}");
                                             color: Color(0xff676767), fontSize: 12),
                                       )),
 
-                                  widget.isUser==true?Container():delButtonDisable == false
-                                      ? Container(
+                                   Container(
                                     padding: const EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 45),
-                                    child: GradientButton(
+                                        left: 16, right: 16, bottom: 10),
+                                    child: isValid==true?
+                                    GradientButton(
                                         onPressed: () {
                                           HapticFeedback.heavyImpact();
                                           buttonLoad=true;
+
                                           setState(() {
 
                                           });
@@ -628,8 +629,10 @@ print("new mapp location got ${currentLocation}");
                                                 isActive: true,
                                                 priority: widget.taskRead?.priority??"",
                                                 reportingPerson: widget.taskRead?.reportingPersonCode??"",
-                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}"" ""${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"??"",
-                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}"" ""${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}"??"",
+                                                endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
+                                                endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"
                                               ));
 
 
@@ -651,30 +654,74 @@ print("new mapp location got ${currentLocation}");
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
-                                        )),
-                                  )
-                                      : Container(
-                                    child: MaterialButton(
-                                        elevation: 0,
-                                        splashColor: Colors.white,
-                                        color: Colors.grey,
-                                        height: 45,
-                                        minWidth:
-                                        MediaQuery.of(context).size.width /
-                                            1.06,
+                                        )):
+                                    GradientButton(
                                         onPressed: () {
-                                          // setState(() {
-                                          //   onTappedCheckOut = true;
-                                          // });
+                                          HapticFeedback.heavyImpact();
+                                          buttonLoad=true;
+
+                                          setState(() {
+
+                                          });
+                                          print("lattttt........ ${_lastMapPosition?.latitude}");
+                                          print("lattttt++++++ ${_lastMapPosition?.longitude}");
+
+                                          BlocProvider.of<TaskBloc>(context).add(
+                                              UpdateTaskEvent(
+                                                  latitude: _lastMapPosition?.latitude.toString()??"",
+                                                  longitude: _lastMapPosition?.longitude.toString()??"",
+                                                  img5:  widget.taskRead?.metaData?.image5,
+                                                  img1: widget.taskRead?.metaData?.image1,
+                                                  img4: widget.taskRead?.metaData?.image4,
+                                                  img2: widget.taskRead?.metaData?.image2,
+                                                  img3: widget.taskRead?.metaData?.image3,
+                                                  attachmentDescription: widget.taskRead?.metaData?.description,
+                                                  attachmentNote: widget.taskRead?.metaData?.note,
+                                                  id: widget.taskRead?.id??0,
+                                                  AssigningCode: widget.taskRead?.assigningCode??"",
+                                                  AssigningType: widget.taskRead?.assigningType??"",
+                                                  createdOn: "${widget.taskRead?.createdOn?.split("T")[0]}"" ""${widget.taskRead?.createdOn?.split("T")[1].split("+")[0]}",
+                                                  jobid: widget.taskRead?.jobId,
+                                                  notas: widget.taskRead?.notes??"",
+                                                  durationOption: widget.taskRead?.duration??'',
+                                                  priorityLeval: 0,
+                                                  remarks: widget.taskRead?.remarks??"",
+                                                  taskName: widget.taskRead?.taskName??"",
+                                                  taskType: widget.taskRead?.taskType??0,
+                                                  lastmodified: null,
+                                                  parant: widget.taskRead?.parent??null,
+                                                  statusStagesId: widget.taskRead?.statusStagesId,
+                                                  discription:widget.taskRead?.description??"",
+                                                  createdBy: widget.taskRead?.createdPersonCode??"",
+                                                  isActive: true,
+                                                  priority: widget.taskRead?.priority??"",
+                                                  reportingPerson: widget.taskRead?.reportingPersonCode??"",
+                                                  endDate: "${widget.taskRead?.endDate?.split("T")[0]}",
+                                                  startDate: "${widget.taskRead?.startDate?.split("T")[0]}",
+                                                  startTime: "${widget.taskRead?.startDate?.split("T")[1].split("+")[0]}",
+                                                  endTime: "${widget.taskRead?.endDate?.split("T")[1].split("+")[0]}"
+                                              ));
+
+
                                         },
-                                        child: const Text(
-                                          "Unable To Deliver here",
-                                          textAlign: TextAlign.center,
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            ColorPalette.inactiveGrey,
+                                            ColorPalette.inactiveGrey,
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        color: ColorPalette.inactiveGrey,
+                                        child:  buttonLoad==true?SpinKitThreeBounce(
+                                          color: Colors.white,
+                                          size: 15.0,
+                                        ):Text(
+                                          "CONFIRM LOCATION",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600),
-                                        )),
+                                              fontSize: 16),
+                                        ))
                                   ),
                                 ],
                               ),

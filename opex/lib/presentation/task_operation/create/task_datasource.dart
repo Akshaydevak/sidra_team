@@ -206,7 +206,7 @@ class TaskDataSource {
             'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
           },
         ));
-    print("api " + api);
+    print("api noti " + api);
     print("response${response.data['data']}");
     (response.data['data']['results'] as List).forEach((element) {
       nationalityModel.add(NotificationList.fromJson(element));
@@ -313,6 +313,27 @@ class TaskDataSource {
     print("Task Read:${ClusterUrls.createTaskUrl}");
     final response = await client.get(
       ClusterUrls.createTaskUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'Auth_Token=${authentication.authenticatedUser.token}',
+        },
+      ),
+    );
+    print(response.data);
+    selectedItemDetails = GetReadCreateTask.fromJson((response.data['data']));
+
+    return selectedItemDetails;
+  }
+  ////
+
+  Future<GetReadCreateTask> getJobCreationRead() async {
+    GetReadCreateTask selectedItemDetails;
+
+    print("Task Read:${ClusterUrls.createJobUrl}");
+    final response = await client.get(
+      ClusterUrls.createJobUrl,
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -457,8 +478,12 @@ class TaskDataSource {
     required String createdOn,
     required String? lastmodified,
     required String? longitude,
+    required String startTime,
+    required String endTime,
     required String? latitude,
   }) async {
+    print("taskdetails parant$startTime");
+    print("taskdetails parant$endTime");
     print("taskdetails parant$durationOption");
     print("taskdetails parant$parant");
     print("taskdetails jobId$jobId");
@@ -505,6 +530,8 @@ class TaskDataSource {
           "last_modified": lastmodified,
           "longitude": longitude,
           "latitude": latitude,
+          "start_time":startTime,
+          "end_time":endTime
         },
         options: Options(
           headers: {
@@ -551,6 +578,8 @@ class TaskDataSource {
         "last_modified": lastmodified,
         "longitude": longitude,
         "latitude": latitude,
+        "start_time":startTime,
+        "end_time":endTime
       },
       options: Options(
         headers: {
@@ -636,7 +665,11 @@ class TaskDataSource {
     required int? id,
     required String? longitude,
     required String? latitude,
+    required String startTime,
+    required String endTime,
   }) async {
+    print("taskdetails$startTime");
+    print("taskdetails$endTime");
     print("taskdetails$parant");
     print("location$longitude");
     print("taskdetails$jobid");
@@ -697,7 +730,9 @@ class TaskDataSource {
         "attachment_description": attachdescription,
         "longitude":longitude,
         "latitude":latitude,
-        "status_stages_id":statusStagesId
+        "status_stages_id":statusStagesId,
+        "start_time":startTime,
+        "end_time":endTime
       },
       options: Options(
         headers: {
@@ -708,7 +743,7 @@ class TaskDataSource {
       ),
     );
 
-    print("create response$response");
+    print("update response$response");
     if (response.data['status'] == 'success') {
       return DataResponse(
           data: response.data["status"] == "success",
@@ -1550,5 +1585,34 @@ class TaskDataSource {
     } else {
       return DataResponse(data: false, error: response.data['message']);
     }
+  }
+
+  Future<List<SearchMapResultsModel>> searchMapLocation(
+      String? searchQuery) async {
+    List<SearchMapResultsModel> varientDetails = [];
+    print(
+        "state is api${"https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchQuery&key=AIzaSyDJavpenypIG-Kd1sTSUeEk6jyJ4NpsAFA"}");
+    final response = await client.get(
+        "${"https://maps.googleapis.com/maps/api/place/textsearch/json?query=$searchQuery&key=AIzaSyDJavpenypIG-Kd1sTSUeEk6jyJ4NpsAFA"}",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ));
+    print("respoooooooooooooonsss ${response.data}");
+    if (response.data['results'].isNotEmpty) {
+      (response.data['results'] as List).forEach((element) {
+        varientDetails.add(SearchMapResultsModel.fromJson(element));
+      });
+      print("respoooooooooooooonsss $varientDetails");
+      return varientDetails;
+    } else {
+      return [];
+    }
+    // (response.data['data']['results'] as List).forEach((element) {
+    //   varientDetails.add(ProductItem.fromJson(element));
+    // });
+    // return varientDetails;
   }
 }

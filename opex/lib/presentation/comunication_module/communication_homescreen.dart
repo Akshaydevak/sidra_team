@@ -1076,91 +1076,91 @@ setState(() {
           },
           child: const Icon(Icons.add,size: 32,color: Colors.white,),
         ),
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: Column(
-              children: [
-                AppBar(
-                  surfaceTintColor: Colors.white,
-                  systemOverlayStyle: const SystemUiOverlayStyle(
-                    systemNavigationBarColor: Colors.white, // Navigation bar
-                    statusBarColor: Colors.white, // Status bar
-                  ),
-                  elevation: 0,
-                  backgroundColor: Colors.white,
-                  centerTitle: false,
-      
-                  title: Text(
-                    "Communication",
-                    style:  TextStyle(color: Colors.black,fontSize: w/22),
-                  ),
-                  titleSpacing: 10,
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: SvgPicture.string(
-                      AppsSvg().appbarIcon,
-                    ),
-                  ),
-                  leadingWidth: 28,
-                  // actions: [
-                  //   // Padding(
-                  //   //   padding: const EdgeInsets.only(top: 12,left: 16),
-                  //   //   child: InkWell(
-                  //   //     onTap: (){},
-                  //   //     //   if(activeTextfield==true){
-                  //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
-                  //   //     //       mobile: mobileController.text,
-                  //   //     //       lname: "",
-                  //   //     //       fname: nameController.text,
-                  //   //     //       dob: "",
-                  //   //     //       email: emailController.text,
-                  //   //     //
-                  //   //     //     ));
-                  //   //     //   }
-                  //   //     //   else{
-                  //   //     //
-                  //   //     //   }
-                  //   //     //   myfocus.unfocus();
-                  //   //     //   myfocus1.unfocus();
-                  //   //     //   myfocus2.unfocus();
-                  //   //     //   activeTextfield=false;
-                  //   //     // },
-                  //   //     child: Text(
-                  //   //       "Save",
-                  //   //       style: GoogleFonts.roboto(
-                  //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
-                  //   //         fontSize: 18,
-                  //   //         fontWeight: FontWeight.w500,
-                  //   //         height: 1.56,
-                  //   //       ),
-                  //   //     ),
-                  //   //   ),
-                  //   // ),
-                  //
-                  //
-                  //   // SvgPicture.string(HomeSvg().msgIcon),
-                  //   //         const SizedBox(
-                  //   //           width: 16,
-                  //   //         ),
-                  //   //         GestureDetector(
-                  //   //           onTap: widget.onTap,
-                  //   //             child: SvgPicture.string(HomeSvg().addIcon)),
-                  //
-                  //   const SizedBox(
-                  //     width: 16,
-                  //   )
-                  // ],
-                ),
-                Container(
-                  width: w,
-                  height: 1.50,
-                  decoration: const BoxDecoration(
-                    color: Color(0xb2e6e6e6),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        // appBar: PreferredSize(
+        //     preferredSize: Size.fromHeight(60),
+        //     child: Column(
+        //       children: [
+        //         AppBar(
+        //           surfaceTintColor: Colors.white,
+        //           systemOverlayStyle: const SystemUiOverlayStyle(
+        //             systemNavigationBarColor: Colors.white, // Navigation bar
+        //             statusBarColor: Colors.white, // Status bar
+        //           ),
+        //           elevation: 0,
+        //           backgroundColor: Colors.white,
+        //           centerTitle: false,
+        //
+        //           title: Text(
+        //             "Communication",
+        //             style:  TextStyle(color: Colors.black,fontSize: w/22),
+        //           ),
+        //           titleSpacing: 10,
+        //           leading: Padding(
+        //             padding: const EdgeInsets.only(left: 10),
+        //             child: SvgPicture.string(
+        //               AppsSvg().appbarIcon,
+        //             ),
+        //           ),
+        //           leadingWidth: 28,
+        //           // actions: [
+        //           //   // Padding(
+        //           //   //   padding: const EdgeInsets.only(top: 12,left: 16),
+        //           //   //   child: InkWell(
+        //           //   //     onTap: (){},
+        //           //   //     //   if(activeTextfield==true){
+        //           //   //     //     context.read<ProfileBloc>().add(UpdateProfileEvent(
+        //           //   //     //       mobile: mobileController.text,
+        //           //   //     //       lname: "",
+        //           //   //     //       fname: nameController.text,
+        //           //   //     //       dob: "",
+        //           //   //     //       email: emailController.text,
+        //           //   //     //
+        //           //   //     //     ));
+        //           //   //     //   }
+        //           //   //     //   else{
+        //           //   //     //
+        //           //   //     //   }
+        //           //   //     //   myfocus.unfocus();
+        //           //   //     //   myfocus1.unfocus();
+        //           //   //     //   myfocus2.unfocus();
+        //           //   //     //   activeTextfield=false;
+        //           //   //     // },
+        //           //   //     child: Text(
+        //           //   //       "Save",
+        //           //   //       style: GoogleFonts.roboto(
+        //           //   //         color: activeTextfield==true?Color(0xFF2871AF):Color(0xFFD3D3D3),
+        //           //   //         fontSize: 18,
+        //           //   //         fontWeight: FontWeight.w500,
+        //           //   //         height: 1.56,
+        //           //   //       ),
+        //           //   //     ),
+        //           //   //   ),
+        //           //   // ),
+        //           //
+        //           //
+        //           //   // SvgPicture.string(HomeSvg().msgIcon),
+        //           //   //         const SizedBox(
+        //           //   //           width: 16,
+        //           //   //         ),
+        //           //   //         GestureDetector(
+        //           //   //           onTap: widget.onTap,
+        //           //   //             child: SvgPicture.string(HomeSvg().addIcon)),
+        //           //
+        //           //   const SizedBox(
+        //           //     width: 16,
+        //           //   )
+        //           // ],
+        //         ),
+        //         Container(
+        //           width: w,
+        //           height: 1.50,
+        //           decoration: const BoxDecoration(
+        //             color: Color(0xb2e6e6e6),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
         // body: SafeArea(
         //   child: SingleChildScrollView(
         //     child: Column(

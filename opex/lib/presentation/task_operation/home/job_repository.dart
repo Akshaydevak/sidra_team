@@ -183,7 +183,7 @@ class JobRepo {
   Future<DataResponse> getGroupList() async {
     final apiResponse = await _dataSource.getGroupList();
     try {
-      if (apiResponse.isNotEmpty) {
+      if (apiResponse !=null) {
         return DataResponse(data: apiResponse);
       } else {
         return DataResponse(error: "error Text");
@@ -294,8 +294,14 @@ class JobRepo {
     required String? endDate,
     required String? priority,
     required int? relatedJob,
+    required String? durationOption,
+    required String? startTime,
+    required String? endTime,
   }) async {
     final restAPIresponse = await _dataSource.jobCreatePost(
+      durationOption: durationOption,
+      startTime: startTime,
+      endTime: endTime,
       name: name,
       jobType: jobType,
       reportingPerson: reportingPerson,
@@ -376,6 +382,9 @@ class JobRepo {
     required String? startDate,
     required String? endDate,
     required String? priority,
+    required String? durationOption,
+    required String? startTime,
+    required String? endTime,
   }) async {
     final restAPIresponse = await _dataSource.jobUpdatePost(
         name: name,
@@ -390,8 +399,9 @@ class JobRepo {
         startDate:startDate,
         endDate:endDate,
         priority:priority,
-
-
+startTime: startTime,
+endTime: endTime,
+      durationOption: durationOption
     );
     if (restAPIresponse.data) {
       return DataResponse(error: restAPIresponse.error,data: true);
