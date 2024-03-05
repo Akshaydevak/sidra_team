@@ -106,10 +106,13 @@ class _ChatAppBarState extends State<ChatAppBar> {
   @override
   Widget build(BuildContext context) {
     print("shifas${widget.cmntgrpid}");
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1 > 700
+        ? 400
+        : w1;
     var h = MediaQuery.of(context).size.height;
     return Container(
-      width: w,
+      // width: w/2,
       color: ColorPalette.primary,
       padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
       child: Row(

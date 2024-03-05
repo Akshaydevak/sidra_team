@@ -2,6 +2,7 @@ import 'package:cluster/common_widgets/no_glow.dart';
 import 'package:cluster/common_widgets/reusable_textfield.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/dashboard.dart';
@@ -182,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: ColorPalette.white,
+        backgroundColor: isMobile?ColorPalette.white:ColorPalette.webBagroundClr,
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(0),
             child: AppBar(
@@ -197,7 +198,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: SafeArea(
                 child: Container(
-              height: h / 1.1,
+                  color: ColorPalette.white,
+              height: isMobile?h / 1.1:h,
+              margin: isMobile?null:EdgeInsets.symmetric(horizontal: webTotalMargin(context)),
               padding: EdgeInsets.only(top: 30, left: 20, right: 20),
               // padding: EdgeInsets.only(top: h / 7, left: 10,right: h/7),
               child: Stack(
@@ -212,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Login to account",
                         style: GoogleFonts.inter(
                           color: Colors.black,
-                          fontSize: w / 14,
+                          fontSize: isMobile?w / 14:w/35,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -287,13 +290,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.roboto(
                                     color: Colors.white,
-                                    fontSize: w / 24,
+                                    fontSize: isMobile?w / 24:w/40,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 )),
                       SizedBox(
                         height: 30,
                       ),
+
                       // GestureDetector(
                       //   onTap: (){
                       //        PersistentNavBarNavigator.pushNewScreen(
@@ -313,16 +317,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   Positioned(
-                    bottom: 0,
-                    child: Container(
+                    bottom:isMobile? 0:25,
+
+                    child:
+                    Container(
                       width: w / 1.2,
+                      padding: EdgeInsets.only(left: 100),
+                      // color: Colors.red,
                       child: RichText(
-                          textAlign: TextAlign.center,
+                          textAlign: isMobile?TextAlign.center:TextAlign.start,
                           text: TextSpan(
                               text: 'By logging in, ',
                               style: GoogleFonts.roboto(
                                 color: Colors.black,
-                                fontSize: w / 28,
+                                fontSize:isMobile? w / 28:w/46,
                                 height: 1.5,
                                 fontWeight: FontWeight.normal,
                               ),
@@ -331,7 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   text: 'You accept to our',
                                   style: GoogleFonts.roboto(
                                     color: ColorPalette.black,
-                                    fontSize: w / 28,
+                                    fontSize:isMobile? w / 28:w/45,
                                     height: 1.5,
                                     fontWeight: FontWeight.normal,
                                   ),
@@ -340,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     text: 'Terms \n',
                                     style: GoogleFonts.roboto(
                                       color: ColorPalette.primary,
-                                      fontSize: w / 28,
+                                      fontSize:isMobile? w / 28:w/45,
                                       height: 1.5,
                                       fontWeight: FontWeight.w500,
                                     )),
@@ -348,7 +356,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     text: 'and ',
                                     style: GoogleFonts.roboto(
                                       color: Colors.black,
-                                      fontSize: w / 28,
+                                      fontSize:isMobile? w / 28:w/45,
                                       height: 1.5,
                                       fontWeight: FontWeight.normal,
                                     )),
@@ -356,7 +364,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   text: 'Privacy Policy',
                                   style: GoogleFonts.roboto(
                                     color: ColorPalette.primary,
-                                    fontSize: w / 28,
+                                    fontSize:isMobile? w / 28:w/45,
                                     height: 1.5,
                                     fontWeight: FontWeight.w500,
                                   ),

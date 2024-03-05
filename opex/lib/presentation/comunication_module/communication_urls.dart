@@ -1,8 +1,8 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
-      // "https://api-communication-application.hilalcart.com/";
+      "https://api-communication-application.hilalcart.com/";
       // "http://192.168.1.187:5500/";
-      "https://5z7l1nh4-5500.inc1.devtunnels.ms/";
+      // "https://5z7l1nh4-5500.inc1.devtunnels.ms/";
 
   static const getAllRegisteredUsersUrl="${communicationBaseUrl}api/chat/users/list";
   static const addAFriendUser="${communicationBaseUrl}api/inventory/inventory-connect-personal";

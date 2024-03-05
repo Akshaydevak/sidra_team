@@ -1,3 +1,4 @@
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,11 +13,14 @@ class SearchBarDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.only(left: 18, right: 18),
-      width: w,
+      width:isMobile? w:w1,
       height: 45,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(49),
@@ -53,7 +57,7 @@ class SearchBarDashboard extends StatelessWidget {
                 hintText: "Search..",
                 hintStyle: GoogleFonts.roboto(
                   color: Color(0xffbdbdbd),
-                  fontSize: w / 28,
+                  fontSize:isMobile? w / 28:w/24,
                   fontWeight: FontWeight.w400,
                 ),
 

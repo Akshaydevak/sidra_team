@@ -1,3 +1,4 @@
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
@@ -111,8 +112,8 @@ String token="";
     var h = MediaQuery.of(context).size.width;
     debugPrint("${authentication.authenticatedUser.token}customer_CODE");
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
+      backgroundColor:isMobile? Colors.white:Colors.grey,
+      body:isMobile? Center(
         child: PageView(children: [
           Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +128,22 @@ String token="";
                 )
               ]),
         ]),
-      ),
+      ):Container(color: Colors.white,
+      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
+      child: Center(child:  PageView(children: [
+        Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: h / 4,
+                alignment: Alignment.center,
+                child: Lottie.asset('asset/Logo.json'),
+                // Image.asset('asset/Logo'),
+                //child: SvgPicture.string(IconConstants().SplashIcon),
+              )
+            ]),
+      ]),),),
     );
   }
 

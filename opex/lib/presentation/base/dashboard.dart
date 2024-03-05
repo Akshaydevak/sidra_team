@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
@@ -870,6 +871,7 @@ pref = await SharedPreferences.getInstance();
                               }
                             : _onWillPop,
                         child: Scaffold(
+                          backgroundColor: isMobile?Colors.white:Colors.grey,
                           key: scaffoldKey,
                           appBar: PreferredSize(
                             preferredSize: const Size.fromHeight(58),
@@ -881,59 +883,67 @@ pref = await SharedPreferences.getInstance();
                           ),
                           drawer:  AppDrawer(
                            ),
-                          body: PersistentTabView(
+                          body: Container(
+                            margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
 
-                            context,
-                            padding:
-                                const NavBarPadding.only(left: 10, right: 10),
-                            controller: _controller,
-                              screens: _buildScreens(),
-                            onItemSelected: (value) {
+                            child:
+                            PersistentTabView(
 
-                              newIndex = value;
+                              context,
+                              padding:
+                                  const NavBarPadding.only(left: 100, right: 100),
+                              controller: _controller,
+                                screens: _buildScreens(),
+                              onItemSelected: (value) {
 
-                              setState(() {});
+                                newIndex = value;
 
-                              print("llllll$newIndex");
-
-                              if (newIndex == 0 || newIndex == 3) {
                                 setState(() {});
-                              } else if (newIndex == 2) {
-                                context
-                                    .read<ProfileBloc>()
-                                    .add(GetProfileEvent());
-                              }
-                            },
-                          
-                            items: _navBarsItems(),
-                            confineInSafeArea: true,
-                            hideNavigationBarWhenKeyboardShows: true,
-                            backgroundColor: ColorPalette.white,
-                            handleAndroidBackButtonPress: true,
-                            resizeToAvoidBottomInset: true,
-                            stateManagement: false,
-                            decoration: NavBarDecoration(boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade200.withOpacity(0.8),
 
-                                blurRadius: 2.0,
+                                print("llllll$newIndex");
 
-                                spreadRadius: 1, //New
-                              )
-                            ]),
-                            popAllScreensOnTapOfSelectedTab: true,
-                            popActionScreens: PopActionScreensType.all,
-                            itemAnimationProperties:
-                                const ItemAnimationProperties(
-                              duration: Duration(milliseconds: 200),
-                              curve: Curves.ease,
-                            ),
-                            navBarStyle: NavBarStyle.style3,
-                            screenTransitionAnimation:
-                                const ScreenTransitionAnimation(
-                              animateTabTransition: false,
-                              curve: Curves.ease,
-                              duration: Duration(milliseconds: 200),
+                                if (newIndex == 0 || newIndex == 3) {
+                                  setState(() {});
+                                } else if (newIndex == 2) {
+                                  context
+                                      .read<ProfileBloc>()
+                                      .add(GetProfileEvent());
+                                }
+                              },
+
+                              items: _navBarsItems(),
+                              confineInSafeArea: true,
+                              hideNavigationBarWhenKeyboardShows: true,
+                              backgroundColor: ColorPalette.white,
+                              handleAndroidBackButtonPress: true,
+                              resizeToAvoidBottomInset: true,
+                              stateManagement: false,
+                              decoration: NavBarDecoration(boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade200.withOpacity(0.8),
+
+                                  blurRadius: 2.0,
+
+                                  spreadRadius: 1, //New
+                                ),
+
+                              ],
+
+                              ),
+                              popAllScreensOnTapOfSelectedTab: true,
+                              popActionScreens: PopActionScreensType.all,
+                              itemAnimationProperties:
+                                  const ItemAnimationProperties(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.ease,
+                              ),
+                              navBarStyle: NavBarStyle.style3,
+                              screenTransitionAnimation:
+                                  const ScreenTransitionAnimation(
+                                animateTabTransition: false,
+                                curve: Curves.ease,
+                                duration: Duration(milliseconds: 200),
+                              ),
                             ),
                           ),
                         ),

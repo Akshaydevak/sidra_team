@@ -1,9 +1,11 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/dummy_user_list_model.dart';
 import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
+import 'package:cluster/presentation/comunication_module/web_chat_screen.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +127,13 @@ int unreadCount=0;
               userId: widget.loginUserId??""));
           PersistentNavBarNavigator.pushNewScreen(
             context,
-            screen: ChatScreen(
+            screen:isMobile? ChatScreen(
+              token: widget.token,
+              loginUserId: widget.loginUserId,
+              socket: widget.socket,
+              isGroup: widget.isGroup,
+              communicationUserModel: widget.communicationUserModel,
+            ):WebChatScreen(
               token: widget.token,
               loginUserId: widget.loginUserId,
               socket: widget.socket,
@@ -179,7 +187,7 @@ int unreadCount=0;
                             shape: Shape.Circular,
                             size: 48,
                             numberLetters: 2,
-                            fontSize: w1/22,
+                            fontSize: w/22,
                             textColor: Colors.white,
                             fontWeight: FontWeight.w500,
                             text:"${widget.communicationUserModel?.name.toString().toUpperCase()}" ,
@@ -215,12 +223,13 @@ int unreadCount=0;
                   const SizedBox(
                     width: 14,
                   ),
-                  SizedBox(
-                    width: w1/1.3,
+                  Container(
+                    // color: Colors.red,
+                    width:isMobile? w/1.3:w1-w1/2,
                     child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: w1 /1.8,
+                          width: w /1.8,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +242,7 @@ int unreadCount=0;
                                           overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.roboto(
                                         color: const Color(0xff151522),
-                                        fontSize: w1/24.3,
+                                        fontSize: w/24.3,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     )
@@ -258,7 +267,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Container(
-                                                  width: w1/2.3,
+                                                  width: w/2.3,
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -273,7 +282,7 @@ int unreadCount=0;
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: w1/5,
+                                                        width: w/5,
                                                         child: Text(
                                                           widget.communicationUserModel
                                                                   ?.latestMessage ??
@@ -308,7 +317,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 SizedBox(
-                                                  width: w1/3,
+                                                  width: w/3,
                                                   child: Text(
                                                     widget.communicationUserModel
                                                             ?.latestMessage ??
@@ -341,7 +350,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 SizedBox(
-                                                  width: w1/3,
+                                                  width: w/3,
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -401,7 +410,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 SizedBox(
-                                                  width: w1/2.3,
+                                                  width: w/2.3,
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -420,7 +429,7 @@ int unreadCount=0;
                                                  Icon(
                                                       Icons.mic,
                                                       color: Color.fromARGB(255, 2, 2, 2),
-                                                      size: w1/24,
+                                                      size: w/24,
                                                     ),
                                                 Text(
                                                       "voice message",
@@ -428,7 +437,7 @@ int unreadCount=0;
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                     color: Color(0xff151522),
-                                                    fontSize: w1/30,
+                                                    fontSize: w/30,
                                                   ),
                                                 ),
                                               ],
@@ -443,7 +452,7 @@ int unreadCount=0;
                                                  Icon(
                                                       Icons.mic,
                                                       color: Color.fromARGB(255, 2, 2, 2),
-                                                      size: w1/24,
+                                                      size: w/24,
                                                     ),
                                                 Text(
                                                       "voice message",
@@ -451,7 +460,7 @@ int unreadCount=0;
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                     color: Color(0xff151522),
-                                                    fontSize: w1/30,
+                                                    fontSize: w/30,
                                                   ),
                                                 ),
                                               ],
@@ -462,7 +471,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 SizedBox(
-                                                  width: w1/2.3,
+                                                  width: w/2.3,
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -479,7 +488,7 @@ int unreadCount=0;
                                                       Icon(
                                                       Icons.video_library,
                                                       color: Color.fromARGB(255, 2, 2, 2),
-                                                      size: w1/24,
+                                                      size: w/24,
                                                     ),
                                                     ],
                                                   ),
@@ -493,7 +502,7 @@ int unreadCount=0;
                                                  Icon(
                                                       Icons.video_library,
                                                       color: Color.fromARGB(255, 2, 2, 2),
-                                                      size: w1/24,
+                                                      size: w/24,
                                                     ),
                                                 // SizedBox(
                                                 //   width: w/3,
@@ -527,7 +536,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                 SizedBox(
-                                                  width: w1/2.3,
+                                                  width: w/2.3,
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -622,7 +631,7 @@ int unreadCount=0;
                                                   MainAxisAlignment.spaceBetween,
                                               children: [
                                                  SizedBox(
-                                                  width: w1/2,
+                                                  width: w/2,
                                                   child: Text(
                                                     widget.communicationUserModel
                                                             ?.latestMessage ??
@@ -668,14 +677,16 @@ int unreadCount=0;
                                       overflow: TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       color: Color(0xff151522),
-                                                      fontSize: w1/30,
+                                                      fontSize: w/30,
                                                     ),)
                         
                                      
                             ],
                           ),
                         ),
+
                          Container(
+
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         // crossAxisAlignment: CrossAxisAlignment.end,
@@ -739,7 +750,7 @@ int unreadCount=0;
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GoogleFonts.roboto(
                                                   color: Color.fromARGB(255, 159, 157, 157),
-                                                  fontSize: w1/35,
+                                                  fontSize: w/35,
                                                   fontWeight: FontWeight.w500,
                                                 )),
                                           ],
@@ -768,7 +779,7 @@ int unreadCount=0;
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GoogleFonts.roboto(
                                                   color: const Color(0xff6d6d6d),
-                                                  fontSize: w1/35,
+                                                  fontSize: w/35,
                                                   fontWeight: FontWeight.w500,
                                                   
                                                 )),
