@@ -763,8 +763,10 @@
 import 'dart:convert';
  
 import 'package:cluster/common_widgets/loading.dart';
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
@@ -1063,7 +1065,7 @@ setState(() {
           backgroundColor: Color(0xFF2871AF),
           tooltip: "Create group",
           onPressed: () {
-            PersistentNavBarNavigator.pushNewScreen(
+        isMobile?    PersistentNavBarNavigator.pushNewScreen(
               context,
               screen: CreateAGroup(
                 token: token,
@@ -1072,7 +1074,11 @@ setState(() {
               ),
               withNavBar: false, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
-            );
+            ):
+        chabeTAbIndex(4,
+            token: token,
+            loginUserId: loginuserId,
+            socket: socketCon,);
           },
           child: const Icon(Icons.add,size: 32,color: Colors.white,),
         ),

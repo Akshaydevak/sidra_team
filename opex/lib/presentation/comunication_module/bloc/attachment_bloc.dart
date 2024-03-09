@@ -5,6 +5,7 @@ import 'package:cluster/presentation/comunication_module/communication_datasourc
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 part 'attachment_event.dart';
@@ -15,9 +16,15 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
   final CommunicationDatasource _productData = CommunicationDatasource();
   @override
   Stream<AttachmentState> mapEventToState(AttachmentEvent event) async* {
+    // if (event is UploadPictureEvent) {
+    //   yield* uploadImageMap(image: event.image);
+    // }
     if (event is UploadPictureEvent) {
       yield* uploadImageMap(image: event.image);
-    } else if (event is UploadVideoEvent) {
+    }
+
+
+    else if (event is UploadVideoEvent) {
       yield* uploadVideoMap(video: event.video);
     } else if (event is UploadFilesEvent) {
       yield* uploadFilesMap(files: event.files);
@@ -34,8 +41,18 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
     }
   }
 
+  // Stream<AttachmentState> uploadImageMap(
+  //     {required File image}) async* {
+  //   yield UploadPictureLoading();
+  //   final dataResponse = await _productData.uploadImageData1(img: image);
+  //   if (dataResponse.isNotEmpty) {
+  //     yield UploadPictureSuccess(upload: dataResponse);
+  //   } else {
+  //     yield const UploadPictureFailed(error: "failed");
+  //   }
+  // }
   Stream<AttachmentState> uploadImageMap(
-      {required File image}) async* {
+      {required Uint8List image}) async* {
     yield UploadPictureLoading();
     final dataResponse = await _productData.uploadImageData1(img: image);
     if (dataResponse.isNotEmpty) {

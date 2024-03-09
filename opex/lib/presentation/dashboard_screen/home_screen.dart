@@ -1,3 +1,4 @@
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/dashboard.dart';
@@ -55,109 +56,128 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: ColorPalette.white,
 
 
-      body: ScrollConfiguration(
-        behavior: NoGlow(),
-        child: SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  width: w,
-                  alignment: Alignment.center,
-                  child: Text(
-                    "A big business start from",
-                    style: GoogleFonts.roboto(
-                      color: ColorPalette.black,
-                      fontSize: w / 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: (){
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: HelpScreen(autoFocus: true),
-                      withNavBar: false,
-                      // OPTIONAL VALUE. True by default.
-                      pageTransitionAnimation: PageTransitionAnimation.slideUp,
-                    );
-                  },
-                    child: SearchBarDashboard()),
-                Container(
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
-                    width: w,
-                    child: HeadlineText(headText: "Quick Access to : ")),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: AppHomeCard(
-                      onTap: widget.homeTap,
-                      appTitle: "Communication",
-                      appDescription:
-                          "This app tailored for efficient internal communication within organization.",
-                      svgIcon: AppsSvg().communicationSvgIcon,
-                    )),
-                SizedBox(
-                  height: 40,
-                ),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: AppHomeCard(
-                      onTap: widget.taskTap,
-                      appTitle: "Task & Operations",
-                      appDescription:
-                          "For seamless internal organization task assign and team collaboration.",
-                      svgIcon: AppsSvg().taskOpSvgIcon,
-                    )),
-                SizedBox(
-                  height: 40,
-                ),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: AppHomeCard(
-                      onTap: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: const SidraLearningHomePage(),
-                          withNavBar: false,
-                          // OPTIONAL VALUE. True by default.
-                          pageTransitionAnimation: PageTransitionAnimation.slideUp,
-                        );
-                      },
-                      appTitle: "Sidra Learning",
-                      appDescription:
-                      "Get the skills you need to succeed by watching video clips, anytime, anywhere.",
-                      svgIcon: AppsSvg().sidraLearningIcon,
-                    )),
-
-                SizedBox(
-                  height: h / 5,
-                ),
-                Center(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: ValueListenableBuilder<int>(
+            valueListenable: slectedTab,
+            builder: (BuildContext context, int value,child){
+              return Container(
+                height: h-70,
+                child: Stack(
                   children: [
-                    SvgPicture.string(
-                      AppsSvg().careIcon,
-                      height: 10,width: 10,
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: w,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "A big business start from",
+                              style: GoogleFonts.roboto(
+                                color: ColorPalette.black,
+                                fontSize: w / 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap: (){
+                                PersistentNavBarNavigator.pushNewScreen(
+                                  context,
+                                  screen: HelpScreen(autoFocus: true),
+                                  withNavBar: false,
+                                  // OPTIONAL VALUE. True by default.
+                                  pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                                );
+                              },
+                              child: SearchBarDashboard()),
+                          Container(
+                              padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
+                              width: w,
+                              child: HeadlineText(headText: "Quick Access to : ")),
+                          AppHomeCard(
+                            clr:getTAbIndex(0)?ColorPalette.selectedTabClr:Colors.transparent,
+                            // onTap: widget.homeTap,
+                            onTap: (){
+                              chabeTAbIndex(0);
+                            },
+                            appTitle: "Communication",
+                            appDescription:
+                            "This app tailored for efficient internal communication within organization.",
+                            svgIcon: AppsSvg().communicationSvgIcon,
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          AppHomeCard(
+                            clr:getTAbIndex(1)?ColorPalette.selectedTabClr:Colors.transparent,
+                            // onTap: widget.taskTap,
+                            onTap: (){
+                              chabeTAbIndex(1);
+                            },
+                            appTitle: "Task & Operations",
+                            appDescription:
+                            "For seamless internal organization task assign and team collaboration.",
+                            svgIcon: AppsSvg().taskOpSvgIcon,
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          AppHomeCard(
+                            clr:getTAbIndex(2)?ColorPalette.selectedTabClr:Colors.transparent,
+                            onTap: (){
+                              chabeTAbIndex(2);
+
+                              // PersistentNavBarNavigator.pushNewScreen(
+                              //   context,
+                              //   screen: const SidraLearningHomePage(),
+                              //   withNavBar: false,
+                              //   // OPTIONAL VALUE. True by default.
+                              //   pageTransitionAnimation: PageTransitionAnimation.slideUp,
+                              // );
+                            },
+                            appTitle: "Sidra Learning",
+                            appDescription:
+                            "Get the skills you need to succeed by watching video clips, anytime, anywhere.",
+                            svgIcon: AppsSvg().sidraLearningIcon,
+                          ),
+
+
+
+                        ],
+                      ),
                     ),
-                    SizedBox(width: 5,),
-                    Text("all rights reserved to sidrateams",
-                    style: GoogleFonts.roboto(
-                      fontSize: w/32,
-                      color: Color(0xff555555),
-                    ),),
+                    Positioned(
+                      bottom: 0,
+                         left: 40,
+                        child:   Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.string(
+                              AppsSvg().careIcon,
+                              height: 10,width: 10,
+                            ),
+                            SizedBox(width: 5,),
+                            Text("all rights reserved to sidrateams",
+                              style: GoogleFonts.roboto(
+                                fontSize: w/32,
+                                color: Color(0xff555555),
+                              ),),
+                          ],
+                        ))
                   ],
-                ))
-              ],
-            ),
-          ),
+                ),
+              );
+            },
+
+
+          )
         ),
       ),
     );

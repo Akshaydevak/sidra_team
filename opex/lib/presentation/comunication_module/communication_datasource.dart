@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart'as http;
 
 import 'package:cluster/core/utils/data_response.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
@@ -8,6 +10,7 @@ import 'package:cluster/presentation/comunication_module/models/communicationuse
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -312,7 +315,7 @@ class CommunicationDatasource {
     api="${CommunicationUrls.commentGroupUrl}$grpchatId?page=$pageNo";
   }else{
     print("else chatId $chatId ..");
-    api="${CommunicationUrls.getChatScreenUrl}$chatId?page=$pageNo";
+    api="${CommunicationUrls.getChatScreenUrl}$chatId/$userId?page=$pageNo";
   }
    print("display $api "); // print(
     //     "got it but just api${CommunicationUrls.getChatScreenUrl}$userId?page=$pageNo}");
@@ -407,35 +410,87 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
-  Future<String> uploadImageData1({File? img}) async {
+  Future<String> uploadImageData1({Uint8List? img}) async {
     String statusCode;
 
-    print("total result ${img}");
-    String filePath = "";
+    Map valueMap=Map();
+    final url=Uri.parse(  CommunicationUrls.uploadImageUrl);
+    print("the url$url");
+    // print("the bytes$bytes");
+    final request = http.MultipartRequest('POST', url);
+    if(img!=null) {
+      final imageFile = http.MultipartFile.fromBytes(
+        'image',
+        img,
+        filename: "Variable.imageTyp",
+      );
 
-    if (img != null) filePath = img.path;
-    final mime = lookupMimeType(filePath)!.split("/");
 
-    final fileData = await MultipartFile.fromFile(
-      filePath,
-      contentType: MediaType(mime.first, mime.last),
-    );
-    final FormData formData = FormData.fromMap({"upload": fileData});
+      request.files.add(imageFile);
+      final response = await request.send();
+//  final responseBody = await response.stream.bytesToString();
 
-    final response = await client.post(
-      CommunicationUrls.uploadImageUrl,
-      data: formData,
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ),
-    );
-    print("response is here ${response.data}");
-    statusCode = (response.data['data']['upload']);
+
+      // final completer = Completer<void>();
+
+      final responseStream =
+      Stream.fromIterable(await response.stream.toList());
+      print("rressspondseee stream ${responseStream.transform(utf8.decoder).first}");
+
+
+      try
+      {
+        // await completer.future;
+        final responseBody = await responseStream.transform(utf8.decoder).join();
+        valueMap  = jsonDecode(responseBody);
+        print(valueMap["data"]);
+
+
+
+
+
+
+
+
+
+      }
+      catch(e) {
+        print("response stream exceotiojn $e");
+      }
+    }
+    statusCode = (valueMap['upload']);
     return statusCode;
   }
+
+  // Future<String> uploadImageData1({File? img}) async {
+  //   String statusCode;
+  //
+  //   print("total result ${img}");
+  //   String filePath = "";
+  //
+  //   if (img != null) filePath = img.path;
+  //   final mime = lookupMimeType(filePath)!.split("/");
+  //
+  //   final fileData = await MultipartFile.fromFile(
+  //     filePath,
+  //     contentType: MediaType(mime.first, mime.last),
+  //   );
+  //   final FormData formData = FormData.fromMap({"upload": fileData});
+  //
+  //   final response = await client.post(
+  //     CommunicationUrls.uploadImageUrl,
+  //     data: formData,
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     ),
+  //   );
+  //   print("response is here ${response.data}");
+  //   statusCode = (response.data['data']['upload']);
+  //   return statusCode;
+  // }
   
   //   Future<String> groupimage({File? img}) async {
   //   String statusCode;

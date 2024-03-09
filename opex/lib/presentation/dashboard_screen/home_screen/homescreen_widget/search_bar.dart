@@ -20,7 +20,7 @@ class SearchBarDashboard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.only(left: 18, right: 18),
-      width:isMobile? w:w1,
+      width:isMobile? w:w,
       height: 45,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(49),
@@ -41,7 +41,8 @@ class SearchBarDashboard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: w / 1.6,
+            width: w / 2.6,
+
             child: TextFormField(
               onTap: (){
                 PersistentNavBarNavigator.pushNewScreen(

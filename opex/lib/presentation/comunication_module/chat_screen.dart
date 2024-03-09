@@ -3056,8 +3056,8 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       print('File pathinside: ${image!.path}');
       setState(() {
         if(source=="camera"){
-          BlocProvider.of<AttachmentBloc>(context)
-           .add(UploadPictureEvent(image:_imageFile));
+          // BlocProvider.of<AttachmentBloc>(context)
+          //  .add(UploadPictureEvent(image:_imageFile));
         } else{
         showDialog(
           barrierColor: Color.fromARGB(255, 238, 230, 230),
@@ -3089,8 +3089,8 @@ String formatMessageTimestamp(DateTime timestamp,int index){
                              child: CircleAvatar(
                               backgroundColor: Colors.white,
                                child: IconButton(onPressed: (){
-                                BlocProvider.of<AttachmentBloc>(context)
-                                             .add(UploadPictureEvent(image: _imageFile));
+                                // BlocProvider.of<AttachmentBloc>(context)
+                                //              .add(UploadPictureEvent(image: _imageFile));
                                              Navigator.pop(context);
                                }, icon:Icon(Icons.done),color: Colors.blue,),
                              ),

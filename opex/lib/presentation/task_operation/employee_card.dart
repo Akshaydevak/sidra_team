@@ -69,7 +69,7 @@ class EmployeeCard extends StatelessWidget {
              ),
              SizedBox(width: 8,),
              SizedBox(
-               width: w1>700?w1/1.15:w1/1.4,
+               width: w1>700?w/1.15:w/1.4,
                child: Column(
                  mainAxisAlignment: MainAxisAlignment.start,
                  crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +78,7 @@ class EmployeeCard extends StatelessWidget {
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
                        Container(
-                         width: w1/2.2,
+                         width: w/2.2,
                          // color: Colors.yellow,
                          child: Text(
                            "${employeeList?.fname}"" ""${employeeList?.lname}",

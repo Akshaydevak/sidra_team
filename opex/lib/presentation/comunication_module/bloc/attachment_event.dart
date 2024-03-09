@@ -7,12 +7,16 @@ abstract class AttachmentEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// class UploadPictureEvent extends AttachmentEvent {
+//   final File image;
+//
+//   const UploadPictureEvent({required this.image});
+// }
 class UploadPictureEvent extends AttachmentEvent {
-  final File image;
 
-  const UploadPictureEvent({required this.image});
+  final Uint8List image ;
+  const UploadPictureEvent( { required this.image,});
 }
-
 class UploadVideoEvent extends AttachmentEvent {
   final FilePickerResult video;
   const UploadVideoEvent({required this.video});

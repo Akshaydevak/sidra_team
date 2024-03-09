@@ -32,7 +32,7 @@ class _AppBarState extends State<AppBarScreen> {
   void initState() {
     super.initState();
     context.read<TaskBloc>().add(const GetNotificationListEvent("", "", ""));
-    context.read<ProfileBloc>().add(const GetProfilePicEvent());
+    if(isMobile) context.read<ProfileBloc>().add(const GetProfilePicEvent());
     // Transparent status bar
     // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     //   statusBarColor: Colors.white,
@@ -73,6 +73,7 @@ class _AppBarState extends State<AppBarScreen> {
         ),
       ],
       child: Container(
+       color:   Color(0xff0F2F5),
         // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
 
         child: Column(
@@ -83,7 +84,7 @@ class _AppBarState extends State<AppBarScreen> {
                 statusBarColor: Colors.white, statusBarIconBrightness: Brightness.dark,statusBarBrightness: Brightness.light// Status bar
               ),
               elevation: 0,
-              backgroundColor: Colors.white,
+              backgroundColor:    Color(0xff0F2F5),
               surfaceTintColor: Colors.white,
               leading: Container(
                 padding: const EdgeInsets.only(left: 16),
@@ -499,7 +500,7 @@ class _BackAppBarState extends State<BackAppBar> {
             statusBarColor: Colors.white, // Status bar
           ),
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xffF0F2F5),
           centerTitle: false,
 
           title: Text(

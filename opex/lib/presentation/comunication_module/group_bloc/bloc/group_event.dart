@@ -69,7 +69,12 @@ class GroupProfileEditEvent extends GroupEvent {
   const GroupProfileEditEvent({required this.token, required this.chatId, required this.groupname,required this.groupdescription,this.image});
 }
 class GroupUploadPictureEvent extends GroupEvent {
-  final File image;
+  final Uint8List image;
 
   const GroupUploadPictureEvent({required this.image});
 }
+// class GroupUploadPictureEvent extends GroupEvent {
+//   final File image;
+//
+//   const GroupUploadPictureEvent({required this.image});
+// }

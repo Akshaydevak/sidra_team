@@ -1,8 +1,10 @@
+import 'dart:html' as html;
 import 'dart:html';
 import 'dart:math';
 
 import 'dart:convert';
 
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/comunication_module/myChatlistWeb.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -101,6 +103,8 @@ class _WebChatScreenState extends State<WebChatScreen>
   bool canFocus=false;
   final _audioRecorder = Record();
   AudioPlayer? player = AudioPlayer();
+  FocusNode textformFocusnOde=FocusNode();
+  FocusNode focsuNode=FocusNode();
   bool ismount1=true;
   bool isMount = true;
   bool ismounted =true;
@@ -191,6 +195,10 @@ class _WebChatScreenState extends State<WebChatScreen>
   String seenTimestamp="";
   @override
   void initState() {
+
+
+    // Initialize your FocusNode
+
 
     print("room id listens atleast ${widget.redirectchatid} userid${widget.redirectionsenduserId} chatid${widget.grpchatid} ${widget.isGroup}");
     widget.socket?.emit("join.chat", {
@@ -465,6 +473,7 @@ class _WebChatScreenState extends State<WebChatScreen>
     });
     print("777777777777") ;
     loadUnreadMessageCount();
+
     super.initState();
   }
   void handleLatestMessage(data) {
@@ -1743,1153 +1752,1339 @@ class _WebChatScreenState extends State<WebChatScreen>
                 elevation: 0,
               ),
             ),
-            body: Container
-              (
-              color: Color(0xffEFF1F3),
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child:loadmsg==false?LottieLoader(): Column(
-                children: [
-                  chatbar==true?  ChatAppBar(
-                    chat: widget.chat,
-                    isGroup: widget.isGroup,
-                    roomId: roomId,
-                    cmntgrpid: widget.grpchatid,
-                    cmntgrpname: widget.cmntgrpchatname,
-                    redirectchatid: widget.redirectchatid,
-                    redirectchatname: widget.redirectchatname,
-                    socket: widget.socket,
-                    token: widget.token,
-                    loginUserId: widget.loginUserId,
-                    redirectionsenduserId: widget.redirectionsenduserId,
-                    typing: typing,
-                    isadmin: isadmin,
-                    groupTypingUser: groupTypingUser,
-                    communicationUserModel: widget.communicationUserModel,
-                    communicationuser: widget.communicationuser,
-                    isgrp: widget.isg,
-                    grpuser: widget.grpuser,
-                    grpmember: grpmember,
-                    ontap: (){
-                      if(widget.isGroup==false){
-                        if(widget.redirectchatid != ""){
-                          print("push notificstion redirection");
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.redirectionsenduserId??""});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid":widget.loginUserId??""
-                          }
-                          );
-
-                          print("user left too");
-
-                          print("user left too");
-
-                          widget.socket!.on("left.room", (data) {
-                            print("room left $data");
-                            if(ismounted){
-                              print("roooom left $data");
-                              widget.socket!.emit("get.clients",roomId);
-                              widget.socket!.on("active.length", handleActiveLength
-                              );
+            body :RawKeyboardListener(
+            focusNode: focsuNode,
+            onKey: handleKeyPress,
+              child: Container
+                (
+                color: Color(0xffEFF1F3),
+                // margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child:loadmsg==false?LottieLoader(): Column(
+                  children: [
+                    chatbar==true?
+                    ChatAppBar(
+                      chat: widget.chat,
+                      isGroup: widget.isGroup,
+                      roomId: roomId,
+                      cmntgrpid: widget.grpchatid,
+                      cmntgrpname: widget.cmntgrpchatname,
+                      redirectchatid: widget.redirectchatid,
+                      redirectchatname: widget.redirectchatname,
+                      socket: widget.socket,
+                      token: widget.token,
+                      loginUserId: widget.loginUserId,
+                      redirectionsenduserId: widget.redirectionsenduserId,
+                      typing: typing,
+                      isadmin: isadmin,
+                      groupTypingUser: groupTypingUser,
+                      communicationUserModel: widget.communicationUserModel,
+                      communicationuser: widget.communicationuser,
+                      isgrp: widget.isg,
+                      grpuser: widget.grpuser,
+                      grpmember: grpmember,
+                      ontap: (){
+                        if(widget.isGroup==false){
+                          if(widget.redirectchatid != ""){
+                            print("push notificstion redirection");
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid.toString(),'userid':widget.redirectionsenduserId??""});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid":widget.loginUserId??""
                             }
+                            );
 
-                            widget.socket!.on("msg1.seen", (data) {
-                              print("room leave message $data");
+                            print("user left too");
+
+                            print("user left too");
+
+                            widget.socket!.on("left.room", (data) {
+                              print("room left $data");
+                              if(ismounted){
+                                print("roooom left $data");
+                                widget.socket!.emit("get.clients",roomId);
+                                widget.socket!.on("active.length", handleActiveLength
+                                );
+                              }
+
+                              widget.socket!.on("msg1.seen", (data) {
+                                print("room leave message $data");
 
 
-                            } );
-                          });
+                              } );
+                            });
 
 
-                          widget.socket!.on("user.left", (data){
-                            print("user left $data");
+                            widget.socket!.on("user.left", (data){
+                              print("user left $data");
 
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
 
-                            }else{
-                              print("same user id");
-                            }
-                          });
+                              }else{
+                                print("same user id");
+                              }
+                            });
 
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          // Navigator.pop(context);
-                          // Navigator.pop(context);
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            // Navigator.pop(context);
+                            // Navigator.pop(context);
+                        if(isMobile)   {
                           Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false);
-                          //               PersistentNavBarNavigator.pushNewScreen(
-                          //   context,
-                          //   screen: DashBoard(
-                          //     // token: widget.token ?? ""
-                          //     // socket: widget.socket,
-                          //   ),
-                          //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                          //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                          // );
                         }
-                        else if( widget.chat==false){
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid":widget.communicationUserModel?.id??""
+                        else{  chabeTAbIndex(0) ; }
+
+                            //               PersistentNavBarNavigator.pushNewScreen(
+                            //   context,
+                            //   screen: DashBoard(
+                            //     // token: widget.token ?? ""
+                            //     // socket: widget.socket,
+                            //   ),
+                            //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                            //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                            // );
                           }
-                          );
+                          else if( widget.chat==false){
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationUserModel?.chatid,'userid':widget.communicationUserModel?.id.toString()});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid":widget.communicationUserModel?.id??""
+                            }
+                            );
 
-                          print("user left too");
+                            print("user left too");
 
-                          print("user left too");
-                          widget.socket!.on("left.room", (data) {
-                            print("room left $data");
-                            if(mounted){
+                            print("user left too");
+                            widget.socket!.on("left.room", (data) {
+                              print("room left $data");
+                              if(mounted){
+                                widget.socket!.emit("get.clients",roomId);
+                                //                 widget.socket!.on("active.length", handleActiveLength
+                                //  );
+                              }
+
+                              widget.socket!.on("msg1.seen", (data) {
+                                print("room leave message $data");
+
+
+                              } );
+                            });    widget.socket!.on("user.left", (data){
+                              print("user left");
+
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount1(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
+                                setState(() {
+
+                                });
+                              }else{
+                                print("same user id");
+                              }
+                            });
+                            isMobile? Navigator.pop(context):chabeTAbIndex(0) ;
+                          }else{
+                            BlocProvider.of<CommunicationBloc>(context).add(
+                                GetFilterdChatListEvent(
+                                    token: widget.token ?? "",
+                                    chatFilter: "chats"
+                                ));
+                            // Navigator.pop(context);
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationuser?.users?[0].id.toString()});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid":widget.communicationuser?.users?[0].id??""
+                            }
+                            );
+
+                            print("user left too");
+
+                            print("user left too");
+                            widget.socket!.on("left.room", (data) {
+                              print("room left $data");
+                              //  if(mounted){
                               widget.socket!.emit("get.clients",roomId);
                               //                 widget.socket!.on("active.length", handleActiveLength
                               //  );
+                              // }
+
+                              widget.socket!.on("msg1.seen", (data) {
+                                print("room leave message $data");
+
+
+                              } );
+                            });
+
+                            widget.socket!.on("user.left", (data){
+                              print("user left");
+
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount1(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
+                                setState(() {
+
+                                });
+                              }else{
+                                print("same user id");
+                              }
+                            });
+                           isMobile? Navigator.pop(context):chabeTAbIndex(0) ;
+                          }
+
+                        }
+                        else{
+                          if(widget.redirectchatid != ""){
+                            print("push notificstion redirection");
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid": widget.redirectionsenduserId??""                             //widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
                             }
+                            );
+
+                            print("user left too");
+
+                            print("user left too");
+                            widget.socket!.on("left.room", (data) {
+                              print("room left $data");
+                              if(mounted){
+                                widget.socket!.emit("get.clients",roomId);
+                                widget.socket!.on("active.length", handleActiveLength
+                                );
+                              }
+                              if(ismount1){
+                                widget.socket?.emit("group.message.seen",roomId);
+                                widget.socket?.on("msg.seen.by",activeuserlist);
+                              }
+
+                            });
+
 
                             widget.socket!.on("msg1.seen", (data) {
                               print("room leave message $data");
 
 
                             } );
-                          });    widget.socket!.on("user.left", (data){
-                            print("user left");
+                            widget.socket!.on("user.left", (data){
+                              print("user left");
 
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
-                              setState(() {
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount1(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
+                                setState(() {
 
-                              });
-                            }else{
-                              print("same user id");
-                            }
-                          });
+                                });
+                              }else{
+                                print("same user id");
+                              }
+                            });
 
-                          Navigator.pop(context);
-                        }else{
-                          BlocProvider.of<CommunicationBloc>(context).add(
-                              GetFilterdChatListEvent(
-                                  token: widget.token ?? "",
-                                  chatFilter: "chats"
-                              ));
-                          Navigator.pop(context);
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationuser?.users?[0].id.toString()});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid":widget.communicationuser?.users?[0].id??""
+                         isMobile?   Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false):chabeTAbIndex(0) ;
+                            //               Navigator.pop(context);
+                            //               PersistentNavBarNavigator.pushNewScreen(
+                            //   context,
+                            //   screen: DashBoard(
+                            //     // token: widget.token ?? ""
+                            //     // socket: widget.socket,
+                            //   ),
+                            //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                            //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                            // );
                           }
-                          );
-
-                          print("user left too");
-
-                          print("user left too");
-                          widget.socket!.on("left.room", (data) {
-                            print("room left $data");
-                            //  if(mounted){
-                            widget.socket!.emit("get.clients",roomId);
-                            //                 widget.socket!.on("active.length", handleActiveLength
-                            //  );
-                            // }
-
-                            widget.socket!.on("msg1.seen", (data) {
-                              print("room leave message $data");
-
-
-                            } );
-                          });
-
-                          widget.socket!.on("user.left", (data){
-                            print("user left");
-
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
-                              setState(() {
-
-                              });
-                            }else{
-                              print("same user id");
+                          else if( widget.isg==false){
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.grpchatid!=""?widget.grpchatid: widget.communicationUserModel?.chatid,'userid':widget.loginUserId});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid": widget.loginUserId??""               //widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
                             }
-                          });
-                          Navigator.pop(context);
+                            );
+
+                            print("user left too");
+
+                            print("user left too");
+                            widget.socket!.on("left.room", (data) {
+                              print("room left $data");
+                              if(mounted){
+                                widget.socket!.emit("get.clients",roomId);
+                                widget.socket!.on("active.length", handleActiveLength
+                                );
+                              }
+                              if(ismount1){
+                                widget.socket?.emit("group.message.seen",roomId);
+                                widget.socket?.on("msg.seen.by",activeuserlist);
+                              }
+
+                              widget.socket!.on("msg1.seen", (data) {
+                                print("room leave message $data");
+
+
+                              } );
+                            });
+
+
+                            widget.socket!.on("user.left", (data){
+                              print("user left");
+
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount1(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
+                                setState(() {
+
+                                });
+                              }else{
+                                print("same user id");
+                              }
+                            });
+
+                            isMobile? Navigator.pop(context):chabeTAbIndex(0) ;
+                          }else{
+                            widget.socket!.emit("update.list",{
+                              print("update")
+                            });
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
+                            widget.socket!.emit("leave.chat",{
+                              "room": roomId??"",
+                              "userid":widget.loginUserId ?? ""
+                            }
+                            );
+
+                            print("user left too");
+                            widget.socket!.on("left.room", (data) {
+                              if(mounted){
+                                widget.socket!.emit("get.clients",roomId);
+                                widget.socket!.on("active.length", handleActiveLength
+                                );
+                              }
+                              if(ismount1){
+                                widget.socket?.emit("group.message.seen",roomId);
+                                widget.socket?.on("msg.seen.by",activeuserlist);
+                              }
+                              print("room left $data");
+
+                              widget.socket!.on("msg1.seen", (data) {
+                                print("room leave message $data");
+
+
+                              } );
+                            });
+
+                            widget.socket!.on("user.left", (data){
+                              print("user left");
+
+                              if(data["userid"] == widget.loginUserId){
+                                print("ACTIVE length sharedprefww");
+                                saveUnreadMessageCount1(0,roomId??"");
+                                print("user left the room1 ${data["chatid"]}");
+                                setState(() {
+
+                                });
+                              }else{
+                                print("same user id");
+                              }
+                            });
+
+                            isMobile? Navigator.pop(context):chabeTAbIndex(0) ;
+                            //                  PersistentNavBarNavigator.pushNewScreen(
+                            //   context,
+                            //   screen: CommunicationModule(),
+                            //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                            //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                            // );
+                          }
+
                         }
 
-                      }
-                      else{
-                        if(widget.redirectchatid != ""){
-                          print("push notificstion redirection");
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.redirectchatid,'userid':widget.loginUserId});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid": widget.redirectionsenduserId??""                             //widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
-                          }
-                          );
-
-                          print("user left too");
-
-                          print("user left too");
-                          widget.socket!.on("left.room", (data) {
-                            print("room left $data");
-                            if(mounted){
-                              widget.socket!.emit("get.clients",roomId);
-                              widget.socket!.on("active.length", handleActiveLength
-                              );
-                            }
-                            if(ismount1){
-                              widget.socket?.emit("group.message.seen",roomId);
-                              widget.socket?.on("msg.seen.by",activeuserlist);
-                            }
-
-                          });
-
-
-                          widget.socket!.on("msg1.seen", (data) {
-                            print("room leave message $data");
-
-
-                          } );
-                          widget.socket!.on("user.left", (data){
-                            print("user left");
-
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
-                              setState(() {
-
-                              });
-                            }else{
-                              print("same user id");
-                            }
-                          });
-
-                          Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 1,)), (route) => false);
-                          //               Navigator.pop(context);
-                          //               PersistentNavBarNavigator.pushNewScreen(
-                          //   context,
-                          //   screen: DashBoard(
-                          //     // token: widget.token ?? ""
-                          //     // socket: widget.socket,
-                          //   ),
-                          //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                          //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                          // );
-                        }
-                        else if( widget.isg==false){
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid': widget.grpchatid!=""?widget.grpchatid: widget.communicationUserModel?.chatid,'userid':widget.loginUserId});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid": widget.loginUserId??""               //widget.isg==false?widget.grpchatid!=""?widget.grpchatid:widget.redirectchatid!=""?"${widget.redirectchatid}": widget.communicationUserModel?.id??"":widget.loginUserId??""
-                          }
-                          );
-
-                          print("user left too");
-
-                          print("user left too");
-                          widget.socket!.on("left.room", (data) {
-                            print("room left $data");
-                            if(mounted){
-                              widget.socket!.emit("get.clients",roomId);
-                              widget.socket!.on("active.length", handleActiveLength
-                              );
-                            }
-                            if(ismount1){
-                              widget.socket?.emit("group.message.seen",roomId);
-                              widget.socket?.on("msg.seen.by",activeuserlist);
-                            }
-
-                            widget.socket!.on("msg1.seen", (data) {
-                              print("room leave message $data");
-
-
-                            } );
-                          });
-
-
-                          widget.socket!.on("user.left", (data){
-                            print("user left");
-
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
-                              setState(() {
-
-                              });
-                            }else{
-                              print("same user id");
-                            }
-                          });
-
-                          Navigator.pop(context);
-                        }else{
-                          widget.socket!.emit("update.list",{
-                            print("update")
-                          });
-                          widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.grpchatid!=""?widget.grpchatid: widget.grpuser?.chatid,'userid':widget.loginUserId});
-                          widget.socket!.emit("leave.chat",{
-                            "room": roomId??"",
-                            "userid":widget.loginUserId ?? ""
-                          }
-                          );
-
-                          print("user left too");
-                          widget.socket!.on("left.room", (data) {
-                            if(mounted){
-                              widget.socket!.emit("get.clients",roomId);
-                              widget.socket!.on("active.length", handleActiveLength
-                              );
-                            }
-                            if(ismount1){
-                              widget.socket?.emit("group.message.seen",roomId);
-                              widget.socket?.on("msg.seen.by",activeuserlist);
-                            }
-                            print("room left $data");
-
-                            widget.socket!.on("msg1.seen", (data) {
-                              print("room leave message $data");
-
-
-                            } );
-                          });
-
-                          widget.socket!.on("user.left", (data){
-                            print("user left");
-
-                            if(data["userid"] == widget.loginUserId){
-                              print("ACTIVE length sharedprefww");
-                              saveUnreadMessageCount1(0,roomId??"");
-                              print("user left the room1 ${data["chatid"]}");
-                              setState(() {
-
-                              });
-                            }else{
-                              print("same user id");
-                            }
-                          });
-
-                          Navigator.pop(context);
-                          //                  PersistentNavBarNavigator.pushNewScreen(
-                          //   context,
-                          //   screen: CommunicationModule(),
-                          //   withNavBar: true, // OPTIONAL VALUE. True by default.
-                          //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                          // );
-                        }
-
-                      }
-
-                    },
-                  ):Container(
-                    width: w,
-                    color: ColorPalette.primary,
-                    padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(onPressed: (){
-                          chatbar=true;
-                          myoption=true;
-                          setState(() {
-
-                          });
-                        }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
-                        myoption==true?  Row(
-                          children: [
-                            IconButton(onPressed: (){
-                              Clipboard.setData(ClipboardData(text:copymsg));
-                              Fluttertoast.showToast(msg: "message copied");
-                              chatbar = true;
-                              myoption=true;
-                              setState(() {
-
-                              });
-                            }, icon: Icon(Icons.copy,color: Colors.white,)),
-
-                            IconButton(onPressed: (){
-
-                              // context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:roomId??"", msgId: msgid));
-                              widget.socket!.emit("delete.message",{"messageId":msgid,"chatId":roomId});
-
-                              chatbar = true;
-                              myoption=true;
-                              setState(() {
-                                Fluttertoast.showToast(msg:"message deleted");
-                              });
-
-                            }, icon: Icon(Icons.delete,size: 30,color: Colors.white))
-                          ],
-                        ):IconButton(onPressed: (){
-                          Clipboard.setData(ClipboardData(text:copymsg));
-                          Fluttertoast.showToast(msg: "message copied");
-                          chatbar = true;
-                          myoption=true;
-                          setState(() {
-
-                          });
-                        }, icon: Icon(Icons.copy,color: Colors.white,)),
-
-
-                      ],
-                    ),
-                  ),
-                  SizedBox(height:3),
-                  messageList.isEmpty
-                      ? Expanded(
-                    // height: h / 1.5,
-                      child: Padding(
-                        padding: EdgeInsets.only(top:170,left:62,right:62,bottom: h/2.3),
-                        child: Container(
-                          // width: w / 1.5,
-                          // height: h/9,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color(0xffFFFFFF),
-                          ),
-                          child:Center(
-                              child: Text(
-                                "This conversation\ncurrently has no messages...",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.roboto(textStyle: TextStyle(
-                                  color: Color(0xFF151522),
-                                  fontSize: 14,
-                                ),
-                                ),
-                              )),
-                        ),
-                      ))
-                      : Expanded(
-                    child: NotificationListener<ScrollEndNotification>(
-                      onNotification: (ScrollEndNotification notification) {
-                        final metrics = notification.metrics;
-                        if (metrics.atEdge) {
-                          // bool isTop = metrics.pixels == 0;
-                          if (notification.metrics.pixels ==
-                              notification.metrics.maxScrollExtent &&
-                              _controller.position.userScrollDirection
-                                  ==
-                                  ScrollDirection.reverse && totpage > 1 && totpage != pageNo) {
-
-                            pageNo++;
-                            if(widget.isGroup==false){
-                              BlocProvider.of<PaginatedchatBloc>(context).add(
-                                  PaginatedChatGetEvent(
-                                      token: widget.token ?? "",
-                                      chatId: widget.chat==false?
-                                      widget.redirectchatid!=""?widget.redirectchatid:
-                                      widget.communicationUserModel?.chatid ??
-                                          "": widget.communicationuser?.id??"",
-                                      grpchatId: "",
-                                      pageNo: pageNo,
-                                      userId: widget.loginUserId??""));
-                            }else{
-                              BlocProvider.of<PaginatedchatBloc>(context).add(
-                                  PaginatedChatGetEvent(
-                                      token: widget.token ?? "",
-                                      chatId: widget.isg==false?widget.grpchatid!=""?widget.grpchatid:
-                                      widget.redirectchatid!=""?widget.redirectchatid:
-                                      widget.communicationUserModel?.chatid ??
-                                          "": widget.grpuser?.chatid??"",
-                                      grpchatId:widget.grpchatid!=""?widget.grpchatid:"" ,
-                                      pageNo: pageNo,
-                                      userId: widget.loginUserId??""));
-                            }
-
-                          } else {
-                            print('At the bottom');
-                          }
-                        }
-                        return false;
                       },
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: ListView.separated(
-                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                          cacheExtent: 999999999,
-                          reverse:totpage<=1?false: true,
-                          shrinkWrap: true,
-                          controller: _controller,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
-                          itemCount: messageList.length,
-                          itemBuilder: (context, index) {
-                            String msgdate = "";
+                    ):Container(
+                      width: w,
+                      color: ColorPalette.primary,
+                      padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(onPressed: (){
+                            chatbar=true;
+                            myoption=true;
+                            setState(() {
 
-                            int today=0;
-                            String? timestamp = messageList[index].createdAt.toString();
-                            DateTime dateTime = DateTime.parse(timestamp);
-                            String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
-                            String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
-                            msgdate = formatMessageTimestamp(dateTime,index);
-                            print("list view reload firstMessageOfDay $msgdate ${messageList[index].message}");
-                            if( totpage<=1){
-                              if(messageList.last.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
-                                showdate=true;
+                            });
+                          }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
+                          myoption==true?  Row(
+                            children: [
+                              IconButton(onPressed: (){
+                                Clipboard.setData(ClipboardData(text:copymsg));
+                                Fluttertoast.showToast(msg: "message copied");
+                                chatbar = true;
+                                myoption=true;
+                                setState(() {
+
+                                });
+                              }, icon: Icon(Icons.copy,color: Colors.white,)),
+
+                              IconButton(onPressed: (){
+
+                                // context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:roomId??"", msgId: msgid));
+                                widget.socket!.emit("delete.message",{"messageId":msgid,"chatId":roomId});
+
+                                chatbar = true;
+                                myoption=true;
+                                setState(() {
+                                  Fluttertoast.showToast(msg:"message deleted");
+                                });
+
+                              }, icon: Icon(Icons.delete,size: 30,color: Colors.white))
+                            ],
+                          ):IconButton(onPressed: (){
+                            Clipboard.setData(ClipboardData(text:copymsg));
+                            Fluttertoast.showToast(msg: "message copied");
+                            chatbar = true;
+                            myoption=true;
+                            setState(() {
+
+                            });
+                          }, icon: Icon(Icons.copy,color: Colors.white,)),
+
+
+                        ],
+                      ),
+                    ),
+                    SizedBox(height:3),
+                    messageList.isEmpty
+                        ? Expanded(
+                      // height: h / 1.5,
+                        child: Padding(
+                          padding: EdgeInsets.only(top:170,left:62,right:62,bottom: h/2.3),
+                          child: Container(
+                            // width: w / 1.5,
+                            // height: h/9,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xffFFFFFF),
+                            ),
+                            child:Center(
+                                child: Text(
+                                  "This conversation\ncurrently has no messages...",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(textStyle: TextStyle(
+                                    color: Color(0xFF151522),
+                                    fontSize: 14,
+                                  ),
+                                  ),
+                                )),
+                          ),
+                        ))
+                        : Expanded(
+                      child: NotificationListener<ScrollEndNotification>(
+                        onNotification: (ScrollEndNotification notification) {
+                          final metrics = notification.metrics;
+                          if (metrics.atEdge) {
+                            // bool isTop = metrics.pixels == 0;
+                            if (notification.metrics.pixels ==
+                                notification.metrics.maxScrollExtent &&
+                                _controller.position.userScrollDirection
+                                    ==
+                                    ScrollDirection.reverse && totpage > 1 && totpage != pageNo) {
+
+                              pageNo++;
+                              if(widget.isGroup==false){
+                                BlocProvider.of<PaginatedchatBloc>(context).add(
+                                    PaginatedChatGetEvent(
+                                        token: widget.token ?? "",
+                                        chatId: widget.chat==false?
+                                        widget.redirectchatid!=""?widget.redirectchatid:
+                                        widget.communicationUserModel?.chatid ??
+                                            "": widget.communicationuser?.id??"",
+                                        grpchatId: "",
+                                        pageNo: pageNo,
+                                        userId: widget.loginUserId??""));
                               }else{
-                                showdate=false;
+                                BlocProvider.of<PaginatedchatBloc>(context).add(
+                                    PaginatedChatGetEvent(
+                                        token: widget.token ?? "",
+                                        chatId: widget.isg==false?widget.grpchatid!=""?widget.grpchatid:
+                                        widget.redirectchatid!=""?widget.redirectchatid:
+                                        widget.communicationUserModel?.chatid ??
+                                            "": widget.grpuser?.chatid??"",
+                                        grpchatId:widget.grpchatid!=""?widget.grpchatid:"" ,
+                                        pageNo: pageNo,
+                                        userId: widget.loginUserId??""));
                               }
-                            }else{
-                              if(messageList.first.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
-                                showdate=true;
-                              }else{
-                                showdate=false;
-                              }
+
+                            } else {
+                              print('At the bottom');
                             }
-                            return isMobile?MyChatList(
-                              loginUserId: widget.loginUserId,
-                              messageList: messageList[index],
-                              msgdate: msgdate,
-                              isGroup: widget.isGroup,
-                              formattedTime: formattedTime,
-                              activeUsersLength: activeUsersLength,
-                              grpchatid: widget.grpchatid,
-                              index: index,
-                              roomid: roomId,
-                              grpmember: grpmember,
-                              ontap: (){
-                                print("coooppppyyy ${messageList[index].fromuserid} ${widget.loginUserId}");
-                                if(messageList[index].fromuserid!=widget.loginUserId){
-                                  print("coooppppyyy false enterd");
+                          }
+                          return false;
+                        },
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: ListView.separated(
+                            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                            cacheExtent: 999999999,
+                            reverse:totpage<=1?false: true,
+                            shrinkWrap: true,
+                            controller: _controller,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(left: 8, right: 8,top:5,bottom: 5),
+                            itemCount: messageList.length,
+                            itemBuilder: (context, index) {
+                              String msgdate = "";
 
-                                  myoption=false;
+                              int today=0;
+                              String? timestamp = messageList[index].createdAt.toString();
+                              DateTime dateTime = DateTime.parse(timestamp);
+                              String formattedTime = DateFormat('h:mm a').format(dateTime.toLocal());
+                              String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);print("getey$formattedDate $msgdate1");
+                              msgdate = formatMessageTimestamp(dateTime,index);
+                              print("list view reload firstMessageOfDay $msgdate ${messageList[index].message}");
+                              if( totpage<=1){
+                                if(messageList.last.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
+                                  showdate=true;
+                                }else{
+                                  showdate=false;
+                                }
+                              }else{
+                                if(messageList.first.firstMessageOfDay==false || messageList.last.firstMessageOfDay==true && msgdate != "Today"){
+                                  showdate=true;
+                                }else{
+                                  showdate=false;
+                                }
+                              }
+                              return isMobile?MyChatList(
+                                loginUserId: widget.loginUserId,
+                                messageList: messageList[index],
+                                msgdate: msgdate,
+                                isGroup: widget.isGroup,
+                                formattedTime: formattedTime,
+                                activeUsersLength: activeUsersLength,
+                                grpchatid: widget.grpchatid,
+                                index: index,
+                                roomid: roomId,
+                                grpmember: grpmember,
+                                ontap: (){
+                                  print("coooppppyyy ${messageList[index].fromuserid} ${widget.loginUserId}");
+                                  if(messageList[index].fromuserid!=widget.loginUserId){
+                                    print("coooppppyyy false enterd");
+
+                                    myoption=false;
+                                    setState(() {
+
+                                    });
+                                  }
+                                  else{
+                                    myoption=true;
+                                    print("coooppppyyy true enterd");
+                                    msgid = messageList[index].id!;
+                                    print("coooppppyyy false enterd $msgid");
+                                    setState(() {
+
+                                    });
+                                  }
+                                  copymsg=messageList[index].message??"";
+                                  chatbar=false;
                                   setState(() {
 
                                   });
-                                }
-                                else{
-                                  myoption=true;
-                                  print("coooppppyyy true enterd");
-                                  msgid = messageList[index].id!;
-                                  print("coooppppyyy false enterd $msgid");
+                                  // showMenu(
+                                  //               initialValue: 0,
+                                  //               constraints: BoxConstraints(maxWidth: w/3.3),
+                                  //               context: context, position: RelativeRect.fromLTRB(200, 0, 0,0),
+                                  //             color: ColorPalette.primary,
+                                  //             items: [
+                                  //               PopupMenuItem(
+                                  //                 height: 25,
+                                  //                 child: Center(
+                                  //                 child: Row(
+                                  //                   children: [
+                                  //                     IconButton(onPressed: (){
+                                  //                       Clipboard.setData(ClipboardData(text:messageList[index]
+                                  //                               .message??"" ));
+                                  //         //  snackBar(message: "Copied", color: Colors.black,icon: Icon(Icons.copy));
+                                  //         // StatusAlert.show(
+                                  //         //   context,
+                                  //         //   duration: Duration(seconds:1),
+                                  //         //   maxWidth: 100,
+                                  //         //   subtitle: "copied text",
+                                  //         //   subtitleOptions: StatusAlertTextConfiguration(
+                                  //         //     style: TextStyle(fontSize:10)
+                                  //         //   )
+                                  //         // );
+                                  //         Fluttertoast.showToast(msg: "message copied");
+                                  //         Navigator.pop(context);
+                                  //                     }, icon: Icon(Icons.copy,color: Colors.white,)),
+                                  //                     IconButton(onPressed: (){
+
+                                  //                       context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:messageList[index].chatid??"", msgId: messageList[index].id!));
+                                  //                     }, icon: Icon(Icons.delete,color: Colors.white,))
+                                  //                   ],
+                                  //                 ),
+                                  //               )),
+
+
+                                  //             ]);
+                                },
+                              ):WebMyChatList(
+                                loginUserId: widget.loginUserId,
+                                messageList: messageList[index],
+                                msgdate: msgdate,
+                                isGroup: widget.isGroup,
+                                formattedTime: formattedTime,
+                                activeUsersLength: activeUsersLength,
+                                grpchatid: widget.grpchatid,
+                                index: index,
+                                roomid: roomId,
+                                grpmember: grpmember,
+                                ontap: (){
+                                  print("coooppppyyy ${messageList[index].fromuserid} ${widget.loginUserId}");
+                                  if(messageList[index].fromuserid!=widget.loginUserId){
+                                    print("coooppppyyy false enterd");
+
+                                    myoption=false;
+                                    setState(() {
+
+                                    });
+                                  }
+                                  else{
+                                    myoption=true;
+                                    print("coooppppyyy true enterd");
+                                    msgid = messageList[index].id!;
+                                    print("coooppppyyy false enterd $msgid");
+                                    setState(() {
+
+                                    });
+                                  }
+                                  copymsg=messageList[index].message??"";
+                                  chatbar=false;
                                   setState(() {
 
                                   });
-                                }
-                                copymsg=messageList[index].message??"";
-                                chatbar=false;
-                                setState(() {
+                                  // showMenu(
+                                  //               initialValue: 0,
+                                  //               constraints: BoxConstraints(maxWidth: w/3.3),
+                                  //               context: context, position: RelativeRect.fromLTRB(200, 0, 0,0),
+                                  //             color: ColorPalette.primary,
+                                  //             items: [
+                                  //               PopupMenuItem(
+                                  //                 height: 25,
+                                  //                 child: Center(
+                                  //                 child: Row(
+                                  //                   children: [
+                                  //                     IconButton(onPressed: (){
+                                  //                       Clipboard.setData(ClipboardData(text:messageList[index]
+                                  //                               .message??"" ));
+                                  //         //  snackBar(message: "Copied", color: Colors.black,icon: Icon(Icons.copy));
+                                  //         // StatusAlert.show(
+                                  //         //   context,
+                                  //         //   duration: Duration(seconds:1),
+                                  //         //   maxWidth: 100,
+                                  //         //   subtitle: "copied text",
+                                  //         //   subtitleOptions: StatusAlertTextConfiguration(
+                                  //         //     style: TextStyle(fontSize:10)
+                                  //         //   )
+                                  //         // );
+                                  //         Fluttertoast.showToast(msg: "message copied");
+                                  //         Navigator.pop(context);
+                                  //                     }, icon: Icon(Icons.copy,color: Colors.white,)),
+                                  //                     IconButton(onPressed: (){
 
-                                });
-                                // showMenu(
-                                //               initialValue: 0,
-                                //               constraints: BoxConstraints(maxWidth: w/3.3),
-                                //               context: context, position: RelativeRect.fromLTRB(200, 0, 0,0),
-                                //             color: ColorPalette.primary,
-                                //             items: [
-                                //               PopupMenuItem(
-                                //                 height: 25,
-                                //                 child: Center(
-                                //                 child: Row(
-                                //                   children: [
-                                //                     IconButton(onPressed: (){
-                                //                       Clipboard.setData(ClipboardData(text:messageList[index]
-                                //                               .message??"" ));
-                                //         //  snackBar(message: "Copied", color: Colors.black,icon: Icon(Icons.copy));
-                                //         // StatusAlert.show(
-                                //         //   context,
-                                //         //   duration: Duration(seconds:1),
-                                //         //   maxWidth: 100,
-                                //         //   subtitle: "copied text",
-                                //         //   subtitleOptions: StatusAlertTextConfiguration(
-                                //         //     style: TextStyle(fontSize:10)
-                                //         //   )
-                                //         // );
-                                //         Fluttertoast.showToast(msg: "message copied");
-                                //         Navigator.pop(context);
-                                //                     }, icon: Icon(Icons.copy,color: Colors.white,)),
-                                //                     IconButton(onPressed: (){
-
-                                //                       context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:messageList[index].chatid??"", msgId: messageList[index].id!));
-                                //                     }, icon: Icon(Icons.delete,color: Colors.white,))
-                                //                   ],
-                                //                 ),
-                                //               )),
+                                  //                       context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:messageList[index].chatid??"", msgId: messageList[index].id!));
+                                  //                     }, icon: Icon(Icons.delete,color: Colors.white,))
+                                  //                   ],
+                                  //                 ),
+                                  //               )),
 
 
-                                //             ]);
-                              },
-                            ):WebMyChatList(
-                              loginUserId: widget.loginUserId,
-                              messageList: messageList[index],
-                              msgdate: msgdate,
-                              isGroup: widget.isGroup,
-                              formattedTime: formattedTime,
-                              activeUsersLength: activeUsersLength,
-                              grpchatid: widget.grpchatid,
-                              index: index,
-                              roomid: roomId,
-                              grpmember: grpmember,
-                              ontap: (){
-                                print("coooppppyyy ${messageList[index].fromuserid} ${widget.loginUserId}");
-                                if(messageList[index].fromuserid!=widget.loginUserId){
-                                  print("coooppppyyy false enterd");
+                                  //             ]);
+                                },
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              fromuserids=messageList[index+1].fromuserid!;
+                              oldertimestampp=messageList[index].createdAt??"";
+                              return messageList[index].fromuserid!=fromuserids?  Container(
+                                height: 8,
+                                //  color:Colors.green
+                              ):Container(height:3,
+                                // color:Colors.red
+                              );
 
-                                  myoption=false;
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     RecordButton(
+                    //       socket: widget.socket!,
+                    //       roomId: "",
+                    //       recordingFinishedCallback: _recordingFinishedCallback,
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 4),
+                    seenUsersList.isNotEmpty
+                        ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: List.generate(seenUsersList.length, (index) {
+                        return CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 14,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  seenUsersList[index].photo ?? ""),
+                              radius: 12,
+                            ));
+                      }),
+                    )
+                        : Container(),
+                    groupTypingUser != null
+                        ? Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Row( crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // CircleAvatar(
+                          //     backgroundColor: Colors.white,
+                          //     radius: 14,
+                          //     child: CircleAvatar(
+                          //       backgroundImage:
+                          //           NetworkImage(groupTypingUser?.photo ?? ""),
+                          //       radius: 12,
+                          //     )),
+
+                          Image.asset(
+                            "asset/typinggif.gif",
+                            height: 50.0,
+                            width: 50.0,
+                          ),
+                          Text(
+                            "${groupTypingUser?.name} typing",
+                            style: const TextStyle(
+                              color: Color(0xff151522),
+                              fontSize:12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                        : typing == true
+                        ? Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            "asset/typinggif.gif",
+                            height: 50.0,
+                            width: 50.0,
+                          ),
+                        ],
+                      ),
+                    )
+                        : SizedBox(),
+                    mention==true?  Padding(
+                      padding: const EdgeInsets.only(left:20,right: 20),
+                      child: Container(
+                        constraints: BoxConstraints(
+                            maxHeight: h/3
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight:Radius.circular(20),),
+                        ),
+
+                        // height: h/9,
+                        child: ListView.separated(
+                          padding: EdgeInsets.all(10),
+                          scrollDirection: Axis.vertical,
+                          itemCount: grpmember.length,
+                          itemBuilder: (context,index){
+
+                            return ListTile(
+                                onTap: (){
+                                  List<String> names = grpmember[index].name!.split(" ");
+                                  if (names.length > 2) {
+                                    names = [names.first, names[1]];
+                                  }
+
+                                  String formattedFullName = names.map((name) => name.trim()).join('');
+
+                                  // Join first name and last name without any space
+                                  String fullName = "$formattedFullName";
+                                  final String text = typedMessageController.text;
+                                  final int cursorPos = typedMessageController.selection.baseOffset;
+
+                                  final String newText = text.substring(0, cursorPos) +
+                                      fullName + text.substring(cursorPos);
+                                  typedMessageController.value = TextEditingValue(
+                                    text: newText,
+                                    selection: TextSelection.collapsed(
+                                      offset: cursorPos +fullName.length,
+                                    ),
+                                  );
+                                  mentionuser.add(fullName);
+                                  mention=false;
                                   setState(() {
 
                                   });
-                                }
-                                else{
-                                  myoption=true;
-                                  print("coooppppyyy true enterd");
-                                  msgid = messageList[index].id!;
-                                  print("coooppppyyy false enterd $msgid");
-                                  setState(() {
-
-                                  });
-                                }
-                                copymsg=messageList[index].message??"";
-                                chatbar=false;
-                                setState(() {
-
-                                });
-                                // showMenu(
-                                //               initialValue: 0,
-                                //               constraints: BoxConstraints(maxWidth: w/3.3),
-                                //               context: context, position: RelativeRect.fromLTRB(200, 0, 0,0),
-                                //             color: ColorPalette.primary,
-                                //             items: [
-                                //               PopupMenuItem(
-                                //                 height: 25,
-                                //                 child: Center(
-                                //                 child: Row(
-                                //                   children: [
-                                //                     IconButton(onPressed: (){
-                                //                       Clipboard.setData(ClipboardData(text:messageList[index]
-                                //                               .message??"" ));
-                                //         //  snackBar(message: "Copied", color: Colors.black,icon: Icon(Icons.copy));
-                                //         // StatusAlert.show(
-                                //         //   context,
-                                //         //   duration: Duration(seconds:1),
-                                //         //   maxWidth: 100,
-                                //         //   subtitle: "copied text",
-                                //         //   subtitleOptions: StatusAlertTextConfiguration(
-                                //         //     style: TextStyle(fontSize:10)
-                                //         //   )
-                                //         // );
-                                //         Fluttertoast.showToast(msg: "message copied");
-                                //         Navigator.pop(context);
-                                //                     }, icon: Icon(Icons.copy,color: Colors.white,)),
-                                //                     IconButton(onPressed: (){
-
-                                //                       context.read<ChatBloc>().add(Messagedeleteevent(token: widget.token??"", chatId:messageList[index].chatid??"", msgId: messageList[index].id!));
-                                //                     }, icon: Icon(Icons.delete,color: Colors.white,))
-                                //                   ],
-                                //                 ),
-                                //               )),
-
-
-                                //             ]);
-                              },
+                                },
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                // children: [
+                                leading:    CircleAvatar(
+                                  backgroundImage: NetworkImage("${grpmember[index].photo}"),
+                                ),
+                                title:    Text("${grpmember[index].name}",
+                                  softWrap: true,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(fontSize: w/29),
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              // ],
                             );
                           },
                           separatorBuilder: (context, index) {
-                            fromuserids=messageList[index+1].fromuserid!;
-                            oldertimestampp=messageList[index].createdAt??"";
-                            return messageList[index].fromuserid!=fromuserids?  Container(
-                              height: 8,
-                              //  color:Colors.green
-                            ):Container(height:3,
-                              // color:Colors.red
-                            );
-
+                            return Divider(indent: w/7,thickness: 1,);
                           },
                         ),
                       ),
-                    ),
-                  ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     RecordButton(
-                  //       socket: widget.socket!,
-                  //       roomId: "",
-                  //       recordingFinishedCallback: _recordingFinishedCallback,
-                  //     ),
-                  //   ],
-                  // ),
-                  // const SizedBox(height: 4),
-                  seenUsersList.isNotEmpty
-                      ? Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: List.generate(seenUsersList.length, (index) {
-                      return CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 14,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                seenUsersList[index].photo ?? ""),
-                            radius: 12,
-                          ));
-                    }),
-                  )
-                      : Container(),
-                  groupTypingUser != null
-                      ? Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row( crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // CircleAvatar(
-                        //     backgroundColor: Colors.white,
-                        //     radius: 14,
-                        //     child: CircleAvatar(
-                        //       backgroundImage:
-                        //           NetworkImage(groupTypingUser?.photo ?? ""),
-                        //       radius: 12,
-                        //     )),
+                    )
 
-                        Image.asset(
-                          "asset/typinggif.gif",
-                          height: 50.0,
-                          width: 50.0,
-                        ),
-                        Text(
-                          "${groupTypingUser?.name} typing",
-                          style: const TextStyle(
-                            color: Color(0xff151522),
-                            fontSize:12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                      : typing == true
-                      ? Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          "asset/typinggif.gif",
-                          height: 50.0,
-                          width: 50.0,
-                        ),
-                      ],
-                    ),
-                  )
-                      : SizedBox(),
-                  mention==true?  Padding(
-                    padding: const EdgeInsets.only(left:20,right: 20),
-                    child: Container(
-                      constraints: BoxConstraints(
-                          maxHeight: h/3
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight:Radius.circular(20),),
-                      ),
-
-                      // height: h/9,
-                      child: ListView.separated(
-                        padding: EdgeInsets.all(10),
-                        scrollDirection: Axis.vertical,
-                        itemCount: grpmember.length,
-                        itemBuilder: (context,index){
-
-                          return ListTile(
-                              onTap: (){
-                                List<String> names = grpmember[index].name!.split(" ");
-                                if (names.length > 2) {
-                                  names = [names.first, names[1]];
-                                }
-
-                                String formattedFullName = names.map((name) => name.trim()).join('');
-
-                                // Join first name and last name without any space
-                                String fullName = "$formattedFullName";
-                                final String text = typedMessageController.text;
-                                final int cursorPos = typedMessageController.selection.baseOffset;
-
-                                final String newText = text.substring(0, cursorPos) +
-                                    fullName + text.substring(cursorPos);
-                                typedMessageController.value = TextEditingValue(
-                                  text: newText,
-                                  selection: TextSelection.collapsed(
-                                    offset: cursorPos +fullName.length,
-                                  ),
-                                );
-                                mentionuser.add(fullName);
-                                mention=false;
-                                setState(() {
-
-                                });
-                              },
-                              // mainAxisAlignment: MainAxisAlignment.start,
-                              // children: [
-                              leading:    CircleAvatar(
-                                backgroundImage: NetworkImage("${grpmember[index].photo}"),
-                              ),
-                              title:    Text("${grpmember[index].name}",
-                                softWrap: true,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(fontSize: w/29),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            // ],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider(indent: w/7,thickness: 1,);
-                        },
-                      ),
-                    ),
-                  )
-
-                      :Container(),
-                  Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Container(
-                          color: const Color(0xffFFFFFF),
-                          width: w1,
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                // width: w / 1.09,
-                                // height: 54,
-                                // padding: const EdgeInsets.only(left: 16, right: 16),
-                                // decoration: BoxDecoration(
-                                //   borderRadius: BorderRadius.circular(10),
-                                //   border: Border.all(
-                                //     color: const Color(0xffe6ecf0),
-                                //     width: 1,
-                                //   ),
-                                //   boxShadow: const [
-                                //     BoxShadow(
-                                //       color: Color(0x05000000),
-                                //       blurRadius: 8,
-                                //       offset: Offset(1, 1),
-                                //     ),
-                                //   ],
-                                //   color: Colors.white,
-                                // ),
-                                  child:removeduser.contains(widget.loginUserId)?Padding(
-                                    padding: const EdgeInsets.all(15),
-                                    child: Container(width: w/1.15,
-                                        child: Center(child: Text("You can't send messages to this group because you're no longer a member",
-                                          textAlign:TextAlign.center ,
-                                          style: TextStyle(fontSize: 12),
-                                          softWrap: true,
-                                        ))),
-                                  ) :Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          SizedBox(
-                                            width: w1/2,
-                                            child: TextFormField(
-                                              onFieldSubmitted: (va){
-
-
-                                              },
-                                              // focusNode: FocusNode(descendantsAreFocusable: _keyboardVisible),
-                                              // focusNode: FocusNode(skipTraversal: true),
-                                              // focusNode:FocusNode(onKey: (node, event) => ,),
-
-                                              style: const TextStyle(
-                                                // height: 1.6,
-                                              ),
-                                              maxLines:4,
-                                              minLines: 1,
-                                              onChanged: (val) {
-                                                if (widget.isGroup == false) {
-                                                  if (val.length > 0){
-                                                    widget.socket
-                                                        ?.emit("listen.typing", roomId);
-
-                                                  } else {
-                                                    widget.socket?.emit(
-                                                        "stopped.typing", roomId);
-                                                  }
-                                                } else if (widget.isGroup == true) {
-                                                  if (val.length > 0 ) {
-                                                    print("the group typing atleaset");
-                                                    widget.socket?.emit(
-                                                        "group.listen.typing", roomId);
-                                                    if(typedMessageController.text.endsWith('@')){
-                                                      mention=true;
-                                                      setState(() {
-
-                                                      });
-                                                    }else{
-                                                      mention = false;
-                                                      setState(() {
-
-                                                      });
-                                                    }
-                                                  } else {
-                                                    mention=false;
-                                                    widget.socket?.emit(
-                                                        "group.stopped.typing", roomId);
-                                                  }
-                                                }
-
-
-                                                setState(() {});
-                                              },
-                                              scrollPadding: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .top),
-                                              controller: typedMessageController,
-                                              cursorColor: Colors.black,
-                                              decoration: InputDecoration(
-                                                  contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 2),
-                                                  fillColor: Colors.white,
-                                                  filled: true,
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(10),
-                                                      borderSide: const BorderSide(
-                                                        color: Color(0xffe6ecf0),
-                                                      )),
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(10),
-                                                      borderSide: const BorderSide(
-                                                        color: ColorPalette.primary,
-                                                      )),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(10),
-                                                      borderSide: const BorderSide(
-                                                        color: Color(0xffe6ecf0),
-                                                      )),
-                                                  // suffixIconConstraints: BoxConstraints.expand(),
-                                                  suffixIconConstraints:
-                                                  const BoxConstraints(
-                                                      minHeight: 25, minWidth: 20),
-                                                  suffixIcon: InkWell(
-                                                      onTap: () {
-
-                                                        showModalBottomSheet(
-                                                          // backgroundColor:
-                                                          //     Colors.transparent,
-                                                            context: context,
-                                                            builder: (builder) {
-                                                              return bottomSheet(
-                                                                  context);
+                        :Container(),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Container(
+                            color: const Color(0xffFFFFFF),
+                            width: w1,
+                            padding:
+                            const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Container(
+                                  // width: w / 1.09,
+                                  // height: 54,
+                                  // padding: const EdgeInsets.only(left: 16, right: 16),
+                                  // decoration: BoxDecoration(
+                                  //   borderRadius: BorderRadius.circular(10),
+                                  //   border: Border.all(
+                                  //     color: const Color(0xffe6ecf0),
+                                  //     width: 1,
+                                  //   ),
+                                  //   boxShadow: const [
+                                  //     BoxShadow(
+                                  //       color: Color(0x05000000),
+                                  //       blurRadius: 8,
+                                  //       offset: Offset(1, 1),
+                                  //     ),
+                                  //   ],
+                                  //   color: Colors.white,
+                                  // ),
+                                    child:removeduser.contains(widget.loginUserId)?Padding(
+                                      padding: const EdgeInsets.all(15),
+                                      child: Container(width: w/1.15,
+                                          child: Center(child: Text("You can't send messages to this group because you're no longer a member",
+                                            textAlign:TextAlign.center ,
+                                            style: TextStyle(fontSize: 12),
+                                            softWrap: true,
+                                          ))),
+                                    ) :Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            SizedBox(
+                                              width: w1/2,
+                                              child: TextField(
+                                                focusNode: textformFocusnOde,
+                                                  minLines: 1,
+                                                  maxLines: null,
+                                                onSubmitted: (va){
+                                                  print("typedMessageController.text.isNotEmpty");
+                                                  if(typedMessageController.text.isNotEmpty){
+                                                    print("sending....");
+                                                    player!.setAsset('asset/send.mp3').then((value) {
+                                                      return {
+                                                        player!.playerStateStream.listen((state) {
+                                                          if (state.playing) {
+                                                            setState(() {
+                                                              print("audio,,,,");
                                                             });
-                                                      },
-                                                      child: Container(
-                                                        padding: const EdgeInsets.only(
-                                                          right: 6,
-                                                        ),
-                                                        child: SvgPicture.string(
-                                                            TaskSvg().shareIcon),
-                                                      )),
-                                                  hintText:widget.isGroup==true?  micLongPress == true
-                                                      ? "Recording, < slide to cancel "
-                                                      : "Message ${activeUsersLength.toString()} active users":micLongPress == true
-                                                      ? "Recording, < slide to cancel "
-                                                      : "Message${activeUsersLength.toString()} ",
-                                                  hintStyle: GoogleFonts.roboto(
-                                                      color: const Color(0xff949494))),
-                                            ),
-                                          ),
-                                          voiceCancelled == true
-                                              ? buildMicAnimation()
-                                              : Container(),
-
-                                        ],
-                                      ),
-                                      SizedBox(width: 8,),
-                                      Row(
-                                        children: [
-
-                                          if (typedMessageController
-                                              .text.trim().isNotEmpty) ...{
-                                            Container(
-                                              // margin: const EdgeInsets.only(left: 16, right: 16),
-
-                                                child: GestureDetector(
-                                                    onTap: () async{
-                                                      print("sending....");
-                                                      player!.setAsset('asset/send.mp3').then((value) {
-                                                        return {
-                                                          player!.playerStateStream.listen((state) {
-                                                            if (state.playing) {
-                                                              setState(() {
-                                                                print("audio,,,,");
-                                                              });
+                                                          }
+                                                          else
+                                                            switch (state.processingState) {
+                                                              case ProcessingState.idle:
+                                                                break;
+                                                              case ProcessingState.loading:
+                                                                break;
+                                                              case ProcessingState.buffering:
+                                                                break;
+                                                              case ProcessingState.ready:
+                                                                setState(() {
+                                                                });
+                                                                break;
+                                                              case ProcessingState.completed:
+                                                                setState(() {
+                                                                });
+                                                                break;
                                                             }
-                                                            else
-                                                              switch (state.processingState) {
-                                                                case ProcessingState.idle:
-                                                                  break;
-                                                                case ProcessingState.loading:
-                                                                  break;
-                                                                case ProcessingState.buffering:
-                                                                  break;
-                                                                case ProcessingState.ready:
-                                                                  setState(() {
-                                                                  });
-                                                                  break;
-                                                                case ProcessingState.completed:
-                                                                  setState(() {
-                                                                  });
-                                                                  break;
-                                                              }
-                                                          }),
-                                                          player!.play(),
-                                                        };
-                                                      });
-                                                      // HapticFeedback.heavyImpact();
-                                                      if (widget.isGroup == false) {
-
-                                                        sendMessage(
-                                                            typedMessageController.text,
-                                                            widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
-                                                                ?.chatid ??
-                                                                "":widget.communicationuser?.id??"",
-                                                            showdate);
-                                                        widget.socket?.emit(
-                                                            "stopped.typing", roomId);
-
-                                                      } else {
-                                                        print("commentgrpid${widget.grpchatid}");
-                                                        if(widget.grpchatid==""){
-
-                                                          sendGroupMessage(
-                                                              typedMessageController.text,
-                                                              widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
-                                                                  ?.chatid ??
-                                                                  "":widget.grpuser?.chatid??"");
-                                                        }else{
-                                                          print("commentgrppid${widget.grpchatid}");
-                                                          sendGroupMessage(
-                                                              typedMessageController.text,
-                                                              widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
-                                                        }
-                                                        widget.socket?.emit(
-                                                            "group.stopped.typing",
-                                                            roomId);
-                                                        seenUsersList.clear();
-                                                      }
-
-                                                      typedMessageController.clear();
-
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(width:4,),
-                                                        SvgPicture.string(
-                                                          height: 33,
-                                                          width: w / 5,
-                                                          CommunicationSvg().sendIcon,color: Color(0xFF2871AF),),
-                                                      ],
-                                                    )))
-                                          } else ...{
-                                            GestureDetector(
-                                              onLongPressMoveUpdate: (details) {
-                                                if (details.offsetFromOrigin.distance >
-                                                    10) {
-                                                  voiceCancelled = true;
-                                                  setState(() {});
-                                                  _animationController?.forward();
-                                                }
-                                                Future.delayed(
-                                                    const Duration(milliseconds: 3000),
-                                                        () {
-                                                      voiceCancelled = false;
-                                                      _animationController?.reset();
-                                                      setState(() {});
+                                                        }),
+                                                        player!.play(),
+                                                      };
                                                     });
-                                              },
-                                              onLongPressEnd: (details) async {
-                                                micLongPress = false;
-                                                HapticFeedback.heavyImpact();
-                                                final path =
-                                                await _audioRecorder.stop();
-                                                print("file is theee $path");
-                                                if (voiceCancelled == false) {
-                                                  // _recordingFinishedCallback(
-                                                  //     path ?? "", context);
-                                                }
-                                                setState(() {});
-                                              },
-                                              onLongPressStart:  (details) async {
-                                                HapticFeedback.heavyImpact();
-                                                micLongPress = true;
-                                                try {
-                                                  if (await _audioRecorder
-                                                      .hasPermission()) {
-                                                    await _audioRecorder.start();
+                                                    // HapticFeedback.heavyImpact();
+                                                    if (widget.isGroup == false) {
 
-                                                    bool isRecording =
-                                                    await _audioRecorder
-                                                        .isRecording();
+                                                      sendMessage(
+                                                          typedMessageController.text,
+                                                          widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                                                              ?.chatid ??
+                                                              "":widget.communicationuser?.id??"",
+                                                          showdate);
+                                                      widget.socket?.emit(
+                                                          "stopped.typing", roomId);
+
+                                                    } else {
+                                                      print("commentgrpid${widget.grpchatid}");
+                                                      if(widget.grpchatid==""){
+
+                                                        sendGroupMessage(
+                                                            typedMessageController.text,
+                                                            widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                                                                ?.chatid ??
+                                                                "":widget.grpuser?.chatid??"");
+                                                      }else{
+                                                        print("commentgrppid${widget.grpchatid}");
+                                                        sendGroupMessage(
+                                                            typedMessageController.text,
+                                                            widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
+                                                      }
+                                                      widget.socket?.emit(
+                                                          "group.stopped.typing",
+                                                          roomId);
+                                                      seenUsersList.clear();
+                                                    }
+
+                                                    typedMessageController.clear();
+                                                    FocusScope.of(context).requestFocus(textformFocusnOde);
                                                   }
-                                                } catch (e) {
-                                                  print(e);
-                                                }
-                                                setState(() {});
-                                              },
-                                              child: micLongPress == true
-                                                  ? Row(
-                                                children: [
-                                                  SizedBox(width: 4,),
-                                                  CircleAvatar(
-                                                    radius: w/18,
-                                                    backgroundColor: Color(0xFF2871AF),
-                                                    child: SvgPicture.string(
-                                                        width: w /25,
-                                                        // height:28,
-                                                        CommunicationSvg().mic),
-                                                  ),
-                                                ],
+
+
+
+
+                                                },
+                                                // focusNode: FocusNode(descendantsAreFocusable: _keyboardVisible),
+                                                // focusNode: FocusNode(skipTraversal: true),
+                                                // focusNode:FocusNode(onKey: (node, event) => ,),
+
+                                                style: const TextStyle(
+                                                  // height: 1.6,
+                                                ),
+                                                // maxLines:4,
+                                                // minLines: 1,
+                                                onChanged: (val) {
+                                                  if (widget.isGroup == false) {
+                                                    if (val.length > 0){
+                                                      widget.socket
+                                                          ?.emit("listen.typing", roomId);
+
+                                                    } else {
+                                                      widget.socket?.emit(
+                                                          "stopped.typing", roomId);
+                                                    }
+                                                  } else if (widget.isGroup == true) {
+                                                    if (val.length > 0 ) {
+                                                      print("the group typing atleaset");
+                                                      widget.socket?.emit(
+                                                          "group.listen.typing", roomId);
+                                                      if(typedMessageController.text.endsWith('@')){
+                                                        mention=true;
+                                                        setState(() {
+
+                                                        });
+                                                      }else{
+                                                        mention = false;
+                                                        setState(() {
+
+                                                        });
+                                                      }
+                                                    } else {
+                                                      mention=false;
+                                                      widget.socket?.emit(
+                                                          "group.stopped.typing", roomId);
+                                                    }
+                                                  }
+
+
+                                                  setState(() {});
+                                                },
+                                                scrollPadding: EdgeInsets.only(
+                                                    bottom: MediaQuery.of(context)
+                                                        .viewInsets
+                                                        .top),
+                                                controller: typedMessageController,
+                                                cursorColor: Colors.black,
+                                                decoration: InputDecoration(
+                                                    contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 2),
+                                                    fillColor: Colors.white,
+                                                    filled: true,
+                                                    border: OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        borderSide: const BorderSide(
+                                                          color: Color(0xffe6ecf0),
+                                                        )),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        borderSide: const BorderSide(
+                                                          color: ColorPalette.primary,
+                                                        )),
+                                                    enabledBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        borderSide: const BorderSide(
+                                                          color: Color(0xffe6ecf0),
+                                                        )),
+                                                    // suffixIconConstraints: BoxConstraints.expand(),
+                                                    suffixIconConstraints:
+                                                    const BoxConstraints(
+                                                        minHeight: 25, minWidth: 20),
+                                                    suffixIcon: InkWell(
+                                                        onTap: () {
+
+                                                          showModalBottomSheet(
+                                                            // backgroundColor:
+                                                            //     Colors.transparent,
+                                                              context: context,
+                                                              builder: (builder) {
+                                                                return bottomSheet(
+                                                                    context);
+                                                              });
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.only(
+                                                            right: 6,
+                                                          ),
+                                                          child: SvgPicture.string(
+                                                              TaskSvg().shareIcon),
+                                                        )),
+                                                    hintText:widget.isGroup==true?  micLongPress == true
+                                                        ? "Recording, < slide to cancel "
+                                                        : "Message ${activeUsersLength.toString()} active users":micLongPress == true
+                                                        ? "Recording, < slide to cancel "
+                                                        : "Message${activeUsersLength.toString()} ",
+                                                    hintStyle: GoogleFonts.roboto(
+                                                        color: const Color(0xff949494))),
+                                              ),
+                                            ),
+                                            voiceCancelled == true
+                                                ? buildMicAnimation()
+                                                : Container(),
+
+                                          ],
+                                        ),
+                                        SizedBox(width: 8,),
+                                        Row(
+                                          children: [
+
+                                            if (typedMessageController
+                                                .text.trim().isNotEmpty) ...{
+                                              Container(
+                                                // margin: const EdgeInsets.only(left: 16, right: 16),
+
+                                                  child: GestureDetector(
+                                                      onTap: () async{
+                                                        print("sending....");
+                                                        player!.setAsset('asset/send.mp3').then((value) {
+                                                          return {
+                                                            player!.playerStateStream.listen((state) {
+                                                              if (state.playing) {
+                                                                setState(() {
+                                                                  print("audio,,,,");
+                                                                });
+                                                              }
+                                                              else
+                                                                switch (state.processingState) {
+                                                                  case ProcessingState.idle:
+                                                                    break;
+                                                                  case ProcessingState.loading:
+                                                                    break;
+                                                                  case ProcessingState.buffering:
+                                                                    break;
+                                                                  case ProcessingState.ready:
+                                                                    setState(() {
+                                                                    });
+                                                                    break;
+                                                                  case ProcessingState.completed:
+                                                                    setState(() {
+                                                                    });
+                                                                    break;
+                                                                }
+                                                            }),
+                                                            player!.play(),
+                                                          };
+                                                        });
+                                                        // HapticFeedback.heavyImpact();
+                                                        if (widget.isGroup == false) {
+
+                                                          sendMessage(
+                                                              typedMessageController.text,
+                                                              widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                                                                  ?.chatid ??
+                                                                  "":widget.communicationuser?.id??"",
+                                                              showdate);
+                                                          widget.socket?.emit(
+                                                              "stopped.typing", roomId);
+
+                                                        } else {
+                                                          print("commentgrpid${widget.grpchatid}");
+                                                          if(widget.grpchatid==""){
+
+                                                            sendGroupMessage(
+                                                                typedMessageController.text,
+                                                                widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                                                                    ?.chatid ??
+                                                                    "":widget.grpuser?.chatid??"");
+                                                          }else{
+                                                            print("commentgrppid${widget.grpchatid}");
+                                                            sendGroupMessage(
+                                                                typedMessageController.text,
+                                                                widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
+                                                          }
+                                                          widget.socket?.emit(
+                                                              "group.stopped.typing",
+                                                              roomId);
+                                                          seenUsersList.clear();
+                                                        }
+
+                                                        typedMessageController.clear();
+
+                                                      },
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(width:4,),
+                                                          SvgPicture.string(
+                                                            height: 33,
+                                                            width: w / 5,
+                                                            CommunicationSvg().sendIcon,color: Color(0xFF2871AF),),
+                                                        ],
+                                                      )))
+                                            } else ...{
+                                              GestureDetector(
+                                                onLongPressMoveUpdate: (details) {
+                                                  if (details.offsetFromOrigin.distance >
+                                                      10) {
+                                                    voiceCancelled = true;
+                                                    setState(() {});
+                                                    _animationController?.forward();
+                                                  }
+                                                  Future.delayed(
+                                                      const Duration(milliseconds: 3000),
+                                                          () {
+                                                        voiceCancelled = false;
+                                                        _animationController?.reset();
+                                                        setState(() {});
+                                                      });
+                                                },
+                                                onLongPressEnd: (details) async {
+                                                  micLongPress = false;
+                                                  HapticFeedback.heavyImpact();
+                                                  final path =
+                                                  await _audioRecorder.stop();
+                                                  print("file is theee $path");
+                                                  if (voiceCancelled == false) {
+                                                    _recordingFinishedCallback(
+                                                        path ?? "", context);
+                                                  }
+                                                  setState(() {});
+                                                },
+                                                onLongPressStart:  (details) async {
+                                                  HapticFeedback.heavyImpact();
+                                                  micLongPress = true;
+                                                  try {
+                                                    if (await _audioRecorder
+                                                        .hasPermission()) {
+                                                      print("recording start");
+                                                      await _audioRecorder.start();
+
+                                                      bool isRecording =
+                                                      await _audioRecorder
+                                                          .isRecording();
+                                                    }
+                                                  } catch (e) {
+                                                    print(e);
+                                                  }
+                                                  setState(() {});
+                                                },
+                                                child: micLongPress == true
+                                                    ? Row(
+                                                  children: [
+                                                    SizedBox(width: 4,),
+                                                    CircleAvatar(
+                                                      radius: w/18,
+                                                      backgroundColor: Color(0xFF2871AF),
+                                                      child: SvgPicture.string(
+                                                          width: w /25,
+                                                          // height:28,
+                                                          CommunicationSvg().mic),
+                                                    ),
+                                                  ],
+                                                )
+                                                    : SvgPicture.string(
+                                                  // height: 51,
+                                                    width: w / 8.5,
+                                                    CommunicationSvg().micIcon2),
                                               )
-                                                  : SvgPicture.string(
-                                                // height: 51,
-                                                  width: w / 8.5,
-                                                  CommunicationSvg().micIcon2),
-                                            )
-                                          },
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                              )
-                            ],
+                                            },
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ))
-                ],
+                        ))
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+
+  }
+  void handleKeyPress(event) {
+    print("Akshayyyyyyyyyyyy");
+
+    if (event is RawKeyUpEvent && event.data is RawKeyEventDataWeb) {
+
+      var data = event.data as RawKeyEventDataWeb;
+
+      if (data.code == "Enter" && !event.isShiftPressed) {
+        print("Akshayyyyyyyyyyyy2");
+        print("Enterd in shiftPressing");
+        final val = typedMessageController.value;
+        final messageWithoutNewLine =
+        val.selection.start > 0
+            ? typedMessageController.text.substring(0, val.selection.start - 1) +
+            typedMessageController.text.substring(val.selection.start)
+            : typedMessageController.text;
+        typedMessageController.value = TextEditingValue(
+          text: messageWithoutNewLine,
+          selection: TextSelection.fromPosition(
+            TextPosition(offset: messageWithoutNewLine.length),
+          ),
+        );
+        // _onSend();
+      }
+      else if(data.code=="Enter"){
+        print("Working");
+      }
+    }
+    else  if (event is RawKeyDownEvent) {
+      if(event.logicalKey==LogicalKeyboardKey.enter ){
+        print("typedMessageController.text.isNotEmpty)${typedMessageController.text.isNotEmpty}");
+        if(typedMessageController.text.trim().isNotEmpty){
+          print("sending....");
+          print(typedMessageController.text);
+          player!.setAsset('asset/send.mp3').then((value) {
+            return {
+              player!.playerStateStream.listen((state) {
+                if (state.playing) {
+                  setState(() {
+                    print("audio,,,,");
+                  });
+                }
+                else
+                  switch (state.processingState) {
+                    case ProcessingState.idle:
+                      break;
+                    case ProcessingState.loading:
+                      break;
+                    case ProcessingState.buffering:
+                      break;
+                    case ProcessingState.ready:
+                      setState(() {
+                      });
+                      break;
+                    case ProcessingState.completed:
+                      setState(() {
+                      });
+                      break;
+                  }
+              }),
+              player!.play(),
+            };
+          });
+          // HapticFeedback.heavyImpact();
+          if (widget.isGroup == false) {
+
+            sendMessage(
+                typedMessageController.text,
+                widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                    ?.chatid ??
+                    "":widget.communicationuser?.id??"",
+                showdate);
+            widget.socket?.emit(
+                "stopped.typing", roomId);
+
+          } else {
+            print("commentgrpid${widget.grpchatid}");
+            if(widget.grpchatid==""){
+
+              sendGroupMessage(
+                  typedMessageController.text,
+                  widget.isg==false?widget.redirectchatid!=""?widget.redirectchatid: widget.communicationUserModel
+                      ?.chatid ??
+                      "":widget.grpuser?.chatid??"");
+            }else{
+              print("commentgrppid${widget.grpchatid}");
+              sendGroupMessage(
+                  typedMessageController.text,
+                  widget.redirectchatid!=""?widget.redirectchatid:widget.grpchatid.toString());
+            }
+            widget.socket?.emit(
+                "group.stopped.typing",
+                roomId);
+            seenUsersList.clear();
+          }
+
+          typedMessageController.clear();
+        }
+
+        // FocusScope.of(context).requestFocus(textformFocusnOde);
+      }
+    }
   }
 
   String formatMessageTimestamp(DateTime timestamp,int index){
@@ -3030,7 +3225,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                 InkWell(
                   child: iconCreation(
                       icon: Icons.photo,
-                      text: "Image",
+                      text: "ImagSe",
                       color: const Color(0xFF33C658)),
                   onTap: () {
 
@@ -3047,13 +3242,13 @@ class _WebChatScreenState extends State<WebChatScreen>
                                 InkWell(
                                   onTap: (){
 
-                                    // pickFiles("Image",parentcontext,"camera");
+                                    // pickFiles("image",parentcontext,"image");
                                   },
                                   child: Container(
                                     child: Row(
                                       children: [
                                         IconButton(onPressed: (){
-                                          // pickFiles("Image", parentcontext,"camera");
+                                          // pickFiles("image",parentcontext,"image");
 
                                         }, icon: Icon(Icons.camera_alt_outlined,color: ColorPalette.primary,size:25,),),
                                         Text("Camera")
@@ -3064,7 +3259,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                                 ),
                                 InkWell(
                                   onTap: (){
-                                    // pickFiles("Image", parentcontext,"gallery");
+                                    pickFiles("image", parentcontext,"gallery");
                                   },
                                   child: Container(
                                     child: Row(
@@ -3127,6 +3322,43 @@ class _WebChatScreenState extends State<WebChatScreen>
         ),
       ),
     );
+  }
+  Future<Uint8List> imageFileSelection({List<String>?allowedExtensions}) async {
+    Uint8List? bytes;
+
+
+      final pickedFile = await FilePicker.platform.pickFiles(type: FileType.custom,
+          allowedExtensions:allowedExtensions?? ['jpg' ],
+          withData: true);
+      print(pickedFile?.files.first.name);
+      print("pickedFile$pickedFile");
+
+
+
+
+      if (pickedFile != null) {
+        bytes = pickedFile.files.first.bytes;
+
+      }
+
+    return  bytes??Uint8List(0);
+
+
+  }
+  void pickFiles(String? filetype, BuildContext context,String? source)async{
+if(filetype=="image"){
+
+
+    Uint8List? bytes =await imageFileSelection(allowedExtensions:  ['jpg' ]);
+      BlocProvider.of<AttachmentBloc>(context)
+           .add(UploadPictureEvent(image:bytes!));
+      // BlocProvider.of<InventoryBloc>(context).add(PicEvent(bytes: bytes!));
+    }
+  }
+
+
+
+
   }
 
 //   void pickFiles(String? filetype, BuildContext context,String? source) async {
@@ -3386,8 +3618,8 @@ class _WebChatScreenState extends State<WebChatScreen>
 //         break;
 //     }
 //   }
-//
-//
+
+
 // Future<XFile> compressFile(File file) async {
 //   final filePath = file.absolute.path;
 //   // Create output file path
@@ -3428,23 +3660,44 @@ class _WebChatScreenState extends State<WebChatScreen>
       ],
     );
   }
-//   void _recordingFinishedCallback(
-//   String path,
-//   BuildContext context,
-// ) {
-//   print("file is thee $path");
-//   final uri = Uri.parse(path);
-//   File file = File(uri.path);
-//
-//   file.length().then(
-//     (fileSize) {
-//       print("files is this ${file}");
-//       BlocProvider.of<AttachmentBloc>(context)
-//           .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
-//     },
-//   );
-// }
+  void _recordingFinishedCallback(
+  String path,
+  BuildContext context,
+) {
+  print("file is thee $path");
+  final uri = Uri.parse(path);
+  // File file = File(uri.path);
+  // Create a Blob from the recorded data
+  final blob = html.Blob([html.File([path], 'audio/wav')]);
+
+  final reader = html.FileReader();
+  reader.readAsArrayBuffer(blob);
+
+  reader.onLoadEnd.listen((_) {
+    final uint8List = Uint8List.fromList(reader.result as List<int>);
+
+    // Use the Uint8List for further processing or upload
+    // For example, you can create a File from Uint8List
+    final  File file = html.File([uint8List], 'audio.wav');
+
+    // Access file size
+    final fileSize = file.size;
+    print("File size: ${file.runtimeType}");
+
+    // Dispatch your Bloc event or perform other actions
+    // BlocProvider.of<AttachmentBloc>(context)
+    //     .add(UploadLiveAudioEvent(audio: file, comment: widget.grpchatid == "" ? false : true));
+  });
+
+  // file.length().then(
+  //   (fileSize) {
+  //     print("files is this ${file}");
+  //     BlocProvider.of<AttachmentBloc>(context)
+  //         .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
+  //   },
+  // );
 }
+
 
 class ScrollService {
 

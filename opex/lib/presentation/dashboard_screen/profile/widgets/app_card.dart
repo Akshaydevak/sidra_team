@@ -1,3 +1,4 @@
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -10,10 +11,12 @@ class AppHomeCard extends StatelessWidget {
   final String? svgIcon;
   final String? appTitle;
   final String? appDescription;
+  final Color? clr;
   const AppHomeCard(
       {super.key,
       this.onTap,
       this.svgIcon,
+      this.clr,
       this.appTitle,
       this.appDescription});
 
@@ -26,7 +29,8 @@ class AppHomeCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        // color: Colors.green,
+        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+        color: clr??Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,12 +56,13 @@ class AppHomeCard extends StatelessWidget {
                   height: 4,
                 ),
                 Container(
-                  width: w/1.45,
+                  width: isMobile?w/1.45 :w/1.67,
+                  // color: Colors.red,
                   child: Text(
                     appDescription ?? "",
                     style: GoogleFonts.roboto(
                         color: Color(0xFF555555),
-                        fontSize: w/28,
+                        fontSize: isMobile?w/28:w/30,
                         fontWeight: FontWeight.w400),
                   ),
                 ),

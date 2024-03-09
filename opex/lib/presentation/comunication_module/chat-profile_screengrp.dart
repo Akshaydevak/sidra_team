@@ -345,7 +345,7 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
                           radius: 70,
                           backgroundColor: ColorPalette.inactiveGrey,
                           backgroundImage:  
-                              AssetImage("asset/chatgrpimg.png")
+                              AssetImage("asset/chatgrpimg.png",)
                         )
                         :CircleAvatar(
                           radius: 70,
@@ -1528,8 +1528,8 @@ widget.socket?.on("memberAddedToGroup", (data) => print("member added to grp :$d
       if(image != null){
         grpPic=_imageFile.path;
 
-        BlocProvider.of<GroupBloc>(context)
-           .add(GroupUploadPictureEvent(image:_imageFile));
+        // BlocProvider.of<GroupBloc>(context)
+        //    .add(GroupUploadPictureEvent(image:_imageFile));
        
       }else{
         Navigator.pop(context);

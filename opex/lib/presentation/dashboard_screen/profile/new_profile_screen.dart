@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/profile_text_field.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
@@ -233,17 +234,20 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
         // ),
         body: SingleChildScrollView(
           child: Column(
+
             children: [
-              SizedBox(
+           if(isMobile)   SizedBox(
                 height: 10,
               ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment:isMobile? MainAxisAlignment.center:MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: w1 > 700 ? 365 : 140),
+                  Container(
+                    padding: EdgeInsets.only(top: 16),
                     child: Row(
+                      mainAxisAlignment:MainAxisAlignment.center,
+
                       children: [
                         Container(
                           width: 90,
@@ -558,7 +562,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                         )
                       : Container(),
                   SizedBox(
-                    height: 35,
+                    height: 25,
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
@@ -585,12 +589,14 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ProfileMenuCard(
+
                                   iconSvg: AppsSvg().languageSvgIcon,
                                   title: "Language",
+                                  // isWidth: false,
                                   suffixIcon: Text(
                                     "English",
                                     style: GoogleFonts.roboto(
-                                      fontSize: w / 24,
+                                      fontSize:isMobile? w / 24:w/30,
                                       color: Color(0xff555555),
                                     ),
                                   )),
@@ -620,6 +626,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             );
                           },
                           child: ProfileMenuCard(
+                            // isWidth: false,
                               iconSvg: AppsSvg().taskProfileIcon,
                               title: "Task and Activities"),
                         ),
@@ -645,6 +652,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ProfileMenuCard(
+                                  // isWidth: false,
                                   iconSvg: HomeSvg().notiIcon,
                                   title: "Notification Alert",
                                   suffixIcon: isToggle
@@ -686,6 +694,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             );
                           },
                           child: ProfileMenuCard(
+                              // isWidth: false,
                               iconSvg: AppsSvg().helpandsupportIconProfile,
                               title: "Help & Support"),
                         ),
@@ -712,6 +721,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             );
                           },
                           child: ProfileMenuCard(
+                              // isWidth: false,
                               iconSvg: AppsSvg().chagePassword,
                               title: "Change Password"),
                         ),
@@ -740,6 +750,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             } else {}
                           },
                           child: ProfileMenuCard(
+                              // isWidth: false,
                               iconSvg: AppsSvg().sharefeed,
                               title: "Share feedback"),
                         ),
@@ -757,8 +768,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                         GestureDetector(
                           onTap: () async{
                             pref=await SharedPreferences.getInstance();
-                            fcm = pref!.getString("fcm")!;
-                            print("SHIFAS FCM$fcm");
+                            fcm = pref?.getString("fcm")??"";
+                            // print("SHIFAS FCM$fcm");
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -906,6 +917,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                 });
                           },
                           child: ProfileMenuCard(
+                              // isWidth: false,
                               iconSvg: AppsSvg().logoutProfileIcon,
                               title: "Logout"),
                         ),

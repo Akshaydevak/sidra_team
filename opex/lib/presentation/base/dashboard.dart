@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
@@ -678,15 +679,15 @@ pref = await SharedPreferences.getInstance();
 
   List<Widget> _buildScreens() {
     return [
-       HomeScreen(homeTap: (){
-           _controller.jumpToTab(1);
-       },taskTap: (){
-        print("tapppppeeyyy");
-       _controller.jumpToTab(2);
-        // setState(() {
-          
-        // });
-       },),
+       // HomeScreen(homeTap: (){
+       //     _controller.jumpToTab(1);
+       // },taskTap: (){
+       //  print("tapppppeeyyy");
+       // _controller.jumpToTab(2);
+       //  // setState(() {
+       //
+       //  // });
+       // },),
       CommunicationModule(),
       const TaskAndOperation(),
       const NewProfileScreen(),
@@ -695,15 +696,15 @@ pref = await SharedPreferences.getInstance();
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-          icon: SvgPicture.string(
-            IconConstants().homeIcon,
-            color: Color(0xff222222),
-          ),
-          inactiveIcon: SvgPicture.string(IconConstants().homeIcon,
-              color: ColorPalette.inactiveGrey),
-          activeColorPrimary: Color(0xff222222),
-          inactiveColorPrimary: ColorPalette.inactiveGrey),
+      // PersistentBottomNavBarItem(
+      //     icon: SvgPicture.string(
+      //       IconConstants().homeIcon,
+      //       color: Color(0xff222222),
+      //     ),
+      //     inactiveIcon: SvgPicture.string(IconConstants().homeIcon,
+      //         color: ColorPalette.inactiveGrey),
+      //     activeColorPrimary: Color(0xff222222),
+      //     inactiveColorPrimary: ColorPalette.inactiveGrey),
 
       PersistentBottomNavBarItem(
           icon: SvgPicture.string(
@@ -871,7 +872,7 @@ pref = await SharedPreferences.getInstance();
                               }
                             : _onWillPop,
                         child: Scaffold(
-                          backgroundColor: isMobile?Colors.white:Colors.grey,
+                          backgroundColor:Color(0xffF0F2F5),
                           key: scaffoldKey,
                           appBar: PreferredSize(
                             preferredSize: const Size.fromHeight(58),
@@ -881,10 +882,11 @@ pref = await SharedPreferences.getInstance();
 
                             ),
                           ),
-                          drawer:  AppDrawer(
-                           ),
-                          body: Container(
-                            margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
+                          drawer: isMobile? AppDrawer(
+                           ):Container(),
+                          body: isMobile?
+                          Container(
+                            // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
 
                             child:
                             PersistentTabView(
@@ -944,6 +946,103 @@ pref = await SharedPreferences.getInstance();
                                 curve: Curves.ease,
                                 duration: Duration(milliseconds: 200),
                               ),
+                            ),
+                          ):  Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                              color: ColorPalette.webBagroundClr.withOpacity(.3),
+
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width/4.7, child:      HomeScreen(homeTap: (){
+                                  _controller.jumpToTab(0);
+                                },taskTap: (){
+                                  print("tapppppeeyyy");
+                                  _controller.jumpToTab(1);
+                                  // setState(() {
+
+                                  // });
+                                },),
+
+                                )  ,
+                                Flexible(
+                                  flex: 3, child:Container(
+                                  margin: isMobile?null:EdgeInsets.symmetric(horizontal: 10),
+
+                                  child:ValueListenableBuilder<Widget>(
+                                    valueListenable: screenNotifier,
+                                    builder: (BuildContext context, Widget value,child) {
+                                      return value;
+                                        // widgetList[value];
+                                    },
+                                  ),
+                                  // PersistentTabView(
+                                  //
+                                  //   context,
+                                  //   padding:
+                                  //   const NavBarPadding.only(left: 100, right: 100),
+                                  //   controller: _controller,
+                                  //   screens: _buildScreens(),
+                                  //   onItemSelected: (value) {
+                                  //
+                                  //     newIndex = value;
+                                  //
+                                  //     setState(() {});
+                                  //
+                                  //     print("llllll$newIndex");
+                                  //
+                                  //     if (newIndex == 0 || newIndex == 3) {
+                                  //       setState(() {});
+                                  //     } else if (newIndex == 2) {
+                                  //       context
+                                  //           .read<ProfileBloc>()
+                                  //           .add(GetProfileEvent());
+                                  //     }
+                                  //   },
+                                  //
+                                  //   items: _navBarsItems(),
+                                  //   confineInSafeArea: true,
+                                  //   hideNavigationBarWhenKeyboardShows: true,
+                                  //   backgroundColor: ColorPalette.white,
+                                  //   handleAndroidBackButtonPress: true,
+                                  //   resizeToAvoidBottomInset: true,
+                                  //   stateManagement: false,
+                                  //   decoration: NavBarDecoration(boxShadow: [
+                                  //     BoxShadow(
+                                  //       color: Colors.grey.shade200.withOpacity(0.8),
+                                  //
+                                  //       blurRadius: 2.0,
+                                  //
+                                  //       spreadRadius: 1, //New
+                                  //     ),
+                                  //
+                                  //   ],
+                                  //
+                                  //   ),
+                                  //   popAllScreensOnTapOfSelectedTab: true,
+                                  //   popActionScreens: PopActionScreensType.all,
+                                  //   itemAnimationProperties:
+                                  //   const ItemAnimationProperties(
+                                  //     duration: Duration(milliseconds: 200),
+                                  //     curve: Curves.ease,
+                                  //   ),
+                                  //   navBarStyle: NavBarStyle.style3,
+                                  //   screenTransitionAnimation:
+                                  //   const ScreenTransitionAnimation(
+                                  //     animateTabTransition: false,
+                                  //     curve: Curves.ease,
+                                  //     duration: Duration(milliseconds: 200),
+                                  //   ),
+                                  // ),
+                                ),
+
+                                ), Container(
+                                  width: MediaQuery.of(context).size.width/4.7,
+                              child:NewProfileScreen(),
+
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -71,6 +71,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
     if(widget.messageList!.type=="image"){
       // _checkDownloaded(widget.messageList!.message??"");
     }
+
+
     // TODO: implement initState
     super.initState();
   }
@@ -546,17 +548,13 @@ class _WebMyChatListState extends State<WebMyChatList> {
             } else ...{
               Align(
                 alignment: Alignment.bottomLeft,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: MediaQuery.of(context)
-                        .size
-                        .width -
-                        300,
-                    maxWidth: MediaQuery.of(context)
-                        .size
-                        .width -
-                        95,
-                  ),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+            constraints: BoxConstraints(
+            minWidth:
+            25,
+            maxWidth:
+           600,),
                   child: GestureDetector(
                     onLongPress: (){
                       print("enterreeeeeeeeee");
@@ -1138,19 +1136,12 @@ class _WebMyChatListState extends State<WebMyChatList> {
                           "mention")...{
                         Column(crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ConstrainedBox(
+                              Container(
+                                padding: EdgeInsets.all(10),
                                 constraints: BoxConstraints(
                                   minWidth:
-                                  MediaQuery.of(context)
-                                      .size
-                                      .width -
-                                      300,
-                                  maxWidth:
-                                  MediaQuery.of(context)
-                                      .size
-                                      .width -
-                                      90,
-                                ),
+                                  25,
+                                  maxWidth:600),
                                 child: GestureDetector(
                                   onLongPress: ()=>widget.ontap!(),
                                   child: Container(
@@ -1249,18 +1240,13 @@ class _WebMyChatListState extends State<WebMyChatList> {
                       else ...{
                           Column(crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ConstrainedBox(
+                                Container(
+                                  padding: EdgeInsets.all(10),
                                   constraints: BoxConstraints(
                                     minWidth:
-                                    MediaQuery.of(context)
-                                        .size
-                                        .width -
-                                        300,
+                                    25,
                                     maxWidth:
-                                    MediaQuery.of(context)
-                                        .size
-                                        .width -
-                                        90,
+                                    600,
                                   ),
                                   child: GestureDetector(
                                     onLongPress: ()=>widget.ontap!(),
@@ -1806,14 +1792,15 @@ class _WebMyChatListState extends State<WebMyChatList> {
               "mention")...{
             Align(
               alignment: Alignment.centerRight,
-              child: ConstrainedBox(
+              child: Container(
+                padding: EdgeInsets.all(10),
                 constraints: BoxConstraints(
-                  minWidth: MediaQuery.of(context)
+                  minWidth:
+                  25,
+                  maxWidth:
+                  MediaQuery.of(context)
                       .size
-                      .width - 300,
-                  maxWidth: MediaQuery.of(context)
-                      .size
-                      .width - 100,
+                      .width/1.5,
                 ),
                 child: GestureDetector(
                   onLongPress: ()=>widget.ontap(),
@@ -1921,14 +1908,16 @@ class _WebMyChatListState extends State<WebMyChatList> {
           else ...{
               Align(
                 alignment: Alignment.centerRight,
-                child: ConstrainedBox(
+                child:
+                Container(
+                  padding: EdgeInsets.all(10),
                   constraints: BoxConstraints(
-                    minWidth: MediaQuery.of(context)
+                    minWidth:
+                    25,
+                    maxWidth:
+                    MediaQuery.of(context)
                         .size
-                        .width - 300,
-                    maxWidth: MediaQuery.of(context)
-                        .size
-                        .width - 100,
+                        .width/1.5,
                   ),
                   child: GestureDetector(
                     onLongPress: ()=>widget.ontap(),

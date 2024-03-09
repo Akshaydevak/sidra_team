@@ -1,6 +1,8 @@
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/no_glow.dart';
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/common_snackBar.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/bloc/communication_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:cluster/presentation/comunication_module/create_chatgroup.dart';
 import 'package:cluster/presentation/comunication_module/group_bloc/bloc/group_bloc.dart';
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/comunication_module/newgroup.dart';
+import 'package:cluster/presentation/comunication_module/web_chat_screen.dart';
 import 'package:cluster/presentation/mpos/search_card.dart';
 import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +62,10 @@ BlocProvider.of<CommunicationBloc>(context).add(
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     return MultiBlocListener(
      listeners: [
       BlocListener<CommunicationBloc,CommunicationState>( 
@@ -73,9 +79,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
             grpchatId: "",
             pageNo: 1, chatId: state.chatListData1.id??"",userId: widget.loginUserId??"")
           );
-        PersistentNavBarNavigator.pushNewScreen(
+      isMobile?  PersistentNavBarNavigator.pushNewScreen(
         context,
-        screen: ChatScreen(
+        screen: WebChatScreen(
           token: widget.token,
           loginUserId:widget.loginUserId,
           socket:widget.socket,
@@ -83,7 +89,12 @@ BlocProvider.of<CommunicationBloc>(context).add(
           chat: true,
           communicationuser:state.chatListData1,
         ),
-        );
+        ):  chabeTAbIndex(3,       token: widget.token,
+        loginUserId:widget.loginUserId,
+        socket:widget.socket,
+        isGroup:false,
+        chat: true,
+        communicationuser:state.chatListData1,);
           // Navigator.pop(context); 
           // BlocProvider.of<CommunicationBloc>(context).add(
           //         GetFilterdChatListEvent(
@@ -125,8 +136,8 @@ BlocProvider.of<CommunicationBloc>(context).add(
           surfaceTintColor: Colors.white,
            leading: BackButton(
             onPressed: () {
-              
-              Navigator.pop(context);
+             isMobile?  Navigator.pop(context):chabeTAbIndex(0);
+
               // BlocProvider.of<CommunicationBloc>(context)
               //     .add(GetChatListEvent(token: widget.token ?? ""));
             },
@@ -162,7 +173,7 @@ BlocProvider.of<CommunicationBloc>(context).add(
                   child: Container(
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
-                    width: w,
+                    width: w1,
                     height: 70,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -361,9 +372,9 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                             ))
                                             :val1==true?
                                              
-                                                PersistentNavBarNavigator.pushNewScreen(
+                                            isMobile?    PersistentNavBarNavigator.pushNewScreen(
                                                 context,
-                                                screen: ChatScreen(
+                                                screen: WebChatScreen(
                                                   token: widget.token,
                                                   loginUserId:widget.loginUserId,
                                                   socket:widget.socket,
@@ -375,7 +386,12 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                                     false, // OPTIONAL VALUE. True by default.
                                                 pageTransitionAnimation:
                                                     PageTransitionAnimation.fade,
-                                              ):null;
+                                              ):chabeTAbIndex(3,        token: widget.token,
+                                                loginUserId:widget.loginUserId,
+                                                socket:widget.socket,
+                                                isGroup:false,
+                                                chat: true,
+                                                communicationuser:chatlist[i1]):null;
                                             }); 
                                           },
                                           child: EmployeeCard(employeeList: state.registeresUsers[index],isCommunicate:true,)

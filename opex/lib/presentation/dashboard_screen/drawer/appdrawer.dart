@@ -1,4 +1,5 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/dashboard.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
@@ -32,12 +33,17 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   void initState() {
     context.read<ProfileBloc>().add(const GetProfileEvent());
+    // context.read<TaskBloc>().add(const GetNotificationListEvent("", "", ""));
+    context.read<ProfileBloc>().add(const GetProfilePicEvent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
     var h = MediaQuery.of(context).size.height;
     return Drawer(
       backgroundColor: ColorPalette.white,
@@ -119,7 +125,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                 }
                                 return Container();
                               }),
-                              GestureDetector(
+                          if(isMobile)    GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context);
                                   },

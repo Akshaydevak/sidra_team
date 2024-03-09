@@ -5,6 +5,7 @@ import 'package:cluster/presentation/comunication_module/communication_datasourc
 import 'package:cluster/presentation/comunication_module/models/communicationuser_model.dart';
 import 'package:cluster/presentation/task_operation/employee_model/employee_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../dummy_design_forTesting/dummy_user_list_model.dart';
 
@@ -157,9 +158,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
   }
   Stream<GroupState> uploadImageMap(
-      {required File image}) async* {
+      {required Uint8List image}) async* {
     yield GroupUploadPictureLoading();
-    final dataResponse = await _productData.uploadImageData1(img: image);
+    final dataResponse = await _productData.uploadImageData1(img: image!);
     if (dataResponse.isNotEmpty) {
       yield GroupUploadPictureSuccess(upload: dataResponse);
     } else {

@@ -15,7 +15,8 @@ class ColorPalette{
   static const Color divider = Color(0xffE6ECF0);
   static const Color checkoutBackground = Color(0xffFAFAFA);
   static const Color pink = Color(0xffFF477B);
-  static const Color webBagroundClr = Colors.grey;
+  static  Color webBagroundClr = Color(0xffD9D9D9).withOpacity(.3);
+  static  Color selectedTabClr =Colors.grey.shade300;
 
   // static const Color secondary = Color(0xffff9900);
 

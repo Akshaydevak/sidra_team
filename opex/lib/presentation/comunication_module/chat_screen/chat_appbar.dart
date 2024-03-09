@@ -450,7 +450,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     //   withNavBar: true, // OPTIONAL VALUE. True by default.
                     //   pageTransitionAnimation: PageTransitionAnimation.fade,
                     // );
-                  } else if(widget.cmntgrpid=="") {
+                  }
+                  else if(widget.cmntgrpid=="") {
                     // BlocProvider(
           //   create: (context) => GroupBloc()
           //     ..add(GroupProfileGet(
@@ -462,7 +463,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
           );
                     PersistentNavBarNavigator.pushNewScreen(
                       context,
-                      screen: ChatProfileScreen2(
+                      screen:
+                      ChatProfileScreen2(
                         chat: widget.isgrp,
                         token: widget.token,
                         roomId: widget.roomId,
