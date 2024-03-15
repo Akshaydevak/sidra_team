@@ -33,6 +33,9 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js";
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
   </script>
@@ -40,6 +43,25 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+<script>
+z
+ const firebaseConfig = {
+  apiKey: "AIzaSyDD6a93rw23pGVSYc9MipHVExobYqIzke0",
+  authDomain: "sidrateams-d9972.firebaseapp.com",
+  projectId: "sidrateams-d9972",
+  storageBucket: "sidrateams-d9972.appspot.com",
+  messagingSenderId: "793852669363",
+  appId: "1:793852669363:web:89668f6104adf08bccafc6",
+  measurementId: "G-DZFYRLTM7X"
+};
+firebase.initializeApp(firebaseConfig);
+
+  </script>
+
+<script src="main.dart.js" type="application/javascript"></script>
+<script type="text/javascript">
+    window.flutterWebRenderer = "html";
+</script>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js

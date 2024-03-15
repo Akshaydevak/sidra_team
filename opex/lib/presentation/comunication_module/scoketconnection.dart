@@ -8,10 +8,11 @@ class scoketProvider extends ChangeNotifier{
   IO.Socket? get socket => _socket;
    void connect(String token) {
     _socket = IO.io(
-      'https://api-communication-application.hilalcart.com/home',
+      // 'https://api-communication-application.hilalcart.com/home',
       // 'http://192.168.1.187:5500/home',
-      // "https://5z7l1nh4-5500.inc1.devtunnels.ms/home",
+      "https://5z7l1nh4-5500.inc1.devtunnels.ms/home",
       <String, dynamic>{
+
         'transports': ['websocket'],
         'auth': {'token': token},
         'autoConnect': false,
@@ -49,9 +50,9 @@ class scoketgrpProvider extends ChangeNotifier{
   IO.Socket? get socket => _socket;
    void connect(String token, {bool socketReady = false}) {
     _socket = IO.io(
-      'https://api-communication-application.hilalcart.com/group',
+      // 'https://api-communication-application.hilalcart.com/group',
       // 'http://192.168.1.187:5500/home',
-      // "https://5z7l1nh4-5500.inc1.devtunnels.ms/group",
+      "https://5z7l1nh4-5500.inc1.devtunnels.ms/group",
       <String, dynamic>{
         'transports': ['websocket'],
         'auth': {'token': token},

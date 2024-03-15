@@ -193,190 +193,182 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               elevation: 0,
             )),
-        body: ScrollConfiguration(
-          behavior: NoGlow(),
-          child: SingleChildScrollView(
-            child: SafeArea(
-                child: Container(
-                  color: ColorPalette.white,
-              height: isMobile?h / 1.1:h,
-              margin: isMobile?null:EdgeInsets.symmetric(horizontal: webTotalMargin(context)),
-              padding: EdgeInsets.only(top: 30, left: 20, right: 20),
-              // padding: EdgeInsets.only(top: h / 7, left: 10,right: h/7),
-              child: Stack(
+        body: SafeArea(
+            child: Container(
+              color: ColorPalette.white,
+          height: isMobile?h / 1.1:h,
+          margin: isMobile?null:EdgeInsets.only(left: MediaQuery.of(context).size.width/3,right:MediaQuery.of(context).size.width/3,bottom: h/5.5,top: h/9.5),
+          padding: EdgeInsets.only(top: 30, left: 20, right: 20),
+          // padding: EdgeInsets.only(top: h / 7, left: 10,right: h/7),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.string(HomeSvg().teamsIcon),
+                  SvgPicture.string(HomeSvg().teamsIcon),
 
-                      Text(
-                        "Login to account",
-                        style: GoogleFonts.inter(
-                          color: Colors.black,
-                          fontSize: isMobile?w / 14:w/35,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
-                      // Text(
-                      //   "Login to your account",
-                      //   style: TextStyle(
-                      //     color: ColorPalette.subtextGrey,
-                      //     fontSize: w/22,
-                      //   ),
-                      // ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      TextFormReusableNoLabel(
-                        hint: "Enter business/organization email",
-                        controller: emailController,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-
-                      TextFormReusableNoLabel(
-                          hint: "Enter password",
-                          password: true,
-                          controller: passwordController),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      TextFormReusableNoLabel(
-                          hint: "Director/Employee code",
-                          onchange: (bb) {
-                            codeController.value =
-                                codeController.value.copyWith(
-                              text: bb.toUpperCase(),
-                              selection:
-                                  TextSelection.collapsed(offset: bb.length),
-                            );
-                          },
-                          controller: codeController),
-                      // PhoneWidget(),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      GradientButton(
-                          onPressed: () {
-                            _isLoading = true;
-                            context.read<AuthBloc>().add(LoginEvent(
-                                email: emailController.text,
-                                password: passwordController.text,
-                                code: codeController.text));
-                            setState(() {});
-                          },
-                          gradient: const LinearGradient(
-                            colors: [
-                              ColorPalette.primary,
-                              ColorPalette.primary
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          color: Colors.transparent,
-                          child: _isLoading == true
-                              ? SpinKitThreeBounce(
-                                  color: Colors.white,
-                                  size: 15.0,
-                                )
-                              : Text(
-                                  "Login",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.roboto(
-                                    color: Colors.white,
-                                    fontSize: isMobile?w / 24:w/40,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )),
-                      SizedBox(
-                        height: 30,
-                      ),
-
-                      // GestureDetector(
-                      //   onTap: (){
-                      //        PersistentNavBarNavigator.pushNewScreen(
-                      //       context,
-                      //       screen: RegisterNewUser(),
-                      //       withNavBar: true,
-                      //       // OPTIONAL VALUE. True by default.
-                      //       pageTransitionAnimation: PageTransitionAnimation.fade,
-                      //     );
-                      //   },
-                      //   child: Text("Register your organization",
-                      //   style: GoogleFonts.roboto(
-                      //     fontSize: w/26,
-                      //     color: ColorPalette.primary
-                      //   ),),
-                      // )
-                    ],
-                  ),
-                  Positioned(
-                    bottom:isMobile? 0:25,
-
-                    child:
-                    Container(
-                      width: w / 1.2,
-                      padding: EdgeInsets.only(left: 100),
-                      // color: Colors.red,
-                      child: RichText(
-                          textAlign: isMobile?TextAlign.center:TextAlign.start,
-                          text: TextSpan(
-                              text: 'By logging in, ',
-                              style: GoogleFonts.roboto(
-                                color: Colors.black,
-                                fontSize:isMobile? w / 28:w/46,
-                                height: 1.5,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'You accept to our',
-                                  style: GoogleFonts.roboto(
-                                    color: ColorPalette.black,
-                                    fontSize:isMobile? w / 28:w/45,
-                                    height: 1.5,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                TextSpan(
-                                    text: 'Terms \n',
-                                    style: GoogleFonts.roboto(
-                                      color: ColorPalette.primary,
-                                      fontSize:isMobile? w / 28:w/45,
-                                      height: 1.5,
-                                      fontWeight: FontWeight.w500,
-                                    )),
-                                TextSpan(
-                                    text: 'and ',
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.black,
-                                      fontSize:isMobile? w / 28:w/45,
-                                      height: 1.5,
-                                      fontWeight: FontWeight.normal,
-                                    )),
-                                TextSpan(
-                                  text: 'Privacy Policy',
-                                  style: GoogleFonts.roboto(
-                                    color: ColorPalette.primary,
-                                    fontSize:isMobile? w / 28:w/45,
-                                    height: 1.5,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ])),
+                  Text(
+                    "Login to account",
+                    style: GoogleFonts.inter(
+                      color: Colors.black,
+                      fontSize: isMobile?w / 14:w/50,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
+                  // SizedBox(
+                  //   height: 5,
+                  // ),
+                  // Text(
+                  //   "Login to your account",
+                  //   style: TextStyle(
+                  //     color: ColorPalette.subtextGrey,
+                  //     fontSize: w/22,
+                  //   ),
+                  // ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  TextFormReusableNoLabel(
+                    hint: "Enter business/organization email",
+                    controller: emailController,
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+
+                  TextFormReusableNoLabel(
+                      hint: "Enter password",
+                      password: true,
+                      controller: passwordController),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  TextFormReusableNoLabel(
+                      hint: "Director/Employee code",
+                      onchange: (bb) {
+                        codeController.value =
+                            codeController.value.copyWith(
+                          text: bb.toUpperCase(),
+                          selection:
+                              TextSelection.collapsed(offset: bb.length),
+                        );
+                      },
+                      controller: codeController),
+                  // PhoneWidget(),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  GradientButton(
+                      onPressed: () {
+                        _isLoading = true;
+                        context.read<AuthBloc>().add(LoginEvent(
+                            email: emailController.text,
+                            password: passwordController.text,
+                            code: codeController.text));
+                        setState(() {});
+                      },
+                      gradient: const LinearGradient(
+                        colors: [
+                          ColorPalette.primary,
+                          ColorPalette.primary
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      color: Colors.transparent,
+                      child: _isLoading == true
+                          ? SpinKitThreeBounce(
+                              color: Colors.white,
+                              size: 15.0,
+                            )
+                          : Text(
+                              "Login",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: isMobile?w / 24:w/65,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                Spacer(),
+                  Container(
+                    // width: w / 1,
+                    // padding: EdgeInsets.only(left: 100),
+                    // color: Colors.red,
+                    child: RichText(
+                        textAlign: isMobile?TextAlign.center:TextAlign.start,
+                        text: TextSpan(
+                            text: 'By logging in, ',
+                            style: GoogleFonts.roboto(
+                              color: Colors.black,
+                              fontSize:isMobile? w / 28:w*.01,
+                              height: 1.5,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'You accept to our',
+                                style: GoogleFonts.roboto(
+                                  color: ColorPalette.black,
+                                  fontSize:isMobile? w / 28:w*.01,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                              TextSpan(
+                                  text: 'Terms \n',
+                                  style: GoogleFonts.roboto(
+                                    color: ColorPalette.primary,
+                                    fontSize:isMobile? w / 28:w*.01,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.w500,
+                                  )),
+                              TextSpan(
+                                  text: 'and ',
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.black,
+                                    fontSize:isMobile? w / 28:w*.01,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.normal,
+                                  )),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: GoogleFonts.roboto(
+                                  color: ColorPalette.primary,
+                                  fontSize:isMobile? w / 28:w*.01,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ])),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+
+                  // GestureDetector(
+                  //   onTap: (){
+                  //        PersistentNavBarNavigator.pushNewScreen(
+                  //       context,
+                  //       screen: RegisterNewUser(),
+                  //       withNavBar: true,
+                  //       // OPTIONAL VALUE. True by default.
+                  //       pageTransitionAnimation: PageTransitionAnimation.fade,
+                  //     );
+                  //   },
+                  //   child: Text("Register your organization",
+                  //   style: GoogleFonts.roboto(
+                  //     fontSize: w/26,
+                  //     color: ColorPalette.primary
+                  //   ),),
+                  // )
                 ],
               ),
-            )),
+
+            ],
           ),
-        ),
+        )),
       ),
     );
   }

@@ -17,6 +17,7 @@ class Authentication {
   String _keyAuthenticatedUser = "keyAuthenticated";
   String _keyAuthenticatedToken = "keyAuthenticatedToken";
   String keyAdmin = "keyAdmin";
+  List<User> userNameData = [];
   String keyAssociateAdmin = "keyAssociateAdmin";
   bool _isAdmin=false;
   bool _isAssociateAdmin=false;
@@ -26,6 +27,7 @@ class Authentication {
   User get authenticatedUser => _authenticatedUser;
   List<User>? _authenticatedTokenData;
   List<User>? get authenticatedTokenData => _authenticatedTokenData;
+  String get token => _authenticatedUser.code?? "";
   bool get isAuthenticated => _authenticatedUser.token != null;
   // bool get isAdmin{
   //   if(authenticatedUser.roleList!=null && authenticatedUser.roleList!.isNotEmpty)
@@ -90,6 +92,7 @@ class Authentication {
   Future<void> saveAuthenticatedUser({
     bool? isAssociateAdmin, 
     bool? isAdmin,
+    bool isAdd=true,
     required User authenticatedUser,
   }) async {
     try {
@@ -175,6 +178,23 @@ class Authentication {
       await SharedPreferences.getInstance()
         ..remove(_keyAuthenticatedToken)
         ..clear();
+    } catch (e) {
+      debugPrint(
+        "Authentication:clearAuthenticatedUser:Exception:$e",
+      );
+    }
+  }
+  Future<void> clearAuthenticatedUser() async {
+    try {
+      _authenticatedUser = User();
+
+      await SharedPreferences.getInstance()
+        ..remove(_keyAuthenticatedUser)
+        ..clear();
+
+      // ignore: avoid_single_cascade_in_expression_statements
+      await SharedPreferences.getInstance()
+        ..remove(token);
     } catch (e) {
       debugPrint(
         "Authentication:clearAuthenticatedUser:Exception:$e",

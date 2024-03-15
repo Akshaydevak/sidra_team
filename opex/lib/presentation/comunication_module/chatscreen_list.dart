@@ -333,15 +333,16 @@ class _MyChatListState extends State<MyChatList> {
                                                     Container(
                                                       key: new PageStorageKey(
                                 "audio ${widget.roomid}${widget.messageList!.message}",),
-                                                      child: VoiceMessage(
-                                                          audioSrc:
-                                                              widget.messageList!.message ?? "",
-                                                          played:
-                                                              false, // To show played badge or not.
-                                                          me: false, // Set message side.
-                                                          onPlay:
-                                                              () {}, // Do something when voice played.
-                                                        ),
+                                                      child:VoiceMessageView(controller: VoiceController(
+                                                        audioSrc:  widget.messageList.message ?? "",
+                                                        maxDuration: const Duration(hours:5),
+                                                        isFile: false,
+                                                        onComplete: () {},
+                                                        onPause: () {},
+                                                        onPlaying: () {},
+                                                      ),
+                                                        me: false,
+                                                      )
                                                     ),
                                             Positioned(
                                                         right: 6,
@@ -891,15 +892,16 @@ class _MyChatListState extends State<MyChatList> {
                                                             Container(
                                                               key: new PageStorageKey(
                                   "image ${widget.roomid}${widget.messageList!.message}",),
-                                                              child: VoiceMessage(
-                                                                audioSrc: widget.messageList!.message ??
-                                                                    "",
-                                                                played:
-                                                                    false, // To show played badge or not.
-                                                                me: false, // Set message side.
-                                                                onPlay:
-                                                                    () {}, // Do something when voice played.
+                                                              child: VoiceMessageView(controller: VoiceController(
+                                                                audioSrc:  widget.messageList.message ?? "",
+                                                                maxDuration: const Duration(hours:5),
+                                                                isFile: false,
+                                                                onComplete: () {},
+                                                                onPause: () {},
+                                                                onPlaying: () {},
                                                               ),
+                                                                me: false,
+                                                              )
         ),
                                                     Positioned(
                                                                  right: 6,
@@ -1525,15 +1527,16 @@ class _MyChatListState extends State<MyChatList> {
                                                    Container(
                                                   key: new PageStorageKey(
                                 "image ${widget.roomid}${widget.messageList!.message}",),
-                                                     child: VoiceMessage(
-                                                        audioSrc:
-                                                            widget.messageList!.message ?? "",
-                                                        played:
-                                                            true, // To show played badge or not.
-                                                        me: true, // Set message side.
-                                                        onPlay:
-                                                            () {}, // Do something when voice played.
-                                                      ),
+                                                     child: VoiceMessageView(controller: VoiceController(
+                                                       audioSrc:  widget.messageList.message ?? "",
+                                                       maxDuration: const Duration(hours:5),
+                                                       isFile: false,
+                                                       onComplete: () {},
+                                                       onPause: () {},
+                                                       onPlaying: () {},
+                                                     ),
+                                                       me: false,
+                                                     )
                                                    ),
                                            Positioned(
                                                                    right: 5,

@@ -12,7 +12,7 @@ import '../../authentication/authentication.dart';
 
 class OrderDataSource {
   Dio client = Dio();
-
+  List<User> authenticatedTokenList = [];
   // order list
   Future<PaginatedResponse> listOrders() async {
     List<ListOrdersModel> tasktypeList = [];
@@ -64,8 +64,6 @@ class OrderDataSource {
   Future<DoubleResponse> login(
       String? email, String? password, String? code) async {
     User authenticatedUser;
-    print(
-        "heyyyy loginnnn urll https://api-uat-user.sidrabazar.com/user-employee_employeeuserlogin/sidracart");
     print(email.toString()+password.toString()+code.toString());
     final response = await client.post(
       data:
@@ -86,33 +84,89 @@ class OrderDataSource {
     );
     print(response.data);
     if (response.data['status'] == "success") {
+      print("log out check ${authentication.userNameData.length}");
       authenticatedUser = User.fromJson(response.data['data']);
-      await authentication.saveAuthenticatedUser(
-          authenticatedUser: authenticatedUser);
-      print("roleesssss ${authentication.authenticatedUser.roleList}");
-      for (int i = 0;
-      i < authentication.authenticatedUser.roleList!.length;
-      i++) {
-        if (authentication.authenticatedUser.roleList?[i] == "admin") {
+      // await authentication.saveAuthenticatedUser(
+      //     authenticatedUser: authenticatedUser);
+      print("roleesssss ${authenticatedUser.roleList}");
+      for (int i = 0; i < authenticatedUser.roleList!.length; i++) {
+
+        if (authenticatedUser.roleList?[i] == "admin") {
           await authentication.saveAuthenticatedUser(
               authenticatedUser: authenticatedUser, isAdmin: true,isAssociateAdmin: false);
         }
-        else   if (authentication.authenticatedUser.roleList?[i] == "associate_admin") {
+        else   if (authenticatedUser.roleList?[i] == "associate_admin") {
           await authentication.saveAuthenticatedUser(
               authenticatedUser: authenticatedUser, isAssociateAdmin: true,isAdmin: false);
         }
-        else{
+        else if (authenticatedUser.roleList?[i] == "staff") {
           await authentication.saveAuthenticatedUser(
               authenticatedUser: authenticatedUser, isAdmin: false);
         }
       }
+      authenticatedTokenList.add(authenticatedUser);
+      await authentication.saveAuthenticatedToken(
+          authenticatedTokenData: authenticatedTokenList);
       print("roleesssss adminnn ${authentication.isAdmin}");
+      print("roleesssss adminnn ${authenticatedTokenList}");
 
       return DoubleResponse(
           response.data['status'] == "success", response.data['message']);
     }
     return DoubleResponse(
         response.data['status'] == "success", response.data['message']);
+  }
+
+  //switch account get data
+  Future<DataResponse> switchUserAccountGetData({required String token}) async {
+    User userData = User();
+    final response = await client.get(
+        "https://api-uat-user.sidrabazar.com/user-director_check-auth-token/admin",
+        options: Options(
+          validateStatus: (status) => true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'token $token',
+          },
+        ));
+    print("switch user dataSource ${response.data}");
+
+
+    authentication.clearAuthenticatedUser();
+    // authentication.clearAuthenticatedTokens();
+
+    if (response.data['status'] == 'success') {
+      userData = User.fromJson((response.data['data']));
+      print("user dataaaaaa !!!!! ${userData.fname}");
+      if (userData.code != null) {
+        for (int i = 0; i < userData.roleList2!.length;
+        i++) {
+
+          if (userData.roleList2?[i] == "admin") {
+            await authentication.saveAuthenticatedUser(authenticatedUser: userData,isAdd: false,
+                isAdmin: true,isAssociateAdmin: false);
+            // await authentication.saveAuthenticatedUser(
+            //     authenticatedUser: authenticatedUser,);
+          }
+          else   if (userData.roleList2?[i] == "associate_admin") {
+            await authentication.saveAuthenticatedUser(authenticatedUser: userData,isAdd: false,
+                isAdmin: false,isAssociateAdmin: true);
+            // await authentication.saveAuthenticatedUser(
+            //     authenticatedUser: authenticatedUser, isAssociateAdmin: true,isAdmin: false);
+          }
+          else if(userData.roleList2?[i] == "staff"){
+            await authentication.saveAuthenticatedUser(authenticatedUser: userData,isAdd: false,
+                isAdmin: false);
+            // await authentication.saveAuthenticatedUser(
+            //     authenticatedUser: authenticatedUser, isAdmin: false);
+          }
+        }
+
+      }
+    }
+    print("authhhhh user ${authentication.authenticatedUser.token}");
+    return DataResponse(data: userData, error: response.data['message']);
   }
 
   //picking list

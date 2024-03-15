@@ -232,166 +232,168 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
         //     ],
         //   ),
         // ),
-        body: SingleChildScrollView(
-          child: Column(
+        body:
 
-            children: [
-           if(isMobile)   SizedBox(
-                height: 10,
-              ),
-              Column(
-                mainAxisAlignment:isMobile? MainAxisAlignment.center:MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Row(
-                      mainAxisAlignment:MainAxisAlignment.center,
+            Column(
+              mainAxisAlignment:isMobile? MainAxisAlignment.center:MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                      children: [
-                        Container(
-                          width: 90,
-                          height: 90,
-                          // color: Colors.yellow,
-                          child: Stack(
-                            children: [
-                              profilePic != ""
-                                  ? Container(
-                                      width: 80,
-                                      // height: 181,
-                                      decoration: BoxDecoration(
+                Container(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Row(
+                    mainAxisAlignment:MainAxisAlignment.center,
+
+                    children: [
+                      Container(
+                        width: 90,
+                        height: 90,
+                        // color: Colors.yellow,
+                        child: Stack(
+                          children: [
+                            profilePic != ""
+                                ? Container(
+                                    width: 80,
+                                    // height: 181,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                          image:
+                                              NetworkImage(profilePic ?? ""),
+                                          fit: BoxFit.cover),
+                                      // border: Border.all(
+                                      //   color: Colors.white,
+                                      //   width: 3,
+                                      // ),
+                                    ),
+                                  )
+                                : Container(
+                                    width: 80,
+                                    // height: 181,
+                                    padding: EdgeInsets.all(15),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
                                         // color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                            image:
-                                                NetworkImage(profilePic ?? ""),
-                                            fit: BoxFit.cover),
-                                        // border: Border.all(
-                                        //   color: Colors.white,
-                                        //   width: 3,
-                                        // ),
-                                      ),
-                                    )
-                                  : Container(
-                                      width: 80,
-                                      // height: 181,
-                                      padding: EdgeInsets.all(15),
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                          // color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Color(0xffD3D3D3)
-                                              .withOpacity(0.5)),
-                                      child: SvgPicture.string(
-                                        ProfileSvg().profileSvg,
-                                        width: 25,
-                                        height: 25,
-                                      ),
-                                    ),
-                              // Image.asset("asset/newprofile.png"),
-
-                              Positioned(
-                                  bottom: 7,
-                                  right: 0,
-                                  // left: 0,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      getImage(ImageSource.gallery);
-                                    },
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        color: Color(0xffD3D3D3)
+                                            .withOpacity(0.5)),
                                     child: SvgPicture.string(
-                                      ProfileSvg().editProfileIcon,
+                                      ProfileSvg().profileSvg,
+                                      width: 25,
+                                      height: 25,
                                     ),
-                                  )),
-                            ],
-                          ),
+                                  ),
+                            // Image.asset("asset/newprofile.png"),
+
+                            Positioned(
+                                bottom: 7,
+                                right: 0,
+                                // left: 0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    getImage(ImageSource.gallery);
+                                  },
+                                  child: SvgPicture.string(
+                                    ProfileSvg().editProfileIcon,
+                                  ),
+                                )),
+                          ],
                         ),
-                        // SizedBox(width: 10,),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     Future.delayed(Duration(seconds: 0),(){
-                        //       myfocus.requestFocus(); //auto focus on second text field.
-                        //     });
-                        //
-                        //     setState(() {
-                        //
-                        //       focus=true;
-                        //       print("focusss$focus");
-                        //     });
-                        //   },
-                        //   child: Container(
-                        //       child: Text("Edit Profile",
-                        //       style: GoogleFonts.roboto(
-                        //         color: ColorPalette.primary,
-                        //         fontSize: w/26,
-                        //         fontWeight: FontWeight.w500
-                        //       ),)),
-                        // )
-                      ],
-                    ),
+                      ),
+                      // SizedBox(width: 10,),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Future.delayed(Duration(seconds: 0),(){
+                      //       myfocus.requestFocus(); //auto focus on second text field.
+                      //     });
+                      //
+                      //     setState(() {
+                      //
+                      //       focus=true;
+                      //       print("focusss$focus");
+                      //     });
+                      //   },
+                      //   child: Container(
+                      //       child: Text("Edit Profile",
+                      //       style: GoogleFonts.roboto(
+                      //         color: ColorPalette.primary,
+                      //         fontSize: w/26,
+                      //         fontWeight: FontWeight.w500
+                      //       ),)),
+                      // )
+                    ],
                   ),
-                  SizedBox(
-                    height: 10,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: Column(
+                    children: [
+                      ProfileTextFormField(
+                        myfocus: myfocus,
+                        // onTap: () {
+                        //   readOnly[0] = !readOnly[0];
+                        //   setState(() {});
+                        // },
+                        readOnly: true,
+                        // suffixIcon: Icon(Icons.edit,size: 15,color: Color(0xff555555),),
+                        controller: nameController,
+                        onChanege: (sa) {
+                          activeTextfield = true;
+                          setState(() {});
+                        },
+                      ),
+                      // SizedBox(
+                      //   height: 4,
+                      // ),
+                      ProfileTextFormField(
+                        // onTap: () {
+                        //   readOnly[1] = !readOnly[1];
+                        //   setState(() {});
+                        // },
+                        readOnly: true,
+                        myfocus: myfocus1,
+                        controller: mobileController,
+                        onChanege: (sa) {
+                          activeTextfield = true;
+                          setState(() {});
+                        },
+                      ),
+                      // SizedBox(
+                      //   height: 4,
+                      // ),
+                      ProfileTextFormField(
+                        // onTap: () {
+                        //   readOnly[2] = !readOnly[2];
+                        //   setState(() {});
+                        // },
+                        readOnly: true,
+                        myfocus: myfocus2,
+                        controller: emailController,
+                        onChanege: (sa) {
+                          activeTextfield = true;
+                          setState(() {});
+                        },
+                      )
+                    ],
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25),
+                ),
+                SizedBox(
+                  height: 35,
+                ),
+                Expanded(
+                  // height: 200,
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        ProfileTextFormField(
-                          myfocus: myfocus,
-                          // onTap: () {
-                          //   readOnly[0] = !readOnly[0];
-                          //   setState(() {});
-                          // },
-                          readOnly: true,
-                          // suffixIcon: Icon(Icons.edit,size: 15,color: Color(0xff555555),),
-                          controller: nameController,
-                          onChanege: (sa) {
-                            activeTextfield = true;
-                            setState(() {});
-                          },
-                        ),
-                        // SizedBox(
-                        //   height: 4,
-                        // ),
-                        ProfileTextFormField(
-                          // onTap: () {
-                          //   readOnly[1] = !readOnly[1];
-                          //   setState(() {});
-                          // },
-                          readOnly: true,
-                          myfocus: myfocus1,
-                          controller: mobileController,
-                          onChanege: (sa) {
-                            activeTextfield = true;
-                            setState(() {});
-                          },
-                        ),
-                        // SizedBox(
-                        //   height: 4,
-                        // ),
-                        ProfileTextFormField(
-                          // onTap: () {
-                          //   readOnly[2] = !readOnly[2];
-                          //   setState(() {});
-                          // },
-                          readOnly: true,
-                          myfocus: myfocus2,
-                          controller: emailController,
-                          onChanege: (sa) {
-                            activeTextfield = true;
-                            setState(() {});
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 35,
-                  ),
-                  authentication.isAdmin == true ||
-                          authentication.isAssociateAdmin
-                      ? Container(
+                        authentication.isAdmin == true ||
+                            authentication.isAssociateAdmin
+                            ?
+                        Container(
                           alignment: Alignment.centerLeft,
                           padding: EdgeInsets.only(left: 20),
                           // color: Colors.yellow,
@@ -414,7 +416,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                 padding: EdgeInsets.only(right: 15),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     GestureDetector(
                                       onTap: () {
@@ -424,7 +426,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                           withNavBar: false,
                                           // OPTIONAL VALUE. True by default.
                                           pageTransitionAnimation:
-                                              PageTransitionAnimation.fade,
+                                          PageTransitionAnimation.fade,
                                         );
                                       },
                                       child: ProfileMenuCard(
@@ -454,54 +456,54 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               authentication.isAssociateAdmin
                                   ? Container()
                                   : Container(
-                                      padding: EdgeInsets.only(right: 15),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              PersistentNavBarNavigator
-                                                  .pushNewScreen(
-                                                context,
-                                                screen: ProfileOrganisation(),
-                                                withNavBar: false,
-                                                // OPTIONAL VALUE. True by default.
-                                                pageTransitionAnimation:
-                                                    PageTransitionAnimation
-                                                        .fade,
-                                              );
-                                            },
-                                            child: ProfileMenuCard(
-                                              iconSvg: AppsSvg().orgIcon,
-                                              title: "Your Organization",
-                                              // suffixIcon: Text("English",
-                                              //   style: GoogleFonts.roboto(
-                                              //     fontSize: w/24,
-                                              //     color: Color(0xff555555),
-                                              //   ),)
-                                            ),
-                                          ),
-                                        ],
+                                padding: EdgeInsets.only(right: 15),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        PersistentNavBarNavigator
+                                            .pushNewScreen(
+                                          context,
+                                          screen: ProfileOrganisation(),
+                                          withNavBar: false,
+                                          // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation:
+                                          PageTransitionAnimation
+                                              .fade,
+                                        );
+                                      },
+                                      child: ProfileMenuCard(
+                                        iconSvg: AppsSvg().orgIcon,
+                                        title: "Your Organization",
+                                        // suffixIcon: Text("English",
+                                        //   style: GoogleFonts.roboto(
+                                        //     fontSize: w/24,
+                                        //     color: Color(0xff555555),
+                                        //   ),)
                                       ),
                                     ),
+                                  ],
+                                ),
+                              ),
                               authentication.isAssociateAdmin
                                   ? Container()
                                   : SizedBox(
-                                      height: 10,
-                                    ),
+                                height: 10,
+                              ),
                               authentication.isAssociateAdmin
                                   ? Container()
                                   : Container(
-                                      height: 1,
-                                      width: w1,
-                                      color: Colors.grey.shade200,
-                                    ),
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
                               authentication.isAssociateAdmin
                                   ? Container()
                                   : SizedBox(
-                                      height: 10,
-                                    ),
+                                height: 10,
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   PersistentNavBarNavigator.pushNewScreen(
@@ -510,7 +512,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                     withNavBar: false,
                                     // OPTIONAL VALUE. True by default.
                                     pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
+                                    PageTransitionAnimation.fade,
                                   );
                                 },
                                 child: ProfileMenuCard(
@@ -536,14 +538,14 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                     withNavBar: false,
                                     // OPTIONAL VALUE. True by default.
                                     pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
+                                    PageTransitionAnimation.fade,
                                   );
                                 },
                                 child: Container(
                                   padding: EdgeInsets.only(right: 15),
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       ProfileMenuCard(
                                         iconSvg: AppsSvg().groupIcon,
@@ -560,402 +562,405 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                             ],
                           ),
                         )
-                      : Container(),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(left: 20),
-                    // color: Colors.yellow,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "More About",
-                          style: GoogleFonts.roboto(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                            : Container(),
                         SizedBox(
-                          height: 20,
+                          height: 25,
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 20),
+                          // color: Colors.yellow,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ProfileMenuCard(
-
-                                  iconSvg: AppsSvg().languageSvgIcon,
-                                  title: "Language",
+                              Text(
+                                "More About",
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(right: 15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ProfileMenuCard(
+                                    
+                                        iconSvg: AppsSvg().languageSvgIcon,
+                                        title: "Language",
+                                        // isWidth: false,
+                                        suffixIcon: Text(
+                                          "English",
+                                          style: GoogleFonts.roboto(
+                                            fontSize:isMobile? w / 24:w/30,
+                                            color: Color(0xff555555),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: const NewJobList(),
+                                    withNavBar: false,
+                                    // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.fade,
+                                  );
+                                },
+                                child: ProfileMenuCard(
                                   // isWidth: false,
-                                  suffixIcon: Text(
-                                    "English",
-                                    style: GoogleFonts.roboto(
-                                      fontSize:isMobile? w / 24:w/30,
-                                      color: Color(0xff555555),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: const NewJobList(),
-                              withNavBar: false,
-                              // OPTIONAL VALUE. True by default.
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.fade,
-                            );
-                          },
-                          child: ProfileMenuCard(
-                            // isWidth: false,
-                              iconSvg: AppsSvg().taskProfileIcon,
-                              title: "Task and Activities"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            isToggle = !isToggle;
-                            setState(() {});
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(right: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ProfileMenuCard(
-                                  // isWidth: false,
-                                  iconSvg: HomeSvg().notiIcon,
-                                  title: "Notification Alert",
-                                  suffixIcon: isToggle
-                                      ? SvgPicture.string(
+                                    iconSvg: AppsSvg().taskProfileIcon,
+                                    title: "Task and Activities"),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  isToggle = !isToggle;
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(right: 15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ProfileMenuCard(
+                                        // isWidth: false,
+                                        iconSvg: HomeSvg().notiIcon,
+                                        title: "Notification Alert",
+                                        suffixIcon: isToggle
+                                            ? SvgPicture.string(
                                           HomeSvg().toggleActive,
                                           height: 25,
                                           width: 25,
                                         )
-                                      : SvgPicture.string(
+                                            : SvgPicture.string(
                                           HomeSvg().toggleInActive,
                                           height: 25,
                                           width: 25,
                                         ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: HelpScreen(autoFocus: false),
-                              withNavBar: false,
-                              // OPTIONAL VALUE. True by default.
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.slideUp,
-                            );
-                          },
-                          child: ProfileMenuCard(
-                              // isWidth: false,
-                              iconSvg: AppsSvg().helpandsupportIconProfile,
-                              title: "Help & Support"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: ChangePasswordScreen(),
-                              withNavBar: false,
-                              // OPTIONAL VALUE. True by default.
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.slideUp,
-                            );
-                          },
-                          child: ProfileMenuCard(
-                              // isWidth: false,
-                              iconSvg: AppsSvg().chagePassword,
-                              title: "Change Password"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            String email =
-                                Uri.encodeComponent("care@sidrateams.com");
-                            String subject =
-                                Uri.encodeComponent("Share feedback");
-                            String body = Uri.encodeComponent("Hi,");
-                            print(subject); //output: Hello%20Flutter
-                            Uri mail = Uri.parse(
-                                "mailto:$email?subject=$subject&body=$body");
-                            if (await launchUrl(mail)) {
-                            } else {}
-                          },
-                          child: ProfileMenuCard(
-                              // isWidth: false,
-                              iconSvg: AppsSvg().sharefeed,
-                              title: "Share feedback"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: w1,
-                          color: Colors.grey.shade200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () async{
-                            pref=await SharedPreferences.getInstance();
-                            fcm = pref?.getString("fcm")??"";
-                            // print("SHIFAS FCM$fcm");
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    surfaceTintColor: Colors.white,
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Container(
-                                          width: w,
-                                          // height: h/7,
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            "Confirm",
-                                            style: GoogleFonts.roboto(
-                                              color: ColorPalette.black,
-                                              fontSize: w / 24,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: HelpScreen(autoFocus: false),
+                                    withNavBar: false,
+                                    // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.slideUp,
+                                  );
+                                },
+                                child: ProfileMenuCard(
+                                  // isWidth: false,
+                                    iconSvg: AppsSvg().helpandsupportIconProfile,
+                                    title: "Help & Support"),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: ChangePasswordScreen(),
+                                    withNavBar: false,
+                                    // OPTIONAL VALUE. True by default.
+                                    pageTransitionAnimation:
+                                    PageTransitionAnimation.slideUp,
+                                  );
+                                },
+                                child: ProfileMenuCard(
+                                  // isWidth: false,
+                                    iconSvg: AppsSvg().chagePassword,
+                                    title: "Change Password"),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  String email =
+                                  Uri.encodeComponent("care@sidrateams.com");
+                                  String subject =
+                                  Uri.encodeComponent("Share feedback");
+                                  String body = Uri.encodeComponent("Hi,");
+                                  print(subject); //output: Hello%20Flutter
+                                  Uri mail = Uri.parse(
+                                      "mailto:$email?subject=$subject&body=$body");
+                                  if (await launchUrl(mail)) {
+                                  } else {}
+                                },
+                                child: ProfileMenuCard(
+                                  // isWidth: false,
+                                    iconSvg: AppsSvg().sharefeed,
+                                    title: "Share feedback"),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 1,
+                                width: w1,
+                                color: Colors.grey.shade200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () async{
+                                  pref=await SharedPreferences.getInstance();
+                                  fcm = pref?.getString("fcm")??"";
+                                  // print("SHIFAS FCM$fcm");
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          surfaceTintColor: Colors.white,
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
                                           ),
-                                        ),
-                                        const Divider(),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          "Are you sure you want to logout from this application ?",
-                                          style: GoogleFonts.roboto(
-                                            color: ColorPalette.black,
-                                            fontSize: w / 28,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                  width: w / 3.3,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: const Color(
-                                                                0x26000000)
-                                                            .withOpacity(0.05)),
-                                                    // boxShadow: [
-                                                    //   BoxShadow(
-                                                    //     color: Color(0x26000000),
-                                                    //     blurRadius: 0,
-                                                    //     offset: Offset(0, 0),
-                                                    //   ),
-                                                    // ],
-                                                    color: Colors.white,
+                                              Container(
+                                                width: w,
+                                                // height: h/7,
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  "Confirm",
+                                                  style: GoogleFonts.roboto(
+                                                    color: ColorPalette.black,
+                                                    fontSize: w / 24,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "Cancel",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                        color: const Color(
-                                                            0xffa9a8a8),
-                                                        fontSize: w / 26,
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                                ),
+                                              ),
+                                              const Divider(),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                "Are you sure you want to logout from this application ?",
+                                                style: GoogleFonts.roboto(
+                                                  color: ColorPalette.black,
+                                                  fontSize: w / 28,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 30,
+                                              ),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                                  children: <Widget>[
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: Container(
+                                                        width: w / 3.3,
+                                                        padding: const EdgeInsets
+                                                            .symmetric(vertical: 10),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                          border: Border.all(
+                                                              width: 1,
+                                                              color: const Color(
+                                                                  0x26000000)
+                                                                  .withOpacity(0.05)),
+                                                          // boxShadow: [
+                                                          //   BoxShadow(
+                                                          //     color: Color(0x26000000),
+                                                          //     blurRadius: 0,
+                                                          //     offset: Offset(0, 0),
+                                                          //   ),
+                                                          // ],
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            "Cancel",
+                                                            textAlign:
+                                                            TextAlign.center,
+                                                            style:
+                                                            GoogleFonts.poppins(
+                                                              color: const Color(
+                                                                  0xffa9a8a8),
+                                                              fontSize: w / 26,
+                                                              fontWeight:
+                                                              FontWeight.w500,
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  final socketProvider = context
-                                                      .read<scoketProvider>();
-                                                  socketProvider.disconnect();
-                                                  authentication
-                                                      .clearAuthenticatedTokens();
-                                                  Variable.profilePic='';
-                                                  context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
-                                                  Navigator.of(context)
-                                                      .pushAndRemoveUntil(
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const LoginScreen()),
-                                                          (Route<dynamic>
-                                                                  route) =>
-                                                              false);
-                                                },
-                                                child: Container(
-                                                  width: w / 3.1,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 13),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                      colors: [
-                                                        ColorPalette.primary,
-                                                        ColorPalette.primary,
-                                                      ],
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        final socketProvider = context
+                                                            .read<scoketProvider>();
+                                                        socketProvider.disconnect();
+                                                        authentication
+                                                            .clearAuthenticatedTokens();
+                                                        Variable.profilePic='';
+                                                        context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
+                                                        Navigator.of(context)
+                                                            .pushAndRemoveUntil(
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                const LoginScreen()),
+                                                                (Route<dynamic>
+                                                            route) =>
+                                                            false);
+                                                      },
+                                                      child: Container(
+                                                        width: w / 3.1,
+                                                        padding: const EdgeInsets
+                                                            .symmetric(vertical: 13),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                          gradient:
+                                                          const LinearGradient(
+                                                            begin:
+                                                            Alignment.topCenter,
+                                                            end: Alignment
+                                                                .bottomCenter,
+                                                            colors: [
+                                                              ColorPalette.primary,
+                                                              ColorPalette.primary,
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          "Logout",
+                                                          textAlign: TextAlign.center,
+                                                          style: GoogleFonts.roboto(
+                                                            color: Colors.white,
+                                                            fontSize: w / 26,
+                                                            fontWeight:
+                                                            FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  child: Text(
-                                                    "Logout",
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.roboto(
-                                                      color: Colors.white,
-                                                      fontSize: w / 26,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ]),
-                                        SizedBox(
-                                          height: h / 80,
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                });
-                          },
-                          child: ProfileMenuCard(
-                              // isWidth: false,
-                              iconSvg: AppsSvg().logoutProfileIcon,
-                              title: "Logout"),
+                                                  ]),
+                                              SizedBox(
+                                                height: h / 80,
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                },
+                                child: ProfileMenuCard(
+                                  // isWidth: false,
+                                    iconSvg: AppsSvg().logoutProfileIcon,
+                                    title: "Logout"),
+                              ),
+                            ],
+                          ),
+                        ),
+                                    
+                        SizedBox(
+                          height: h / 10,
+                        ),
+                        Center(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.string(
+                                  AppsSvg().careIcon,
+                                  height: 10,
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "all rights reserved to sidrateams",
+                                  style: GoogleFonts.roboto(
+                                    fontSize: w / 32,
+                                    color: Color(0xff555555),
+                                  ),
+                                ),
+                              ],
+                            )),
+                        SizedBox(
+                          height: h / 20,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              SizedBox(
-                height: h / 10,
-              ),
-              Center(
-                  child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.string(
-                    AppsSvg().careIcon,
-                    height: 10,
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    "all rights reserved to sidrateams",
-                    style: GoogleFonts.roboto(
-                      fontSize: w / 32,
-                      color: Color(0xff555555),
-                    ),
-                  ),
-                ],
-              )),
-              SizedBox(
-                height: h / 20,
-              ),
-            ],
-          ),
+                ),
+
+          ],
         ),
       )),
     );

@@ -17,22 +17,38 @@ class UploadPictureEvent extends AttachmentEvent {
   final Uint8List image ;
   const UploadPictureEvent( { required this.image,});
 }
+// class UploadVideoEvent extends AttachmentEvent {
+//   final FilePickerResult video;
+//   const UploadVideoEvent({required this.video});
+// }
+
 class UploadVideoEvent extends AttachmentEvent {
-  final FilePickerResult video;
+  final Uint8List video;
   const UploadVideoEvent({required this.video});
 }
 
+// class UploadFilesEvent extends AttachmentEvent {
+//   final FilePickerResult files;
+//   const UploadFilesEvent({required this.files});
+// }
+
 class UploadFilesEvent extends AttachmentEvent {
-  final FilePickerResult files;
-  const UploadFilesEvent({required this.files});
+  final Uint8List files;
+  final String name;
+  const UploadFilesEvent({required this.files,required this.name});
 }
 
 class UploadAudioEvent extends AttachmentEvent {
   final FilePickerResult audio;
   const UploadAudioEvent({required this.audio});
 }
+// class UploadLiveAudioEvent extends AttachmentEvent {
+//   final File audio;
+//   final bool comment;
+//   const UploadLiveAudioEvent({required this.audio, required this.comment});
+// }
 class UploadLiveAudioEvent extends AttachmentEvent {
-  final File audio;
+  final Uint8List audio;
   final bool comment;
   const UploadLiveAudioEvent({required this.audio, required this.comment});
 }

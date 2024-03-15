@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 ////* assign a GlobalKey to the Scaffold, then use the key.currentState property to obtain the ScaffoldState rather than
 /// using the Scaffold.of() function.   /
 /* exception Occurs in  Debugg procedure due to this  (when using  Scaffold.of() instead of  scafoldKey.currentState line NO:15) */
-
+void showDailogPopUp(BuildContext context, Widget child) {
+  showDialog(
+    context: context,
+    builder: (context) => child,
+  );
+}
 showSnackBar(
   BuildContext context, {
   required String message,

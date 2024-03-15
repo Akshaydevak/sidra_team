@@ -781,6 +781,7 @@ import 'package:cluster/presentation/comunication_module/pinned_profile.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
+import 'package:cluster/presentation/mpos/search_card.dart';
 import 'package:cluster/presentation/task_operation/lottieLoader.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -814,6 +815,7 @@ class CommunicationModule extends StatefulWidget {
  
 class _CommunicationModuleState extends State<CommunicationModule> {
   Future<void>? _initializeSocket;
+  List<UserDummyList> filteredList=[];
   bool isHomeMount = true;
   Dio client = Dio();
   String _data = '';
@@ -1042,7 +1044,7 @@ setState(() {
     isMount = false;
     super.dispose();
   }
- 
+  String searchtext="";
   TextEditingController searchController = TextEditingController();
   // bool isrefresh= false;
   // void refresh(bool val){
@@ -1382,6 +1384,31 @@ setState(() {
                                           // height: MediaQuery.of(context).size.height*1,
                                           child: Column(
                                             children: [
+                                              SizedBox(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: SearchCard(hint: "Search User ...",
+                                                    controller: searchController,
+                                                    onchange: (val){
+                                                      setState(() {
+                                                        searchtext=val;
+
+                                                        filteredList = userlist.where((user) {
+                                                          return user.name?.toLowerCase().contains(searchtext.toLowerCase()) ?? false;
+                                                        }).toList();
+                                                      });
+                                                    },
+                                                    isCollection: true,
+                                                    onTap1: (){
+                                                      searchtext="";
+                                                      searchController.clear();
+                                                      setState(() {
+
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
                                               // AppBarCommunication(token: widget.token),
                                               // SizedBox(height: 10,),
                                               // ChatTypeList(
@@ -1402,7 +1429,29 @@ setState(() {
                                                                     const SizedBox(
                                                                       height: 20,
                                                                     ),
-                                              ListView.separated(
+                                              searchtext!=""? ListView.separated(
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  // padding: EdgeInsets.all(10),
+                                                  itemCount:filteredList.length,
+                                                  shrinkWrap: true,
+                                                  itemBuilder:(context, index) {
+                                                    return //userlist[index].latestMessage!=null?
+                                                      ChatCard(
+                                                          onlineUsers: onlineUsers,
+                                                          loginUserId: loginuserId,
+                                                          token: token,
+                                                          socket: socketCon,
+                                                          communicationUserModel:
+                                                          filteredList[index],
+                                                          isGroup:
+                                                          filteredList[index].isgrp ?? true
+                                                      );
+                                                  }
+                                                  ,
+                                                  separatorBuilder: ( context,index)=>
+                                                  //userlist[index].latestMessage!=null?
+                                                  SizedBox(height:15,)//:SizedBox()
+                                              ):   ListView.separated(
                                                 physics: NeverScrollableScrollPhysics(),
                                                 // padding: EdgeInsets.all(10),
                                                 itemCount:userlist.length,

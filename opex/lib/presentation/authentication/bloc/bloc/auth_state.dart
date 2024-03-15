@@ -26,6 +26,17 @@ class LoginSuccess extends AuthState {
 }
 
 class LoginFailed extends AuthState {}
+class SwitchUserAuthGetSuccess extends AuthState {
+  final User userData;
+  const SwitchUserAuthGetSuccess({required this.userData});
+
+
+}
+class SwitchUserAuthGetLoading extends AuthState {}
+class SwitchUserAuthGetFailed extends AuthState {
+  final String? error;
+  const SwitchUserAuthGetFailed({this.error});
+}
 // //employee list
 // class GetEmployeeListInitial extends AuthState {}
 

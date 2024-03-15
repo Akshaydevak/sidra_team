@@ -30,6 +30,8 @@ class User extends Equatable {
   final String? lname;
   @JsonKey(name: 'role_list')
   final List<dynamic>? roleList;
+  @JsonKey(name: 'roles')
+  final List<dynamic>? roleList2;
   @JsonKey(name: 'code')
   final String? code;
   @JsonKey(name: 'organization_type')
@@ -44,6 +46,7 @@ class User extends Equatable {
   final bool? isEmployee;
   User( {
     this.loginId,
+    this.roleList2,
     this.fname,
     this.lname,
     this.roleList,

@@ -27,7 +27,7 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
     else if (event is UploadVideoEvent) {
       yield* uploadVideoMap(video: event.video);
     } else if (event is UploadFilesEvent) {
-      yield* uploadFilesMap(files: event.files);
+      yield* uploadFilesMap(files: event.files,name: event.name);
     } else if (event is UploadAudioEvent) {
       yield* uploadAudioMap(files: event.audio);
     } else if (event is UploadGroupProfilePicEvent) {
@@ -63,7 +63,7 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
   }
 
   Stream<AttachmentState> uploadVideoMap(
-      {required FilePickerResult video}) async* {
+      {required Uint8List video}) async* {
     yield UploadVideoLoading();
     final dataResponse = await _productData.uploadImageData(img: video);
     if (dataResponse.isNotEmpty) {
@@ -74,7 +74,7 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
   }
 
   Stream<AttachmentState> uploadFilesMap(
-      {required FilePickerResult files}) async* {
+      {required Uint8List files,required String name}) async* {
     yield UploadFilesLoading();
     final dataResponse = await _productData.uploadImageData(img: files);
     if (dataResponse.isNotEmpty) {
@@ -86,16 +86,16 @@ class AttachmentBloc extends Bloc<AttachmentEvent, AttachmentState> {
 
   Stream<AttachmentState> uploadAudioMap(
       {required FilePickerResult files}) async* {
-    yield UploadAudioLoading();
-    final dataResponse = await _productData.uploadImageData(img: files);
-    if (dataResponse.isNotEmpty) {
-      yield UploadAudioSuccess(upload: dataResponse);
-    } else {
-      yield UploadAudioFailed();
-    }
+    // yield UploadAudioLoading();
+    // final dataResponse = await _productData.uploadImageData(img: files);
+    // if (dataResponse.isNotEmpty) {
+    //   yield UploadAudioSuccess(upload: dataResponse);
+    // } else {
+    //   yield UploadAudioFailed();
+    // }
   }
    Stream<AttachmentState> uploadLiveAudioMap(
-      {required File files}) async* {
+      {required Uint8List files}) async* {
     yield UploadLiveAudioLoading();
     final dataResponse = await _productData.uploadLiveAudioData(img:files );
     if (dataResponse.isNotEmpty) {

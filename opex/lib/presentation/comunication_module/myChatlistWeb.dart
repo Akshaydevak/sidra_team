@@ -40,7 +40,7 @@ class WebMyChatList extends StatefulWidget {
   final String? roomid;
   final bool? seentick;
   final List<GroupUserList> grpmember;
-  final VoidCallback ontap;
+  final Function( String) ontap;
   const WebMyChatList({super.key,
     required this.messageList,
     this.msgdate,
@@ -269,10 +269,12 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                       fit: BoxFit.fill,
                                       image:
 
-                                      ResizeImage( NetworkImage(
+                                   //   ResizeImage(
+                                          NetworkImage(
                                         widget.messageList
                                             .message ??
-                                            "",),width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
+                                            "",)
+                                          //,width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
                                   ),
                                   Positioned(child:_downloadStatus[widget.messageList?.message??""] ==false? BlurryContainer(color: Colors.transparent,
 
@@ -339,17 +341,19 @@ class _WebMyChatListState extends State<WebMyChatList> {
               Stack(
                   children:[
                     Container(
+
                       key: new PageStorageKey(
                         "audio ${widget.roomid}${widget.messageList!.message}",),
-                      child: VoiceMessage(
-                        audioSrc:
-                        widget.messageList!.message ?? "",
-                        played:
-                        false, // To show played badge or not.
-                        me: false, // Set message side.
-                        onPlay:
-                            () {}, // Do something when voice played.
+                      child: VoiceMessageView(controller: VoiceController(
+                        audioSrc:  widget.messageList.message ?? "",
+                        maxDuration: const Duration(hours:5),
+                        isFile: false,
+                        onComplete: () {},
+                        onPause: () {},
+                        onPlaying: () {},
                       ),
+                        me: false,
+                      )
                     ),
                     Positioned(
                       right: 6,
@@ -558,7 +562,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
                   child: GestureDetector(
                     onLongPress: (){
                       print("enterreeeeeeeeee");
-                      widget.ontap();
+                      widget.ontap( widget.messageList
+                          .message??"");
                     },
 
                     child: Container(
@@ -600,8 +605,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Linkify(
-                                  linkStyle: TextStyle(decorationColor: Colors.blue),
+                                SelectableLinkify(
+                                  linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.red),
                                   onOpen: (link) async {
                                     if (!await launchUrl(Uri.parse(link.url))) {
                                       throw Exception('Could not launch ${link.url}');
@@ -612,9 +617,16 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                       "",
 
                                   textAlign: TextAlign.left,
+
+
+
+
+                                  
                                   style:  TextStyle(
                                       fontSize:isMobile?w/29:w/27,
-                                      color: Colors.black),),
+                                      color: Colors.black),
+                                ),
+
                                 // Text(
                                 // widget.messageList!
                                 //         .message ??
@@ -893,17 +905,19 @@ class _WebMyChatListState extends State<WebMyChatList> {
                         Stack(
                             children:[
                               Container(
+
                                 key: new PageStorageKey(
                                   "image ${widget.roomid}${widget.messageList!.message}",),
-                                child: VoiceMessage(
-                                  audioSrc: widget.messageList!.message ??
-                                      "",
-                                  played:
-                                  false, // To show played badge or not.
-                                  me: false, // Set message side.
-                                  onPlay:
-                                      () {}, // Do something when voice played.
+                                child: VoiceMessageView(controller: VoiceController(
+                                  audioSrc:  widget.messageList.message ?? "",
+                                  maxDuration: const Duration(hours:5),
+                                  isFile: false,
+                                  onComplete: () {},
+                                  onPause: () {},
+                                  onPlaying: () {},
                                 ),
+                                  me: false,
+                                )
                               ),
                               Positioned(
                                 right: 6,
@@ -1143,7 +1157,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                   25,
                                   maxWidth:600),
                                 child: GestureDetector(
-                                  onLongPress: ()=>widget.ontap!(),
+                                  onLongPress: (){ widget.ontap( widget.messageList
+                                      .message??"");},
                                   child: Container(
                                     decoration: BoxDecoration(
                                       // RoundedRectangleBorder(
@@ -1249,7 +1264,10 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                     600,
                                   ),
                                   child: GestureDetector(
-                                    onLongPress: ()=>widget.ontap!(),
+                                    onLongPress: (){
+                                      widget.ontap( widget.messageList
+                                          .message??"");
+                                    },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         // RoundedRectangleBorder(
@@ -1288,8 +1306,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Linkify(
-                                                  linkStyle: TextStyle(decorationColor: Colors.blue),
+                                                SelectableLinkify(
+                                                  linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.white,),
                                                   onOpen: (link) async {
                                                     if (!await launchUrl(Uri.parse(link.url))) {
                                                       throw Exception('Could not launch ${link.url}');
@@ -1515,17 +1533,19 @@ class _WebMyChatListState extends State<WebMyChatList> {
             Stack(
                 children:[
                   Container(
+
                     key: new PageStorageKey(
                       "image ${widget.roomid}${widget.messageList!.message}",),
-                    child: VoiceMessage(
-                      audioSrc:
-                      widget.messageList!.message ?? "",
-                      played:
-                      true, // To show played badge or not.
-                      me: true, // Set message side.
-                      onPlay:
-                          () {}, // Do something when voice played.
+                    child: VoiceMessageView(controller: VoiceController(
+                      audioSrc:  widget.messageList.message ?? "",
+                      maxDuration: const Duration(hours:5),
+                      isFile: false,
+                      onComplete: () {},
+                      onPause: () {},
+                      onPlaying: () {},
                     ),
+                      me: true,
+                    )
                   ),
                   Positioned(
                     right: 5,
@@ -1803,7 +1823,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
                       .width/1.5,
                 ),
                 child: GestureDetector(
-                  onLongPress: ()=>widget.ontap(),
+                  onLongPress: ()=> widget.ontap( widget.messageList
+                      .message??""),
 
                   child: Container(
                     decoration: BoxDecoration(
@@ -1920,9 +1941,11 @@ class _WebMyChatListState extends State<WebMyChatList> {
                         .width/1.5,
                   ),
                   child: GestureDetector(
-                    onLongPress: ()=>widget.ontap(),
+                    onLongPress: (){
+    widget.ontap( widget.messageList
+        .message??"");
 
-
+    },
                     child: Container(
                       decoration: BoxDecoration(
                         // RoundedRectangleBorder(
@@ -1965,7 +1988,7 @@ class _WebMyChatListState extends State<WebMyChatList> {
                               children: [
 
 
-                                Linkify(
+                                SelectableLinkify(
                                   options: LinkifyOptions(
                                       humanize: false
                                   ),
@@ -2216,6 +2239,79 @@ class MentionText extends StatelessWidget {
     return RichText(
       text: TextSpan(children: textSpans ,style: TextStyle(color:color==true?Colors.white:Colors.black,)),
     );
+  }
+}
+
+
+// class CustomSelectableLinkify extends StatefulWidget {
+//   final String text;
+//   final TextStyle? style;
+//   final Color selectedTextColor;
+//
+//   const CustomSelectableLinkify({
+//     Key? key,
+//     required this.text,
+//     this.style,
+//     this.selectedTextColor = Colors.blue, // Default selected text color
+//   }) : super(key: key);
+//
+//   @override
+//   _CustomSelectableLinkifyState createState() => _CustomSelectableLinkifyState();
+// }
+//
+// class _CustomSelectableLinkifyState extends State<CustomSelectableLinkify> {
+//   late final FocusNode _focusNode;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _focusNode = FocusNode();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _focusNode.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SelectableLinkify(
+//       text: widget.text,
+//       style: widget.style,
+//       focusNode: _focusNode,
+//       onTap: () {
+//         // When text is tapped, ensure that the widget gets the focus
+//         _focusNode.requestFocus();
+//       },
+//       onOpen: (_) {
+//         // When link is tapped, ensure that the widget gets the focus
+//         _focusNode.requestFocus();
+//       },
+//       linkStyle: TextStyle(color: Colors.blue), // Default link color
+//       onTextHighlightChanged: (isHighlighted) {
+//         setState(() {});
+//       },
+//       textSelectionControls: CustomTextSelectionControls(
+//         selectionColor: widget.selectedTextColor,
+//       ),
+//     );
+//   }
+// }
+
+class CustomTextSelectionControls extends MaterialTextSelectionControls {
+  final Color selectionColor;
+
+  CustomTextSelectionControls({
+    required this.selectionColor,
+  });
+
+  @override
+  Color get handleColor => Colors.blue; // Default handle color
+
+  @override
+  Color getToolbarColor(BuildContext context) {
+    return selectionColor; // Custom selected text color
   }
 }
 

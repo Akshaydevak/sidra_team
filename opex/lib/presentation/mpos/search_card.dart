@@ -11,6 +11,7 @@ class SearchCard extends StatelessWidget {
   String? hint;
   final TextEditingController? controller;
   VoidCallback? onTap;
+  VoidCallback? onTap1;
   void Function(String)? onchange;
 
   SearchCard(
@@ -18,6 +19,7 @@ class SearchCard extends StatelessWidget {
         this.isCollection = false,
         this.hint,
         this.onTap,
+        this.onTap1,
         this.controller,
         this.onchange})
       : super(key: key);
@@ -37,14 +39,17 @@ class SearchCard extends StatelessWidget {
             color: Color(0xff666161),
             fontSize: 16,
           ),
-          suffixIcon: GestureDetector(
+          suffixIcon:
+          GestureDetector(
             onTap: () {},
             child: Container(
                 padding: EdgeInsets.all(16),
-                child: SvgPicture.string(
+                child:isCollection==false? SvgPicture.string(
                   CartSvg().searchIcon,
                   color: Colors.black,
-                )),
+                ):GestureDetector(
+                    onTap: onTap1,
+                    child:controller!.text.isNotEmpty? Icon(Icons.close,size: 20,):SizedBox())),
           ),
           filled: true,
           fillColor: Colors.white,

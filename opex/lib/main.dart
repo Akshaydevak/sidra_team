@@ -13,8 +13,10 @@ import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.d
 import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/home/bloc/job_bloc.dart';
 import 'package:cluster/presentation/task_operation/organisation_pages/organisation_bloc_task/organisation_task_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -46,8 +48,9 @@ main() async {
     DeviceOrientation.portraitDown,
   ]).then((value) => runApp(MyApp()));
   await authentication.init();
+
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.web,
   );
   // await FireBaseApi().initNotification();
   // AndroidNotificationChannel channel = const AndroidNotificationChannel(
@@ -84,9 +87,31 @@ class _MyAppState extends State<MyApp> {
         ?.createNotificationChannel(channel);
   }
 
-
+  void showFlutterNotification(RemoteMessage message) {
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    print("daaaaaaaaaaaaaaaaatttttttttttta");
+    // if (notification != null && android != null && !kIsWeb) {
+    //   // flutterLocalNotificationsPlugin.show(
+    //   //   notification.hashCode,
+    //   //   notification.title,
+    //   //   notification.body,
+    //   //   NotificationDetails(
+    //   //     android: AndroidNotificationDetails(
+    //   //       channel.id,
+    //   //       channel.name,
+    //   //       channelDescription: channel.description,
+    //   //       // TODO add a proper drawable resource to android, for now using
+    //   //       //      one that already exists in example app.
+    //   //       icon: 'launch_background',
+    //   //     ),
+    //   //   ),
+    //   // );
+    // }
+  }
   @override
   void initState() {
+    // FirebaseMessaging.o.listen(showFlutterNotification);
     // data();
     // print("login init");
     // final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =

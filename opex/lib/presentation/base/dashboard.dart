@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
+import 'package:cluster/presentation/base/splash.dart';
 import 'package:cluster/presentation/comunication_module/bloc/chat_bloc.dart';
 import 'package:cluster/presentation/comunication_module/chat_screen.dart';
 import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
@@ -19,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -28,14 +31,19 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:upgrader/upgrader.dart';
 import 'dart:developer' as developer;
 import '../../common_widgets/gradient_button.dart';
+import '../authentication/authentication.dart';
+import '../authentication/bloc/bloc/auth_bloc.dart';
 import '../dashboard_screen/cart_screen/cart_svg.dart';
 import '../dashboard_screen/drawer/appdrawer.dart';
 import '../dashboard_screen/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../dashboard_screen/home_screen/homescreen_widget/appbar.dart';
 import '../task_operation/create/task_bloc/task_bloc.dart';
+import '../task_operation/employee_bloc/employee_bloc.dart';
+import '../task_operation/task_svg.dart';
 import '../task_operation/task_title.dart';
 import 'icon_constants.dart';
+import 'login_page.dart';
 
 class DashBoard extends StatefulWidget {
   final int? index;
@@ -47,6 +55,7 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   String? token = '';
+  bool isSwitchAccountVisible = false;
 
   IO.Socket? socketCon;
 
@@ -165,6 +174,7 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   Future<void> setupInteractedMessage(BuildContext context) async {
+    print("notification dictssssssssssss");
     final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
         FlutterLocalNotificationsPlugin();
 
@@ -182,13 +192,14 @@ class _DashBoardState extends State<DashBoard> {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'messages', 'Messages',
         description: "This is for flutter firebase",
-        importance: Importance.max,playSound: true,enableVibration: true,ledColor:Colors.white);
+        importance: Importance.max,playSound: true,enableVibration: true,ledColor:Colors.red);
 
     flutterlocalnotificationplugins.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
     );
-if(Platform.isAndroid){
+    print("notification dict$data");
+// if(Platform.isAndroid ||Platform.isWindows){
 //    print("notification dict");
    FirebaseMessaging.onMessage.listen((event) async {
 final notification = event.notification;
@@ -223,7 +234,7 @@ final notification = event.notification;
       }
     });
 
-}
+
 
 // if(lifecycleEventHandler.inBackground==2){
 
@@ -871,180 +882,209 @@ pref = await SharedPreferences.getInstance();
                                 return true;
                               }
                             : _onWillPop,
-                        child: Scaffold(
-                          backgroundColor:Color(0xffF0F2F5),
-                          key: scaffoldKey,
-                          appBar: PreferredSize(
-                            preferredSize: const Size.fromHeight(58),
-                            child: AppBarScreen(
-                              scaffoldKey: scaffoldKey,
-                              label: newIndex==0?"Sidra Teams":newIndex==1?"Communication":newIndex==2?"Task & Operation":newIndex==3?"My Profile":"",
+                        child: Stack(
+                          children: [
+                          MouseRegion(
+                          cursor: SystemMouseCursors.basic,
+                          child: GestureDetector(
+                            // highlightColor: Colors.white,
+                            // splashColor: Colors.white,
+                            // hoverColor: Colors.white,
+                            // focusColor:  Colors.white,
+                              onTap: (){
+                                setState(() {
+                                  isSwitchAccountVisible=false;
+                                });
 
-                            ),
-                          ),
-                          drawer: isMobile? AppDrawer(
-                           ):Container(),
-                          body: isMobile?
-                          Container(
-                            // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
-
-                            child:
-                            PersistentTabView(
-
-                              context,
-                              padding:
-                                  const NavBarPadding.only(left: 100, right: 100),
-                              controller: _controller,
-                                screens: _buildScreens(),
-                              onItemSelected: (value) {
-
-                                newIndex = value;
-
-                                setState(() {});
-
-                                print("llllll$newIndex");
-
-                                if (newIndex == 0 || newIndex == 3) {
-                                  setState(() {});
-                                } else if (newIndex == 2) {
-                                  context
-                                      .read<ProfileBloc>()
-                                      .add(GetProfileEvent());
-                                }
                               },
+                              child: Scaffold(
+                                backgroundColor:Color(0xffF0F2F5),
+                                key: scaffoldKey,
+                                appBar: PreferredSize(
+                                  preferredSize: const Size.fromHeight(58),
+                                  child: AppBarScreen(
+                                    ontap: (){
+                                      isSwitchAccountVisible=!isSwitchAccountVisible;
+                                      setState(() {
 
-                              items: _navBarsItems(),
-                              confineInSafeArea: true,
-                              hideNavigationBarWhenKeyboardShows: true,
-                              backgroundColor: ColorPalette.white,
-                              handleAndroidBackButtonPress: true,
-                              resizeToAvoidBottomInset: true,
-                              stateManagement: false,
-                              decoration: NavBarDecoration(boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade200.withOpacity(0.8),
-
-                                  blurRadius: 2.0,
-
-                                  spreadRadius: 1, //New
-                                ),
-
-                              ],
-
-                              ),
-                              popAllScreensOnTapOfSelectedTab: true,
-                              popActionScreens: PopActionScreensType.all,
-                              itemAnimationProperties:
-                                  const ItemAnimationProperties(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.ease,
-                              ),
-                              navBarStyle: NavBarStyle.style3,
-                              screenTransitionAnimation:
-                                  const ScreenTransitionAnimation(
-                                animateTabTransition: false,
-                                curve: Curves.ease,
-                                duration: Duration(milliseconds: 200),
-                              ),
-                            ),
-                          ):  Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
-                              color: ColorPalette.webBagroundClr.withOpacity(.3),
-
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width/4.7, child:      HomeScreen(homeTap: (){
-                                  _controller.jumpToTab(0);
-                                },taskTap: (){
-                                  print("tapppppeeyyy");
-                                  _controller.jumpToTab(1);
-                                  // setState(() {
-
-                                  // });
-                                },),
-
-                                )  ,
-                                Flexible(
-                                  flex: 3, child:Container(
-                                  margin: isMobile?null:EdgeInsets.symmetric(horizontal: 10),
-
-                                  child:ValueListenableBuilder<Widget>(
-                                    valueListenable: screenNotifier,
-                                    builder: (BuildContext context, Widget value,child) {
-                                      return value;
-                                        // widgetList[value];
+                                      });
                                     },
+
+                                    scaffoldKey: scaffoldKey,
+                                    label: newIndex==0?"Sidra Teams":newIndex==1?"Communication":newIndex==2?"Task & Operation":newIndex==3?"My Profile":"",
+
                                   ),
-                                  // PersistentTabView(
-                                  //
-                                  //   context,
-                                  //   padding:
-                                  //   const NavBarPadding.only(left: 100, right: 100),
-                                  //   controller: _controller,
-                                  //   screens: _buildScreens(),
-                                  //   onItemSelected: (value) {
-                                  //
-                                  //     newIndex = value;
-                                  //
-                                  //     setState(() {});
-                                  //
-                                  //     print("llllll$newIndex");
-                                  //
-                                  //     if (newIndex == 0 || newIndex == 3) {
-                                  //       setState(() {});
-                                  //     } else if (newIndex == 2) {
-                                  //       context
-                                  //           .read<ProfileBloc>()
-                                  //           .add(GetProfileEvent());
-                                  //     }
-                                  //   },
-                                  //
-                                  //   items: _navBarsItems(),
-                                  //   confineInSafeArea: true,
-                                  //   hideNavigationBarWhenKeyboardShows: true,
-                                  //   backgroundColor: ColorPalette.white,
-                                  //   handleAndroidBackButtonPress: true,
-                                  //   resizeToAvoidBottomInset: true,
-                                  //   stateManagement: false,
-                                  //   decoration: NavBarDecoration(boxShadow: [
-                                  //     BoxShadow(
-                                  //       color: Colors.grey.shade200.withOpacity(0.8),
-                                  //
-                                  //       blurRadius: 2.0,
-                                  //
-                                  //       spreadRadius: 1, //New
-                                  //     ),
-                                  //
-                                  //   ],
-                                  //
-                                  //   ),
-                                  //   popAllScreensOnTapOfSelectedTab: true,
-                                  //   popActionScreens: PopActionScreensType.all,
-                                  //   itemAnimationProperties:
-                                  //   const ItemAnimationProperties(
-                                  //     duration: Duration(milliseconds: 200),
-                                  //     curve: Curves.ease,
-                                  //   ),
-                                  //   navBarStyle: NavBarStyle.style3,
-                                  //   screenTransitionAnimation:
-                                  //   const ScreenTransitionAnimation(
-                                  //     animateTabTransition: false,
-                                  //     curve: Curves.ease,
-                                  //     duration: Duration(milliseconds: 200),
-                                  //   ),
-                                  // ),
                                 ),
+                                drawer: isMobile? AppDrawer(
+                                 ):Container(),
+                                body: isMobile?
+                                Container(
+                                  // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
 
-                                ), Container(
-                                  width: MediaQuery.of(context).size.width/4.7,
-                              child:NewProfileScreen(),
+                                  child:
+                                  PersistentTabView(
 
+                                    context,
+                                    padding:
+                                        const NavBarPadding.only(left: 100, right: 100),
+                                    controller: _controller,
+                                      screens: _buildScreens(),
+                                    onItemSelected: (value) {
+
+                                      newIndex = value;
+
+                                      setState(() {});
+
+                                      print("llllll$newIndex");
+
+                                      if (newIndex == 0 || newIndex == 3) {
+                                        setState(() {});
+                                      } else if (newIndex == 2) {
+                                        context
+                                            .read<ProfileBloc>()
+                                            .add(GetProfileEvent());
+                                      }
+                                    },
+
+                                    items: _navBarsItems(),
+                                    confineInSafeArea: true,
+                                    hideNavigationBarWhenKeyboardShows: true,
+                                    backgroundColor: ColorPalette.white,
+                                    handleAndroidBackButtonPress: true,
+                                    resizeToAvoidBottomInset: true,
+                                    stateManagement: false,
+                                    decoration: NavBarDecoration(boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade200.withOpacity(0.8),
+
+                                        blurRadius: 2.0,
+
+                                        spreadRadius: 1, //New
+                                      ),
+
+                                    ],
+
+                                    ),
+                                    popAllScreensOnTapOfSelectedTab: true,
+                                    popActionScreens: PopActionScreensType.all,
+                                    itemAnimationProperties:
+                                        const ItemAnimationProperties(
+                                      duration: Duration(milliseconds: 200),
+                                      curve: Curves.ease,
+                                    ),
+                                    navBarStyle: NavBarStyle.style3,
+                                    screenTransitionAnimation:
+                                        const ScreenTransitionAnimation(
+                                      animateTabTransition: false,
+                                      curve: Curves.ease,
+                                      duration: Duration(milliseconds: 200),
+                                    ),
+                                  ),
+                                ):  Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height,
+                                    color: ColorPalette.webBagroundClr.withOpacity(.3),
+
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: MediaQuery.of(context).size.width/4.7, child:      HomeScreen(homeTap: (){
+                                        _controller.jumpToTab(0);
+                                      },taskTap: (){
+                                        print("tapppppeeyyy");
+                                        _controller.jumpToTab(1);
+                                        // setState(() {
+
+                                        // });
+                                      },),
+
+                                      )  ,
+                                      Flexible(
+                                        flex: 3, child:Container(
+                                        margin: isMobile?null:EdgeInsets.symmetric(horizontal: 10),
+
+                                        child:ValueListenableBuilder<Widget>(
+                                          valueListenable: screenNotifier,
+                                          builder: (BuildContext context, Widget value,child) {
+                                            return value;
+                                              // widgetList[value];
+                                          },
+                                        ),
+                                        // PersistentTabView(
+                                        //
+                                        //   context,
+                                        //   padding:
+                                        //   const NavBarPadding.only(left: 100, right: 100),
+                                        //   controller: _controller,
+                                        //   screens: _buildScreens(),
+                                        //   onItemSelected: (value) {
+                                        //
+                                        //     newIndex = value;
+                                        //
+                                        //     setState(() {});
+                                        //
+                                        //     print("llllll$newIndex");
+                                        //
+                                        //     if (newIndex == 0 || newIndex == 3) {
+                                        //       setState(() {});
+                                        //     } else if (newIndex == 2) {
+                                        //       context
+                                        //           .read<ProfileBloc>()
+                                        //           .add(GetProfileEvent());
+                                        //     }
+                                        //   },
+                                        //
+                                        //   items: _navBarsItems(),
+                                        //   confineInSafeArea: true,
+                                        //   hideNavigationBarWhenKeyboardShows: true,
+                                        //   backgroundColor: ColorPalette.white,
+                                        //   handleAndroidBackButtonPress: true,
+                                        //   resizeToAvoidBottomInset: true,
+                                        //   stateManagement: false,
+                                        //   decoration: NavBarDecoration(boxShadow: [
+                                        //     BoxShadow(
+                                        //       color: Colors.grey.shade200.withOpacity(0.8),
+                                        //
+                                        //       blurRadius: 2.0,
+                                        //
+                                        //       spreadRadius: 1, //New
+                                        //     ),
+                                        //
+                                        //   ],
+                                        //
+                                        //   ),
+                                        //   popAllScreensOnTapOfSelectedTab: true,
+                                        //   popActionScreens: PopActionScreensType.all,
+                                        //   itemAnimationProperties:
+                                        //   const ItemAnimationProperties(
+                                        //     duration: Duration(milliseconds: 200),
+                                        //     curve: Curves.ease,
+                                        //   ),
+                                        //   navBarStyle: NavBarStyle.style3,
+                                        //   screenTransitionAnimation:
+                                        //   const ScreenTransitionAnimation(
+                                        //     animateTabTransition: false,
+                                        //     curve: Curves.ease,
+                                        //     duration: Duration(milliseconds: 200),
+                                        //   ),
+                                        // ),
+                                      ),
+
+                                      ), Container(
+                                        width: MediaQuery.of(context).size.width/4.7,
+                                    child:NewProfileScreen(),
+
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            )),
+                        if(isSwitchAccountVisible)    Positioned(
+                          top: 55,
+                            left: 40,
+                            child:AccountSwitch() )
+                          ],
                         ),
                       ),
                     ),
@@ -1215,5 +1255,145 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
 // break;
 
 // }
+  }
+}
+class AccountSwitch extends StatefulWidget {
+  const AccountSwitch({super.key});
+
+  @override
+  State<AccountSwitch> createState() => _AccountSwitchState();
+}
+
+class _AccountSwitchState extends State<AccountSwitch> {
+  String fcm='';
+  @override
+  Widget build(BuildContext context) {
+    
+    double w1 = MediaQuery.of(context).size.width ;
+    double w = w1> 700
+        ? 400
+        : w1;
+    return  MultiBlocListener(
+      listeners:[
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) async {
+            if (state is SwitchUserAuthGetSuccess) {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => SplashScreen()),
+                      (Route<dynamic> route) => false);
+
+              Fluttertoast.showToast(
+                  msg: 'Account Switched Successfully',
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black);
+            } else if (state is SwitchUserAuthGetFailed) {
+              showSnackBar(context,
+                  message: state.error ?? "", color: Colors.red);
+            }
+          },),
+  ],
+  child: Container(
+
+      width: 290,
+      height: 100,
+      decoration: BoxDecoration(
+          color: Colors.white,
+        borderRadius: BorderRadius.circular(10)
+      ),
+
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              color: Colors.white,
+              height: w/10,
+              child: ListView.separated(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  primary: false,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    print(
+                        "userData   !!!! ${authentication.userNameData.length}");
+                    return authentication.userNameData[index].token !=
+                        null &&
+                        authentication.userNameData[index].fname != null
+                        ? GestureDetector(
+                      onTap: () {
+                        HapticFeedback.heavyImpact();
+                        context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
+                        BlocProvider.of<AuthBloc>(context).add(SwitchUserAuthGet(token: authentication.userNameData[index].token));
+
+                      },
+                      child: Container(
+                        width: w1,
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                        decoration: BoxDecoration(
+                            color: authentication.userNameData[index].token==authentication.authenticatedUser?.token?Color(0xffD9D9D9).withOpacity(0.25):Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: ColorPalette.borderGrey.withOpacity(0.2))
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(radius: 18,backgroundImage: NetworkImage(authentication.userNameData[index].prflImage??""),),
+                            SizedBox(width: 10,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(authentication.userNameData[index].fname.toString()??"",
+                                  style: GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: w/28
+                                  ),),
+                                Text(authentication.userNameData[index].emailId??"",
+                                  style: GoogleFonts.roboto(
+                                    // fontWeight: FontWeight.w500,
+                                      fontSize: w/32
+                                  ),),
+                              ],
+                            ),
+                            Spacer(),
+                            authentication.userNameData[index].token==authentication.authenticatedUser?.token?
+                            SvgPicture.string(TaskSvg().tickIcon,color: Colors.green,height: 15,width: 15,):Container()
+                          ],
+                        ),
+                      ),
+                    )
+                        : Container();
+                  },
+                  separatorBuilder: (context, index) {
+                    return Container(
+                      height: 3,
+                    );
+                  },
+                  itemCount: authentication.userNameData.length),
+            ),
+            SizedBox(height: 5,),
+            authentication.userNameData.length<3?GestureDetector(
+              onTap: (){
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => LoginScreen()),
+                        (Route<dynamic> route) => false);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 5),
+                child: Text("+ Add new account",
+                  style: GoogleFonts.roboto(
+
+                      fontSize: w/26,
+                      color: ColorPalette.primary,
+                      fontWeight: FontWeight.w500
+                  ),),
+              ),
+            ):Container(),
+          ],
+        ),
+      ),
+    ),
+);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cluster/core/utils/variables.dart';
 import 'package:http/http.dart'as http;
 
 import 'package:cluster/core/utils/data_response.dart';
@@ -410,55 +411,32 @@ class CommunicationDatasource {
     profileGetModel = ProfileGetModel.fromJson(response.data['data']);
     return profileGetModel;
   }
-  Future<String> uploadImageData1({Uint8List? img}) async {
-    String statusCode;
+  Future<String> uploadImageData1({Uint8List? img,}) async {
+    String statusCode="";
 
     Map valueMap=Map();
     final url=Uri.parse(  CommunicationUrls.uploadImageUrl);
     print("the url$url");
-    // print("the bytes$bytes");
-    final request = http.MultipartRequest('POST', url);
-    if(img!=null) {
-      final imageFile = http.MultipartFile.fromBytes(
-        'image',
-        img,
-        filename: "Variable.imageTyp",
-      );
+    print("the url$img");
+    print("the url${Variable.imageName
+    }");
 
 
-      request.files.add(imageFile);
-      final response = await request.send();
-//  final responseBody = await response.stream.bytesToString();
+    final response = await client.post(
+      CommunicationUrls.uploadImageUrl,
+      data: {"filename": Variable.imageName, "file": img},
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
 
+        },
+      ),
+    );
+    print(response.data);
+    print(response.data['url']);
+    statusCode=response.data['url'];
 
-      // final completer = Completer<void>();
-
-      final responseStream =
-      Stream.fromIterable(await response.stream.toList());
-      print("rressspondseee stream ${responseStream.transform(utf8.decoder).first}");
-
-
-      try
-      {
-        // await completer.future;
-        final responseBody = await responseStream.transform(utf8.decoder).join();
-        valueMap  = jsonDecode(responseBody);
-        print(valueMap["data"]);
-
-
-
-
-
-
-
-
-
-      }
-      catch(e) {
-        print("response stream exceotiojn $e");
-      }
-    }
-    statusCode = (valueMap['upload']);
     return statusCode;
   }
 
@@ -521,63 +499,156 @@ class CommunicationDatasource {
   //   statusCode = (response.data['data']['upload']);
   //   return statusCode;
   // }
-  Future<String> uploadImageData({FilePickerResult? img}) async {
+  Future<String> uploadImageData({Uint8List? img,String? name}) async {
     String statusCode;
 
-    print("total result ${img}");
-    String filePath = "";
+    Map valueMap=Map();
+    final url=Uri.parse(  CommunicationUrls.uploadImageUrl);
+    print("the url$url");
+    print("the url$img");
+    print("the url${Variable.imageName
+    }");
 
-    if (img != null) filePath = img.files[0].path ?? "";
-    final mime = lookupMimeType(filePath)!.split("/");
-
-    final fileData = await MultipartFile.fromFile(
-      filePath,
-      contentType: MediaType(mime.first, mime.last),
-    );
-    final FormData formData = FormData.fromMap({"upload": fileData});
 
     final response = await client.post(
       CommunicationUrls.uploadImageUrl,
-      data: formData,
+      data: {"filename": Variable.imageName, "file": img},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+
         },
       ),
     );
-    print("response is here ${response.data}");
-    statusCode = (response.data['data']['upload']);
+    print(response.data);
+    print(response.data['url']);
+
+
+    // print("the bytes$bytes");
+//     final request = http.MultipartRequest('POST', url);
+//     print("responseee$request");
+//
+//     if(img!=null) {
+//       final imageFile = http.MultipartFile.fromBytes(
+//         'file',
+//         img,
+//         filename: name,
+//       );
+//
+//       try
+//       {
+//       request.files.add(imageFile);
+//       final response = await request.send();
+// //  final responseBody = await response.stream.bytesToString();
+//
+//
+//       // final completer = Completer<void>();
+//
+//       final responseStream =
+//       Stream.fromIterable(await response.stream.toList());
+//       print("rressspondseee stream ${responseStream.transform(utf8.decoder).first}");
+//
+//
+//
+//         // await completer.future;
+//         final responseBody = await responseStream.transform(utf8.decoder).join();
+//         print(responseBody);
+//         valueMap  = jsonDecode(responseBody);
+//         print(valueMap["data"]);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//       }
+//       catch(e) {
+//         print("response stream exceotiojn $e");
+//       }
+//     }
+    statusCode =  (response.data['url']);
     return statusCode;
   }
+  // Future<String> uploadImageData({FilePickerResult? img}) async {
+  //   String statusCode;
+  //
+  //   print("total result ${img}");
+  //   String filePath = "";
+  //
+  //   if (img != null) filePath = img.files[0].path ?? "";
+  //   final mime = lookupMimeType(filePath)!.split("/");
+  //
+  //   final fileData = await MultipartFile.fromFile(
+  //     filePath,
+  //     contentType: MediaType(mime.first, mime.last),
+  //   );
+  //   final FormData formData = FormData.fromMap({"upload": fileData});
+  //
+  //   final response = await client.post(
+  //     CommunicationUrls.uploadImageUrl,
+  //     data: formData,
+  //     options: Options(
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     ),
+  //   );
+  //   print("response is here ${response.data}");
+  //   statusCode = (response.data['data']['upload']);
+  //   return statusCode;
+  // }
 
-  Future<String> uploadLiveAudioData({File? img,bool comment=false}) async {
+  Future<String> uploadLiveAudioData({Uint8List? img,bool comment=false}) async {
     String statusCode;
+    Map valueMap=Map();
+    final url=Uri.parse(  CommunicationUrls.uploadImageUrl);
+    print("the url$url");
+    print("the url$img");
+    print("the url${Variable.imageName
+    }");
 
-    print("total result ${img}");
-    String filePath = "";
-
-    if (img != null) filePath = img.path;
-    final mime = lookupMimeType(filePath)!.split("/");
-
-    final fileData = await MultipartFile.fromFile(
-      filePath,
-      contentType: MediaType(mime.first, mime.last),
-    );
-    final FormData formData = FormData.fromMap({"upload": fileData});
 
     final response = await client.post(
       CommunicationUrls.uploadImageUrl,
-      data: formData,
+      data: {"filename": Variable.imageName, "file": img},
       options: Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+
         },
       ),
     );
-    print("response is here ${response.data}");
-    statusCode = (response.data['data']['upload']);
+    print(response.data);
+    print(response.data['url']);
+
+
+    // if (img != null) filePath = img.path;
+    // final mime = lookupMimeType(filePath)!.split("/");
+    //
+    // final fileData = await MultipartFile.fromFile(
+    //   filePath,
+    //   contentType: MediaType(mime.first, mime.last),
+    // );
+    // final FormData formData = FormData.fromMap({"upload": fileData});
+    //
+    // final response = await client.post(
+    //   CommunicationUrls.uploadImageUrl,
+    //   data: formData,
+    //   options: Options(
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Accept': 'application/json',
+    //     },
+    //   ),
+    // );
+    // print("response is here ${response.data}");
+    statusCode = (response.data['url']);
     return statusCode;
   }
 

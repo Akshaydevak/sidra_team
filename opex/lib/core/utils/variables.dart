@@ -1,5 +1,6 @@
 class Variable{
   static String  prioritys="Low";
+  static String  imageName="";
   static int jobReadId=0;
   static int taskReadId=0;
   static int taskType=0;

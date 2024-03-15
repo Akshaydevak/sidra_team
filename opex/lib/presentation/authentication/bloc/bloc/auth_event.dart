@@ -26,3 +26,7 @@ class GetPickListEvent extends AuthEvent {
 class GetPackListEvent extends AuthEvent {
   const GetPackListEvent();
 }
+class SwitchUserAuthGet extends AuthEvent {
+  final String? token;
+  const SwitchUserAuthGet({this.token});
+}

@@ -1,13 +1,20 @@
 import 'package:cluster/core/color_palatte.dart';
+import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
+import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
+import 'package:cluster/presentation/base/login_page.dart';
+import 'package:cluster/presentation/base/splash.dart';
 import 'package:cluster/presentation/task_operation/badge_icon.dart';
 import 'package:cluster/presentation/task_operation/create/task_bloc/task_bloc.dart';
+import 'package:cluster/presentation/task_operation/employee_bloc/employee_bloc.dart';
 import 'package:cluster/presentation/task_operation/notification_sidra_teams.dart';
+import 'package:cluster/presentation/task_operation/task_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -21,7 +28,8 @@ import '../home_svg.dart';
 class AppBarScreen extends StatefulWidget {
   var scaffoldKey;
   final String label;
-  AppBarScreen({Key? key, this.scaffoldKey, required this.label}) : super(key: key);
+  final VoidCallback ontap;
+  AppBarScreen({Key? key, this.scaffoldKey, required this.label, required this.ontap}) : super(key: key);
 
   @override
   State<AppBarScreen> createState() => _AppBarState();
@@ -40,6 +48,7 @@ class _AppBarState extends State<AppBarScreen> {
   }
   List<NotificationList>? notification=[];
   int countNoti=0;
+  String fcm='';
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +57,24 @@ class _AppBarState extends State<AppBarScreen> {
         ? 400
         : w1;
     return MultiBlocListener(
-      listeners:[ 
+      listeners:[
+        BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) async {
+    if (state is SwitchUserAuthGetSuccess) {
+    Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(
+    builder: (context) => SplashScreen()),
+    (Route<dynamic> route) => false);
+
+    Fluttertoast.showToast(
+    msg: 'Account Switched Successfully',
+    backgroundColor: Colors.white,
+    textColor: Colors.black);
+    } else if (state is SwitchUserAuthGetFailed) {
+    showSnackBar(context,
+    message: state.error ?? "", color: Colors.red);
+    }
+    },),
         BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
 
@@ -57,7 +83,7 @@ class _AppBarState extends State<AppBarScreen> {
         // countNoti=notification?[0].count??0;
         print("SDFG${notification?.length}");
         setState(() {
-    
+
         });
       }
       // TODO: implement listener
@@ -135,13 +161,27 @@ class _AppBarState extends State<AppBarScreen> {
               titleSpacing: 10,
               centerTitle: false,
 
-              title: Text(
-                widget.label??"Sidra Teams",
-                style: GoogleFonts.roboto(
-                  color: Colors.black,
-                  fontSize: w / 22,
-                  fontWeight: FontWeight.w500,
-                ),
+              title: Row(
+                children: [
+                  Text(
+                    widget.label??"Sidra Teams",
+                    style: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontSize: w / 22,
+                      fontWeight: FontWeight.w500,
+                    ),
+
+                  ),
+                  SizedBox(width: w*.01,),
+                  GestureDetector(onTap: (){
+                    widget.ontap();
+
+
+
+
+
+                  }, child: Icon(Icons.keyboard_arrow_down_outlined,size:w*.07,))
+                ],
               ),
               actions: [
                 Center(

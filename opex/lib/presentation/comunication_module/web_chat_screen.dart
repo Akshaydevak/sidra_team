@@ -1,11 +1,13 @@
 import 'dart:html' as html;
 import 'dart:html';
 import 'dart:math';
+import 'package:clipboard/clipboard.dart';
 
 import 'dart:convert';
-
+import 'package:http/http.dart'as http;
 import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/utils/platform_check.dart';
+import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/comunication_module/myChatlistWeb.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:cluster/common_widgets/loading.dart';
@@ -56,6 +58,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:video_player/video_player.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 import 'chat_screen/chat_appbar.dart';
+import 'communication_urls.dart';
 import 'unread.dart';
 import 'globals.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -494,7 +497,7 @@ class _WebChatScreenState extends State<WebChatScreen>
       messageList.insert(0, chatModel);
     }
 
-    print("...msglist${messageList.length}");
+    print("...msglist${messageList.toString()}");
 
     if (isenter) {
       if (data['fromuserid'] != widget.loginUserId) {
@@ -995,7 +998,7 @@ class _WebChatScreenState extends State<WebChatScreen>
             widget.socket!.emit("update.list",{
               print("update")
             });
-            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationuser?.users?[0].id.toString()});
+            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':roomId,'userid':widget.communicationuser?.users?[0].id.toString()});
             widget.socket!.emit("leave.chat",{
               "room": roomId??"",
               "userid":widget.communicationuser?.users?[0].id??""
@@ -1396,6 +1399,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                   print("Loading");
                 } else if (state is UploadPictureSuccess) {
                   if (widget.isGroup != true) {
+                    print("state.upload${state.upload}");
                     widget.socket?.emit("new.message", {
                       "type": "image",
                       "chatid":widget.chat==false?widget.redirectchatid!=""?"${widget.redirectchatid}":widget.communicationUserModel?.chatid:widget.communicationuser?.id,
@@ -1904,7 +1908,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                             widget.socket!.emit("update.list",{
                               print("update")
                             });
-                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':widget.communicationuser?.users?[0].id.toString()});
+                            widget.socket?.emit("unread.messages.chat",{'unreadMessageCount':0,'chatid':roomId,'userid':widget.communicationuser?.users?[0].id.toString()});
                             widget.socket!.emit("leave.chat",{
                               "room": roomId??"",
                               "userid":widget.communicationuser?.users?[0].id??""
@@ -2119,7 +2123,7 @@ class _WebChatScreenState extends State<WebChatScreen>
 
                       },
                     ):Container(
-                      width: w,
+                      width: w1,
                       color: ColorPalette.primary,
                       padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                       child: Row(
@@ -2357,7 +2361,13 @@ class _WebChatScreenState extends State<WebChatScreen>
                                 index: index,
                                 roomid: roomId,
                                 grpmember: grpmember,
-                                ontap: (){
+                                ontap: (String text){
+                                  FlutterClipboard.copy(text).then((result) {
+                                    final snackBar = SnackBar(
+                                      content: Text('Text copied to clipboard'),
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                  });
                                   print("coooppppyyy ${messageList[index].fromuserid} ${widget.loginUserId}");
                                   if(messageList[index].fromuserid!=widget.loginUserId){
                                     print("coooppppyyy false enterd");
@@ -2635,8 +2645,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                                                               print("audio,,,,");
                                                             });
                                                           }
-                                                          else
-                                                            switch (state.processingState) {
+                                                          else switch (state.processingState) {
                                                               case ProcessingState.idle:
                                                                 break;
                                                               case ProcessingState.loading:
@@ -2934,6 +2943,7 @@ class _WebChatScreenState extends State<WebChatScreen>
                                                         .hasPermission()) {
                                                       print("recording start");
                                                       await _audioRecorder.start();
+
 
                                                       bool isRecording =
                                                       await _audioRecorder
@@ -3294,14 +3304,14 @@ class _WebChatScreenState extends State<WebChatScreen>
                 ),
                 InkWell(
                   onTap: () {
-                    // pickFiles("Video", context,"");
+                    pickFiles("Video", context,"");
                   },
                   child: iconCreation(
                       icon: Icons.video_call, text: "Video", color: Colors.red),
                 ),
                 InkWell(
                   onTap: () {
-                    // pickFiles("MultipleFile", context,"");
+                    pickFiles("MultipleFile", context,"");
                   },
                   child: iconCreation(
                       icon: Icons.insert_drive_file,
@@ -3331,7 +3341,9 @@ class _WebChatScreenState extends State<WebChatScreen>
           allowedExtensions:allowedExtensions?? ['jpg' ],
           withData: true);
       print(pickedFile?.files.first.name);
-      print("pickedFile$pickedFile");
+      // print(pickedFile?.files.first.mimeType);
+
+      Variable.imageName=pickedFile?.files.first.name??"";
 
 
 
@@ -3340,26 +3352,73 @@ class _WebChatScreenState extends State<WebChatScreen>
         bytes = pickedFile.files.first.bytes;
 
       }
-
+    print(bytes);
     return  bytes??Uint8List(0);
 
 
   }
   void pickFiles(String? filetype, BuildContext context,String? source)async{
-if(filetype=="image"){
 
-
-    Uint8List? bytes =await imageFileSelection(allowedExtensions:  ['jpg' ]);
-      BlocProvider.of<AttachmentBloc>(context)
-           .add(UploadPictureEvent(image:bytes!));
-      // BlocProvider.of<InventoryBloc>(context).add(PicEvent(bytes: bytes!));
+    switch(filetype){
+      case 'image':{
+        Uint8List? bytes =await imageFileSelection(allowedExtensions:  ['jpg','png' ]);
+        BlocProvider.of<AttachmentBloc>(context)
+            .add(UploadPictureEvent(image:bytes!));
+      }break;
+      case 'MultipleFile':{
+        Uint8List? bytes =await imageFileSelection(allowedExtensions:  ['xlsx','xls','pdf',"csv",'docs','zip' ]);
+        BlocProvider.of<AttachmentBloc>(context)
+            .add(UploadFilesEvent(files: bytes!,name:Variable.imageName ));
+      }
+      break;      case 'Video':{
+        print("thisssssssssssssssss");
+        Uint8List? bytes =await imageFileSelection(allowedExtensions:   ['mp4', 'mov', 'avi']);
+        uploadFileChunks(bytes);
+        print("thisssssssssssssssss$bytes");
+        // BlocProvider.of<AttachmentBloc>(context)
+        //     .add(UploadVideoEvent(video: bytes!));
+      }
+      break;
     }
+
+  }
+
+
+
+
   }
 
 
+Future<void> uploadFileChunks(Uint8List fileBytes) async {
+  const chunkSize = 1024 * 1024; // 1 MB chunk size
+  int offset = 0;
 
+  while (offset < fileBytes.length) {
+    final end = offset + chunkSize < fileBytes.length ? offset + chunkSize : fileBytes.length;
+    final chunk = fileBytes.sublist(offset, end);
+    print("chunkssssssssssssssssss$chunk");
 
+    // Send chunk to the server
+    try {
+      final response = await http.post(
+     Uri.parse(   CommunicationUrls.uploadImageUrl), // Replace with your server endpoint
+        body:{"filename": Variable.imageName, "file": chunk} ,
+        // headers: {'Content-Type': 'application/octet-stream'},
+      );
+      if (response.statusCode == 200) {
+        print('Uploaded chunk: ${chunk.length} bytes');
+      } else {
+        throw Exception('Failed to upload chunk: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error uploading chunk: $e');
+      // Handle error (e.g., retry or show error message)
+      return;
+    }
+
+    offset += chunkSize;
   }
+}
 
 //   void pickFiles(String? filetype, BuildContext context,String? source) async {
 //     print("inside the case");
@@ -3660,34 +3719,141 @@ if(filetype=="image"){
       ],
     );
   }
-  void _recordingFinishedCallback(
+//   void _recordingFinishedCallback(
+//   String path,
+//   BuildContext context,
+// ) {
+//
+//   final uri = Uri.parse(path);
+//   print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii$uri");
+//
+//   // File file = File(uri.path);
+//   // Create a Blob from the recorded data
+//   final blob = html.Blob([html.File([path], 'audio/wav')]);
+//
+//   final reader = html.FileReader();
+//   reader.readAsArrayBuffer(blob);
+//
+//   reader.onLoadEnd.listen((_) {
+//     final uint8List = Uint8List.fromList(reader.result as List<int>);
+//
+//     // Use the Uint8List for further processing or upload
+//     // For example, you can create a File from Uint8List
+//     final  File file = html.File([uint8List], 'audio.wav');
+//
+//     // Access file size
+//     final fileSize = file.size;
+//     print("File size: ${file.runtimeType}");
+//
+//     // Dispatch your Bloc event or perform other actions
+//     BlocProvider.of<AttachmentBloc>(context)
+//         .add(UploadLiveAudioEvent(audio: uint8List, comment: true));
+//   });
+//
+//   // file.length().then(
+//   //   (fileSize) {
+//   //     print("files is this ${file}");
+//   //     BlocProvider.of<AttachmentBloc>(context)
+//   //         .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
+//   //   },
+//   // );
+// }
+Future<void> _recordingFinishedCallback(
   String path,
   BuildContext context,
-) {
-  print("file is thee $path");
+) async {
+
   final uri = Uri.parse(path);
+  print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii$uri");
+
+  // final blobUrl = 'blob:http://localhost:57539/f3793822-b6cf-4764-8932-8c1eaf81c5ca';
+
+  try{
+    final blob = await HttpRequest.request(uri.toString(), responseType: 'blob').then((request) => request.response);
+    print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii1$blob");
+
+    // Create a FileReader instance to read the blob data
+    final reader = FileReader();
+    print("sss");
+
+    // Register an onLoadEnd event handler to process the blob data after it's loaded
+    reader.onLoadEnd.listen((e) {
+      print("ss1s");
+      // Convert blob data to bytes
+      final blobBytes = reader.result as List<int>;
+      print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii1$blob");
+      // Convert bytes to base64 string
+      final blobBase64 = base64Encode(blobBytes);
+      print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3$blob");
+
+      // Send the base64 string to the backend
+      final apiUrl =Uri.parse(  CommunicationUrls.uploadImageUrl);
+      http.post(apiUrl, body: {'file': blobBase64,"filename":"audio.mp3"}).then((response) {
+        // Handle response from backend
+        if (response.statusCode == 200) {
+          print('Blob data successfully sent to the backend.');
+        } else {
+          print('Failed to send blob data to the backend. Status code: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        print('Error sending blob data to the backend: $error');
+      });
+    });
+  }catch(e){
+
+    print("the error is her$e");
+  }
+  // final blob = await HttpRequest.request(uri.toString(), responseType: 'blob').then((request) => request.response);
+  // print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii1$blob");
+  //
+  // // Create a FileReader instance to read the blob data
+  // final reader = FileReader();
+  //
+  // // Register an onLoadEnd event handler to process the blob data after it's loaded
+  // reader.onLoadEnd.listen((e) {
+  //   // Convert blob data to bytes
+  //   final blobBytes = reader.result as List<int>;
+  //   print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii1$blob");
+  //   // Convert bytes to base64 string
+  //   final blobBase64 = base64Encode(blobBytes);
+  //   print("uriiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3$blob");
+  //
+  //   // Send the base64 string to the backend
+  //   final apiUrl =Uri.parse(  CommunicationUrls.uploadImageUrl);
+  //   http.post(apiUrl, body: {'file': blobBase64,"filename":"audio.mp3"}).then((response) {
+  //     // Handle response from backend
+  //     if (response.statusCode == 200) {
+  //       print('Blob data successfully sent to the backend.');
+  //     } else {
+  //       print('Failed to send blob data to the backend. Status code: ${response.statusCode}');
+  //     }
+  //   }).catchError((error) {
+  //     print('Error sending blob data to the backend: $error');
+  //   });
+  // });
+
   // File file = File(uri.path);
   // Create a Blob from the recorded data
-  final blob = html.Blob([html.File([path], 'audio/wav')]);
-
-  final reader = html.FileReader();
-  reader.readAsArrayBuffer(blob);
-
-  reader.onLoadEnd.listen((_) {
-    final uint8List = Uint8List.fromList(reader.result as List<int>);
-
-    // Use the Uint8List for further processing or upload
-    // For example, you can create a File from Uint8List
-    final  File file = html.File([uint8List], 'audio.wav');
-
-    // Access file size
-    final fileSize = file.size;
-    print("File size: ${file.runtimeType}");
-
-    // Dispatch your Bloc event or perform other actions
-    // BlocProvider.of<AttachmentBloc>(context)
-    //     .add(UploadLiveAudioEvent(audio: file, comment: widget.grpchatid == "" ? false : true));
-  });
+  // final blob = html.Blob([html.File([path], 'audio/wav')]);
+  //
+  // final reader = html.FileReader();
+  // reader.readAsArrayBuffer(blob);
+  //
+  // reader.onLoadEnd.listen((_) {
+  //   final uint8List = Uint8List.fromList(reader.result as List<int>);
+  //
+  //   // Use the Uint8List for further processing or upload
+  //   // For example, you can create a File from Uint8List
+  //   final  File file = html.File([uint8List], 'audio.wav');
+  //
+  //   // Access file size
+  //   final fileSize = file.size;
+  //   print("File size: ${file.runtimeType}");
+  //
+  //   // Dispatch your Bloc event or perform other actions
+  //   BlocProvider.of<AttachmentBloc>(context)
+  //       .add(UploadLiveAudioEvent(audio: uint8List, comment: true));
+  // });
 
   // file.length().then(
   //   (fileSize) {

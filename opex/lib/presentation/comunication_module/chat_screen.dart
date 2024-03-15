@@ -3157,8 +3157,8 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       // File size is within the allowed limit
       print('File path: ${file.path}');
       print('File size: ${file.size}');
-      BlocProvider.of<AttachmentBloc>(context)
-            .add(UploadVideoEvent(video: result!));
+      // BlocProvider.of<AttachmentBloc>(context)
+      //       .add(UploadVideoEvent(video: result!));
     } else {
       print('File path: ${file.path}');
       print('File size: ${file.size}');
@@ -3253,8 +3253,8 @@ String formatMessageTimestamp(DateTime timestamp,int index){
       // File size is within the allowed limit
       print('File path: ${file.path}');
       print('File size: ${file.size}');
-      BlocProvider.of<AttachmentBloc>(context)
-            .add(UploadFilesEvent(files: result!));
+      // BlocProvider.of<AttachmentBloc>(context)
+      //       .add(UploadFilesEvent(files: result!));
     } else {
       print('File path: ${file.path}');
       print('File size: ${file.size}');
@@ -3338,13 +3338,13 @@ Future<XFile> compressFile(File file) async {
   final uri = Uri.parse(path);
   File file = File(uri.path);
 
-  file.length().then(
-    (fileSize) {
-      print("files is this ${file}");
-      BlocProvider.of<AttachmentBloc>(context)
-          .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
-    },
-  );
+  // file.length().then(
+  //   (fileSize) {
+  //     print("files is this ${file}");
+  //     BlocProvider.of<AttachmentBloc>(context)
+  //         .add(UploadLiveAudioEvent(audio: file,comment: widget.grpchatid==""?false:true));
+  //   },
+  // );
 }
 }
 
