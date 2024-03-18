@@ -111,7 +111,8 @@ class _CenrerScereenSwitchState extends State<CenrerScereenSwitch> {
         communicationuser: widget.communicationuser,
         communicationUserModel: widget.communicationUserModel,
         );
-        }break;      case 4:
+        }break;
+      case 4:
         {
           data =CreateAGroup(
           token: widget.token,

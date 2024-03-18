@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js');
 
 const firebaseConfig = {
   apiKey: "AIzaSyDD6a93rw23pGVSYc9MipHVExobYqIzke0",
@@ -11,8 +11,6 @@ const firebaseConfig = {
   measurementId: "G-DZFYRLTM7X"
 };
 firebase.initializeApp(firebaseConfig);
-
-
 const messaging = firebase.messaging();
   /*messaging.onMessage((payload) => {
   console.log('Message received. ', payload);*/

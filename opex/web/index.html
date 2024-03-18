@@ -32,19 +32,31 @@
   <title>Sidra Teams</title>
   <link rel="manifest" href="manifest.json">
 
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js"></script>
   <script>
-   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js";
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('../firebase-messaging-sw.js')
+          .then(function(registration) {
+            console.log("Service Worker Registered");
+            // Assuming 'messaging' is your Firebase messaging instance
+            messaging.useServiceWorker(registration);
+          })
+          .catch(function(error) {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
   </script>
+
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
 <body>
 <script>
-z
+
  const firebaseConfig = {
   apiKey: "AIzaSyDD6a93rw23pGVSYc9MipHVExobYqIzke0",
   authDomain: "sidrateams-d9972.firebaseapp.com",
