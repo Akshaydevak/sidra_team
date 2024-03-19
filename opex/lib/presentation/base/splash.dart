@@ -1,3 +1,4 @@
+import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
@@ -54,18 +55,18 @@ String token="";
     super.initState();
     Timer(
         const Duration(seconds: 2),
-        () { 
-           authentication.isAuthenticated
-                        ?socketconnnect():
-                        null;
+        () {
+          print("init timer${authentication.isAuthenticated}");
+          authentication.isAuthenticated
+              ?
+          context.read<DummyLoginBloc>()
+              .add(TokenCreationCommunicationEvent()):
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                   // HomePage()
-                  authentication.isAuthenticated
-                      ? const DashBoard()
-                      : const OnBoarding())
+                  const OnBoarding())
           );
         }
     );
@@ -111,7 +112,47 @@ String token="";
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.width;
     debugPrint("${authentication.authenticatedUser.token}customer_CODE");
-    return Scaffold(
+    return
+    BlocListener<DummyLoginBloc, DummyLoginState>(
+    listener: (context, state) async {
+
+    if (state is TokenCreationCommunicationSuccess) {
+    final socketProvider = context.read<scoketProvider>();
+
+    final socketgrpProvider = context.read<scoketgrpProvider>();
+    pref = await SharedPreferences.getInstance();
+
+    await pref!.setString("token", state.token);
+
+
+    print("socket token ${state.token}");
+    socketProvider.connect(state.token.toString());
+
+    socketgrpProvider.connect(state.token.toString());
+    Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+    builder: (context) =>
+    // HomePage()
+    // authentication.isAuthenticated
+    //     ?
+    const DashBoard()
+    // : const OnBoarding()
+    )
+    );
+
+    setState(() {});
+    } else if (state is TokenCreationCommunicationFailed) {
+    showSnackBar(context,
+    message: "Token creation failed",
+    color: Colors.red,
+    // icon: HomeSvg().SnackbarIcon,
+    autoDismiss: true);
+    setState(() {});
+    }
+    },
+
+  child: Scaffold(
       backgroundColor:isMobile? Colors.white:Colors.grey,
       body:isMobile? Center(
         child: PageView(children: [
@@ -144,7 +185,8 @@ String token="";
               )
             ]),
       ]),),),
-    );
+    ),
+);
   }
 
 }

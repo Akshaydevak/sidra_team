@@ -555,10 +555,12 @@ class _WebMyChatListState extends State<WebMyChatList> {
                 child: Container(
                   padding: EdgeInsets.all(10),
             constraints: BoxConstraints(
-            minWidth:
-            25,
-            maxWidth:
-           600,),
+                minWidth:
+                25,
+                maxWidth:
+                MediaQuery.of(context)
+                    .size
+                    .width/3,),
                   child: GestureDetector(
                     onLongPress: (){
                       print("enterreeeeeeeeee");
@@ -605,26 +607,30 @@ class _WebMyChatListState extends State<WebMyChatList> {
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SelectableLinkify(
-                                  linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.red),
-                                  onOpen: (link) async {
-                                    if (!await launchUrl(Uri.parse(link.url))) {
-                                      throw Exception('Could not launch ${link.url}');
-                                    }
-                                  },
-                                  text: widget.messageList
-                                      .message ??
-                                      "",
+                                Theme(data: Theme.of(context).copyWith(
+                                    textSelectionTheme: TextSelectionThemeData(
+                                        selectionColor: Colors.grey.withOpacity(.2))),
+                                  child: SelectableLinkify(
+                                    linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.red),
+                                    onOpen: (link) async {
+                                      if (!await launchUrl(Uri.parse(link.url))) {
+                                        throw Exception('Could not launch ${link.url}');
+                                      }
+                                    },
+                                    text: widget.messageList
+                                        .message ??
+                                        "",
 
-                                  textAlign: TextAlign.left,
+                                    textAlign: TextAlign.left,
 
 
 
 
-                                  
-                                  style:  TextStyle(
-                                      fontSize:isMobile?w/29:w/27,
-                                      color: Colors.black),
+
+                                    style:  TextStyle(
+                                        fontSize:isMobile?w/29:w/27,
+                                        color: Colors.black),
+                                  ),
                                 ),
 
                                 // Text(
@@ -1155,7 +1161,10 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                 constraints: BoxConstraints(
                                   minWidth:
                                   25,
-                                  maxWidth:600),
+                                  maxWidth:
+                                  MediaQuery.of(context)
+                                      .size
+                                      .width/3,),
                                 child: GestureDetector(
                                   onLongPress: (){ widget.ontap( widget.messageList
                                       .message??"");},
@@ -1261,7 +1270,9 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                     minWidth:
                                     25,
                                     maxWidth:
-                                    600,
+                                    MediaQuery.of(context)
+                                        .size
+                                        .width/3,
                                   ),
                                   child: GestureDetector(
                                     onLongPress: (){
@@ -1306,21 +1317,26 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                SelectableLinkify(
-                                                  linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.white,),
-                                                  onOpen: (link) async {
-                                                    if (!await launchUrl(Uri.parse(link.url))) {
-                                                      throw Exception('Could not launch ${link.url}');
-                                                    }
-                                                  },
-                                                  text: widget.messageList
-                                                      .message ??
-                                                      "",
+                                               Theme(data: Theme.of(context).copyWith(
+                                                    textSelectionTheme: TextSelectionThemeData(
+                                                      selectionHandleColor: Colors.orange,
+                                                        selectionColor: Colors.grey.withOpacity(.2))),
+                                                  child: SelectableLinkify(
+                                                    linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.white,),
+                                                    onOpen: (link) async {
+                                                      if (!await launchUrl(Uri.parse(link.url))) {
+                                                        throw Exception('Could not launch ${link.url}');
+                                                      }
+                                                    },
+                                                    text: widget.messageList
+                                                        .message ??
+                                                        "",
 
-                                                  textAlign: TextAlign.left,
-                                                  style:  TextStyle(
-                                                      fontSize: PlatformUtils.isMobile?w/29:w/27,
-                                                      color: Colors.black),),
+                                                    textAlign: TextAlign.left,
+                                                    style:  TextStyle(
+                                                        fontSize: PlatformUtils.isMobile?w/29:w/27,
+                                                        color: Colors.black),),
+                                                ),
                                                 // Text(
                                                 // widget.messageList!
                                                 //         .message ??
@@ -1938,7 +1954,7 @@ class _WebMyChatListState extends State<WebMyChatList> {
                     maxWidth:
                     MediaQuery.of(context)
                         .size
-                        .width/1.5,
+                        .width/3,
                   ),
                   child: GestureDetector(
                     onLongPress: (){
@@ -1988,28 +2004,33 @@ class _WebMyChatListState extends State<WebMyChatList> {
                               children: [
 
 
-                                SelectableLinkify(
-                                  options: LinkifyOptions(
-                                      humanize: false
-                                  ),
-                                  linkifiers:  [
+                                Theme(data: Theme.of(context).copyWith(
+                                    textSelectionTheme: TextSelectionThemeData(
+                                        selectionHandleColor: Colors.orange,
+                                        selectionColor: Colors.white.withOpacity(.2))),
+                                  child: SelectableLinkify(
+                                    options: LinkifyOptions(
+                                        humanize: false
+                                    ),
+                                    linkifiers:  [
 
-                                    EmailLinkifier(),
-                                    UrlLinkifier(),
+                                      EmailLinkifier(),
+                                      UrlLinkifier(),
 
-                                  ],
-                                  linkStyle: TextStyle(color: Color.fromARGB(255, 219, 246, 244),decorationColor: Color.fromARGB(255, 219, 246, 244)),
-                                  onOpen: (link) async {
-                                    if (!await launchUrl(Uri.parse(link.url))) {
-                                      throw Exception('Could not launch ${link.url}');
-                                    }
-                                  },
-                                  text: widget.messageList.message ??"",
+                                    ],
+                                    linkStyle: TextStyle(color: Color.fromARGB(255, 219, 246, 244),decorationColor: Color.fromARGB(255, 219, 246, 244)),
+                                    onOpen: (link) async {
+                                      if (!await launchUrl(Uri.parse(link.url))) {
+                                        throw Exception('Could not launch ${link.url}');
+                                      }
+                                    },
+                                    text: widget.messageList.message ??"",
 
-                                  textAlign: TextAlign.left,
-                                  style:  TextStyle(
-                                      fontSize: PlatformUtils.isMobile?w/29:w/27,
-                                      color:Colors.white),),
+                                    textAlign: TextAlign.left,
+                                    style:  TextStyle(
+                                        fontSize: PlatformUtils.isMobile?w/29:w/27,
+                                        color:Colors.white),),
+                                ),
                                 // Text(
                                 // widget.messageList!
                                 //         .message ??

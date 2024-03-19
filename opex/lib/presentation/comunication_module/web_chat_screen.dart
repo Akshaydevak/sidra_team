@@ -872,6 +872,7 @@ class _WebChatScreenState extends State<WebChatScreen>
 
   @override
   Widget build(BuildContext context) {
+    // FocusScope.of(context).requestFocus(textformFocusnOde);
     // print("homescreen latest widget.id ${widget.communicationUserModel?.id}");
     // print("token ${widget.token}");
     double w1 = MediaQuery.of(context).size.width ;
@@ -2436,8 +2437,9 @@ class _WebChatScreenState extends State<WebChatScreen>
                               oldertimestampp=messageList[index].createdAt??"";
                               return messageList[index].fromuserid!=fromuserids?  Container(
                                 height: 8,
+                                // color: Colors.red,
                                 //  color:Colors.green
-                              ):Container(height:3,
+                              ):Container(
                                 // color:Colors.red
                               );
 

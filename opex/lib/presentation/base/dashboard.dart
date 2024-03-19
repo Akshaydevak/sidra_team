@@ -24,6 +24,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -915,8 +916,8 @@ pref = await SharedPreferences.getInstance();
 
                                   ),
                                 ),
-                                drawer: isMobile? AppDrawer(
-                                 ):Container(),
+                                // drawer: isMobile? AppDrawer(
+                                //  ):Container(),
                                 body: isMobile?
                                 Container(
                                   // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
@@ -983,7 +984,20 @@ pref = await SharedPreferences.getInstance();
                                 ):  Container(
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height,
-                                    color: ColorPalette.webBagroundClr.withOpacity(.3),
+                                    decoration: BoxDecoration(
+                                      color: ColorPalette.webBagroundClr.withOpacity(.3),
+                                      boxShadow: [
+                                      BoxShadow(
+                                      color: Colors.grey.withOpacity(.4),
+                                      blurRadius: 5.0,
+                                      spreadRadius: 2.0,
+                                      offset: Offset(
+                                        0, // No horizontal offset
+                                        -.05, // Move shadow 5 units upwards
+                                      ),
+                                    )],
+                                    ),
+
 
                                   child: Row(
                                     children: [
@@ -1268,8 +1282,10 @@ class _AccountSwitchState extends State<AccountSwitch> {
   String fcm='';
   @override
   Widget build(BuildContext context) {
+    print("authentication.userNameData.length${ authentication.userNameData.length}");
     
     double w1 = MediaQuery.of(context).size.width ;
+    double h = MediaQuery.of(context).size.height ;
     double w = w1> 700
         ? 400
         : w1;
@@ -1296,7 +1312,7 @@ class _AccountSwitchState extends State<AccountSwitch> {
   child: Container(
 
       width: 290,
-      height: 100,
+      height:authentication.userNameData.length==1 ||authentication.userNameData.length==0? 100:authentication.userNameData.length==2?150:200,
       decoration: BoxDecoration(
           color: Colors.white,
         borderRadius: BorderRadius.circular(10)
@@ -1307,11 +1323,14 @@ class _AccountSwitchState extends State<AccountSwitch> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 3,),
             Container(
               color: Colors.white,
-              height: w/10,
+              // height:authentication.userNameData.length==1 ||authentication.userNameData.length==0? h*.06:h*.01,
               child: ListView.separated(
-                  physics: AlwaysScrollableScrollPhysics(),
+                scrollDirection: Axis.vertical,
+
+                  physics: NeverScrollableScrollPhysics(),
                   primary: false,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
@@ -1371,7 +1390,7 @@ class _AccountSwitchState extends State<AccountSwitch> {
                   },
                   itemCount: authentication.userNameData.length),
             ),
-            SizedBox(height: 5,),
+           Spacer(),
             authentication.userNameData.length<3?GestureDetector(
               onTap: (){
                 Navigator.of(context).pushAndRemoveUntil(
@@ -1390,6 +1409,7 @@ class _AccountSwitchState extends State<AccountSwitch> {
                   ),),
               ),
             ):Container(),
+            SizedBox(height: 3,),
           ],
         ),
       ),

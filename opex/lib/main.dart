@@ -238,6 +238,12 @@ class _MyAppState extends State<MyApp> {
               title: 'Sidrateams',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
+                // textSelectionTheme: TextSelectionThemeData(
+                //   cursorColor: Colors.green, // Text cursor color
+                //   selectionColor: Colors.yellow,
+                //   // Text selection background color
+                //   selectionHandleColor: Colors.blue, // Text selection handle color
+                // ),
               ),
 
               home: SplashScreen(),

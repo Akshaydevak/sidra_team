@@ -245,7 +245,8 @@ int unreadCount=0;
                       child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: w /1.8,
+                            width:isMobile? w /1.8:w1-w1/1.8,
+                            // color: Colors.red,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +284,7 @@ int unreadCount=0;
                                                     MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Container(
-                                                    width: w/2.3,
+                                                    width: w1-w1/1.8,
                                                     child: Row(
                                                       children: [
                                                         Text(
@@ -298,7 +299,7 @@ int unreadCount=0;
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          width: w/5,
+                                                          width: w,
                                                           child: Text(
                                                             widget.communicationUserModel
                                                                     ?.latestMessage ??
@@ -333,7 +334,7 @@ int unreadCount=0;
                                                     MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   SizedBox(
-                                                    width: w/3,
+                                                    width: w1-w1/1.4,
                                                     child: Text(
                                                       widget.communicationUserModel
                                                               ?.latestMessage ??

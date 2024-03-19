@@ -134,9 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state is LoginSuccess) {
               data();
               _isLoading = false;
-              context
-                  .read<DummyLoginBloc>()
-                  .add(TokenCreationCommunicationEvent());
+              context.read<DummyLoginBloc>().add(TokenCreationCommunicationEvent());
               
             } else if (state is LoginFailed) {
               showSnackBar(context,

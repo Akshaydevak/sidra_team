@@ -5,6 +5,8 @@ import 'package:cluster/common_widgets/profile_text_field.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
+import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
+import 'package:cluster/presentation/base/splash.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
@@ -861,21 +863,48 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        final socketProvider = context
-                                                            .read<scoketProvider>();
-                                                        socketProvider.disconnect();
-                                                        authentication
-                                                            .clearAuthenticatedTokens();
-                                                        Variable.profilePic='';
-                                                        context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
-                                                        Navigator.of(context)
-                                                            .pushAndRemoveUntil(
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                const LoginScreen()),
-                                                                (Route<dynamic>
-                                                            route) =>
-                                                            false);
+                                                        if(authentication.userNameData.length==1){
+                                                          final socketProvider = context
+                                                              .read<scoketProvider>();
+                                                          socketProvider.disconnect();
+                                                          authentication
+                                                              .clearAuthenticatedTokens();
+                                                          Variable.profilePic='';
+                                                          authentication.userNameData.clear();
+                                                          context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                  const LoginScreen()),
+                                                                  (Route<dynamic>
+                                                              route) =>
+                                                              false);
+                                                        }
+                                                        else{
+                                                          for(var i=0;i<authentication.userNameData.length;i++){
+                                                            if(authentication.userNameData[i].token==authentication.authenticatedUser?.token){
+                                                              authentication.userNameData.removeAt(i);
+                                                              context.read<EmployeeBloc>().add( FcmTokenLogOutEvent(fcm.toString()??""));
+                                                              setState(() {
+
+                                                              });
+                                                              print("lllll${authentication.userNameData.length}");
+                                                              BlocProvider.of<AuthBloc>(context)
+                                                                  .add(SwitchUserAuthGet(token: authentication.userNameData[0].token));
+
+                                                              Navigator.of(context)
+                                                                  .pushAndRemoveUntil(
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                          SplashScreen()),
+                                                                      (Route<dynamic>
+                                                                  route) =>
+                                                                  false);
+                                                            }
+                                                          }
+                                                        }
                                                       },
                                                       child: Container(
                                                         width: w / 3.1,

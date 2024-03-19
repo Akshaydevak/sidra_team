@@ -99,7 +99,19 @@ class _AppBarState extends State<AppBarScreen> {
         ),
       ],
       child: Container(
-       color:   Color(0xff0F2F5),
+
+        decoration: BoxDecoration(
+          color:   Color(0xff0F2F5),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.withOpacity(0.5), // Adjust shadow color and opacity
+          //     blurRadius: 2.0, // soften the shadow
+          //     spreadRadius: 1.0, //extend the shadow
+          //     offset: Offset(0, -1.0), // Move shadow to bottom
+          //   ),
+          // ],
+        ),
+
         // margin: isMobile?null:EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4.5),
 
         child: Column(

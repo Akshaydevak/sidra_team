@@ -16,6 +16,7 @@ class Authentication {
 
   String _keyAuthenticatedUser = "keyAuthenticated";
   String _keyAuthenticatedToken = "keyAuthenticatedToken";
+  String _keyUserDataList = "userListData";
   String keyAdmin = "keyAdmin";
   List<User> userNameData = [];
   String keyAssociateAdmin = "keyAssociateAdmin";
@@ -45,8 +46,7 @@ class Authentication {
     print("before   retrieve cache data");
 
     try {
-      SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
       String? authenticatedUserJsonString =
       sharedPreferences.getString(_keyAuthenticatedUser);
@@ -54,11 +54,22 @@ class Authentication {
       sharedPreferences.getBool(keyAdmin);
       bool? authenticatedAssociateAdmin =
       sharedPreferences.getBool(keyAssociateAdmin);
+      String? authenticationSavedListData = sharedPreferences.getString(_keyUserDataList);
       if (authenticatedUserJsonString != null) {
         print("retrieve cache data");
         _authenticatedUser = User.fromJson(
           jsonDecode(authenticatedUserJsonString),
         );
+        print("here we  go$authenticationSavedListData");
+
+        userNameData=(jsonDecode(authenticationSavedListData!) as List)
+            .map((json) => User.fromJson(json))
+            .toList();
+
+        print("here we  list${userNameData.length}");
+        // userNameData.add(User.fromJson(
+        //     jsonDecode(authenticationSavedListData??"")) ,
+        // );
       }
 
       if (authenticatedAdmin != null) {
@@ -89,8 +100,8 @@ class Authentication {
     }
   }
 
-  Future<void> saveAuthenticatedUser({
-    bool? isAssociateAdmin, 
+  Future<void>  saveAuthenticatedUser({
+    bool? isAssociateAdmin,
     bool? isAdmin,
     bool isAdd=true,
     required User authenticatedUser,
@@ -113,12 +124,19 @@ class Authentication {
           keyAssociateAdmin,
           isAssociateAdmin??false,
         );
+      isAdd==true?userNameData.add(authenticatedUser):null;
+      await SharedPreferences.getInstance()
+        ..setString(
+          _keyUserDataList,
+          jsonEncode(userNameData),
+        );
+      print("heyyyyyyyyy savvvveee ${userNameData}");
       print("anganene admin val = $isAdmin");
       print("anganene admin val = $isAssociateAdmin");
 
       if (authenticatedUser.token!.isNotEmpty) {
         print("enteredddd savingg!!!");
-        // ignore: avoid_single_cascade_in_expression_statements
+
         await SharedPreferences.getInstance()
           ..setString(
             _keyAuthenticatedUser,
