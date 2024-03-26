@@ -1,6 +1,7 @@
 class CommunicationUrls {
   static const communicationBaseUrl =
       "https://api-communication-application.hilalcart.com/";
+      // "https://test-1communication.hilalcart.com/";
 
       // "http://192.168.1.187:5500/";
       // "https://5z7l1nh4-5500.inc1.devtunnels.ms/";

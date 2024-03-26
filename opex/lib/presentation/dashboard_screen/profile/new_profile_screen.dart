@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/profile_text_field.dart';
+import 'package:cluster/common_widgets/switch.dart';
 import 'package:cluster/core/color_palatte.dart';
 import 'package:cluster/core/utils/platform_check.dart';
 import 'package:cluster/core/utils/variables.dart';
 import 'package:cluster/presentation/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:cluster/presentation/base/splash.dart';
+import 'package:cluster/presentation/comunication_module/communication_homescreen.dart';
 import 'package:cluster/presentation/comunication_module/scoketconnection.dart';
 import 'package:cluster/presentation/dashboard_screen/home_screen/homescreen_widget/apps_svg.dart';
 import 'package:cluster/presentation/dashboard_screen/profile/profile_bloc/profile_bloc.dart';
@@ -688,14 +690,18 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: HelpScreen(autoFocus: false),
-                                    withNavBar: false,
-                                    // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                    PageTransitionAnimation.slideUp,
-                                  );
+                                  showDailogPopUp(
+                                      context,
+                                      //     AdminCreationUser()
+                                      HelpScreen(autoFocus: false));
+                                  // PersistentNavBarNavigator.pushNewScreen(
+                                  //   context,
+                                  //   screen: HelpScreen(autoFocus: false),
+                                  //   withNavBar: false,
+                                  //   // OPTIONAL VALUE. True by default.
+                                  //   pageTransitionAnimation:
+                                  //   PageTransitionAnimation.slideUp,
+                                  // );
                                 },
                                 child: ProfileMenuCard(
                                   // isWidth: false,
@@ -715,14 +721,25 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: ChangePasswordScreen(),
-                                    withNavBar: false,
-                                    // OPTIONAL VALUE. True by default.
-                                    pageTransitionAnimation:
-                                    PageTransitionAnimation.slideUp,
-                                  );
+
+                                  showDailogPopUp(
+                                      context,
+                                      //     AdminCreationUser()
+                                      ChangePasswordScreen(
+
+
+
+
+                                      ));
+
+                                  // PersistentNavBarNavigator.pushNewScreen(
+                                  //   context,
+                                  //   screen: ChangePasswordScreen(),
+                                  //   withNavBar: false,
+                                  //   // OPTIONAL VALUE. True by default.
+                                  //   pageTransitionAnimation:
+                                  //   PageTransitionAnimation.slideUp,
+                                  // );
                                 },
                                 child: ProfileMenuCard(
                                   // isWidth: false,
@@ -863,6 +880,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
+                                                        objectGlobal=   objectGlobal.changeScreen(current: CommunicationModule(),previous: this.widget,tabIndex: 0);objectGlobal.changeData();
+
                                                         if(authentication.userNameData.length==1){
                                                           final socketProvider = context
                                                               .read<scoketProvider>();

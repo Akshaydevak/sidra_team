@@ -104,7 +104,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             clr:getTAbIndex(0)?ColorPalette.selectedTabClr:Colors.transparent,
                             // onTap: widget.homeTap,
                             onTap: (){
-                              chabeTAbIndex(0);
+                              // chabeTAbIndex(0);
+                              objectGlobal=   objectGlobal.changeScreen(current: CommunicationModule(),previous: this.widget,tabIndex: 0);
+                              print(objectGlobal.existing);
+                              objectGlobal.changeData();
+
                             },
                             appTitle: "Communication",
                             appDescription:
@@ -118,7 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             clr:getTAbIndex(1)?ColorPalette.selectedTabClr:Colors.transparent,
                             // onTap: widget.taskTap,
                             onTap: (){
-                              chabeTAbIndex(1);
+                              // chabeTAbIndex(1);
+                              objectGlobal=   objectGlobal.changeScreen(current: TaskAndOperation(),previous: this.widget,tabIndex: 1);
+                              print(objectGlobal.existing);
+                              objectGlobal.changeData();
                             },
                             appTitle: "Task & Operations",
                             appDescription:
@@ -131,7 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppHomeCard(
                             clr:getTAbIndex(2)?ColorPalette.selectedTabClr:Colors.transparent,
                             onTap: (){
-                              chabeTAbIndex(2);
+                              // chabeTAbIndex(2);
+                              objectGlobal=   objectGlobal.changeScreen(current: SidraLearningHomePage(),previous: this.widget,tabIndex: 2);
+                              print(objectGlobal.existing);
+                              objectGlobal.changeData();
 
                               // PersistentNavBarNavigator.pushNewScreen(
                               //   context,

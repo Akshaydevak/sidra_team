@@ -1,5 +1,6 @@
-importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js');
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDD6a93rw23pGVSYc9MipHVExobYqIzke0",
@@ -12,6 +13,16 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
+  if ('serviceWorker' in navigator) {
+  console.log('Registration successful, scope is:')
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then(function(registration) {
+      console.log('Registration successful, scope is:', registration.scope);
+    }).catch(function(err) {
+      console.log('Service worker registration failed, error:', err);
+    });
+  }
+
   /*messaging.onMessage((payload) => {
   console.log('Message received. ', payload);*/
   messaging.onBackgroundMessage(function(payload) {
@@ -21,7 +32,29 @@ const messaging = firebase.messaging();
     const notificationOptions = {
       body: payload.notification.body,
     };
-
-    self.registration.showNotification(notificationTitle,
-      notificationOptions);
-  });
+});
+messaging.setBackgroundMessageHandler(function (payload) {
+ console.log('SET background message ', payload);
+    const promiseChain = clients
+        .matchAll({
+            type: "window",
+            includeUncontrolled: true
+        })
+        .then(windowClients => {
+            for (let i = 0; i < windowClients.length; i++) {
+                const windowClient = windowClients[i];
+                windowClient.postMessage(payload);
+            }
+        })
+        .then(() => {
+            const title = payload.notification.title;
+            const options = {
+                body: payload.notification.score
+              };
+            return registration.showNotification(title, options);
+        });
+    return promiseChain;
+});
+self.addEventListener('notificationclick', function (event) {
+    console.log('notification received: ', event)
+});

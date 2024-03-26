@@ -124,3 +124,40 @@ class _CenrerScereenSwitchState extends State<CenrerScereenSwitch> {
     return data ;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+ValueNotifier< Widget> slectedTabWidgetNottifer=ValueNotifier( CommunicationModule());
+
+
+
+ScreenChange objectGlobal=ScreenChange(existing: CommunicationModule());
+
+class ScreenChange{
+  final Widget? previous;
+  final Widget? existing;
+  final int? tabIndex;
+  ScreenChange({this.previous,this.existing,this.tabIndex});
+
+  ScreenChange changeScreen({ required Widget current, Widget? previous, int? tabIndex,}){
+    return ScreenChange(
+        existing:current,
+        previous:previous??this.existing,
+      tabIndex: tabIndex??-1,
+    );
+  }
+
+  changeData({ bool isPrev=false}){
+    slectedTab.value=this.tabIndex??-1;
+    slectedTabWidgetNottifer.value=isPrev?this.previous??Container():this.existing??Container();
+    print(slectedTabWidgetNottifer.value);
+  }
+}

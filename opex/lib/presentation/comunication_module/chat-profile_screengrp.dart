@@ -85,13 +85,13 @@ class _ChatProfileScreen2State extends State<ChatProfileScreen2> {
   @override
   void initState() {
     
-print("room pofilr ${widget.communicationuser?.description} ${widget.isadmin} ${widget.redirectchatid} ${widget.redirectchatname}");
+// print("room pofilr ${widget.roomId} ${widget.isadmin} ${widget.redirectchatid} ${widget.redirectchatname}");
  widget.socket!.emit("group.members", 
-     widget.chat==false?widget.redirectchatid!=""?widget.redirectchatid:widget.communicationUserModel?.chatid : widget.communicationuser?.chatid);
-     
+    widget.roomId??"");
+     print("testiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
     widget.socket!.on("groupmembers.result", (data){ 
       print("groupk members: $data");
-      
+      print("testiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
       grpmember.clear();
     (data as List).forEach((element) {
     grpmember.add(GroupUserList.fromJson(element));

@@ -1077,10 +1077,21 @@ setState(() {
               withNavBar: false, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.fade,
             ):
-        chabeTAbIndex(4,
-            token: token,
-            loginUserId: loginuserId,
-            socket: socketCon,);
+        objectGlobal=   objectGlobal.changeScreen(current:
+        CreateAGroup(
+          token: token,
+          loginUserId: loginuserId,
+          socket: socketCon,
+        ),
+            previous: this.widget,tabIndex: -1);
+        print(objectGlobal.existing);
+        objectGlobal.changeData();
+
+
+        // chabeTAbIndex(4,
+        //     token: token,
+        //     loginUserId: loginuserId,
+        //     socket: socketCon,);
           },
           child: const Icon(Icons.add,size: 32,color: Colors.white,),
         ),

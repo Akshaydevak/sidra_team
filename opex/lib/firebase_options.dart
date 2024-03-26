@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '793852669363',
     projectId: 'sidrateams-d9972',
     authDomain: 'sidrateams-d9972.firebaseapp.com',
+    databaseURL: 'https://sidrateams-d9972-default-rtdb.firebaseio.com',
     storageBucket: 'sidrateams-d9972.appspot.com',
     measurementId: 'G-2G7V6XQ0LK',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:793852669363:android:07b4a38a8e5bc9acccafc6',
     messagingSenderId: '793852669363',
     projectId: 'sidrateams-d9972',
+    databaseURL: 'https://sidrateams-d9972-default-rtdb.firebaseio.com',
     storageBucket: 'sidrateams-d9972.appspot.com',
   );
 
@@ -66,6 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:793852669363:ios:821233131f9a5ab0ccafc6',
     messagingSenderId: '793852669363',
     projectId: 'sidrateams-d9972',
+    databaseURL: 'https://sidrateams-d9972-default-rtdb.firebaseio.com',
     storageBucket: 'sidrateams-d9972.appspot.com',
     iosBundleId: 'com.rgcopex',
   );
@@ -75,6 +78,7 @@ class DefaultFirebaseOptions {
     appId: '1:793852669363:ios:821233131f9a5ab0ccafc6',
     messagingSenderId: '793852669363',
     projectId: 'sidrateams-d9972',
+    databaseURL: 'https://sidrateams-d9972-default-rtdb.firebaseio.com',
     storageBucket: 'sidrateams-d9972.appspot.com',
     iosBundleId: 'com.rgcopex',
   );

@@ -25,6 +25,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common_widgets/gradient_button.dart';
 import '../../common_widgets/phonenum_field.dart';
+import '../../common_widgets/switch.dart';
+import '../comunication_module/communication_homescreen.dart';
 import '../dashboard_screen/home_screen/home_svg.dart';
 import '../task_operation/employee_bloc/employee_bloc.dart';
 
@@ -163,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                socketProvider.connect(state.token.toString());
 
     socketgrpProvider.connect(state.token.toString());
+                          objectGlobal=   objectGlobal.changeScreen(current: CommunicationModule(),previous: this.widget,tabIndex: 0);objectGlobal.changeData();
             
                            Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => DashBoard(index: 0,)), (route) => false);
 

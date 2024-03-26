@@ -1,3 +1,4 @@
+
 {
     "name": "opex",
     "short_name": "opex",
@@ -5,6 +6,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
+    "gcm_sender_id": "793852669363",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,

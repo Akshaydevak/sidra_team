@@ -119,6 +119,7 @@ class ChatModel extends Equatable {
   final bool? firstMessageOfDay;
   @JsonKey(name: "date")
   final String? day;
+  final bool? isSelectable;
   @JsonKey(name: "seenBy")
   final List<String>? seenBy;
 
@@ -126,6 +127,7 @@ class ChatModel extends Equatable {
       {this.type,
       this.message,
       this.id,
+        this.isSelectable,
       this.chatid,
       this.groupid,
       this.fromUser,

@@ -1,7 +1,9 @@
 
 
+// import 'dart:html';
+import 'dart:html';
 import 'dart:math';
-// import 'dart:io';
+import 'dart:html' as html;
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:cluster/common_widgets/loading.dart';
 import 'package:cluster/common_widgets/string_extensions.dart';
@@ -41,6 +43,7 @@ class WebMyChatList extends StatefulWidget {
   final bool? seentick;
   final List<GroupUserList> grpmember;
   final Function( String) ontap;
+  final Function? selectionChange;
   const WebMyChatList({super.key,
     required this.messageList,
     this.msgdate,
@@ -53,7 +56,7 @@ class WebMyChatList extends StatefulWidget {
     this.roomid,
     required this.grpmember,
     this.seentick,
-    required this.ontap
+    required this.ontap, this.selectionChange
   });
 
   @override
@@ -69,6 +72,8 @@ class _WebMyChatListState extends State<WebMyChatList> {
   void initState() {
     print("activelength chat page ${widget.activeUsersLength}");
     if(widget.messageList!.type=="image"){
+      _downloadStatus[widget.messageList!.message??""] = false;
+        _downloadloading[widget.messageList!.message??""] = false;
       // _checkDownloaded(widget.messageList!.message??"");
     }
 
@@ -77,7 +82,20 @@ class _WebMyChatListState extends State<WebMyChatList> {
     super.initState();
   }
 
+
+
+  // void setTrueAtIndex(List<bool> list, int index) {
+  //   for (int i = 0; i <widge.length; i++) {
+  //     if (i == index) {
+  //       list[i] = true;
+  //     } else {
+  //       list[i] = false;
+  //     }
+  //   }
+  // }
   // Future<void> _checkDownloaded(String imageUrl) async {
+  //   _downloadStatus[imageUrl] = false;
+  //   _downloadloading[imageUrl] = false;
   //   final directory = await getApplicationDocumentsDirectory();
   //   _localPath = directory.path;
   //   final filePath = '$_localPath/${imageUrl.split('/').last}';
@@ -145,6 +163,78 @@ class _WebMyChatListState extends State<WebMyChatList> {
   //    // await GallerySaver.saveImage(file.path);
   //    setState(() {});
   //  }
+
+
+
+
+  Future<void> _downloadImage(String imageUrl) async {
+    print("download $imageUrl");
+    try {
+      final response = await html.HttpRequest.request(imageUrl, responseType: 'blob');
+      final blob = response.response as html.Blob;
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute("download", imageUrl.split('/').last)
+        ..click();
+      html.Url.revokeObjectUrl(url);
+
+      // Update your state accordingly
+      setState(() {
+        _downloadStatus[widget.messageList!.message ?? ""] = true;
+        _downloadloading[widget.messageList!.message ?? ""] = true;
+      });
+    } catch (e) {
+      // Handle any errors that occur during the download process
+      print("Error downloading image: $e");
+    }
+  }
+
+
+
+
+
+
+  Future<void> _downloadImage1(String imageUrl) async {
+    print("download$imageUrl");
+
+
+
+    final response = await http.get(Uri.parse(imageUrl),
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        // "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
+        // "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "GET,POST, OPTIONS"
+      },
+
+
+    ); // Use suitable HTTP package for web
+    final imageData = response.bodyBytes;
+
+    // Simulating saving the image to a file (not possible in web directly)
+    final blob = html.Blob([imageData]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute("download", imageUrl.split('/').last)
+      ..click();
+    html.Url.revokeObjectUrl(url);
+
+    // Update your state accordingly
+    setState(() {
+      // Update your state here
+    });
+
+    // final response = await http.get(Uri.parse(imageUrl));
+    // final directory = await getApplicationDocumentsDirectory();
+    // _localPath = directory.path;
+    // final filePath = '$_localPath/${imageUrl.split('/').last}';
+    // final file = File(filePath);
+    // await file.writeAsBytes(response.bodyBytes);
+    _downloadStatus[imageUrl] = true;
+    // await ImageGallerySaver.saveFile(file.path);
+    // await GallerySaver.saveImage(file.path);
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     double w1 = MediaQuery.of(context).size.width ;
@@ -192,150 +282,162 @@ class _WebMyChatListState extends State<WebMyChatList> {
             widget.loginUserId) ...{
           if (widget.isGroup == false ) ...{
             if (widget.messageList!.type == "image")...{
-              InkWell(
-                  onTap: () {
-                    _downloadStatus[widget.messageList?.message??""] ==false?null:
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) {
-                          return DetailScreen(
-                            image:widget.messageList!
-                                .message ??
-                                "",
-                          );
-                        }));
-                  },
-                  child: Container(
-                      key: new PageStorageKey(
-                        "image ${widget.roomid}${widget.messageList!.message}",
-                      ),
-                      width: w / 1.5,
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomLeft:
-                          Radius.circular(0),
-                          bottomRight:
-                          Radius.circular(10),
-                        ),
-                        color: Colors.white,
-                      ),
-                      alignment: Alignment.topLeft,
-                      child: Column(
-                        children: [
-                          Container(
-                            constraints: BoxConstraints(
-                              maxHeight:
-                              MediaQuery.of(context)
-                                  .size
-                                  .height /
-                                  2.5,
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // SizedBox(height:widget.isselcted==true? 5:0,),
+                  InkWell(
+                      onTap: () {
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (_) {
+                        //       return MyPhotoView(
+                        //         Path :widget.messageList
+                        //             .message ??
+                        //             "",
+                        //       );
+                        //     }));
+                      },
+                      // onLongPress: widget.ontap,
+                      child: Container(
+                          width: w / 1.5,
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(0),
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
                             ),
-                            width: w,
-                            child: ClipRRect(
-                              borderRadius:
-                              const BorderRadius
-                                  .only(
-                                  topLeft: Radius
-                                      .circular(0),
-                                  topRight: Radius
-                                      .circular(6),
-                                  bottomLeft: Radius
-                                      .circular(6),
-                                  bottomRight:
-                                  Radius
-                                      .circular(
-                                      6)),
-                              child:
-
-                              Stack(
-                                children: [
-                                  Image(
-                                      loadingBuilder: (context,
-                                          child,
-                                          loadingProgress) {
-                                        if (loadingProgress ==
-                                            null)
-                                          return child;
-                                        return const SizedBox(
-                                          child: Center(
-                                              child: CircularProgressIndicator(
-                                                  color: Colors
-                                                      .white)),
-                                        );
-                                      },
-                                      width: 500,height:400,
-                                      fit: BoxFit.fill,
-                                      image:
-
-                                   //   ResizeImage(
-                                          NetworkImage(
-                                        widget.messageList
-                                            .message ??
-                                            "",)
-                                          //,width: 500,height:400,allowUpscaling: true,policy: ResizeImagePolicy.fit)
-                                  ),
-                                  Positioned(child:_downloadStatus[widget.messageList?.message??""] ==false? BlurryContainer(color: Colors.transparent,
-
-                                    child: Container(
-
-                                        height: 20,
-                                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: (){
-                                                // _downloadImage(widget.messageList!
-                                                //     .message ??
-                                                // "");
-                                              } ,
-
-                                              child: Card(
-                                                  color: Color.fromARGB(147, 255, 255, 255),
-                                                  child:_downloadStatus[widget.messageList?.message??""]==false? Row(
-                                                    children: [
-                                                      Icon(Icons.download,size: 36,),
-                                                      Text("download",style: TextStyle(fontWeight: FontWeight.w400),),
-                                                      SizedBox(width: 2,)
-                                                    ],
-                                                  ):customCupertinoLoading()
-                                              ),
-                                            ),
-                                          ],
-                                        )
-
-                                    ),
-
-                                    height:
-                                    MediaQuery.of(context)
-                                        .size
-                                        .height /
-                                        2.5,
-
-                                    width: w,):SizedBox())
-                                ],
-                              ),
-                            ),
+                            color: Colors.white,
                           ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.end,
+                          alignment: Alignment.topRight,
+                          child: Column(
                             children: [
-                              Text(
-                                widget.formattedTime??"",
-                                style: const TextStyle(
-                                  fontSize: 8,
-                                  color: Color(0xFF6D6D6D),
+                              Container(
+                                key: new PageStorageKey(
+                                  "image ${widget.roomid}${widget.messageList.message}",
+                                ),
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                  MediaQuery.of(context)
+                                      .size
+                                      .height /
+                                      2.5,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft:
+                                      Radius.circular(
+                                          6),
+                                      topRight:
+                                      Radius.circular(
+                                          6),
+                                      bottomLeft:
+                                      Radius.circular(
+                                          6),
+                                      bottomRight:
+                                      Radius.circular(
+                                          0)),
+                                ),
+                                width: w,
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+
+                                    Image(
+                                        loadingBuilder:
+                                            (context,
+                                            child,
+                                            loadingProgress) {
+                                          if (loadingProgress ==
+                                              null)
+                                            return child;
+                                          return const SizedBox(
+                                            child: Center(
+                                                child: CircularProgressIndicator(
+                                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                                )),
+                                          );
+                                        },
+                                        fit: BoxFit.cover,
+                                        image: ResizeImage(policy:ResizeImagePolicy.fit,
+                                            NetworkImage(
+                                                widget.messageList
+                                                    .message ??
+                                                    ""),width:700,height:800,allowUpscaling: true)),
+                                    Positioned(child:_downloadStatus[widget.messageList.message??""]==false?
+                                    BlurryContainer(
+                                        color: Color.fromARGB(97, 0, 0, 0),
+                                        width: w,
+                                        height: h,
+                                        borderRadius: BorderRadius.zero,
+                                        child:InkWell(
+                                            onTap: () {
+                                              _downloadloading[widget.messageList.message??""]=true;
+                                              _downloadImage(widget.messageList.message??"");
+                                              setState(() {
+
+                                              });
+                                            },
+                                            child:_downloadloading[widget.messageList.message??""]==false?  Padding(
+                                              padding:  EdgeInsets.only(right:w/6,left:w/6,top:h/6.1,bottom:h/6.1),
+                                              child: Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  decoration: ShapeDecoration(
+                                                    color: Colors.white.withOpacity(0.7900000214576721),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(36),
+                                                    ),
+                                                  ),
+
+                                                  child: SvgPicture.string(CommunicationSvg().imageIcon)),
+                                            )
+                                                :Padding(
+                                              padding:  EdgeInsets.only(right:w/4,left:w/4,top:h/6.1,bottom:h/6.1),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  _downloadImage(widget.messageList.message??"");
+                                                },
+                                                child: Container(
+                                                    width: 50,
+                                                    height: 40,
+                                                    padding: EdgeInsets.all(10),
+                                                    decoration: ShapeDecoration(
+                                                      color: Colors.white.withOpacity(0.7900000214576721),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(36),
+                                                      ),
+                                                    ),
+
+                                                    child:customCupertinoLoading()),
+                                              ),
+                                            ))
+                                    ):SizedBox()),
+                                  ],
                                 ),
                               ),
+                              const SizedBox(
+                                height: 3,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    widget.formattedTime??"",
+                                    style: const TextStyle(
+                                      fontSize: 8,
+                                      color: Colors.black,
+                                    ),
+                                  ),
 
+                                ],
+                              ),
                             ],
-                          ),
-                        ],
-                      )))
+                          ))),
+                  // SizedBox(height:widget.isselcted==true? 5:0,),
+                ],
+              )
+
             } else if (widget.messageList!.type ==
                 "audio") ...{
               Stack(
@@ -609,8 +711,43 @@ class _WebMyChatListState extends State<WebMyChatList> {
                               children: [
                                 Theme(data: Theme.of(context).copyWith(
                                     textSelectionTheme: TextSelectionThemeData(
-                                        selectionColor: Colors.grey.withOpacity(.2))),
+                                        selectionColor:widget.messageList.isSelectable==true? Colors.grey.withOpacity(.2):Colors.transparent)),
                                   child: SelectableLinkify(
+                                    onTap: (){
+                                      Clipboard.setData(ClipboardData(text: widget.messageList.message ?? ""));
+                                      // Fluttertoast.showToast(
+                                      //   msg: 'URL copied to clipboard',
+                                      //   toastLength: Toast.LENGTH_SHORT,
+                                      //   gravity: ToastGravity.BOTTOM,
+                                      //   timeInSecForIosWeb: 1,
+                                      //   backgroundColor: Colors.grey,
+                                      //   textColor: Colors.white,
+                                      //   fontSize: 16.0,
+                                      // );
+                                      print("Akshay selectable");
+                                    },
+                                    linkifiers:  [
+
+                                      EmailLinkifier(),
+                                      UrlLinkifier(),
+
+                                    ],
+
+
+                                    onSelectionChanged: (TextSelection selection, SelectionChangedCause? cause) {
+                                      if (selection.baseOffset != selection.extentOffset) {
+                                        if(widget.selectionChange!=null){
+                                          widget.selectionChange!(widget.index);
+                                        }
+                                        // Text is selected
+
+                                      } else {
+                                        // Text is not selected
+                                        setState(() {
+                                          print("testing case in false");
+                                        });
+                                      }
+                                    },
                                     linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.red),
                                     onOpen: (link) async {
                                       if (!await launchUrl(Uri.parse(link.url))) {
@@ -1320,8 +1457,40 @@ class _WebMyChatListState extends State<WebMyChatList> {
                                                Theme(data: Theme.of(context).copyWith(
                                                     textSelectionTheme: TextSelectionThemeData(
                                                       selectionHandleColor: Colors.orange,
-                                                        selectionColor: Colors.grey.withOpacity(.2))),
+                                                        selectionColor:widget.messageList.isSelectable==true? Colors.grey.withOpacity(.2):Colors.transparent)),
                                                   child: SelectableLinkify(
+                                                    onTap: (){
+                                                      Clipboard.setData(ClipboardData(text: widget.messageList.message ?? ""));
+                                                      // Fluttertoast.showToast(
+                                                      //   msg: 'URL copied to clipboard',
+                                                      //   toastLength: Toast.LENGTH_SHORT,
+                                                      //   gravity: ToastGravity.BOTTOM,
+                                                      //   timeInSecForIosWeb: 1,
+                                                      //   backgroundColor: Colors.grey,
+                                                      //   textColor: Colors.white,
+                                                      //   fontSize: 16.0,
+                                                      // );
+                                                      print("Akshay selectable");
+                                                    },
+                                                    linkifiers:  [
+
+                                                      EmailLinkifier(),
+                                                      UrlLinkifier(),
+
+                                                    ],
+                                                    onSelectionChanged: (TextSelection selection, SelectionChangedCause? cause) {
+                                                      if (selection.baseOffset != selection.extentOffset) {
+                                                        // Text is selected
+                                                        if(widget.selectionChange!=null){
+                                                          widget.selectionChange!(widget.index);
+                                                        }
+                                                      } else {
+                                                        // Text is not selected
+                                                        setState(() {
+                                                          print("testing case in false");
+                                                        });
+                                                      }
+                                                    },
                                                     linkStyle: TextStyle(decorationColor: Colors.blue,color: Colors.white,),
                                                     onOpen: (link) async {
                                                       if (!await launchUrl(Uri.parse(link.url))) {
@@ -1885,7 +2054,7 @@ class _WebMyChatListState extends State<WebMyChatList> {
                               MentionText(
                                 text: widget.messageList.message ??"",
                                 grpmember: widget.grpmember,
-                                mentionStyle: TextStyle(color: Color.fromARGB(255, 105, 212, 205),decoration: TextDecoration.underline,fontSize: PlatformUtils.isMobile? w/29:w/27),
+                                mentionStyle: TextStyle(color: Color(0xFFF1D302),fontSize: PlatformUtils.isMobile? w/29:w/27),
                                 color: true,),
                               // Text(
                               // widget.messageList!
@@ -2004,33 +2173,59 @@ class _WebMyChatListState extends State<WebMyChatList> {
                               children: [
 
 
-                                Theme(data: Theme.of(context).copyWith(
-                                    textSelectionTheme: TextSelectionThemeData(
-                                        selectionHandleColor: Colors.orange,
-                                        selectionColor: Colors.white.withOpacity(.2))),
-                                  child: SelectableLinkify(
-                                    options: LinkifyOptions(
-                                        humanize: false
-                                    ),
-                                    linkifiers:  [
-
-                                      EmailLinkifier(),
-                                      UrlLinkifier(),
-
-                                    ],
-                                    linkStyle: TextStyle(color: Color.fromARGB(255, 219, 246, 244),decorationColor: Color.fromARGB(255, 219, 246, 244)),
-                                    onOpen: (link) async {
-                                      if (!await launchUrl(Uri.parse(link.url))) {
-                                        throw Exception('Could not launch ${link.url}');
-                                      }
+                                  Theme(data: Theme.of(context).copyWith(
+                                      textSelectionTheme: TextSelectionThemeData(
+                                          selectionHandleColor: Colors.orange,
+                                          selectionColor:widget.messageList.isSelectable==true? Colors.white.withOpacity(.2):Colors.transparent)),
+                                    child: SelectableLinkify(
+                                    onTap: (){
+                                      Clipboard.setData(ClipboardData(text: widget.messageList.message ?? ""));
+                                      // Fluttertoast.showToast(
+                                      //   msg: 'URL copied to clipboard',
+                                      //   toastLength: Toast.LENGTH_SHORT,
+                                      //   gravity: ToastGravity.BOTTOM,
+                                      //   timeInSecForIosWeb: 1,
+                                      //   backgroundColor: Colors.grey,
+                                      //   textColor: Colors.white,
+                                      //   fontSize: 16.0,
+                                      // );
+                                      print("Akshay selectable");
                                     },
-                                    text: widget.messageList.message ??"",
+                                      options: LinkifyOptions(
+                                          humanize: false
+                                      ),
+                                      linkifiers:  [
 
-                                    textAlign: TextAlign.left,
-                                    style:  TextStyle(
-                                        fontSize: PlatformUtils.isMobile?w/29:w/27,
-                                        color:Colors.white),),
-                                ),
+                                        EmailLinkifier(),
+                                        UrlLinkifier(),
+
+                                      ],
+                                      onSelectionChanged: (TextSelection selection, SelectionChangedCause? cause) {
+                                        if (selection.baseOffset != selection.extentOffset) {
+                                          // Text is selected
+                                          if(widget.selectionChange!=null){
+                                            widget.selectionChange!(widget.index);
+                                          }
+                                        } else {
+                                          // Text is not selected
+                                          setState(() {
+                                            print("testing case in false");
+                                          });
+                                        }
+                                      },
+                                      linkStyle: TextStyle(color: Color.fromARGB(255, 219, 246, 244),decorationColor: Color.fromARGB(255, 219, 246, 244)),
+                                      onOpen: (link) async {
+                                        if (!await launchUrl(Uri.parse(link.url))) {
+                                          throw Exception('Could not launch ${link.url}');
+                                        }
+                                      },
+                                      text: widget.messageList.message ??"",
+
+                                      textAlign: TextAlign.left,
+                                      style:  TextStyle(
+                                          fontSize: PlatformUtils.isMobile?w/29:w/27,
+                                          color:Colors.white),),
+                                  ),
                                 // Text(
                                 // widget.messageList!
                                 //         .message ??

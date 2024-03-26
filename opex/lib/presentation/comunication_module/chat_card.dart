@@ -50,6 +50,8 @@ String deleteAt='';
 int unreadCount=0;
  String formattedDate ="";
   String inputDate="";
+final GlobalKey<WebChatScreenState> _webchatScreenKey = GlobalKey();
+
 @override
   void initState() {
     super.initState();
@@ -136,11 +138,24 @@ int unreadCount=0;
                 grpchatId: "",
                 pageNo: 1,
                 userId: widget.loginUserId??""));
-            chabeTAbIndex(3,     token: widget.token,
-              loginUserId: widget.loginUserId,
-              socket: widget.socket,
-              isGroup: widget.isGroup,
-              communicationUserModel: widget.communicationUserModel,);
+            // chabeTAbIndex(3,     token: widget.token,
+            //   loginUserId: widget.loginUserId,
+            //   socket: widget.socket,
+            //   isGroup: widget.isGroup,
+            //   communicationUserModel: widget.communicationUserModel,);
+
+            objectGlobal=   objectGlobal.changeScreen(current:
+            WebChatScreen(
+              key: _webchatScreenKey,
+                  token: widget.token,
+                  loginUserId: widget.loginUserId,
+                  socket: widget.socket,
+                  isGroup: widget.isGroup,
+                  communicationUserModel: widget.communicationUserModel,
+                ),
+                previous: this.widget,tabIndex: -1);
+            print(objectGlobal.existing);
+            objectGlobal.changeData();
             // PersistentNavBarNavigator.pushNewScreen(
             //   context,
             //   screen:isMobile? ChatScreen(
@@ -174,7 +189,7 @@ int unreadCount=0;
                           onTap: () async {
                 await showDialog(
                   context: context,
-                  builder: (_) => imageDialog(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.communicationUserModel?.photo,widget.isGroup,context)
+                  builder: (_) => isMobile?imageDialog(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.communicationUserModel?.photo,widget.isGroup,context):imageDialogWeb(widget.communicationUserModel?.name,widget.communicationUserModel?.photoindividual,widget.communicationUserModel?.photo,widget.isGroup,context)
                 );
               },
                           child:
@@ -896,7 +911,7 @@ return Dialog(
         child: Container(
           width: MediaQuery.of(context).size.width/5,
           height: MediaQuery.of(context).size.height/3,
-          child:group==false? 
+          child:group==false?
           path==""?TextAvatar(
                             shape: Shape.Circular,
                             size: 20,
@@ -915,5 +930,98 @@ return Dialog(
     ],
   ),
 );}
+
+
+
+Widget imageDialogWeb(text, path,grppath,group, context) {
+  return Dialog(
+    // backgroundColor: Colors.transparent,
+    // elevation: 0,
+    child:Container(
+      width: MediaQuery.of(context).size.width*.2,
+      height:MediaQuery.of(context).size.width*.2,
+      // color: Colors.red,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Container(
+              height: 40,
+              child: Center(
+                child: Text(
+                  '${text.toString().toTitleCase()}',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+    CircleAvatar(
+      radius: 118.0,
+      child:group==false?
+      path==""?
+      TextAvatar(
+        // shape: Shape.Circular,
+        // size:  118.0,
+        numberLetters: 2,
+        fontSize:10,
+        // MediaQuery.of(context).size.width/5,
+        textColor: Colors.white,
+        fontWeight: FontWeight.w500,
+        text:"${text.toString().toUpperCase()}" ,
+      ) :ClipOval(
+        child: Image.network("$path",fit:BoxFit.fitWidth ,)
+           ,
+      ):grppath==""?Image.asset("asset/chatgrpimg.png"):Image.network('$grppath',),
+      backgroundColor: Colors.white,
+
+
+
+      ),])
+    )
+
+
+
+
+
+    // Column(
+    //   mainAxisSize: MainAxisSize.min,
+    //   crossAxisAlignment: CrossAxisAlignment.stretch,
+    //   children: [
+    //     Padding(
+    //       padding: const EdgeInsets.only(left: 8.0),
+    //       child: Container(
+    //         height: 40,
+    //         child: Center(
+    //           child: Text(
+    //             '${text.toString().toTitleCase()}',
+    //             style: TextStyle(fontWeight: FontWeight.bold),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //     Padding(
+    //       padding: const EdgeInsets.only(top:8.0,right: 8.0,left: 8.0,bottom:25),
+    //       child: Container(
+    //         width: MediaQuery.of(context).size.width/5,
+    //         height: MediaQuery.of(context).size.height/3,
+    //         child:group==false?
+    //         path==""?TextAvatar(
+    //           shape: Shape.Circular,
+    //           size: 20,
+    //           numberLetters: 2,
+    //           fontSize: MediaQuery.of(context).size.width/5,
+    //           textColor: Colors.white,
+    //           fontWeight: FontWeight.w500,
+    //           text:"${text.toString().toUpperCase()}" ,
+    //         )
+    //             :Image.network(
+    //           '$path',
+    //           fit: BoxFit.cover,
+    //         ):grppath==""?Image.asset("asset/chatgrpimg.png"):Image.network('$grppath'),
+    //       ),
+    //     ),
+    //   ],
+    // ),
+  );}
 
 }

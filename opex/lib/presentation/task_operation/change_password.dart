@@ -217,173 +217,182 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         data: MediaQuery.of(context).copyWith(
           textScaleFactor: 1.0,
         ),
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-      child: BackAppBar(
-        label: "Change password",
-        isAction: false,
-      ),
-    ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.only(
-                    left: w1 > 700 ? 30 : 16,
-                    right: w1 > 700 ? 30 : 16,),
+        child: AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            width: w1/3,
+            height: h/1.5,
+            color: Colors.red,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(70),
+                  child: BackAppBar(
+            label: "Change password",
+            isAction: false,
+                  ),
+                ),
+              body: SafeArea(
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // const  Icon(Icons.arrow_back_ios_new, color: Palette.DARK),
+                  child: Container(
+                    // width: w1/2,
+                    margin: EdgeInsets.only(
+                        left: w1 > 700 ? 30 : 16,
+                        right: w1 > 700 ? 30 : 16,),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // const  Icon(Icons.arrow_back_ios_new, color: Palette.DARK),
 
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFormReusable(
-                        controller: currentPassword,
-                        label: "Current Password",
-                        hint: "Enter current password",
-                        password: true,
-                        isMandatory: true,
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return ('Enter Password');
-                          }
-                          if (value.length < 6) {
-                            return ("password requires min 6 digit");
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      TextFormReusable(
-                        controller: newPassword,
-                        label: "New Password",
-                        hint: "Enter new password",
-                        password: true,
-                        isMandatory: true,
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return ('Enter Password');
-                          }
-                          if (value.length < 6) {
-                            return ("password requires min 6 digit");
-                          }
-                          if (newPassword.text == currentPassword.text) {
-                            return ('both passwords are same');
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      TextFormReusable(
-                        controller: newPasswordTwo,
-                        label: "Confirm Password",
-                        hint: "Enter new password",
-                        password: true,
-                        isMandatory: true,
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return ('Confirm your password');
-                          }
-                          if (newPasswordTwo.text != newPassword.text) {
-                            return ('passwords does not match');
-                          }
-                          if (newPasswordTwo.text == currentPassword.text) {
-                            return ('both passwords are same');
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: w1 > 700 ? 30 : 40,
-                      ),
-                      GradientButton(
-                          onPressed: () {
-                            if (newPassword.text.trim() == "" ||
-                                newPasswordTwo.text.trim() == "" ||
-                                newPassword.text.trim() ==
-                                    currentPassword.text.trim() ||
-                                newPasswordTwo.text.trim() ==
-                                    currentPassword.text.trim()) {
-                              print(newPassword.text.trim() == "");
-                              print(newPasswordTwo.text.trim() == "");
-                              print(newPassword.text.trim() ==
-                                  currentPassword.text.trim());
-                              print(newPasswordTwo.text.trim() ==
-                                  currentPassword.text.trim());
-                              print(newPassword.text);
-                              print(currentPassword.text);
-                              print(newPasswordTwo.text);
-                              Fluttertoast.showToast(
-                                  msg: 'Please Check Fields',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  backgroundColor: Colors.white,
-                                  textColor: Colors.black);
-                            } else {
-                              print(
-                                  "new${authentication.authenticatedUser.username.toString()}");
-                              newPassword.text == newPasswordTwo.text
-                                  ? BlocProvider.of<EmployeeBloc>(context)
-                                  .add(ChangePasswordEvent(
-                                current: currentPassword.text,
-                                userName: authentication
-                                    .authenticatedUser.username
-                                    .toString(),
-                                newPass: newPasswordTwo.text,
-                              ))
-                                  : Fluttertoast.showToast(
-                                  msg: 'Password Does Not Match',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  backgroundColor: Colors.white,
-                                  textColor: Colors.black);
-                            }
-                          },
-                          gradient: const LinearGradient(
-                            colors: [ColorPalette.primary, ColorPalette.primary],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                          const SizedBox(
+                            height: 10,
                           ),
-                          color: ColorPalette.primary,
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          )),
+                          TextFormReusable(
+                            controller: currentPassword,
+                            label: "Current Password",
+                            hint: "Enter current password",
+                            password: true,
+                            isMandatory: true,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return ('Enter Password');
+                              }
+                              if (value.length < 6) {
+                                return ("password requires min 6 digit");
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          TextFormReusable(
+                            controller: newPassword,
+                            label: "New Password",
+                            hint: "Enter new password",
+                            password: true,
+                            isMandatory: true,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return ('Enter Password');
+                              }
+                              if (value.length < 6) {
+                                return ("password requires min 6 digit");
+                              }
+                              if (newPassword.text == currentPassword.text) {
+                                return ('both passwords are same');
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          TextFormReusable(
+                            controller: newPasswordTwo,
+                            label: "Confirm Password",
+                            hint: "Enter new password",
+                            password: true,
+                            isMandatory: true,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return ('Confirm your password');
+                              }
+                              if (newPasswordTwo.text != newPassword.text) {
+                                return ('passwords does not match');
+                              }
+                              if (newPasswordTwo.text == currentPassword.text) {
+                                return ('both passwords are same');
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(
+                            height: w1 > 700 ? 30 : 40,
+                          ),
+                          GradientButton(
+                              onPressed: () {
+                                if (newPassword.text.trim() == "" ||
+                                    newPasswordTwo.text.trim() == "" ||
+                                    newPassword.text.trim() ==
+                                        currentPassword.text.trim() ||
+                                    newPasswordTwo.text.trim() ==
+                                        currentPassword.text.trim()) {
+                                  print(newPassword.text.trim() == "");
+                                  print(newPasswordTwo.text.trim() == "");
+                                  print(newPassword.text.trim() ==
+                                      currentPassword.text.trim());
+                                  print(newPasswordTwo.text.trim() ==
+                                      currentPassword.text.trim());
+                                  print(newPassword.text);
+                                  print(currentPassword.text);
+                                  print(newPasswordTwo.text);
+                                  Fluttertoast.showToast(
+                                      msg: 'Please Check Fields',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.white,
+                                      textColor: Colors.black);
+                                } else {
+                                  print(
+                                      "new${authentication.authenticatedUser.username.toString()}");
+                                  newPassword.text == newPasswordTwo.text
+                                      ? BlocProvider.of<EmployeeBloc>(context)
+                                      .add(ChangePasswordEvent(
+                                    current: currentPassword.text,
+                                    userName: authentication
+                                        .authenticatedUser.username
+                                        .toString(),
+                                    newPass: newPasswordTwo.text,
+                                  ))
+                                      : Fluttertoast.showToast(
+                                      msg: 'Password Does Not Match',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.white,
+                                      textColor: Colors.black);
+                                }
+                              },
+                              gradient: const LinearGradient(
+                                colors: [ColorPalette.primary, ColorPalette.primary],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              color: ColorPalette.primary,
+                              child: const Text(
+                                "Submit",
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              )),
 
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     // showDefaultPopup();
-                      //     showDialog(
-                      //       context: context,
-                      //       builder: (context) =>
-                      //           AlertDialog(
-                      //             title: Text("title"),
-                      //             content: Text("body"),
-                      //             actions: [
-                      //               ElevatedButton(onPressed: () {
-                      //                 Navigator.of(context).pop();
-                      //               }, child: Text('OK'),)
-                      //
-                      //             ],
-                      //           )
-                      //     );
-                      //   },
-                      //   child: Container(
-                      //     height: 100,
-                      //       width: 100,
-                      //     color: Colors.green,
-                      //   ),
-                      // )
-                    ],
+                          // GestureDetector(
+                          //   onTap: (){
+                          //     // showDefaultPopup();
+                          //     showDialog(
+                          //       context: context,
+                          //       builder: (context) =>
+                          //           AlertDialog(
+                          //             title: Text("title"),
+                          //             content: Text("body"),
+                          //             actions: [
+                          //               ElevatedButton(onPressed: () {
+                          //                 Navigator.of(context).pop();
+                          //               }, child: Text('OK'),)
+                          //
+                          //             ],
+                          //           )
+                          //     );
+                          //   },
+                          //   child: Container(
+                          //     height: 100,
+                          //       width: 100,
+                          //     color: Colors.green,
+                          //   ),
+                          // )
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -88,6 +88,7 @@ ChatModel _$ChatModelFromJson(Map<String, dynamic> json) => ChatModel(
       type: json['type'] as String?,
       message: json['message'] as String?,
       id: json['id'] as int?,
+      isSelectable: json['isSelectable'] as bool?,
       chatid: json['chatid'] as String?,
       groupid: json['groupid'] as String?,
       fromUser: json['fromUser'] == null
@@ -116,6 +117,7 @@ Map<String, dynamic> _$ChatModelToJson(ChatModel instance) => <String, dynamic>{
       'fromUser': instance.fromUser,
       'firstMessageOfDay': instance.firstMessageOfDay,
       'date': instance.day,
+      'isSelectable': instance.isSelectable,
       'seenBy': instance.seenBy,
     };
 
@@ -245,3 +247,4 @@ Map<String, dynamic> _$GroupsToJson(Groups instance) => <String, dynamic>{
       'name': instance.name,
       'id': instance.id,
     };
+

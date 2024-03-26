@@ -89,12 +89,27 @@ BlocProvider.of<CommunicationBloc>(context).add(
           chat: true,
           communicationuser:state.chatListData1,
         ),
-        ):  chabeTAbIndex(3,       token: widget.token,
+        ):
+      // chabeTAbIndex(3,       token: widget.token,
+      //   loginUserId:widget.loginUserId,
+      //   socket:widget.socket,
+      //   isGroup:false,
+      //   chat: true,
+      //   communicationuser:state.chatListData1,);
+
+      objectGlobal=   objectGlobal.changeScreen(current:
+      WebChatScreen(
+        token: widget.token,
         loginUserId:widget.loginUserId,
         socket:widget.socket,
         isGroup:false,
         chat: true,
-        communicationuser:state.chatListData1,);
+        communicationuser:state.chatListData1,
+      ),
+          previous: this.widget,tabIndex: -1);
+          print(objectGlobal.existing);
+          objectGlobal.changeData();
+
           // Navigator.pop(context); 
           // BlocProvider.of<CommunicationBloc>(context).add(
           //         GetFilterdChatListEvent(
@@ -136,7 +151,11 @@ BlocProvider.of<CommunicationBloc>(context).add(
           surfaceTintColor: Colors.white,
            leading: BackButton(
             onPressed: () {
-             isMobile?  Navigator.pop(context):chabeTAbIndex(0);
+             isMobile?  Navigator.pop(context):
+             // chabeTAbIndex(0);
+             objectGlobal=   objectGlobal.changeScreen(current: CommunicationModule(),previous: this.widget,tabIndex: 0);
+             print(objectGlobal.existing);
+             objectGlobal.changeData();
 
               // BlocProvider.of<CommunicationBloc>(context)
               //     .add(GetChatListEvent(token: widget.token ?? ""));
@@ -302,97 +321,120 @@ BlocProvider.of<CommunicationBloc>(context).add(
                                             email1=state.registeresUsers[index].email!;
                                              
                                             setState(()async{
-                                              bool val1=false;
-                                              int id=1;
-                                              int i1=0;
-                                              print("1-------------$val");
-                                            print("llllll${chatlist.length}}");
-                                            if(chatlist.isNotEmpty){
-                                            for(int i=0; i<=chatlist.length;i++){
-                                              print(chatlist[i].users!.length);
-                                              for(int j=0; j<=chatlist[i].users!.length;j++){ 
-                                                print(" $i");
-                                              print(val);
-                                                if(chatlist[i].users?[j].email==email1){ 
-                                                  val1=true;
-                                                  i1=i;
-                                                  BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
-                                                  token: widget.token ?? "",
-                                                  grpchatId: "",
-                                                  pageNo: 1, chatId: chatlist[i].id??"",userId:widget.loginUserId??""));
-                                                  print(",.,.,.,$i...$val1");
-                                                break;
-                                                }
-                                                else{
-                                                  val1=false;
-      
-                                                j++;
-                                                    id++;
-                                                }
-                                                  
-                                                  } 
-                                                  if(val1==true){
-                                                  break; 
-                                                  }
-                                                  else if(id>chatlist.length){
-                                                    break;
-                                                  }
-                                                } 
-                                            }
-                                            else{
-                                              val1=false;
-                                            } 
-                                                print("...$val1");
-                                            print("2-------------$val1");
-                                            
-                                               val1==false? 
-                                                
-                                            BlocProvider.of<
-                                                        CommunicationBloc>(
-                                                    context)
-                                                .add(AddAFriendUserEvent(
-                                              token: widget.token ?? "",
-                                              email: state
-                                                      .registeresUsers[index]
-                                                      .email ??
-                                                  "",
-                                              fname: state
-                                                      .registeresUsers[index]
-                                                      .fname ??
-                                                  "",
-                                              photo: state
-                                                      .registeresUsers[index].userMete
-                                                      ?.profile ??
-                                                  "",
-                                              lname: state
-                                                      .registeresUsers[index]
-                                                      .lname ??
-                                                  "",
-                                                 usercode: state.registeresUsers[index].userCode??"" 
-                                            ))
-                                            :val1==true?
-                                             
-                                            isMobile?    PersistentNavBarNavigator.pushNewScreen(
-                                                context,
-                                                screen: WebChatScreen(
-                                                  token: widget.token,
-                                                  loginUserId:widget.loginUserId,
-                                                  socket:widget.socket,
-                                                  isGroup:false,
-                                                  chat: true,
-                                                  communicationuser:chatlist[i1],
-                                                ),
-                                                withNavBar:
-                                                    false, // OPTIONAL VALUE. True by default.
-                                                pageTransitionAnimation:
-                                                    PageTransitionAnimation.fade,
-                                              ):chabeTAbIndex(3,        token: widget.token,
-                                                loginUserId:widget.loginUserId,
-                                                socket:widget.socket,
-                                                isGroup:false,
-                                                chat: true,
-                                                communicationuser:chatlist[i1]):null;
-                                            }); 
+    bool val1=false;
+    int id=1;
+    int i1=0;
+    print("1-------------$val");
+    print("llllll${chatlist.length}}");
+    if(chatlist.isNotEmpty){
+    for(int i=0; i<=chatlist.length;i++){
+    print(chatlist[i].users!.length);
+    for(int j=0; j<=chatlist[i].users!.length;j++){
+    print(" $i");
+    print(val);
+    if(chatlist[i].users?[j].email==email1){
+    val1=true;
+    i1=i;
+    BlocProvider.of<ChatBloc>(context).add(ChatScreenGetEvent(
+    token: widget.token ?? "",
+    grpchatId: "",
+    pageNo: 1, chatId: chatlist[i].id??"",userId:widget.loginUserId??""));
+    print(",.,.,.,$i...$val1");
+    break;
+    }
+    else{
+    val1=false;
+
+    j++;
+    id++;
+    }
+
+    }
+    if(val1==true){
+    break;
+    }
+    else if(id>chatlist.length){
+    break;
+    }
+    }
+    }
+    else{
+    val1=false;
+    }
+    print("...$val1");
+    print("2-------------$val1");
+
+
+    if( val1==false){
+
+    BlocProvider.of<
+    CommunicationBloc>(
+    context)
+        .add(AddAFriendUserEvent(
+    token: widget.token ?? "",
+    email: state
+        .registeresUsers[index]
+        .email ??
+    "",
+    fname: state
+        .registeresUsers[index]
+        .fname ??
+    "",
+    photo: state
+        .registeresUsers[index].userMete
+        ?.profile ??
+    "",
+    lname: state
+        .registeresUsers[index]
+        .lname ??
+    "",
+    usercode: state.registeresUsers[index].userCode??""
+    ));
+    } else{
+                                              if(val1==true){
+                                               if( isMobile)    PersistentNavBarNavigator.pushNewScreen(
+                                                  context,
+                                                  screen: WebChatScreen(
+                                                    token: widget.token,
+                                                    loginUserId:widget.loginUserId,
+                                                    socket:widget.socket,
+                                                    isGroup:false,
+                                                    chat: true,
+                                                    communicationuser:chatlist[i1],
+                                                  ),
+                                                  withNavBar:
+                                                  false, // OPTIONAL VALUE. True by default.
+                                                  pageTransitionAnimation:
+                                                  PageTransitionAnimation.fade,
+                                                );else{
+                                                 objectGlobal=   objectGlobal.changeScreen(current:
+                                                 WebChatScreen(
+                                                   token: widget.token,
+                                                   loginUserId:widget.loginUserId,
+                                                   socket:widget.socket,
+                                                   isGroup:false,
+                                                   chat: true,
+                                                   communicationuser:chatlist[i1],
+                                                 ),
+                                                     previous: this.widget,tabIndex: 0);
+                                                 print(objectGlobal.existing);
+                                                 objectGlobal.changeData();
+                                                 // chabeTAbIndex(3,        token: widget.token,
+                                                 //     loginUserId:widget.loginUserId,
+                                                 //     socket:widget.socket,
+                                                 //     isGroup:false,
+                                                 //     chat: true,
+                                                 //     communicationuser:chatlist[i1]);
+                                               }
+
+                                              }else{
+                                                print("Nothing");
+                                              }
+
+
+
+    }
+                                            });
                                           },
                                           child: EmployeeCard(employeeList: state.registeresUsers[index],isCommunicate:true,)
                                           // Container(

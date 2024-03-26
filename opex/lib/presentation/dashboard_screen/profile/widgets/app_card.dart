@@ -36,9 +36,9 @@ class AppHomeCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.string(svgIcon ?? "",
-            height: 50,width: 50,),
+            height: w*.11,width:  w*.11,),
             SizedBox(
-              width: 15,
+              width: w*.05,
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -56,7 +56,7 @@ class AppHomeCard extends StatelessWidget {
                   height: 4,
                 ),
                 Container(
-                  width: isMobile?w/1.45 :w/1.67,
+                  width: isMobile?w/1.45 :w/1.8,
                   // color: Colors.red,
                   child: Text(
                     appDescription ?? "",

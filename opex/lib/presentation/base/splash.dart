@@ -1,5 +1,6 @@
 import 'package:cluster/core/common_snackBar.dart';
 import 'package:cluster/core/utils/platform_check.dart';
+import 'package:cluster/firebase_options.dart';
 import 'package:cluster/presentation/authentication/authentication.dart';
 import 'package:cluster/presentation/base/onboarding.dart';
 import 'package:cluster/presentation/comunication_module/dummy_design_forTesting/bloc/dummy_login_bloc.dart';
@@ -30,7 +31,7 @@ SharedPreferences? pref;
 String token="";
   data() async {
 
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(name: "webteam",options: DefaultFirebaseOptions.currentPlatform);
     print("log data");
     final _firebaseMessaging=FirebaseMessaging.instance;
     await _firebaseMessaging.requestPermission( alert: true,
@@ -40,7 +41,7 @@ String token="";
         criticalAlert: false,
         provisional: false,
         sound: true);
-    final fcmToken=await _firebaseMessaging.getToken();
+    final fcmToken=await _firebaseMessaging.getToken(vapidKey:  "BFPsZ_p4MERknOu2s1KUw_2RDHS95Q7mlX3E_l8WtXfzOjJXzoOyOYnkoevdf9V0FAoVj7ha8IiI5rgzjgTbGqU");
     print("FCM TOKEN.....$fcmToken");
     SharedPreferences pre = await SharedPreferences.getInstance();
     pre.setString("fcm", fcmToken.toString());

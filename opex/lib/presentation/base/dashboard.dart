@@ -986,16 +986,16 @@ pref = await SharedPreferences.getInstance();
                                   height: MediaQuery.of(context).size.height,
                                     decoration: BoxDecoration(
                                       color: ColorPalette.webBagroundClr.withOpacity(.3),
-                                      boxShadow: [
-                                      BoxShadow(
-                                      color: Colors.grey.withOpacity(.4),
-                                      blurRadius: 5.0,
-                                      spreadRadius: 2.0,
-                                      offset: Offset(
-                                        0, // No horizontal offset
-                                        -.05, // Move shadow 5 units upwards
-                                      ),
-                                    )],
+                                    //   boxShadow: [
+                                    //   BoxShadow(
+                                    //   color: Colors.grey.withOpacity(.4),
+                                    //   blurRadius: 5.0,
+                                    //   spreadRadius: 2.0,
+                                    //   offset: Offset(
+                                    //     0, // No horizontal offset
+                                    //     -.05, // Move shadow 5 units upwards
+                                    //   ),
+                                    // )],
                                     ),
 
 
@@ -1018,7 +1018,7 @@ pref = await SharedPreferences.getInstance();
                                         margin: isMobile?null:EdgeInsets.symmetric(horizontal: 10),
 
                                         child:ValueListenableBuilder<Widget>(
-                                          valueListenable: screenNotifier,
+                                          valueListenable: slectedTabWidgetNottifer,
                                           builder: (BuildContext context, Widget value,child) {
                                             return value;
                                               // widgetList[value];
@@ -1294,6 +1294,7 @@ class _AccountSwitchState extends State<AccountSwitch> {
         BlocListener<AuthBloc, AuthState>(
           listener: (context, state) async {
             if (state is SwitchUserAuthGetSuccess) {
+              objectGlobal=   objectGlobal.changeScreen(current: CommunicationModule(),previous: this.widget,tabIndex: 0);objectGlobal.changeData();
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                       builder: (context) => SplashScreen()),
@@ -1315,7 +1316,15 @@ class _AccountSwitchState extends State<AccountSwitch> {
       height:authentication.userNameData.length==1 ||authentication.userNameData.length==0? 100:authentication.userNameData.length==2?150:200,
       decoration: BoxDecoration(
           color: Colors.white,
-        borderRadius: BorderRadius.circular(10)
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 8,
+            spreadRadius: 2,
+            offset: Offset(0, 4), // Adjust the vertical offset to control shadow position
+          ),
+        ],
       ),
 
       padding: const EdgeInsets.symmetric(horizontal: 16),

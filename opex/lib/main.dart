@@ -74,188 +74,188 @@ class MyApp extends StatefulWidget {
 
   @override
   State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  // FlutterTts ftts = FlutterTts();
-  void createChannel(AndroidNotificationChannel channel) async {
-    final FlutterLocalNotificationsPlugin plugin =
-    FlutterLocalNotificationsPlugin();
-    await plugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
   }
 
-  void showFlutterNotification(RemoteMessage message) {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-    print("daaaaaaaaaaaaaaaaatttttttttttta");
-    // if (notification != null && android != null && !kIsWeb) {
-    //   // flutterLocalNotificationsPlugin.show(
-    //   //   notification.hashCode,
-    //   //   notification.title,
-    //   //   notification.body,
-    //   //   NotificationDetails(
-    //   //     android: AndroidNotificationDetails(
-    //   //       channel.id,
-    //   //       channel.name,
-    //   //       channelDescription: channel.description,
-    //   //       // TODO add a proper drawable resource to android, for now using
-    //   //       //      one that already exists in example app.
-    //   //       icon: 'launch_background',
-    //   //     ),
-    //   //   ),
-    //   // );
-    // }
+  class _MyAppState extends State<MyApp> {
+    // FlutterTts ftts = FlutterTts();
+    void createChannel(AndroidNotificationChannel channel) async {
+      final FlutterLocalNotificationsPlugin plugin =
+      FlutterLocalNotificationsPlugin();
+      await plugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+    }
+
+    void showFlutterNotification(RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      print("daaaaaaaaaaaaaaaaatttttttttttta");
+      // if (notification != null && android != null && !kIsWeb) {
+      //   // flutterLocalNotificationsPlugin.show(
+      //   //   notification.hashCode,
+      //   //   notification.title,
+      //   //   notification.body,
+      //   //   NotificationDetails(
+      //   //     android: AndroidNotificationDetails(
+      //   //       channel.id,
+      //   //       channel.name,
+      //   //       channelDescription: channel.description,
+      //   //       // TODO add a proper drawable resource to android, for now using
+      //   //       //      one that already exists in example app.
+      //   //       icon: 'launch_background',
+      //   //     ),
+      //   //   ),
+      //   // );
+      // }
+    }
+    @override
+    void initState() {
+      // FirebaseMessaging.o.listen(showFlutterNotification);
+      // data();
+      // print("login init");
+      // final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
+      // FlutterLocalNotificationsPlugin();
+      // const AndroidInitializationSettings androidinitializationsettings =
+      // AndroidInitializationSettings('@mipmap/ic_launcher');
+      // const DarwinInitializationSettings darwinInitializationSettings =
+      // DarwinInitializationSettings();
+      // const InitializationSettings initializationSettings =
+      // InitializationSettings(
+      //     android: androidinitializationsettings,
+      //     iOS: darwinInitializationSettings);
+      // const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      //     'messages', 'Messages',
+      //     description: "This is for flutter firebase",
+      //     importance: Importance.max);
+      // createChannel(channel);
+      // flutterlocalnotificationplugins.initialize(initializationSettings);
+      // FirebaseMessaging.onMessage.listen((event) async {
+      //
+      //   // await ftts.setLanguage("en-US");
+      //   // await ftts.setSpeechRate(0.5);
+      //   // await ftts.setVolume(1.0);
+      //   // await ftts.setPitch(1);
+      //   //
+      //   // //play text to sp
+      //   // var result = await ftts.speak(
+      //   // "${event.notification?.title ?? ""} ${event.notification?.body}");
+      //   // if (result == 1) {
+      //   //
+      //   // //speaking
+      //   // } else {
+      //   // //not speaking
+      //   // }
+      //   final notification = event.notification;
+      //   final android = event.notification?.android;
+      //   final data = event.data;
+      //   if (notification != null && android != null) {
+      //     flutterlocalnotificationplugins.show(
+      //         notification.hashCode,
+      //         notification.title,
+      //         notification.body,
+      //         NotificationDetails(
+      //             android: AndroidNotificationDetails(channel.id, channel.name,
+      //                 channelDescription: channel.description,
+      //                 icon: android.smallIcon)));
+      //   }
+      //
+      // });
+      //
+      // // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // //   // Handle the incoming message when the app is in the foreground
+      // //   print("onMessage: ${message}");
+      // //   // _handleNotification(message.data);
+      // // });
+
+      super.initState();
+    }
+
+
+    @override
+    Widget build(BuildContext context) {
+
+      print("..........${authentication.authenticatedUser.token}");
+        return StreamProvider<InternetConnectionStatus>(
+          initialData: InternetConnectionStatus.connected,
+          create: (_) {
+            return InternetConnectionChecker().onStatusChange;
+          },
+          child: FlutterSizer(builder: (context, orientation, screenType) {
+
+            return MultiProvider(
+              providers: [
+                ChangeNotifierProvider(create: ((context) => scoketProvider() )),
+                ChangeNotifierProvider(create: ((context) => scoketgrpProvider() )),
+                BlocProvider(
+                  create: (context) => JobBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => TaskBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => EmployeeBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => OrderListBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => OrderStatusBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => AuthBloc(),
+                ),
+                 BlocProvider(
+                  create: (context) => DummyLoginBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => CommunicationBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => SellerAdminBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => ChatBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => PaginatedchatBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => GroupBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => AttachmentBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => ProfileBloc(),
+                ),
+                BlocProvider(
+                  create: (context) => OrganisationTaskBloc(),
+                ),
+              ],
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Sidrateams',
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                  // textSelectionTheme: TextSelectionThemeData(
+                  //   cursorColor: Colors.green, // Text cursor color
+                  //   selectionColor: Colors.yellow,
+                  //   // Text selection background color
+                  //   selectionHandleColor: Colors.blue, // Text selection handle color
+                  // ),
+                ),
+
+                home: SplashScreen(),
+                // builder: EasyLoading.init(),
+                // home:  HomeApp(),
+              ),
+            );
+          }));
+    }
+
+
+
   }
-  @override
-  void initState() {
-    // FirebaseMessaging.o.listen(showFlutterNotification);
-    // data();
-    // print("login init");
-    // final FlutterLocalNotificationsPlugin flutterlocalnotificationplugins =
-    // FlutterLocalNotificationsPlugin();
-    // const AndroidInitializationSettings androidinitializationsettings =
-    // AndroidInitializationSettings('@mipmap/ic_launcher');
-    // const DarwinInitializationSettings darwinInitializationSettings =
-    // DarwinInitializationSettings();
-    // const InitializationSettings initializationSettings =
-    // InitializationSettings(
-    //     android: androidinitializationsettings,
-    //     iOS: darwinInitializationSettings);
-    // const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    //     'messages', 'Messages',
-    //     description: "This is for flutter firebase",
-    //     importance: Importance.max);
-    // createChannel(channel);
-    // flutterlocalnotificationplugins.initialize(initializationSettings);
-    // FirebaseMessaging.onMessage.listen((event) async {
-    //
-    //   // await ftts.setLanguage("en-US");
-    //   // await ftts.setSpeechRate(0.5);
-    //   // await ftts.setVolume(1.0);
-    //   // await ftts.setPitch(1);
-    //   //
-    //   // //play text to sp
-    //   // var result = await ftts.speak(
-    //   // "${event.notification?.title ?? ""} ${event.notification?.body}");
-    //   // if (result == 1) {
-    //   //
-    //   // //speaking
-    //   // } else {
-    //   // //not speaking
-    //   // }
-    //   final notification = event.notification;
-    //   final android = event.notification?.android;
-    //   final data = event.data;
-    //   if (notification != null && android != null) {
-    //     flutterlocalnotificationplugins.show(
-    //         notification.hashCode,
-    //         notification.title,
-    //         notification.body,
-    //         NotificationDetails(
-    //             android: AndroidNotificationDetails(channel.id, channel.name,
-    //                 channelDescription: channel.description,
-    //                 icon: android.smallIcon)));
-    //   }
-    //
-    // });
-    //
-    // // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // //   // Handle the incoming message when the app is in the foreground
-    // //   print("onMessage: ${message}");
-    // //   // _handleNotification(message.data);
-    // // });
-
-    super.initState();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    print("..........${authentication.authenticatedUser.token}");
-      return StreamProvider<InternetConnectionStatus>(
-        initialData: InternetConnectionStatus.connected,
-        create: (_) {
-          return InternetConnectionChecker().onStatusChange;
-        },
-        child: FlutterSizer(builder: (context, orientation, screenType) {
-
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: ((context) => scoketProvider() )),
-              ChangeNotifierProvider(create: ((context) => scoketgrpProvider() )),
-              BlocProvider(
-                create: (context) => JobBloc(),
-              ),
-              BlocProvider(
-                create: (context) => TaskBloc(),
-              ),
-              BlocProvider(
-                create: (context) => EmployeeBloc(),
-              ),
-              BlocProvider(
-                create: (context) => OrderListBloc(),
-              ),
-              BlocProvider(
-                create: (context) => OrderStatusBloc(),
-              ),
-              BlocProvider(
-                create: (context) => AuthBloc(),
-              ),
-               BlocProvider(
-                create: (context) => DummyLoginBloc(),
-              ),
-              BlocProvider(
-                create: (context) => CommunicationBloc(),
-              ),
-              BlocProvider(
-                create: (context) => SellerAdminBloc(),
-              ),
-              BlocProvider(
-                create: (context) => ChatBloc(),
-              ),
-              BlocProvider(
-                create: (context) => PaginatedchatBloc(),
-              ),
-              BlocProvider(
-                create: (context) => GroupBloc(),
-              ),
-              BlocProvider(
-                create: (context) => AttachmentBloc(),
-              ),
-              BlocProvider(
-                create: (context) => ProfileBloc(),
-              ),
-              BlocProvider(
-                create: (context) => OrganisationTaskBloc(),
-              ),
-            ],
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Sidrateams',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-                // textSelectionTheme: TextSelectionThemeData(
-                //   cursorColor: Colors.green, // Text cursor color
-                //   selectionColor: Colors.yellow,
-                //   // Text selection background color
-                //   selectionHandleColor: Colors.blue, // Text selection handle color
-                // ),
-              ),
-
-              home: SplashScreen(),
-              // builder: EasyLoading.init(),
-              // home:  HomeApp(),
-            ),
-          );
-        }));
-  }
-
-
-
-}
 
 

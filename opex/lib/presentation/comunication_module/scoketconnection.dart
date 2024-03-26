@@ -52,6 +52,8 @@ class scoketgrpProvider extends ChangeNotifier{
     _socket = IO.io(
       'https://api-communication-application.hilalcart.com/group',
       // 'http://192.168.1.187:5500/home',
+      // "http://test-1communication.hilalcart.com/"
+
       // "https://5z7l1nh4-5500.inc1.devtunnels.ms/group",
       <String, dynamic>{
         'transports': ['websocket'],
